@@ -12,7 +12,7 @@ inline void DebugScene::Initialize()
 {
 
 	camera_.Initialize();
-	camera_.position_ = { 0.0f,0.0f,-20.0f };
+	camera_.position_ = { 0.0f,0.0f,-30.0f };
 
 	model_.Initialize("./Resources/EngineResources/testObjects/axis.obj");
 
