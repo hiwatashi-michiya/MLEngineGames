@@ -1,5 +1,5 @@
 #include "DebugScene.h"
-#include"Externals/imgui/imgui.h"
+#include "ImguiManager.h"
 
 using namespace MLEngine::Resource;
 
@@ -15,11 +15,15 @@ inline void DebugScene::Initialize()
 {
 	//お試しプッシュ
 
+	input_ = MLEngine::Input::Manager::GetInstance();
+
 	camera_.Initialize();
 	camera_.position_ = { 0.0f,0.0f,-10.0f };
 
 	model_.Initialize("./Resources/EngineResources/testObjects/axis.obj");
 	particle_.reset(Particle3D::Create("./Resources/model/plane/plane.obj", 32));
+	//読み込み("./Resources/audio/"以降のパスでOK)
+	se1_.Load("SE/test.mp3");
 
 }
 
@@ -29,19 +33,64 @@ void DebugScene::Finalize()
 
 void DebugScene::Update()
 {
-	DrawImgui();
-	
-	for (int32_t i = 0; i < 32; i++) {
-		//ビルボードフラグ
-		particle_->isBillboard_ = true;
-		//モデル一つ一つのアクティブフラグ
-		particle_->isActive_[i] = true;
-		//トランスフォーム
-		particle_->transforms_[i].translate_ = { i * 0.1f, 0.0f,0.0f };
-		particle_->transforms_[i].scale_ = { 1.0f,1.0f,1.0f };
-		particle_->transforms_[i].rotateQuaternion_ = MLEngine::Math::IdentityQuaternion();
-		//色
-		particle_->colors_[i] = { 1.0f, i / 32.0f, 1.0f, 1.0f };
+
+
+	//Audio
+	{
+
+#ifdef _DEBUG
+
+		ImGui::Begin("Test");
+
+		ImGui::Text("isPlayingSE: %d", se1_.IsPlaying());
+
+		ImGui::End();
+
+#endif // _DEBUG
+
+		if (input_->GetKeyboard()->Trigger(DIK_Q)) {
+			//SE再生
+			se1_.Play(0.5f, false);
+		}
+
+		if (input_->GetKeyboard()->Trigger(DIK_W)) {
+			//一時停止
+			se1_.Pause();
+		}
+
+		if (input_->GetKeyboard()->Trigger(DIK_E)) {
+			//再開
+			se1_.ReStart();
+		}
+
+		if (input_->GetKeyboard()->Trigger(DIK_R)) {
+			//停止
+			se1_.Stop();
+		}
+
+		if (input_->GetKeyboard()->Trigger(DIK_1)) {
+			//ボリューム調整
+			se1_.SetVolume(0.1f);
+		}
+
+	}
+
+	//Particle3D
+	{
+
+		for (int32_t i = 0; i < 32; i++) {
+			//ビルボードフラグ
+			particle_->isBillboard_ = true;
+			//モデル一つ一つのアクティブフラグ
+			particle_->isActive_[i] = true;
+			//トランスフォーム
+			particle_->transforms_[i].translate_ = { i * 0.1f, 0.0f,0.0f };
+			particle_->transforms_[i].scale_ = { 1.0f,1.0f,1.0f };
+			particle_->transforms_[i].rotateQuaternion_ = MLEngine::Math::IdentityQuaternion();
+			//色
+			particle_->colors_[i] = { 1.0f, i / 32.0f, 1.0f, 1.0f };
+		}
+
 	}
 
 	camera_.Update();
