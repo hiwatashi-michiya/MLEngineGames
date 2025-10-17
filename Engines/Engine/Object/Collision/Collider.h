@@ -5,6 +5,7 @@
 #include <variant>
 #include <functional>
 #include "Object/GameObject.h"
+#include <unordered_map>
 
 namespace MLEngine::Object::Collision {
 
@@ -20,17 +21,19 @@ namespace MLEngine::Object::Collision {
 		~Collider();
 
 		// 衝突時に呼ばれる関数
-		virtual void OnCollision(Collider* collider) { if (function_) { function_(collider); } }
+		void Hit(Collider* collider);
+		//衝突していない時に呼ばれる関数
+		void NoHit(Collider* collider);
 		// コライダーの中心位置取得
 		virtual MLEngine::Math::Vector3 GetPosition() = 0;
 		//中心位置セット
 		virtual void SetPosition(const MLEngine::Math::Vector3& position) = 0;
 		// 衝突属性(自分)を取得
-		uint32_t GetCollisionAttribute() { return collisionAttribute_; }
+		uint32_t GetCollisionAttribute() const { return collisionAttribute_; }
 		// 衝突属性(自分)を設定
 		void SetCollisionAttribute(uint32_t collisionAttribute) { collisionAttribute_ = collisionAttribute; }
 		// 衝突マスク(相手)を取得
-		uint32_t GetCollisionMask() { return collisionMask_; }
+		uint32_t GetCollisionMask() const { return collisionMask_; }
 		// 衝突マスク(相手)を設定
 		void SetCollisionMask(uint32_t collisionMask) { collisionMask_ = collisionMask; }
 		// 判定処理
@@ -44,7 +47,7 @@ namespace MLEngine::Object::Collision {
 		//アクティブ状態かどうか
 		bool GetIsActive() const { return isActive_; }
 		//関数セット
-		void SetFunction(const std::function<void(Collider*)>& func) { function_ = func; }
+		void SetFunction(const std::function<void(Collider*)>& func) { stayFunc_ = func; }
 		//ゲームオブジェクトゲッター
 		GameObject* GetGameObject() { return object_; }
 		//ゲームオブジェクトセッター
@@ -59,8 +62,12 @@ namespace MLEngine::Object::Collision {
 
 		GameObject* object_ = nullptr;
 
-		//衝突時に呼び出す関数
-		std::function<void(Collider*)> function_;
+		//衝突中に呼び出す関数
+		std::function<void(Collider*)> stayFunc_;
+		//衝突した瞬間に呼び出す関数
+		std::function<void(Collider*)> enterFunc_;
+		//離れた瞬間に呼び出す関数
+		std::function<void(Collider*)> exitFunc_;
 
 		// 衝突属性(自分)
 		uint32_t collisionAttribute_ = 0xffffffff;
@@ -68,6 +75,10 @@ namespace MLEngine::Object::Collision {
 		uint32_t collisionMask_ = 0xffffffff;
 
 		bool isActive_ = true;
+		//コライダーのID
+		int id_;
+		//どのコライダーと衝突したか
+		std::unordered_map<int, int> idMap_;
 
 	};
 

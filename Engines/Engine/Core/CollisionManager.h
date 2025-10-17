@@ -31,7 +31,10 @@ namespace MLEngine::Core {
 		std::list<MLEngine::Object::Collision::Collider*> colliders_;
 
 		std::mutex collidersMutex_;
-
+		//コライダー最大数
+		const int kMaxCount_ = 1024;
+		//インデックスが仕様済かどうか
+		std::vector<bool> isUsed_;
 		/// <summary>
 		/// コライダーの2つの衝突判定と応答
 		/// </summary>

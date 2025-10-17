@@ -1,4 +1,5 @@
 #include "CollisionManager.h"
+#include <Windows.h>
 
 using namespace MLEngine::Object::Collision;
 using namespace MLEngine::Core;
@@ -71,8 +72,15 @@ void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* collide
 	// 交差判定
 	if (colliderA->CollideWith(colliderB)) {
 		// コライダーAの衝突時コールバックを呼び出す
-		colliderA->OnCollision(colliderB);
+		colliderA->Hit(colliderB);
 		// コライダーBの衝突時コールバックを呼び出す
-		colliderB->OnCollision(colliderA);
+		colliderB->Hit(colliderA);
+		return;
 	}
+
+	// コライダーAの衝突していない時のコールバックを呼び出す
+	colliderA->NoHit(colliderB);
+	// コライダーBの衝突していない時のコールバックを呼び出す
+	colliderB->NoHit(colliderA);
+
 }

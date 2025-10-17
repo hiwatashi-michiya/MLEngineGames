@@ -110,7 +110,7 @@ void Engine::Run(BaseScene* startScene) {
 		sceneManager_->Update();
 
 		//エスケープキーが押されるか、ウィンドウのxボタンが押されたら終了する
-		if (Input::Manager::GetInstance()->GetKeyboard()->TriggerKey(DIK_ESCAPE) or ProcessMessage() != 0) {
+		if (Input::Manager::GetInstance()->GetKeyboard()->Trigger(DIK_ESCAPE) or ProcessMessage() != 0) {
 			sceneManager_->Finalize();
 			break;
 		}

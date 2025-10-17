@@ -46,7 +46,7 @@ void Keyboard::Finalize() {
 
 }
 
-bool Keyboard::PushKey(BYTE keyNumber) {
+bool Keyboard::Push(BYTE keyNumber) {
 
 	if (key_[keyNumber]) {
 		return true;
@@ -56,7 +56,7 @@ bool Keyboard::PushKey(BYTE keyNumber) {
 
 }
 
-bool Keyboard::TriggerKey(BYTE keyNumber) {
+bool Keyboard::Trigger(BYTE keyNumber) {
 
 	if (key_[keyNumber] and preKey_[keyNumber] == false) {
 		return true;
@@ -66,7 +66,7 @@ bool Keyboard::TriggerKey(BYTE keyNumber) {
 
 }
 
-bool Keyboard::ReleaseKey(BYTE keyNumber) {
+bool Keyboard::Release(BYTE keyNumber) {
 
 	if (key_[keyNumber] == false and preKey_[keyNumber]) {
 		return true;

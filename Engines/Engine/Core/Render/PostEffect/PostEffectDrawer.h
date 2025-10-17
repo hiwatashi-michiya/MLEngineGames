@@ -38,8 +38,6 @@ namespace MLEngine::Core::Render::PostEffect {
 		std::vector<std::shared_ptr<PostEffects>> postEffects_;
 		//レンダーテクスチャリスト
 		std::vector<RenderTexture> renderTextures_;
-		//レンダーテクスチャ
-		RenderTexture renderTexture_;
 		//ポストエフェクトのタイプ
 		PostEffectType type_ = kDepthBasedOutline;
 
