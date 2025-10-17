@@ -249,7 +249,6 @@ void Particle3D::Initialize(const std::string& filename, uint32_t instanceCount)
 	lifeTimes_.resize(maxInstanceCount_);
 
 	for (uint32_t i = 0; i < maxInstanceCount_; i++) {
-		transforms_[i] = std::make_shared<Transform>();
 		colors_[i] = { 1.0f,1.0f,1.0f,1.0f };
 		worldMatrices[i] = MakeIdentity4x4();
 	}
@@ -316,16 +315,18 @@ void Particle3D::Draw(Camera* camera) {
 
 	for (uint32_t i = 0; i < instanceCount_; i++) {
 
+		Vector3 scale = transforms_[i].scale_;
+
 		//アクティブ状態でない場合、スケールを0にして表示しない
 		if (not isActive_[i]) {
-			transforms_[i]->scale_ = Vector3::Zero();
+			scale = Vector3::Zero();
 		}
 
 		if (isBillboard_) {
-			worldMatrices[i] = MakeScaleMatrix(transforms_[i]->scale_) * matBillboard_ * MakeTranslateMatrix(transforms_[i]->translate_);
+			worldMatrices[i] = MakeScaleMatrix(scale) * matBillboard_ * MakeTranslateMatrix(transforms_[i].translate_);
 		}
 		else {
-			worldMatrices[i] = MakeAffineMatrix(transforms_[i]->scale_, transforms_[i]->rotateQuaternion_, transforms_[i]->translate_);
+			worldMatrices[i] = MakeAffineMatrix(scale, transforms_[i].rotateQuaternion_, transforms_[i].translate_);
 		}
 
 		/*Matrix4x4 worldMatrix = worldTransform[i].matWorld_;*/

@@ -9,6 +9,9 @@
 #include <windows.h>
 #include <cmath>
 
+using namespace MLEngine::Resource;
+using namespace MLEngine::Object;
+
 ParticleEditor* ParticleEditor::GetInstance()
 {
 	static ParticleEditor instance;

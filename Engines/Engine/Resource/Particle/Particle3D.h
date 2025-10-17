@@ -79,11 +79,9 @@ namespace MLEngine::Resource {
 		//ビルボードを使うかどうか
 		bool isBillboard_ = true;
 		//トランスフォームリスト
-		std::vector<std::shared_ptr<MLEngine::Object::Transform>> transforms_{};
+		std::vector<MLEngine::Object::Transform> transforms_{};
 		//色リスト
 		std::vector<MLEngine::Math::Vector4> colors_{};
-		//ワールド行列リスト
-		std::vector<MLEngine::Math::Matrix4x4> worldMatrices{};
 		//速度リスト
 		std::vector<MLEngine::Math::Vector3> velocities_{};
 		//アクティブフラグリスト
@@ -137,6 +135,9 @@ namespace MLEngine::Resource {
 		MLEngine::Resource::Texture texture_;
 
 		std::string texturePath_;
+
+		//ワールド行列リスト
+		std::vector<MLEngine::Math::Matrix4x4> worldMatrices{};
 
 		//ビルボード行列
 		MLEngine::Math::Matrix4x4 matBillboard_;

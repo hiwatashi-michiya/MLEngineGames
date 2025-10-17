@@ -160,6 +160,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Editor\ParticleEditor.cpp" />
     <ClCompile Include="Engine\Resource\Audio\Audio.cpp" />
     <ClCompile Include="Engine\Resource\InstancingResource.cpp" />
     <ClCompile Include="Engine\Resource\Particle\Particle2D.cpp" />
@@ -213,7 +214,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Leak.cpp" />
     <ClCompile Include="Engine\Object\Collision\Collision.cpp" />
     <ClCompile Include="Engine\Object\DebugCamera.cpp" />
-    <ClCompile Include="Engine\Math\Easing.cpp" />
+    <ClCompile Include="Engine\Utility\Easing.cpp" />
     <ClCompile Include="Engine\Math\Matrix4x4.cpp" />
     <ClCompile Include="Engine\Math\Quaternion.cpp" />
     <ClCompile Include="Engine\Math\Rand.cpp" />
@@ -228,6 +229,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Utility\Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Editor\ParticleEditor.h" />
     <ClInclude Include="Engine\Core\Render\ResourceView.h" />
     <ClInclude Include="Engine\Resource\Audio\Audio.h" />
     <ClInclude Include="Engine\Resource\InstancingResource.h" />
@@ -287,7 +289,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Leak.h" />
     <ClInclude Include="Engine\Object\Collision\Collision.h" />
     <ClInclude Include="Engine\Object\DebugCamera.h" />
-    <ClInclude Include="Engine\Math\Easing.h" />
+    <ClInclude Include="Engine\Utility\Easing.h" />
     <ClInclude Include="Engine\Math\Matrix4x4.h" />
     <ClInclude Include="Engine\Math\Quaternion.h" />
     <ClInclude Include="Engine\Math\Rand.h" />
