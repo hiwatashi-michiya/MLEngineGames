@@ -10,6 +10,7 @@ DebugScene::~DebugScene()
 
 inline void DebugScene::Initialize()
 {
+	//お試しプッシュ
 
 	camera_.Initialize();
 	camera_.position_ = { 0.0f,0.0f,-30.0f };
