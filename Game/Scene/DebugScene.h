@@ -27,6 +27,9 @@ public:
 	void Draw() override;
 
 private:
+	void DrawImgui();
+
+private:
 
 	//入力デバイス
 	MLEngine::Input::Manager* input_ = nullptr;

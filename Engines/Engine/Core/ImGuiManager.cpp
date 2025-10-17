@@ -24,6 +24,25 @@ void ImGuiManager::Initialize()
 	//ImGuiの初期化
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
+
+	// ImGuiIO
+	auto& imguiIO = ImGui::GetIO();
+	// Docking有効化
+	imguiIO.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	ImWchar const ranges[] = { 0x0020, 0xfffd, 0, };
+	// 日本語フォント追加
+	ImFont* font = imguiIO.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\msgothic.ttc", 13.0f, NULL, ranges);
+
+	if (font == nullptr) {
+		// フォントの読み込みに失敗
+		printf("Failed to load Japanese font!\n");
+	}
+	else {
+		// フォント読み込み成功
+		printf("Japanese font loaded successfully!\n");
+		imguiIO.FontDefault = font; // デフォルトフォントに設定
+	}
+
 	ImGui::StyleColorsDark();
 	ImGui_ImplWin32_Init(Core::Window::Manager::GetInstance()->GetHwnd());
 	ImGui_ImplDX12_Init(Core::DirectXSetter::GetInstance()->GetDevice(),

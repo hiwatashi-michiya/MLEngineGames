@@ -1,4 +1,5 @@
 #include "DebugScene.h"
+#include"Externals/imgui/imgui.h"
 
 using namespace MLEngine::Resource;
 
@@ -28,7 +29,7 @@ void DebugScene::Finalize()
 
 void DebugScene::Update()
 {
-
+	DrawImgui();
 	
 	for (int32_t i = 0; i < 32; i++) {
 		//ビルボードフラグ
@@ -53,5 +54,14 @@ void DebugScene::Draw()
 	model_.Draw(&camera_);
 
 	particle_->Draw(&camera_);
+
+}
+
+void DebugScene::DrawImgui(){
+	ImGui::Begin("お試し");
+
+	ImGui::Text("テスト");
+
+	ImGui::End();
 
 }
