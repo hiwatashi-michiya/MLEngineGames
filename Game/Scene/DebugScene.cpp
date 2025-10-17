@@ -32,13 +32,13 @@ void DebugScene::Update()
 	
 	for (int32_t i = 0; i < 32; i++) {
 		//ビルボードフラグ
-		particle_->isBillboard_ = true;
+		//particle_->isBillboard_ = true;
 		//モデル一つ一つのアクティブフラグ
 		particle_->isActive_[i] = true;
 		//トランスフォーム
-		particle_->transforms_[i].translate_ = { i * 0.1f, 0.0f,0.0f };
+		particle_->transforms_[i].translate_ = { i * 0.1f, 0.0f,-1.0f };
 		particle_->transforms_[i].scale_ = { 1.0f,1.0f,1.0f };
-		particle_->transforms_[i].rotateQuaternion_ = MLEngine::Math::IdentityQuaternion();
+		particle_->transforms_[i].rotateQuaternion_ = MLEngine::Math::ConvertFromEuler((0.0f,0.0f,));
 		//色
 		particle_->colors_[i] = { 1.0f, i / 32.0f, 1.0f, 1.0f };
 	}
