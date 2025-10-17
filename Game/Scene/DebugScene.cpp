@@ -1,4 +1,5 @@
 #include "DebugScene.h"
+#include"Externals/imgui/imgui.h"
 
 DebugScene::DebugScene()
 {
@@ -25,7 +26,7 @@ void DebugScene::Finalize()
 
 void DebugScene::Update()
 {
-
+	DrawImgui();
 	
 	camera_.Update();
 
@@ -35,5 +36,14 @@ void DebugScene::Draw()
 {
 
 	model_.Draw(&camera_);
+
+}
+
+void DebugScene::DrawImgui(){
+	ImGui::Begin("お試し");
+
+	ImGui::Text("テスト");
+
+	ImGui::End();
 
 }

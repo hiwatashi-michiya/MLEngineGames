@@ -24,6 +24,9 @@ public:
 	void Draw() override;
 
 private:
+	void DrawImgui();
+
+private:
 
 	MLEngine::Object::Camera camera_;
 

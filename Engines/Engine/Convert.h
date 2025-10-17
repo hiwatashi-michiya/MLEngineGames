@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 
+bool IsUTF8(const std::string& str);
 //マルチバイト文字列からワイド文字列に変換
 std::wstring ConvertString(const std::string& str);
 //ワイド文字列からマルチバイト文字列に変換
