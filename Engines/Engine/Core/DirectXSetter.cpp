@@ -400,7 +400,7 @@ void DirectXSetter::CreateRenderTargets() {
 void DirectXSetter::CreateDepthBuffer() {
 
 	//デプスステンシルビュー生成
-	depthStencil_.Create(device_.Get(), Window::Config::kWindowWidth, Window::Config::kWindowHeight);
+	depthStencil_.Create(device_.Get(), Window::Manager::GetInstance()->GetClientWidth(), Window::Manager::GetInstance()->GetClientHeight());
 
 	dsvHeap_.Create(device_.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_DSV, kMaxDSVDescriptor_, false, "DSVHeap");
 

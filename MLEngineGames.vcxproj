@@ -110,8 +110,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)Engines\Engine\Math;$(ProjectDir)Engines\Engine;$(ProjectDir)Engines\Engine\Scene;$(ProjectDir)Engines\Engine\Resource;$(ProjectDir)Engines;$(ProjectDir)Engines\Engine\Core;$(ProjectDir)Engines\Engine\Core\Render;$(ProjectDir)Engines\Externals\assimp\include;$(ProjectDir)Engines\Engine\Input;$(ProjectDir)Engines\Externals\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalOptions>/source-charset:utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>$(ProjectDir)Engines\Engine\Math;$(ProjectDir)Engines\Engine;$(ProjectDir)Engines\Engine\Scene;$(ProjectDir)Engines\Engine\Resource;$(ProjectDir)Engines;$(ProjectDir)Engines\Engine\Core;$(ProjectDir)Engines\Engine\Core\Render;$(ProjectDir)Engines\Externals\assimp\include;$(ProjectDir)Engines\Engine\Input;$(ProjectDir)Engines\Externals\imgui;$(ProjectDir)Engines\Engine\Resource\Audio;$(ProjectDir)Engines\Engine\Resource\Sprite;$(ProjectDir)Engines\Engine\Resource\Particle;$(ProjectDir)Engines\Engine\Resource\Model;$(ProjectDir)Engines\Engine\Object\Collision;$(ProjectDir)Engines\Engine\Object;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
@@ -130,8 +130,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)Engines\Engine\Math;$(ProjectDir)Engines\Engine;$(ProjectDir)Engines\Engine\Scene;$(ProjectDir)Engines\Engine\Resource;$(ProjectDir)Engines;$(ProjectDir)Engines\Engine\Core;$(ProjectDir)Engines\Engine\Core\Render;$(ProjectDir)Engines\Externals\assimp\include;$(ProjectDir)Engines\Engine\Input;$(ProjectDir)Engines\Externals\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalOptions>/source-charset:utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>$(ProjectDir)Engines\Engine\Math;$(ProjectDir)Engines\Engine;$(ProjectDir)Engines\Engine\Scene;$(ProjectDir)Engines\Engine\Resource;$(ProjectDir)Engines;$(ProjectDir)Engines\Engine\Core;$(ProjectDir)Engines\Engine\Core\Render;$(ProjectDir)Engines\Externals\assimp\include;$(ProjectDir)Engines\Engine\Input;$(ProjectDir)Engines\Externals\imgui;$(ProjectDir)Engines\Engine\Resource\Audio;$(ProjectDir)Engines\Engine\Resource\Sprite;$(ProjectDir)Engines\Engine\Resource\Particle;$(ProjectDir)Engines\Engine\Resource\Model;$(ProjectDir)Engines\Engine\Object\Collision;$(ProjectDir)Engines\Engine\Object;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>

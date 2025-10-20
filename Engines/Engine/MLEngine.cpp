@@ -11,21 +11,22 @@ using namespace MLEngine;
 using namespace MLEngine::Resource;
 using namespace MLEngine::Core;
 
-void MLEngine::Run(const char* title, BaseScene* startScene) {
-
-	//エンジンの生成
-	Engine* engine = new Engine();
-
-	engine->Initialize(title, 1280, 720);
-
-	engine->Run(startScene);
-
-	engine->Finalize();
-
-	//エンジンの開放
-	delete engine;
-
-}
+//template<class BaseScene>
+//void MLEngine::Run(const char* title) {
+//
+//	//エンジンの生成
+//	Engine* engine = new Engine();
+//
+//	engine->Initialize(title, 1280, 720);
+//
+//	engine->Run(new BaseScene());
+//
+//	engine->Finalize();
+//
+//	//エンジンの開放
+//	delete engine;
+//
+//}
 
 void Engine::Initialize(const char* title, int width, int height) {
 
@@ -47,21 +48,24 @@ void Engine::Initialize(const char* title, int width, int height) {
 	windowManager_->CreateGameWindow(
 		titleString.c_str(), width, height);
 
-	//インスタンス取得
-
-
-
 	//初期化
-
+	//インスタンス取得
 	//ここから諸々の初期化処理
 	dxSetter_ = Core::DirectXSetter::GetInstance();
 	dxSetter_->Initialize(windowManager_, width, height);
+
+#ifdef _DEBUG
+
+	ImGuiManager::GetInstance()->Initialize();
+
+#endif // _DEBUG
 
 	textureManager_ = Core::TextureManager::GetInstance();
 	shaderManager_ = Core::Render::Shader::Manager::GetInstance();
 	pipelineManager_ = Core::Render::Pipeline::Manager::GetInstance();
 	rootSignatureManager_ = Core::Render::RootSignature::Manager::GetInstance();
 	modelManager_ = Core::Render::Model::Manager::GetInstance();
+	collisionManager_ = CollisionManager::GetInstance();
 
 	textureManager_->Initialize(dxSetter_->GetSrvHeap()->Get());
 	shaderManager_->Initialize();
@@ -82,17 +86,11 @@ void Engine::Initialize(const char* title, int width, int height) {
 	Input::Manager::GetInstance()->Initialize();
 
 	//Engineクラスでインスタンス生成をしておく
-	CollisionManager::GetInstance()->Initialize();
+	collisionManager_->Initialize();
 	Render::Particle::Manager::GetInstance()->Initialize();
 	Render::Manager::GetInstance()->Clear();
 
 	sceneManager_ = Scene::Manager::GetInstance();
-
-#ifdef _DEBUG
-
-	ImGuiManager::GetInstance()->Initialize();
-
-#endif // _DEBUG
 
 }
 
@@ -108,6 +106,8 @@ void Engine::Run(BaseScene* startScene) {
 
 		//ゲームシーン更新
 		sceneManager_->Update();
+		//当たり判定チェック
+		collisionManager_->CheckAllCollisions();
 
 		//エスケープキーが押されるか、ウィンドウのxボタンが押されたら終了する
 		if (Input::Manager::GetInstance()->GetKeyboard()->Trigger(DIK_ESCAPE) or ProcessMessage() != 0) {

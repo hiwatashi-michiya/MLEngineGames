@@ -9,6 +9,7 @@
 #include "Line/LineDrawer.h"
 #include "Core/Render/RenderManager.h"
 #include "Core/Render/ParticleManager.h"
+#include "BaseScene.h"
 
 using namespace MLEngine::Core::Render;
 using namespace MLEngine::Core;
@@ -35,7 +36,7 @@ void Scene::Manager::Update() {
 		scene_.reset(nextScene_.release());
 
 		scene_->SetSceneManager(this);
-
+		scene_->SetCamera();
 		scene_->Initialize();
 
 	}

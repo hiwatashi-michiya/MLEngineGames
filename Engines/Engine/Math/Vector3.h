@@ -75,7 +75,7 @@ namespace MLEngine::Math {
 	// OBB(箱)
 	struct OBB {
 		// 中心点
-		Vector3 center;
+		Vector3 center{};
 		// 座標軸。正規化・直交必須
 		Vector3 orientations[3] = {
 			{1.0f,0.0f,0.0f},
@@ -83,7 +83,7 @@ namespace MLEngine::Math {
 			{0.0f,0.0f,1.0f}
 		};
 		// 座標軸方向の長さの半分。中心から面までの距離
-		Vector3 size;
+		Vector3 size{ 1.0f,1.0f,1.0f };
 	};
 
 	//バネ構造体
@@ -127,6 +127,23 @@ namespace MLEngine::Math {
 	struct Capsule {
 		Segment segment;
 		float radius;
+	};
+
+	/// <summary>
+	/// 球体
+	/// </summary>
+	struct Sphere
+	{
+		MLEngine::Math::Vector3 center{};
+		float radius = 1.0f;
+	};
+
+	/// <summary>
+	/// 平面
+	/// </summary>
+	struct Plane {
+		MLEngine::Math::Vector3 normal{ 0.0f,1.0f,0.0f }; //法線
+		float distance; //距離
 	};
 
 	struct Vector2;

@@ -1,6 +1,8 @@
 #pragma once
-#include "BaseScene.h"
 #include <memory>
+#include "Camera.h"
+
+class BaseScene;
 
 namespace MLEngine {
 
@@ -24,6 +26,10 @@ namespace MLEngine {
 			void Render();
 			//シーン切り替え
 			void ChangeScene(BaseScene* nextScene);
+			//メインカメラセット
+			void SetMainCamera(MLEngine::Object::Camera* camera) { mainCamera_ = camera; }
+			//メインカメラ取得
+			MLEngine::Object::Camera* GetMainCamera() { return mainCamera_; }
 
 		private:
 
@@ -31,6 +37,8 @@ namespace MLEngine {
 			std::unique_ptr<BaseScene> scene_;
 			//次のシーン
 			std::unique_ptr<BaseScene> nextScene_;
+			//メインカメラのポインタ
+			MLEngine::Object::Camera* mainCamera_ = nullptr;
 
 		private:
 			//シングルトン化

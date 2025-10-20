@@ -29,9 +29,6 @@
 
 namespace MLEngine {
 
-	//開始時の処理(一度だけ)
-	void Run(const char* title, BaseScene* startScene);
-
 	/// <summary>
 	/// ゲームエンジン
 	/// </summary>
@@ -84,8 +81,27 @@ namespace MLEngine {
 		MLEngine::Core::Render::Pipeline::Manager* pipelineManager_ = nullptr;
 		MLEngine::Core::Render::RootSignature::Manager* rootSignatureManager_ = nullptr;
 		MLEngine::Scene::Manager* sceneManager_ = nullptr;
+		MLEngine::Core::CollisionManager* collisionManager_ = nullptr;
 
 	};
+
+	//開始時の処理(一度だけ)
+	template<class BaseScene>
+	void Run(const char* title) {
+
+		//エンジンの生成
+		Engine* engine = new Engine();
+
+		engine->Initialize(title, 1280, 720);
+
+		engine->Run(new BaseScene());
+
+		engine->Finalize();
+
+		//エンジンの開放
+		delete engine;
+
+	}
 
 }
 

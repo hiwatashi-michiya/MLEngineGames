@@ -38,7 +38,7 @@ void PostEffectDrawer::Initialize() {
 
 		//ディスクリプタヒープのハンドルを取得
 		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = GetCPUDescriptorHandle(dxSetter_->GetRtvHeap()->Get(), descriptorSizeRTV, 2 + i);
-		newRenderTex.Create(device_, Window::Config::kWindowWidth, Window::Config::kWindowHeight,
+		newRenderTex.Create(device_, Window::Manager::GetInstance()->GetClientWidth(), Window::Manager::GetInstance()->GetClientHeight(),
 			DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, kRenderTargetClearValue);
 		device_->CreateRenderTargetView(newRenderTex.Get(), &renderTargetViewDesc, rtvHandle);
 

@@ -31,7 +31,7 @@ namespace MLEngine::Core {
 		//未使用のインデックスを使用済みにして返す
 		uint32_t GetUnUsedIndex();
 		//インデックスを未使用に戻す
-		void SetIndexUnused(uint32_t index);
+		void SetIndexUnUsed(uint32_t index);
 	private:
 
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> heap_;

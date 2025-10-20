@@ -4,7 +4,7 @@
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	
-	MLEngine::Run("卒業制作", new DebugScene());
+	MLEngine::Run<DebugScene>("卒業制作");
 
 	return 0;
 

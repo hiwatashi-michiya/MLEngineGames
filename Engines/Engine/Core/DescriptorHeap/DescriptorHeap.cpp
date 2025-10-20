@@ -74,7 +74,7 @@ uint32_t DescriptorHeap::GetUnUsedIndex()
 	return 0;
 }
 
-void DescriptorHeap::SetIndexUnused(uint32_t index)
+void DescriptorHeap::SetIndexUnUsed(uint32_t index)
 {
 
 	assert(index < limit_);
