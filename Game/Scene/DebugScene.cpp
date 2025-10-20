@@ -53,7 +53,7 @@ void DebugScene::Update()
 
 #ifdef _DEBUG
 
-		ImGui::Begin("Test");
+		ImGui::Begin("テスト");
 
 		ImGui::Text("isPlayingSE: %d", se1_.IsPlaying());
 
