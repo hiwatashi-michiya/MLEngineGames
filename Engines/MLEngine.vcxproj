@@ -82,7 +82,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalOptions>/source-charset:utf-8 </AdditionalOptions>
+      <AdditionalOptions>/utf-8 </AdditionalOptions>
       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Editor;$(ProjectDir)Engine;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Utility;$(ProjectDir)Engine\Tool;$(ProjectDir)Engine\Resource;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\Core;$(ProjectDir)Engine\Core\Render;$(ProjectDir)Engine\Core\Buffer;$(ProjectDir)Engine\Core\DescriptorHeap;$(ProjectDir)Engine\Input;$(ProjectDir)Externals\assimp\include;$(ProjectDir)Externals\imgui;$(ProjectDir)Engine\Object</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
@@ -111,7 +111,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalOptions>/source-charset:utf-8 </AdditionalOptions>
+      <AdditionalOptions>/utf-8 </AdditionalOptions>
       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Editor;$(ProjectDir)Engine;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Utility;$(ProjectDir)Engine\Tool;$(ProjectDir)Engine\Resource;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\Core;$(ProjectDir)Engine\Core\Render;$(ProjectDir)Engine\Core\Buffer;$(ProjectDir)Engine\Core\DescriptorHeap;$(ProjectDir)Engine\Input;$(ProjectDir)Externals\assimp\include;$(ProjectDir)Externals\imgui;$(ProjectDir)Engine\Object</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -141,7 +141,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalOptions>/source-charset:utf-8 </AdditionalOptions>
+      <AdditionalOptions>/utf-8 </AdditionalOptions>
       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Editor;$(ProjectDir)Engine;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Utility;$(ProjectDir)Engine\Tool;$(ProjectDir)Engine\Resource;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\Core;$(ProjectDir)Engine\Core\Render;$(ProjectDir)Engine\Core\Buffer;$(ProjectDir)Engine\Core\DescriptorHeap;$(ProjectDir)Engine\Input;$(ProjectDir)Externals\assimp\include;$(ProjectDir)Externals\imgui;$(ProjectDir)Engine\Object</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
