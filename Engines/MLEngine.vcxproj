@@ -83,7 +83,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Editor;$(ProjectDir)Engine;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Utility;$(ProjectDir)Engine\Tool;$(ProjectDir)Engine\Resource;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\Core;$(ProjectDir)Engine\Core\Render;$(ProjectDir)Engine\Core\Buffer;$(ProjectDir)Engine\Core\DescriptorHeap;$(ProjectDir)Engine\Input;$(ProjectDir)Externals\assimp\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Editor;$(ProjectDir)Engine;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Utility;$(ProjectDir)Engine\Tool;$(ProjectDir)Engine\Resource;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\Core;$(ProjectDir)Engine\Core\Render;$(ProjectDir)Engine\Core\Buffer;$(ProjectDir)Engine\Core\DescriptorHeap;$(ProjectDir)Engine\Input;$(ProjectDir)Externals\assimp\include;$(ProjectDir)Game</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
       <Optimization>Disabled</Optimization>

@@ -175,6 +175,7 @@ Sprite::Sprite(Texture texture, Vector2 position, Vector2 size, Vector4 color) {
 	texture_ = texture;
 	position_ = position;
 	size_ = size;
+	anchorPoint_ = Vector2(0.5f, 0.5f);
 	viewRect_ = { 1.0f,1.0f };
 	color_ = color;
 }

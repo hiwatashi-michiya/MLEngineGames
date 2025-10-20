@@ -1,10 +1,12 @@
 #include "DebugScene.h"
 #include"Externals/imgui/imgui.h"
+#include"SceneManager.h"
+#include"PlayScene.h"
 
 using namespace MLEngine::Resource;
 
-DebugScene::DebugScene()
-{
+DebugScene::DebugScene(){
+	input_ = MLEngine::Input::Manager::GetInstance();
 }
 
 DebugScene::~DebugScene()
@@ -14,6 +16,7 @@ DebugScene::~DebugScene()
 inline void DebugScene::Initialize()
 {
 	//お試しプッシュ
+
 
 	camera_.Initialize();
 	camera_.position_ = { 0.0f,0.0f,-10.0f };
@@ -44,24 +47,36 @@ void DebugScene::Update()
 		particle_->colors_[i] = { 1.0f, i / 32.0f, 1.0f, 1.0f };
 	}
 
+	if (input_->GetKeyboard()->Trigger(DIK_SPACE)){
+		sceneManager_->ChangeScene(new PlayScene());
+	}
+
+	
+
 	camera_.Update();
 
 }
 
 void DebugScene::Draw()
 {
-
+	
 	model_.Draw(&camera_);
 
 	particle_->Draw(&camera_);
 
 }
 
+
 void DebugScene::DrawImgui(){
+#ifdef _DEBUG
+
+
 	ImGui::Begin("お試し");
 
 	ImGui::Text("テスト");
 
 	ImGui::End();
+
+#endif // _DEBUG
 
 }

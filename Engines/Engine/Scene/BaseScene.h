@@ -23,7 +23,7 @@ public:
 	//シーンマネージャーセット
 	virtual void SetSceneManager(MLEngine::Scene::Manager* sceneManager) { sceneManager_ = sceneManager; }
 
-private:
+protected:
 
 	MLEngine::Scene::Manager* sceneManager_ = nullptr;
 
