@@ -16,9 +16,9 @@ public:
     // ゲーム全体設定
     float timeLimit_ = 180.0f;    // 制限時間(秒)
     const int centerPos_ = 640;//中心座標
-    int maxLane_ = 5;             // レーンの最大数
+    int maxLane_ = 3;             // レーンの最大数
     int centerLane_;//中心のライン
-    int laneDistance_ = 200;//レーンの幅
+    int laneDistancePlayer_ = 200;//プレイヤー側のレーンの幅
     bool enableDebugMode_ = false;//デバックモードにするかどうか
 
 private:
