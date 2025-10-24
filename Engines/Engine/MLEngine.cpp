@@ -94,8 +94,9 @@ void Engine::Initialize(const char* title, int width, int height) {
 
 }
 
-void Engine::Run(BaseScene* startScene) {
+void Engine::Run(BaseScene* startScene, BaseSceneFactory* sceneFactory) {
 
+	sceneManager_->SetSceneFactory(sceneFactory);
 	sceneManager_->ChangeScene(startScene);
 
 	while (true)

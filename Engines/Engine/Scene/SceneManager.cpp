@@ -72,3 +72,14 @@ void Scene::Manager::ChangeScene(BaseScene* nextScene) {
 	nextScene_.reset(nextScene);
 
 }
+
+void MLEngine::Scene::Manager::ChangeScene(const std::string& sceneName)
+{
+
+	assert(sceneFactory_);
+
+	assert(nextScene_ == nullptr);
+
+	nextScene_.reset(sceneFactory_->CreateScene(sceneName));
+
+}

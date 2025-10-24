@@ -59,15 +59,19 @@ bool BoxCollider::CollideWithSphere(SphereCollider* sphere) { return IsCollision
 void BoxCollider::Debug()
 {
 
+#ifdef _DEBUG
 	ImGui::DragFloat3("center", &collider_.center.x);
 	ImGui::DragFloat3("size", &collider_.size.x);
+#endif // _DEBUG
 
 }
 
 void SphereCollider::Debug()
 {
 
+#ifdef _DEBUG
 	ImGui::DragFloat3("center", &collider_.center.x);
 	ImGui::DragFloat("size", &collider_.radius);
+#endif // _DEBUG
 
 }

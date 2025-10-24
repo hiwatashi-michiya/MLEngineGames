@@ -137,10 +137,13 @@ void DebugScene::Draw()
 }
 
 void DebugScene::DrawImgui(){
+
+#ifdef _DEBUG
 	ImGui::Begin("お試し");
 
 	ImGui::Text("テスト");
 
 	ImGui::End();
+#endif // _DEBUG
 
 }

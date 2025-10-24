@@ -144,10 +144,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Game\Scene\DebugScene.cpp" />
+    <ClCompile Include="Game\Scene\SceneFactory.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Scene\DebugScene.h" />
+    <ClInclude Include="Game\Scene\SceneFactory.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
