@@ -64,6 +64,11 @@ void Player::DebugDraw(){
 
 }
 
+void Player::OnCollision(const float damege){
+	life_ -= damege;
+	isDamaged_ = true;
+}
+
 void Player::PlayerMove(){
 	//左入力
 	if (input_->GetKeyboard()->Trigger(DIK_A) || input_->GetKeyboard()->Trigger(DIK_LEFT)) {

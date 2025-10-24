@@ -17,6 +17,12 @@ public:
 	//デバック描画(ラインとか)
 	void DebugDraw() override;
 
+	void OnCollision(const float damege);
+
+	int GetNowLine()const {
+		return nowLine_;
+	}
+
 private:
 	//プレイヤーのボタンによる操作
 	void PlayerMove();
