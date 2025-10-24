@@ -9,8 +9,8 @@ namespace MLEngine::Core::Render {
 	namespace RootSignature {
 
 		/// <summary>
-	/// ルートシグネチャ管理クラス
-	/// </summary>
+		/// ルートシグネチャ管理クラス
+		/// </summary>
 		class Manager
 		{
 		public:

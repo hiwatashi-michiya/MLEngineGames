@@ -13,7 +13,7 @@ namespace MLEngine::Resource {
 		Audio() = default;
 		~Audio() = default;
 
-		//オーディオファイル読み込み
+		//オーディオファイル読み込み("./Resources/audio/"以降のパス)
 		void Load(const std::string& filename);
 
 		/// <summary>

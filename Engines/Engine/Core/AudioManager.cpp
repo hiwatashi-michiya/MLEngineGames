@@ -66,10 +66,14 @@ void AudioManager::Finalize() {
 
 uint32_t AudioManager::LoadInMF(const std::string& filename) {
 
-	//既にロードした音源だったらそのまま返す
-	if (intMap_.find(filename) != intMap_.end()) {
+	std::string filePath = "./Resources/audio/";
 
-		return intMap_[filename];
+	filePath += filename;
+
+	//既にロードした音源だったらそのまま返す
+	if (intMap_.find(filePath) != intMap_.end()) {
+
+		return intMap_[filePath];
 
 	}
 
@@ -78,7 +82,7 @@ uint32_t AudioManager::LoadInMF(const std::string& filename) {
 
 	Audio tmpAudio{};
 
-	std::wstring path = ConvertString(filename);
+	std::wstring path = ConvertString(filePath);
 
 	//ソースリーダー作成
 	MFCreateSourceReaderFromURL(path.c_str(), NULL, &tmpAudio.pMFSourceReader);
@@ -127,7 +131,7 @@ uint32_t AudioManager::LoadInMF(const std::string& filename) {
 	}
 
 	//ファイル名と値を関連付け、配列に格納
-	intMap_[filename] = audioCount_;
+	intMap_[filePath] = audioCount_;
 	audios_.push_back(tmpAudio);
 
 	//戻り値を設定

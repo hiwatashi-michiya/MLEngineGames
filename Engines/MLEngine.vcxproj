@@ -84,6 +84,8 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8</AdditionalOptions>
       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Editor;$(ProjectDir)Engine;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Utility;$(ProjectDir)Engine\Tool;$(ProjectDir)Engine\Resource;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\Core;$(ProjectDir)Engine\Core\Render;$(ProjectDir)Engine\Core\Buffer;$(ProjectDir)Engine\Core\DescriptorHeap;$(ProjectDir)Engine\Input;$(ProjectDir)Externals\assimp\include;$(ProjectDir)Game</AdditionalIncludeDirectories>
+      <AdditionalOptions>/utf-8 </AdditionalOptions>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Editor;$(ProjectDir)Engine;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Utility;$(ProjectDir)Engine\Tool;$(ProjectDir)Engine\Resource;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\Core;$(ProjectDir)Engine\Core\Render;$(ProjectDir)Engine\Core\Buffer;$(ProjectDir)Engine\Core\DescriptorHeap;$(ProjectDir)Engine\Input;$(ProjectDir)Externals\assimp\include;$(ProjectDir)Externals\imgui;$(ProjectDir)Engine\Object</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
       <Optimization>Disabled</Optimization>
@@ -111,8 +113,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalOptions>/source-charset:utf-8 </AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Editor;$(ProjectDir)Engine;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Utility;$(ProjectDir)Engine\Tool;$(ProjectDir)Engine\Resource;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\Core;$(ProjectDir)Engine\Core\Render;$(ProjectDir)Engine\Core\Buffer;$(ProjectDir)Engine\Core\DescriptorHeap;$(ProjectDir)Engine\Input;$(ProjectDir)Externals\assimp\include</AdditionalIncludeDirectories>
+      <AdditionalOptions>/utf-8 </AdditionalOptions>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Editor;$(ProjectDir)Engine;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Utility;$(ProjectDir)Engine\Tool;$(ProjectDir)Engine\Resource;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\Core;$(ProjectDir)Engine\Core\Render;$(ProjectDir)Engine\Core\Buffer;$(ProjectDir)Engine\Core\DescriptorHeap;$(ProjectDir)Engine\Input;$(ProjectDir)Externals\assimp\include;$(ProjectDir)Externals\imgui;$(ProjectDir)Engine\Object</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <Optimization>MinSpace</Optimization>
@@ -141,8 +143,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalOptions>/source-charset:utf-8 </AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Editor;$(ProjectDir)Engine;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Utility;$(ProjectDir)Engine\Tool;$(ProjectDir)Engine\Resource;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\Core;$(ProjectDir)Engine\Core\Render;$(ProjectDir)Engine\Core\Buffer;$(ProjectDir)Engine\Core\DescriptorHeap;$(ProjectDir)Engine\Input;$(ProjectDir)Externals\assimp\include</AdditionalIncludeDirectories>
+      <AdditionalOptions>/utf-8 </AdditionalOptions>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Editor;$(ProjectDir)Engine;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Utility;$(ProjectDir)Engine\Tool;$(ProjectDir)Engine\Resource;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\Core;$(ProjectDir)Engine\Core\Render;$(ProjectDir)Engine\Core\Buffer;$(ProjectDir)Engine\Core\DescriptorHeap;$(ProjectDir)Engine\Input;$(ProjectDir)Externals\assimp\include;$(ProjectDir)Externals\imgui;$(ProjectDir)Engine\Object</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <Optimization>MinSpace</Optimization>
@@ -284,6 +286,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Core\TextureManager.h" />
     <ClInclude Include="Engine\Resource\Texture\Texture.h" />
     <ClInclude Include="Engine\Scene\BaseScene.h" />
+    <ClInclude Include="Engine\Scene\BaseSceneFactory.h" />
     <ClInclude Include="Engine\Scene\SceneManager.h" />
     <ClInclude Include="Engine\Input\Input.h" />
     <ClInclude Include="Engine\Leak.h" />

@@ -1,5 +1,5 @@
 #pragma once
-#include <Vector3.h>
+#include "Vector3.h"
 #include <stdint.h>
 #include "Collision.h"
 #include <variant>
@@ -46,8 +46,12 @@ namespace MLEngine::Object::Collision {
 		void SetIsActive(bool flag) { isActive_ = flag; }
 		//アクティブ状態かどうか
 		bool GetIsActive() const { return isActive_; }
-		//関数セット
-		void SetFunction(const std::function<void(Collider*)>& func) { stayFunc_ = func; }
+		//当たった瞬間の関数セット
+		void SetEnterFunction(const std::function<void(Collider*)>& func) { enterFunc_ = func; }
+		//当たっている時の関数セット
+		void SetStayFunction(const std::function<void(Collider*)>& func) { stayFunc_ = func; }
+		//離れた時の関数セット
+		void SetExitFunction(const std::function<void(Collider*)>& func) { exitFunc_ = func; }
 		//ゲームオブジェクトゲッター
 		GameObject* GetGameObject() { return object_; }
 		//ゲームオブジェクトセッター
@@ -57,6 +61,8 @@ namespace MLEngine::Object::Collision {
 		virtual MLEngine::Math::Vector3 GetSize() const { return MLEngine::Math::Vector3(0.0f, 0.0f, 0.0f); }
 		//半径取得(Sphere用)
 		virtual float GetRadius() const { return 0.0f; }
+		//デバッグ機能
+		virtual void Debug() = 0;
 
 	protected:
 
@@ -76,7 +82,7 @@ namespace MLEngine::Object::Collision {
 
 		bool isActive_ = true;
 		//コライダーのID
-		int id_;
+		uint32_t id_;
 		//どのコライダーと衝突したか
 		std::unordered_map<int, int> idMap_;
 
@@ -95,6 +101,8 @@ namespace MLEngine::Object::Collision {
 		bool CollideWithSphere(SphereCollider* sphere) override;
 		MLEngine::Math::Vector3 GetSize() const override { return collider_.size; }
 
+		void Debug() override;
+
 		MLEngine::Math::OBB collider_;
 
 	};
@@ -112,7 +120,9 @@ namespace MLEngine::Object::Collision {
 		bool CollideWithSphere(SphereCollider* sphere) override { return IsCollision(this->collider_, sphere->collider_); }
 		float GetRadius() const override { return collider_.radius; }
 
-		Sphere collider_;
+		void Debug() override;
+
+		MLEngine::Math::Sphere collider_;
 
 	};
 

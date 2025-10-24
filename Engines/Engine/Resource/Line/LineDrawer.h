@@ -107,6 +107,38 @@ namespace MLEngine::Resource {
 
 	};
 
+	/// <summary>
+	/// 主に当たり判定に使う線の箱描画
+	/// </summary>
+	class LineSphere
+	{
+	public:
+		LineSphere();
+		~LineSphere();
+		//OBBセット
+		void SetSphere(MLEngine::Math::Sphere* sphere) { sphere_ = sphere; }
+		//デバッグ用の線かどうかのフラグセット
+		void SetIsCollisionLine(bool flag);
+		//更新
+		void Update();
+		//色セット
+		void SetColor(MLEngine::Math::Vector4 color);
+		//描画コマンド積む
+		void Draw(MLEngine::Object::Camera* camera, const MLEngine::Math::Matrix4x4& matrix = MLEngine::Math::MakeIdentity4x4());
+
+	private:
+
+		//球体の分割数
+		static const uint32_t kSubdivision_ = 6;
+		//描画に使用する線の数(分割数 * 分割数 * 2)
+		static const uint32_t kMaxLine_ = 72;
+
+		MLEngine::Math::Sphere* sphere_ = nullptr;
+		//線分
+		std::array<std::unique_ptr<Line>, kMaxLine_> lines_;
+
+	};
+
 }
 
 

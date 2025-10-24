@@ -48,8 +48,8 @@ namespace MLEngine::Core {
 		/// <summary>
 		/// 初期化
 		/// </summary>
-		void Initialize(MLEngine::Core::Window::Manager* windowManager_, int32_t backBufferWidth = MLEngine::Core::Window::Config::kWindowWidth,
-			int32_t backBufferHeight = MLEngine::Core::Window::Config::kWindowHeight);
+		void Initialize(MLEngine::Core::Window::Manager* windowManager_, int32_t backBufferWidth = MLEngine::Core::Window::Manager::GetInstance()->GetClientWidth(),
+			int32_t backBufferHeight = MLEngine::Core::Window::Manager::GetInstance()->GetClientWidth());
 
 		/// <summary>
 		/// 描画前処理

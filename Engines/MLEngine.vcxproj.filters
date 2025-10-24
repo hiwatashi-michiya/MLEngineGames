@@ -440,6 +440,9 @@
     <ClInclude Include="Editor\ParticleEditor.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Scene\BaseSceneFactory.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\FullScreen.hlsli">

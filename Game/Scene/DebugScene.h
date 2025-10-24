@@ -1,12 +1,13 @@
 #pragma once
-#include "Scene/BaseScene.h"
-#include "Model/Model.h"
-#include "Object/Camera.h"
-#include "Sprite/Sprite.h"
-#include "Audio/Audio.h"
-#include "Input/Input.h"
-#include "Particle/Particle3D.h"
+#include "BaseScene.h"
+#include "Model.h"
+#include "Camera.h"
+#include "Sprite.h"
+#include "Audio.h"
+#include "Input.h"
+#include "Particle3D.h"
 #include <memory>
+#include "Collider.h"
 
 /// <summary>
 /// デバッグシーン、エンジン機能理解用
@@ -34,8 +35,7 @@ private:
 	//入力デバイス
 	MLEngine::Input::Manager* input_ = nullptr;
 
-	//カメラ
-	MLEngine::Object::Camera camera_;
+	
 	//オーディオ
 	MLEngine::Resource::Audio se1_;
 	//通常モデル
@@ -46,7 +46,11 @@ private:
 	MLEngine::Math::Matrix4x4 matrix_;
 	//パーティクル
 	std::unique_ptr<MLEngine::Resource::Particle3D> particle_;
-
+	//コライダーテスト
+	MLEngine::Object::Collision::SphereCollider sphere_;
+	MLEngine::Resource::LineSphere lineSphere_;
+	MLEngine::Object::Collision::BoxCollider box_;
+	MLEngine::Resource::LineBox lineBox_;
 
 };
 

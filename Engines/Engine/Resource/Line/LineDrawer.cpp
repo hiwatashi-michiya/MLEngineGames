@@ -6,6 +6,10 @@
 #include "Buffer/BufferResource.h"
 #include "Convert.h"
 #include "RenderManager.h"
+#include <cmath>
+#include <numbers>
+#include "SceneManager.h"
+#include "WindowManager.h"
 
 using namespace MLEngine::Resource;
 using namespace MLEngine::Core::Render;
@@ -17,7 +21,13 @@ ID3D12Device* Line::device_ = nullptr;
 ID3D12GraphicsCommandList* Line::commandList_ = nullptr;
 ID3D12RootSignature* Line::rootSignature_ = nullptr;
 ID3D12PipelineState* Line::pipelineState_ = nullptr;
+#ifdef _DEBUG
+bool Line::showCollisionLine_ = true;
+#else
 bool Line::showCollisionLine_ = false;
+#endif // _DEBUG
+
+
 
 void Line::Initialize(ID3D12Device* device) {
 
@@ -332,6 +342,105 @@ void LineBox::Draw(Camera* camera, const Matrix4x4& matrix) {
 #ifdef _DEBUG
 
 	if (obb_) {
+
+		for (int32_t i = 0; i < kMaxLine_; i++) {
+			lines_[i]->Draw(camera, matrix);
+		}
+
+	}
+
+#endif // _DEBUG
+
+}
+
+LineSphere::LineSphere()
+{
+
+	for (int32_t i = 0; i < kMaxLine_; i++) {
+		lines_[i] = std::make_unique<Line>();
+	}
+
+}
+
+LineSphere::~LineSphere()
+{
+}
+
+void LineSphere::SetIsCollisionLine(bool flag)
+{
+	for (int32_t i = 0; i < kMaxLine_; i++) {
+		lines_[i]->SetIsCollisionLine(flag);
+	}
+}
+
+void LineSphere::Update() {
+
+	/*Camera* camera = MLEngine::Scene::Manager::GetInstance()->GetMainCamera();
+
+	Matrix4x4 viewportMatrix = MakeViewportMatrix(0.0f, 0.0f, float(Window::Manager::GetInstance()->GetClientWidth()),
+		float(Window::Manager::GetInstance()->GetClientHeight()), 0.0f, 1.0f);*/
+
+	if (sphere_) {
+
+		const float  kLonEvery = float(2 * std::numbers::pi / kSubdivision_); //経度分割1つ分の角度
+		const float kLatEvery = float(2 * std::numbers::pi / kSubdivision_); //緯度分割1つ分の角度
+		//緯度の方向に分割　-π/2 ～ π/2
+		for (uint32_t latIndex = 0; latIndex < kSubdivision_; ++latIndex) {
+			float lat = -(float(std::numbers::pi) / 2.0f) + kLatEvery * latIndex; //現在の緯度
+			//経度の方向に分割　-π/2 ～ π/2
+			for (uint32_t lonIndex = 0; lonIndex < kSubdivision_; ++lonIndex) {
+				float lon = lonIndex * kLonEvery;//現在の経度
+				float thetaD = float(std::numbers::pi / kSubdivision_);
+				float phiD = float(2 * std::numbers::pi / kSubdivision_);
+				//world座標系でのa,b,cを求める
+				Vector3 a, b, c;
+				a = { sphere_->radius * cosf(lat) * cosf(lon) + sphere_->center.x,
+					sphere_->radius * sinf(lat) + sphere_->center.y,
+					sphere_->radius * cosf(lat) * sinf(lon) + sphere_->center.z };
+
+				b = { sphere_->radius * cosf(lat + thetaD) * cosf(lon) + sphere_->center.x,
+					sphere_->radius * sinf(lat + thetaD) + sphere_->center.y,
+				sphere_->radius * cosf(lat + thetaD) * sinf(lon) + sphere_->center.z };
+
+				c = { sphere_->radius * cosf(lat) * cosf(lon + phiD) + sphere_->center.x,
+				sphere_->radius * sinf(lat) + sphere_->center.y,
+				sphere_->radius * cosf(lat) * sinf(lon + phiD) + sphere_->center.z };
+
+				////スクリーン座標に変換
+				//Vector3 ndcVertex = CoordTransform(a, camera->matViewProjection_);
+				//a = CoordTransform(ndcVertex, viewportMatrix);
+				//ndcVertex = CoordTransform(b, camera->matViewProjection_);
+				//b = CoordTransform(ndcVertex, viewportMatrix);
+				//ndcVertex = CoordTransform(c, camera->matViewProjection_);
+				//c = CoordTransform(ndcVertex, viewportMatrix);
+
+				//ラインを設定
+				lines_[lonIndex * 2 + latIndex * kSubdivision_ * 2]->start_ = a;
+				lines_[lonIndex * 2 + latIndex * kSubdivision_ * 2]->end_ = b;
+				lines_[lonIndex * 2 + latIndex * kSubdivision_ * 2 + 1]->start_ = a;
+				lines_[lonIndex * 2 + latIndex * kSubdivision_ * 2 + 1]->end_ = c;
+
+			}
+		}
+
+	}
+
+}
+
+void LineSphere::SetColor(Vector4 color)
+{
+
+	for (int32_t i = 0; i < kMaxLine_; i++) {
+		lines_[i]->color_ = color;
+	}
+
+}
+
+void LineSphere::Draw(Camera* camera, const Matrix4x4& matrix) {
+
+#ifdef _DEBUG
+
+	if (sphere_) {
 
 		for (int32_t i = 0; i < kMaxLine_; i++) {
 			lines_[i]->Draw(camera, matrix);

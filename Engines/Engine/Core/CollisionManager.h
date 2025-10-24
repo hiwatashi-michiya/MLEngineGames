@@ -13,7 +13,7 @@ namespace MLEngine::Core {
 		//インスタンス取得
 		static CollisionManager* GetInstance();
 		//初期化
-		void Initialize() { colliders_.clear(); }
+		void Initialize();
 
 		//コライダー追加
 		void PushCollider(MLEngine::Object::Collision::Collider* collider);
@@ -24,6 +24,10 @@ namespace MLEngine::Core {
 		void ClearList();
 		//全当たり判定チェック
 		void CheckAllCollisions();
+		//未使用のインデックスを取得
+		uint32_t GetUnUsedIndex();
+		//インデックスを未使用に戻す
+		void SetIndexUnUsed(uint32_t index);
 
 	private:
 
@@ -32,9 +36,10 @@ namespace MLEngine::Core {
 
 		std::mutex collidersMutex_;
 		//コライダー最大数
-		const int kMaxCount_ = 1024;
+		const uint32_t kMaxCount_ = 1024;
 		//インデックスが仕様済かどうか
 		std::vector<bool> isUsed_;
+
 		/// <summary>
 		/// コライダーの2つの衝突判定と応答
 		/// </summary>

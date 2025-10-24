@@ -43,6 +43,8 @@ void ImGuiManager::Initialize()
 		imguiIO.FontDefault = font; // デフォルトフォントに設定
 	}
 
+	imguiIO.Fonts->Build();
+
 	ImGui::StyleColorsDark();
 	ImGui_ImplWin32_Init(Core::Window::Manager::GetInstance()->GetHwnd());
 	ImGui_ImplDX12_Init(Core::DirectXSetter::GetInstance()->GetDevice(),
@@ -51,6 +53,8 @@ void ImGuiManager::Initialize()
 		Core::DirectXSetter::GetInstance()->GetSrvHeap()->Get(),
 		MLEngine::Core::GetCPUDescriptorHandle(Core::DirectXSetter::GetInstance()->GetSrvHeap()->Get(), descriptorSizeSRV_, index),
 		MLEngine::Core::GetGPUDescriptorHandle(Core::DirectXSetter::GetInstance()->GetSrvHeap()->Get(), descriptorSizeSRV_, index));
+
+
 
 }
 
