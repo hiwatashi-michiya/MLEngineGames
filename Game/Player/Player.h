@@ -18,6 +18,15 @@ public:
 	void DebugDraw() override;
 
 private:
+	//プレイヤーのボタンによる操作
+	void PlayerMove();
+
+	//今いるレーンに応じての座標計算
+	float LaneSpecificCalculation();
+
+private:
+	GameConfig* config_ = nullptr;
+
 	//入力デバイス
 	MLEngine::Input::Manager* input_ = nullptr;
 
@@ -34,9 +43,7 @@ private:
 	//回復量
 	int16_t recoveryValue_ = 1;
 	//現在いるラインの番号
-	int8_t nowLine_ = 2;
-	//レーンの幅
-	int16_t posXValue_ = 200;
+	int nowLine_ = 2;
 
 };
 

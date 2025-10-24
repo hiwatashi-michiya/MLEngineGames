@@ -7,6 +7,7 @@
 #include "Input/Input.h"
 #include "Particle/Particle3D.h"
 #include"Manager/GameManager.h"
+#include"Config/GameConfig.h"
 #include"Manager/PlayerManager.h"
 #include <memory>
 
@@ -36,6 +37,8 @@ private:
 	MLEngine::Object::Camera camera_;
 
 	GameManager* gameManager_ = nullptr;
+	GameConfig* config_ = nullptr;
+	
 
 	std::unique_ptr<PlayerManager> playerManager_;
 

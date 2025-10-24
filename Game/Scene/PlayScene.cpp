@@ -6,6 +6,8 @@ using namespace MLEngine::Resource;
 PlayScene::PlayScene(){
 	input_ = MLEngine::Input::Manager::GetInstance();
 	gameManager_ = GameManager::GetInstance();
+	config_ = GameConfig::GetInstance();
+	config_->Initialize();
 }
 
 PlayScene::~PlayScene(){
@@ -31,6 +33,8 @@ void PlayScene::Update(){
 
 	DrawImgui();
 
+	config_->Update();
+
 	gameManager_->Update(0.0f);
 
 	playerManager_->Update(0.0f);
@@ -47,7 +51,7 @@ void PlayScene::Draw(){
 
 void PlayScene::DrawImgui() {
 #ifdef _DEBUG
-
+	config_->Debug();
 
 	ImGui::Begin("お試しプレイ");
 

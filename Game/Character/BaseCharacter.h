@@ -2,6 +2,7 @@
 #include "Model/Model.h"
 #include "Sprite/Sprite.h"
 #include "Audio/Audio.h"
+#include"Config/GameConfig.h"
 #include "Input/Input.h"
 //自機や敵の元となる基底クラス
 class BaseCharacter{
