@@ -17,7 +17,7 @@ public:
 	//デバック描画(ラインとか)
 	void DebugDraw() override;
 
-	void OnCollision(const float damege);
+	void OnCollision(const int damege);
 
 	int GetNowLine()const {
 		return nowLine_;

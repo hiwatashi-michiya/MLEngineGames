@@ -64,7 +64,7 @@ void Player::DebugDraw(){
 
 }
 
-void Player::OnCollision(const float damege){
+void Player::OnCollision(const int damege){
 	life_ -= damege;
 	isDamaged_ = true;
 }
@@ -129,7 +129,7 @@ float Player::LaneSpecificCalculation(){
 	int laneDis = 0;
 	//中心のレーンからの差を求める
 	laneDis = config_->centerLane_ - nowLine_;
-	result = config_->centerPos_ - (config_->laneDistancePlayer_ * laneDis);
+	result = (float)(config_->centerPos_ - (config_->laneDistancePlayer_ * laneDis));
 
 	return result;
 }
