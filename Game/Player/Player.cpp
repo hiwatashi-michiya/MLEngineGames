@@ -19,8 +19,10 @@ Player::~Player(){
 }
 
 void Player::Initialize(){
-	nowLine_ = 2;
-	life_ = lifeMax_;
+	nowLine_ = config_->centerLane_;
+	time_ = 0.0f;
+	recoverySpeed_ = 1.0f;
+	life_ = lifeMax_ ;
 	pos_ = Vector3(640.0f, 650.0f, 0.0f);
 	color_ = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
 }
@@ -29,9 +31,11 @@ void Player::Finalize(){
 
 }
 
-void Player::Update(float deltaTime){
+void Player::Update(const float deltaTime){
 	DebugDraw();
-
+	TimeProcess(deltaTime);
+	
+	PlayerRecovery();
 	PlayerMove();
 
 	pos_.x = LaneSpecificCalculation();
@@ -49,6 +53,12 @@ void Player::DebugDraw(){
 	ImGui::Begin("プレイヤー");
 	ImGui::DragFloat2("座標", &pos_.x, 1.0f);
 	ImGui::Text("今のレーン	%d", nowLine_);
+	ImGui::Text("今の体力	%d", life_);
+	ImGui::Text("傷コンボ	%d", isDamaged_);
+	if (ImGui::Button("体力を減らす")){
+		isDamaged_ = true;
+		life_ -= 20;
+	}
 	ImGui::End();
 #endif // _DEBUG
 
@@ -85,6 +95,29 @@ void Player::PlayerMove(){
 
 }
 
+void Player::TimeProcess(const float deltaTime){
+	//回復のタイマー
+	if (lifeMax_ <= life_) {
+		isLifeMax_ = true;
+		time_ = 0.0f;
+	}
+	else {
+		isLifeMax_ = false;
+	}
+
+	if (!isLifeMax_) {
+		time_ += deltaTime;
+	}
+	//被弾のタイマー
+	if (isDamaged_) {
+		damageTime_ += deltaTime;
+	}
+	if (damageTime_ >= damegeCount_) {
+		isDamaged_ = false;
+		damageTime_ = 0.0f;
+	}
+}
+
 float Player::LaneSpecificCalculation(){
 	float result = 0;
 	//レーンの差
@@ -94,4 +127,18 @@ float Player::LaneSpecificCalculation(){
 	result = config_->centerPos_ - (config_->laneDistancePlayer_ * laneDis);
 
 	return result;
+}
+
+void Player::PlayerRecovery(){
+	//時間以上で回復
+	if (time_ >= recoverySpeed_){
+		time_ = 0.0f;
+		life_ += recoveryValue_;
+	}
+	
+	//超過していた場合調整
+	if (life_ >= lifeMax_){
+		life_ = lifeMax_;
+		
+	}
 }

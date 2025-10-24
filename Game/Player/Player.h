@@ -11,7 +11,7 @@ public:
 	//終了処理
 	void Finalize() override;
 	//更新
-	void Update(float deltaTime) override;
+	void Update(const float deltaTime) override;
 	//描画
 	void Draw() override;
 	//デバック描画(ラインとか)
@@ -20,9 +20,13 @@ public:
 private:
 	//プレイヤーのボタンによる操作
 	void PlayerMove();
+	//時間関連の処理
+	void TimeProcess(const float deltaTime);
 
 	//今いるレーンに応じての座標計算
 	float LaneSpecificCalculation();
+	//時間による回復
+	void PlayerRecovery();
 
 private:
 	GameConfig* config_ = nullptr;
@@ -36,12 +40,23 @@ private:
 
 	//前を向いているか
 	bool isforward_ = true;
+	//前を向いているか
+	bool isLifeMax_ = true;
+	//攻撃をくらったか
+	bool isDamaged_ = false;
+
+	float damageTime_ = 0.0f;
+
+	float damegeCount_ = 3.0f;
+
+	float time_ = 0.0f;
+
 	//体力最大値
-	int16_t lifeMax_ = 100;
+	int lifeMax_ = 100;
 	//回復速度
-	int16_t recoverySpeed_ = 60;
+	float recoverySpeed_ = 1.0f;
 	//回復量
-	int16_t recoveryValue_ = 1;
+	int recoveryValue_ = 1;
 	//現在いるラインの番号
 	int nowLine_ = 2;
 

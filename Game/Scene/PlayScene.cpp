@@ -35,9 +35,9 @@ void PlayScene::Update(){
 
 	config_->Update();
 
-	gameManager_->Update(0.0f);
+	gameManager_->Update();
 
-	playerManager_->Update(0.0f);
+	playerManager_->Update(gameManager_->GetDeltaTime());
 
 	camera_.Update();
 

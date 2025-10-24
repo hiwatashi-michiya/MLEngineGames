@@ -12,7 +12,7 @@ public:
 	//終了処理
 	virtual void Finalize() = 0;
 	//更新
-	virtual void Update(float deltaTime) = 0;
+	virtual void Update(const float deltaTime) = 0;
 	//描画
 	virtual void Draw() = 0;
 	//デバック描画(ラインとか)
@@ -22,7 +22,7 @@ public:
 
 protected:
 	//体力
-	int16_t life_;
+	int life_;
 	//座標
 	MLEngine::Math::Vector3 pos_;
 	//大きさ

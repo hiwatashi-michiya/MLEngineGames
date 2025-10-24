@@ -15,9 +15,9 @@ void GameManager::Finalize() {
     // 保存や後処理など
 }
 
-void GameManager::Update(float deltaTime) {
+void GameManager::Update() {
     if (state_ == GameState::Playing) {
-        remainingTime_ -= deltaTime;
+        remainingTime_ -= deltaTime_;
         if (remainingTime_ <= 0.0f) {
             remainingTime_ = 0.0f;
             state_ = GameState::Result;

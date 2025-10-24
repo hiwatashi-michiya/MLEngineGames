@@ -14,7 +14,7 @@ public:
     void Finalize();
 
     // フレーム更新
-    void Update(float deltaTime);
+    void Update();
 
     // 状態管理
     enum class GameState {
@@ -34,6 +34,7 @@ public:
     void SetTimeLimit(float t) { timeLimit_ = t; }
     float GetTimeLimit() const { return timeLimit_; }
     float GetRemainingTime() const { return remainingTime_; }
+    float GetDeltaTime() const { return deltaTime_; }
 
     // 設定関連
     void SetDifficulty(int d) { difficulty_ = d; }
@@ -53,6 +54,8 @@ private:
     // スコア
     int score_ = 0;
 
+    float deltaTime_ = 1.0f / 60.0f;
+    
     // 制限時間管理
     float timeLimit_ = 60.0f;       // 秒
     float remainingTime_ = 60.0f;
