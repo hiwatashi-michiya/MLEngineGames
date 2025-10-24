@@ -8,6 +8,7 @@ using namespace MLEngine::Resource;
 using namespace MLEngine::Object::Collision;
 
 DebugScene::DebugScene(){
+	
 	input_ = MLEngine::Input::Manager::GetInstance();
 }
 
@@ -18,7 +19,7 @@ DebugScene::~DebugScene()
 inline void DebugScene::Initialize()
 {
 	//お試しプッシュ
-
+	vController_ = &VirtualController::GetInstance();
 
 	camera_.Initialize();
 	camera_.position_ = { 0.0f,0.0f,-10.0f };
@@ -116,7 +117,7 @@ void DebugScene::Update()
 			particle_->colors_[i] = { 1.0f, i / 32.0f, 1.0f, 1.0f };
 		}
 
-		if (input_->GetKeyboard()->Trigger(DIK_SPACE)) {
+		if (vController_->Decide()) {
 			sceneManager_->ChangeScene(new PlayScene());
 		}
 

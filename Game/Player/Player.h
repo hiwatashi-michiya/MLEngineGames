@@ -1,5 +1,6 @@
 #pragma once
 #include"Character/BaseCharacter.h"
+#include"VirtualController.h"
 //プレイヤーが操作する自機
 class Player : public BaseCharacter{
 public:
@@ -38,7 +39,7 @@ private:
 	GameConfig* config_ = nullptr;
 
 	//入力デバイス
-	MLEngine::Input::Manager* input_ = nullptr;
+	VirtualController* vController_ = nullptr;
 
 	MLEngine::Resource::Sprite* sprite_ = nullptr;
 

@@ -84,6 +84,7 @@ void Engine::Initialize(const char* title, int width, int height) {
 	Render::PostEffect::PostEffectDrawer::GetInstance()->Initialize();
 
 	Input::Manager::GetInstance()->Initialize();
+	VirtualController::GetInstance().Initialize();
 
 	//Engineクラスでインスタンス生成をしておく
 	collisionManager_->Initialize();
@@ -95,6 +96,7 @@ void Engine::Initialize(const char* title, int width, int height) {
 }
 
 void Engine::Run(BaseScene* startScene, BaseSceneFactory* sceneFactory) {
+	
 
 	sceneManager_->SetSceneFactory(sceneFactory);
 	sceneManager_->ChangeScene(startScene);

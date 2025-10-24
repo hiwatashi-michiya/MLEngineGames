@@ -9,7 +9,7 @@ Player::Player(){
 
 	sprite_ = MLEngine::Resource::Sprite::Create(texture_, MLEngine::Math::Vector2(pos_.x, pos_.y), color_);
 
-	input_ = MLEngine::Input::Manager::GetInstance();
+	vController_ = &VirtualController::GetInstance();
 	config_ = GameConfig::GetInstance();
 
 }
@@ -71,21 +71,21 @@ void Player::OnCollision(const int damege){
 
 void Player::PlayerMove(){
 	//左入力
-	if (input_->GetKeyboard()->Trigger(DIK_A) || input_->GetKeyboard()->Trigger(DIK_LEFT)) {
+	if (vController_->LeftTriger()) {
 		if (nowLine_ > 0){
 			nowLine_--;
 		}
 		
 	}
 	//右入力
-	if (input_->GetKeyboard()->Trigger(DIK_D) || input_->GetKeyboard()->Trigger(DIK_RIGHT)) {
+	if (vController_->RightTriger()) {
 		if (nowLine_ < config_->maxLane_ - 1) {
 			nowLine_++;
 		}
 	}
 
 	//反転入力
-	if (input_->GetKeyboard()->Trigger(DIK_SPACE) || input_->GetKeyboard()->Trigger(DIK_RETURN)) {
+	if (vController_->Decide()) {
 		isforward_ = !isforward_;
 	}
 
