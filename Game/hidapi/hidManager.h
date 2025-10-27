@@ -11,7 +11,7 @@ std::string WStringToString(const std::wstring& wstr, UINT codePage = CP_UTF8);
 class hidManager {
 public:
 	void Init();
-	hid_device_info* Get(unsigned short product_id);
+	hid_device* Get(unsigned short product_id);
 private:
 	hid_device_info* device;
 };

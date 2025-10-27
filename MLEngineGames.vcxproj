@@ -146,7 +146,8 @@
   <ItemGroup>
     <ClCompile Include="Game\Character\BaseCharacter.cpp" />
     <ClCompile Include="Game\Config\GameConfig.cpp" />
-    <ClCompile Include="Game\Joycon\hidManager.cpp" />
+    <ClCompile Include="Game\hidapi\hidManager.cpp" />
+    <ClCompile Include="Game\Joycon\Joycon.cpp" />
     <ClCompile Include="Game\Manager\GameManager.cpp" />
     <ClCompile Include="Game\Manager\PlayerManager.cpp" />
     <ClCompile Include="Game\Player\Player.cpp" />
@@ -158,7 +159,8 @@
   <ItemGroup>
     <ClInclude Include="Game\Character\BaseCharacter.h" />
     <ClInclude Include="Game\Config\GameConfig.h" />
-    <ClInclude Include="Game\Joycon\hidManager.h" />
+    <ClInclude Include="Game\hidapi\hidManager.h" />
+    <ClInclude Include="Game\Joycon\Joycon.h" />
     <ClInclude Include="Game\Manager\GameManager.h" />
     <ClInclude Include="Game\Manager\PlayerManager.h" />
     <ClInclude Include="Game\Player\Player.h" />

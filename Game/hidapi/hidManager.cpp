@@ -26,7 +26,13 @@ void hidManager::Init() {
     hid_free_enumeration(device);
 }
 
-hid_device_info* hidManager::Get(unsigned short product_id)
+hid_device* hidManager::Get(unsigned short product_id)
 {
-    return hid_enumerate(0, product_id);
+    hid_device_info* cheakDevice = hid_enumerate(0, product_id);
+
+    if (cheakDevice) {
+        return hid_open(device->vendor_id, device->product_id, device->serial_number);
+    }
+
+    return nullptr;
 }
