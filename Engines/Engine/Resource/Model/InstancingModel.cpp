@@ -105,6 +105,11 @@ void InstancingModel::Initialize(const std::string& filename) {
 void InstancingModel::Render(ID3D12GraphicsCommandList* commandList)
 {
 
+	//インスタンスカウントが0以下なら描画の必要はない
+	if (instanceCount_ <= 0) {
+		return;
+	}
+
 	//カメラ設定
 	commandList->SetGraphicsRootConstantBufferView(4, cameraBuff_->GetGPUVirtualAddress());
 	commandList->SetGraphicsRootConstantBufferView(1, matBuff_->GetGPUVirtualAddress());

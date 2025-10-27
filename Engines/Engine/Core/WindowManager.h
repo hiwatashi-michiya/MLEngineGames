@@ -13,16 +13,6 @@ namespace MLEngine::Core {
 	namespace Window {
 
 		/// <summary>
-		/// 設定
-		/// </summary>
-		namespace Config {
-
-			static const int kWindowWidth = 1280; //横幅
-			static const int kWindowHeight = 720; //縦幅
-
-		}
-
-		/// <summary>
 		/// 画面に表示するウィンドウを生成するクラス
 		/// </summary>
 		class Manager
@@ -37,7 +27,7 @@ namespace MLEngine::Core {
 
 			//ウィンドウ生成
 			void CreateGameWindow(const wchar_t* windowName = L"MyEngine",
-				int32_t clientWidth = Config::kWindowWidth, int32_t clientHeight = Config::kWindowHeight);
+				int32_t clientWidth = 1280, int32_t clientHeight = 720);
 
 			//メッセージ処理
 			bool ProcessMessage();
@@ -56,6 +46,10 @@ namespace MLEngine::Core {
 			/// </summary>
 			/// <returns></returns>
 			HINSTANCE GetHInstance() const { return wc_.hInstance; }
+			//横幅取得
+			int32_t GetClientWidth() const { return clientWidth_; }
+			//縦幅取得
+			int32_t GetClientHeight() const { return clientHeight_; }
 
 		private:
 
@@ -63,6 +57,10 @@ namespace MLEngine::Core {
 			HWND hwnd_ = nullptr;
 			//ウィンドウクラス
 			WNDCLASS wc_{};
+			//ウィンドウ横幅
+			int32_t clientWidth_ = 1280;
+			//ウィンドウ縦幅
+			int32_t clientHeight_ = 720;
 
 		private:
 			Manager() = default;

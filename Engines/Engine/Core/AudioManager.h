@@ -74,7 +74,7 @@ namespace MLEngine::Core {
 		//音声データ読み込み
 		/*uint32_t SoundLoadWave(const char* filename);*/
 
-		//Media Foundationで読み込み
+		//Media Foundationで読み込み("./Resources/audio/"以降のパス)
 		uint32_t LoadInMF(const std::string& filename);
 
 		/// <summary>

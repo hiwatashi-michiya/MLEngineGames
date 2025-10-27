@@ -1,5 +1,6 @@
 #include "CollisionManager.h"
 #include <Windows.h>
+#include <cassert>
 
 using namespace MLEngine::Object::Collision;
 using namespace MLEngine::Core;
@@ -7,6 +8,14 @@ using namespace MLEngine::Core;
 CollisionManager* CollisionManager::GetInstance() {
 	static CollisionManager instance;
 	return &instance;
+}
+
+void CollisionManager::Initialize() {
+	
+	colliders_.clear();
+
+	isUsed_.resize(kMaxCount_);
+
 }
 
 void CollisionManager::PushCollider(Collider* collider) {
@@ -82,5 +91,35 @@ void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* collide
 	colliderA->NoHit(colliderB);
 	// コライダーBの衝突していない時のコールバックを呼び出す
 	colliderB->NoHit(colliderA);
+
+}
+
+uint32_t CollisionManager::GetUnUsedIndex() {
+
+	for (uint32_t i = 0; i < kMaxCount_; i++) {
+
+		//使用されていない場合、そのインデックスを返す
+		if (not isUsed_[i]) {
+			isUsed_[i] = true;
+			return i;
+		}
+
+	}
+
+	//使用制限を超えているのでassert
+	assert(false);
+
+	return 0;
+
+}
+
+void CollisionManager::SetIndexUnUsed(uint32_t index)
+{
+
+	assert(index < kMaxCount_);
+
+	if (isUsed_[index]) {
+		isUsed_[index] = false;
+	}
 
 }
