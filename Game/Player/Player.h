@@ -24,6 +24,18 @@ public:
 		return nowLine_;
 	}
 
+	//通信で送る情報をまとめた構造体
+	struct SendPlayerState {
+		//前を向いているか
+		bool isforwardFlug;
+		//攻撃をくらったか
+		bool isDamaged;
+		//体力
+		int life;
+		//現在いるラインの番号
+		int nowLine;
+	};
+
 private:
 	//プレイヤーのボタンによる操作
 	void PlayerMove();
@@ -34,9 +46,14 @@ private:
 	float LaneSpecificCalculation();
 	//時間による回復
 	void PlayerRecovery();
+	//送る情報を更新
+	void PlayerInfoInsertion();
+
 
 private:
 	GameConfig* config_ = nullptr;
+
+	SendPlayerState plState_{};
 
 	//入力デバイス
 	VirtualController* vController_ = nullptr;
@@ -47,7 +64,7 @@ private:
 
 	//前を向いているか
 	bool isforward_ = true;
-	//前を向いているか
+	//体力が最大かどうか
 	bool isLifeMax_ = true;
 	//攻撃をくらったか
 	bool isDamaged_ = false;

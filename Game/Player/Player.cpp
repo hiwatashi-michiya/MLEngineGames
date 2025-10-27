@@ -38,6 +38,8 @@ void Player::Update(const float deltaTime){
 	PlayerRecovery();
 	PlayerMove();
 
+	PlayerInfoInsertion();
+
 	pos_.x = LaneSpecificCalculation();
 
 	sprite_->position_ = Vector2(pos_.x, pos_.y);
@@ -52,9 +54,9 @@ void Player::DebugDraw(){
 #ifdef _DEBUG
 	ImGui::Begin("プレイヤー");
 	ImGui::DragFloat2("座標", &pos_.x, 1.0f);
-	ImGui::Text("今のレーン	%d", nowLine_);
-	ImGui::Text("今の体力	%d", life_);
-	ImGui::Text("傷コンボ	%d", isDamaged_);
+	ImGui::Text("今のレーン	%d", plState_.nowLine);
+	ImGui::Text("今の体力	%d", plState_.life);
+	ImGui::Text("傷コンボ	%d", plState_.isDamaged);
 	if (ImGui::Button("体力を減らす")){
 		isDamaged_ = true;
 		life_ -= 20;
@@ -146,4 +148,11 @@ void Player::PlayerRecovery(){
 		life_ = lifeMax_;
 		
 	}
+}
+
+void Player::PlayerInfoInsertion(){
+	plState_.isDamaged = isDamaged_;
+	plState_.isforwardFlug = isforward_;
+	plState_.life = life_;
+	plState_.nowLine = nowLine_;
 }
