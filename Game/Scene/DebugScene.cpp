@@ -19,7 +19,7 @@ inline void DebugScene::Initialize()
 {
 	//お試しプッシュ
 
-
+#pragma region
 	camera_.Initialize();
 	camera_.position_ = { 0.0f,0.0f,-10.0f };
 
@@ -39,6 +39,12 @@ inline void DebugScene::Initialize()
 	lineBox_.SetOBB(&box_.collider_);
 	sphere_.SetCollisionAttribute(0x00000001);
 	lineSphere_.SetSphere(&sphere_.collider_);
+#pragma endregion
+
+#pragma region
+	joyconInput = std::make_unique<hidManager>();
+	joyconInput->Init();
+#pragma endregion ジョイコン
 
 }
 
@@ -62,7 +68,7 @@ void DebugScene::Update()
 		//トランスフォーム
 		particle_->transforms_[i].translate_ = { i * 0.1f, 0.0f,-1.0f };
 		particle_->transforms_[i].scale_ = { 1.0f,1.0f,1.0f };
-		particle_->transforms_[i].rotateQuaternion_ = MLEngine::Math::ConvertFromEuler((0.0f,0.0f,));
+		//particle_->transforms_[i].rotateQuaternion_ = MLEngine::Math::ConvertFromEuler(Vector3(0.0f,0.0f,0.0f));
 		//色
 		particle_->colors_[i] = { 1.0f, i / 32.0f, 1.0f, 1.0f };
 	}
@@ -83,13 +89,13 @@ void DebugScene::Update()
 void DebugScene::Draw()
 {
 	
-	model_.Draw(&camera_);
+	//model_.Draw(&camera_);
 
-	particle_->Draw(&camera_);
+	//particle_->Draw(&camera_);
 
-	lineSphere_.Draw(&camera_);
+	//lineSphere_.Draw(&camera_);
 
-	lineBox_.Draw(&camera_);
+	//lineBox_.Draw(&camera_);
 
 }
 

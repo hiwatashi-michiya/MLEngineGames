@@ -18,6 +18,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MLEngine", "MLEngine.vcxpro
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MLEngineGames", "..\MLEngineGames.vcxproj", "{4AA49E07-58E4-40A7-84AB-0EDA75CC895E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hidapi", "Externals\hidapi\windows\hidapi.vcxproj", "{A107C21C-418A-4697-BB10-20C3AA60E2E4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -58,6 +60,14 @@ Global
 		{4AA49E07-58E4-40A7-84AB-0EDA75CC895E}.Profile|x64.Build.0 = Release|x64
 		{4AA49E07-58E4-40A7-84AB-0EDA75CC895E}.Release|x64.ActiveCfg = Release|x64
 		{4AA49E07-58E4-40A7-84AB-0EDA75CC895E}.Release|x64.Build.0 = Release|x64
+		{A107C21C-418A-4697-BB10-20C3AA60E2E4}.Debug|x64.ActiveCfg = Debug|Win32
+		{A107C21C-418A-4697-BB10-20C3AA60E2E4}.Debug|x64.Build.0 = Debug|Win32
+		{A107C21C-418A-4697-BB10-20C3AA60E2E4}.Demo|x64.ActiveCfg = Release|Win32
+		{A107C21C-418A-4697-BB10-20C3AA60E2E4}.Demo|x64.Build.0 = Release|Win32
+		{A107C21C-418A-4697-BB10-20C3AA60E2E4}.Profile|x64.ActiveCfg = Release|Win32
+		{A107C21C-418A-4697-BB10-20C3AA60E2E4}.Profile|x64.Build.0 = Release|Win32
+		{A107C21C-418A-4697-BB10-20C3AA60E2E4}.Release|x64.ActiveCfg = Release|Win32
+		{A107C21C-418A-4697-BB10-20C3AA60E2E4}.Release|x64.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -65,6 +75,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{371B9FA9-4C90-4AC6-A123-ACED756D6C77} = {C3A4FDC0-4628-4C5E-B9F4-139A906CB003}
 		{8A63A36B-CDA0-488D-A663-05D604FBDBB3} = {C3A4FDC0-4628-4C5E-B9F4-139A906CB003}
+		{A107C21C-418A-4697-BB10-20C3AA60E2E4} = {C3A4FDC0-4628-4C5E-B9F4-139A906CB003}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BF056E88-506A-4FEA-AB4E-4B5BD8794FBA}

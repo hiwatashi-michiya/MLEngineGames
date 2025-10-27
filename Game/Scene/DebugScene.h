@@ -9,6 +9,8 @@
 #include <memory>
 #include "Collider.h"
 
+#include "Joycon/hidManager.h"
+
 /// <summary>
 /// デバッグシーン、エンジン機能理解用
 /// シーンはmain.cppで初期シーンのポインタを渡す
@@ -51,6 +53,8 @@ private:
 	MLEngine::Resource::LineSphere lineSphere_;
 	MLEngine::Object::Collision::BoxCollider box_;
 	MLEngine::Resource::LineBox lineBox_;
+
+	std::unique_ptr<hidManager> joyconInput;
 
 };
 
