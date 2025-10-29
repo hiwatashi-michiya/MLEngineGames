@@ -54,6 +54,7 @@ private:
 	MLEngine::Object::Collision::BoxCollider box_;
 	MLEngine::Resource::LineBox lineBox_;
 
+	std::unique_ptr<hidManager> joyconInput;
 };
 
 

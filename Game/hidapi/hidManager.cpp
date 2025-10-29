@@ -9,7 +9,8 @@ std::string WStringToString(const std::wstring& wstr, UINT codePage) {
 
 void hidManager::Init() {
     // 接続されているHIDデバイスの連結リストを取得。
-    device = hid_enumerate(0, 0);
+    device = hid_enumerate(0, JOYCON_L_PRODUCT_ID);
+
     while (device)
     {
         // プロダクトID等を指定して、HID deviceをopenする。そうすると、そのhidデバイスの情報が載ったhid_deviceが帰ってくる。

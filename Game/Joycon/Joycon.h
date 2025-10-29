@@ -4,8 +4,6 @@
 class Joycon {
 public:
 	void Init();
-	void CheakInput();
-	bool SendSubcommand(hid_device* device, std::byte subcommandId);
 
 private:
 	std::unique_ptr<hidManager> hidManager_;
