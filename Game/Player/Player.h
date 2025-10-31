@@ -23,18 +23,27 @@ public:
 	int GetNowLine()const {
 		return nowLine_;
 	}
-
+#pragma pack(push, 1)	
 	//通信で送る情報をまとめた構造体
 	struct SendPlayerState {
 		//前を向いているか
-		bool isforwardFlug;
+		bool isForwardFlug;
 		//攻撃をくらったか
-		bool isDamaged;
+		bool isDamagedFlug;
 		//体力
 		int life;
 		//現在いるラインの番号
 		int nowLine;
 	};
+#pragma pack(pop)
+
+	SendPlayerState GetSendPlayerState() const {
+		return plState_;
+	}
+
+	void SetSendPlayerState(const SendPlayerState plState){
+		plState_ = plState;
+	}
 
 private:
 	//プレイヤーのボタンによる操作
@@ -63,7 +72,7 @@ private:
 	MLEngine::Resource::Texture texture_;
 
 	//前を向いているか
-	bool isforward_ = true;
+	bool isForward_ = true;
 	//体力が最大かどうか
 	bool isLifeMax_ = true;
 	//攻撃をくらったか

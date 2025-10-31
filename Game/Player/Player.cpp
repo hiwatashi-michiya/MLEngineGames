@@ -56,7 +56,7 @@ void Player::DebugDraw(){
 	ImGui::DragFloat2("座標", &pos_.x, 1.0f);
 	ImGui::Text("今のレーン	%d", plState_.nowLine);
 	ImGui::Text("今の体力	%d", plState_.life);
-	ImGui::Text("傷コンボ	%d", plState_.isDamaged);
+	ImGui::Text("傷コンボ	%d", plState_.isDamagedFlug);
 	if (ImGui::Button("体力を減らす")){
 		isDamaged_ = true;
 		life_ -= 20;
@@ -88,10 +88,10 @@ void Player::PlayerMove(){
 
 	//反転入力
 	if (vController_->Decide()) {
-		isforward_ = !isforward_;
+		isForward_ = !isForward_;
 	}
 
-	if (not isforward_){
+	if (not isForward_){
 		//後ろを向いているなら青色
  		sprite_->color_ = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
 	}
@@ -151,8 +151,8 @@ void Player::PlayerRecovery(){
 }
 
 void Player::PlayerInfoInsertion(){
-	plState_.isDamaged = isDamaged_;
-	plState_.isforwardFlug = isforward_;
+	plState_.isDamagedFlug = isDamaged_;
+	plState_.isForwardFlug = isForward_;
 	plState_.life = life_;
 	plState_.nowLine = nowLine_;
 }
