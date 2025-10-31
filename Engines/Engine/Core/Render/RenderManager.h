@@ -1,5 +1,5 @@
 #pragma once
-#include "Model/Model.h"
+#include "Model/RigidModel.h"
 #include "Model/Skinning/SkinningModel.h"
 #include "Particle/Particle3D.h"
 #include "Sprite/Sprite.h"

@@ -1,6 +1,6 @@
 #pragma once
 #include "BaseScene.h"
-#include "Model.h"
+#include "RigidModel.h"
 #include "Camera.h"
 #include "Sprite.h"
 #include "Audio.h"
@@ -46,11 +46,14 @@ private:
 	MLEngine::Math::Matrix4x4 matrix_;
 	//パーティクル
 	std::unique_ptr<MLEngine::Resource::Particle3D> particle_;
+	//スプライト
+	std::unique_ptr<MLEngine::Resource::Sprite> sprite_;
 	//コライダーテスト
 	MLEngine::Object::Collision::SphereCollider sphere_;
 	MLEngine::Resource::LineSphere lineSphere_;
 	MLEngine::Object::Collision::BoxCollider box_;
 	MLEngine::Resource::LineBox lineBox_;
+	MLEngine::Resource::Texture tex_;
 
 };
 

@@ -1,5 +1,5 @@
 #pragma once
-#include "Model/Model.h"
+#include "Model/RigidModel.h"
 #include "Model/InstancingModel.h"
 #include <array>
 #include <unordered_map>

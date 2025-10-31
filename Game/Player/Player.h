@@ -67,7 +67,7 @@ private:
 	//入力デバイス
 	VirtualController* vController_ = nullptr;
 
-	MLEngine::Resource::Sprite* sprite_ = nullptr;
+	std::unique_ptr<MLEngine::Resource::Sprite> sprite_;
 
 	MLEngine::Resource::Texture texture_;
 
