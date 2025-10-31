@@ -11,7 +11,7 @@
 #include <vector>
 #include <wrl.h>
 #include "Vector4.h"
-#include "Model.h"
+#include "RigidModel.h"
 #include "InstancingResource.h"
 #include "Texture/Texture.h"
 

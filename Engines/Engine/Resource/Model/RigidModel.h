@@ -24,6 +24,10 @@ namespace MLEngine::Resource {
 	class RigidModel
 	{
 	public:
+
+		RigidModel() {};
+		~RigidModel();
+
 		//初期化
 		void Initialize(const std::string& filename, const std::string& texturename = "");
 		//描画コマンド積む
@@ -56,10 +60,10 @@ namespace MLEngine::Resource {
 		bool IsEndAnimation() const { return isEndAnimation_; }
 		//アニメーションのループフラグを設定
 		void SetIsLoop(bool flag) { isLoop_ = flag; }
-		//色変更
-		void SetColor(const MLEngine::Math::Vector4& color) { color_ = color; }
 		//インスタンシングモデル取得
 		InstancingModel* GetInstancingModel() { return instancingModel_; }
+
+
 		//ワールド行列
 		MLEngine::Math::Matrix4x4 worldMatrix_;
 		//アニメーションのマトリックス
@@ -68,6 +72,8 @@ namespace MLEngine::Resource {
 		MLEngine::Math::Matrix4x4 worldViewProjectionMatrix_;
 		//色
 		MLEngine::Math::Vector4 color_;
+		//アクティブフラグ
+		bool isActive_ = true;
 
 	private:
 

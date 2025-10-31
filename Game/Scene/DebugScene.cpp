@@ -23,8 +23,12 @@ inline void DebugScene::Initialize()
 	camera_.Initialize();
 	camera_.position_ = { 0.0f,0.0f,-10.0f };
 
+	tex_.Load("./Resources/white.png");
+
 	model_.Initialize("./Resources/EngineResources/testObjects/axis.obj");
 	particle_.reset(Particle3D::Create("./Resources/model/plane/plane.obj", 32));
+	sprite_.reset(Sprite::Create(tex_, { 200.0f,200.0f }, { 0.0f,1.0f,0.0f,1.0f }));
+	sprite_->size_ = { 200.0f,200.0f };
 	//読み込み("./Resources/audio/"以降のパスでOK)
 	se1_.Load("SE/test.mp3");
 
@@ -67,6 +71,10 @@ void DebugScene::Update()
 		if (ImGui::TreeNode("Sphere")) {
 			sphere_.Debug();
 			ImGui::TreePop();
+		}
+
+		if (ImGui::Checkbox("show axis", &model_.isActive_)) {
+
 		}
 
 		ImGui::End();
@@ -132,8 +140,8 @@ void DebugScene::Update()
 void DebugScene::Draw()
 {
 	
-	model_.Draw(&camera_);
 
+	sprite_->Draw();
 	particle_->Draw(&camera_);
 
 	lineSphere_.Draw(&camera_);

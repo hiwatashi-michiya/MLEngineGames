@@ -19,7 +19,7 @@ namespace MLEngine::Resource {
 	public:
 
 		Sprite(MLEngine::Resource::Texture texture, MLEngine::Math::Vector2 position, MLEngine::Math::Vector2 size, MLEngine::Math::Vector4 color);
-		~Sprite() = default;
+		~Sprite();
 		//静的初期化
 		static void StaticInitialize(ID3D12Device* device);
 
@@ -69,6 +69,8 @@ namespace MLEngine::Resource {
 
 		//色
 		MLEngine::Math::Vector4 color_ = { 1.0f,1.0f,1.0f,1.0f };
+		//アクティブフラグ
+		bool isActive_ = true;
 
 	public:
 		//描画コマンド積む

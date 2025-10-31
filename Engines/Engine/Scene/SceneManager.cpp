@@ -1,7 +1,7 @@
 #include "SceneManager.h"
 #include <cassert>
 #include "Core/DirectXSetter.h"
-#include "Model/Model.h"
+#include "Model/RigidModel.h"
 #include "Particle/Particle3D.h"
 #include "Sprite/Sprite.h"
 #include "Core/Render/PostEffect/PostEffectDrawer.h"
@@ -50,6 +50,7 @@ void Scene::Manager::Finalize()
 {
 
 	scene_->Finalize();
+	scene_.reset();
 
 }
 
