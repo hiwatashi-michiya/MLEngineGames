@@ -143,10 +143,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Game\Bullet\Bullet.cpp" />
+    <ClCompile Include="Game\Bullet\BulletManager.cpp" />
+    <ClCompile Include="Game\Enemy\Enemy.cpp" />
+    <ClCompile Include="Game\Enemy\EnemyState.cpp" />
     <ClCompile Include="Game\Scene\DebugScene.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game\Bullet\Bullet.h" />
+    <ClInclude Include="Game\Bullet\BulletManager.h" />
+    <ClInclude Include="Game\Enemy\Enemy.h" />
+    <ClInclude Include="Game\Enemy\EnemyState.h" />
     <ClInclude Include="Game\Scene\DebugScene.h" />
   </ItemGroup>
   <ItemGroup>
