@@ -17,8 +17,6 @@ namespace MLEngine::Core {
 	class TextureManager
 	{
 	public:
-		//最大デスクリプタ数
-		static const size_t kNumDescriptors = 256;
 		//インスタンス取得
 		static TextureManager* GetInstance();
 		//初期化

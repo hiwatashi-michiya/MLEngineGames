@@ -1,6 +1,6 @@
 #pragma once
 #include "Sprite/Sprite.h"
-#include "Model/Model.h"
+#include "Model/RigidModel.h"
 #include "Particle/Particle3D.h"
 #include "AudioManager.h"
 #include "Core/DirectXSetter.h"
@@ -26,11 +26,10 @@
 #include "RenderManager.h"
 #include "ModelManager.h"
 #include "Scene/SceneManager.h"
+#include <memory>
+#include "Resource/ResourceManager.h"
 
 namespace MLEngine {
-
-	//開始時の処理(一度だけ)
-	void Run(const char* title, BaseScene* startScene);
 
 	/// <summary>
 	/// ゲームエンジン
@@ -50,7 +49,7 @@ namespace MLEngine {
 		/// <summary>
 		/// ループ開始(一度のみ)
 		/// </summary>
-		void Run(BaseScene* startScene);
+		void Run(BaseScene* startScene, BaseSceneFactory* sceneFactory);
 
 		/// <summary>
 		/// ウィンドウの×ボタンが押されたかどうか
@@ -84,8 +83,30 @@ namespace MLEngine {
 		MLEngine::Core::Render::Pipeline::Manager* pipelineManager_ = nullptr;
 		MLEngine::Core::Render::RootSignature::Manager* rootSignatureManager_ = nullptr;
 		MLEngine::Scene::Manager* sceneManager_ = nullptr;
+		MLEngine::Core::CollisionManager* collisionManager_ = nullptr;
+		MLEngine::Resource::Manager* resourceManager_ = nullptr;
 
 	};
+
+	//開始時の処理(一度だけ)
+	template<class BaseScene, class Factory>
+	void Run(const char* title) {
+
+		//エンジンの生成
+		Engine* engine = new Engine();
+		//シーンファクトリー生成
+		std::unique_ptr<BaseSceneFactory> factory = std::make_unique<Factory>();
+
+		engine->Initialize(title, 1280, 720);
+
+		engine->Run(new BaseScene(), factory.get());
+
+		engine->Finalize();
+
+		//エンジンの開放
+		delete engine;
+
+	}
 
 }
 

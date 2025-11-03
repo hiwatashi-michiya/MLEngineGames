@@ -30,11 +30,11 @@ namespace MLEngine::Input {
 		/// </summary>
 		/// <param name="keyNumber"></param>
 		/// <returns></returns>
-		bool PushKey(BYTE keyNumber);
+		bool Push(BYTE keyNumber);
 		//キーが押された瞬間
-		bool TriggerKey(BYTE keyNumber);
+		bool Trigger(BYTE keyNumber);
 		//キーが離された瞬間
-		bool ReleaseKey(BYTE keyNumber);
+		bool Release(BYTE keyNumber);
 
 	private:
 

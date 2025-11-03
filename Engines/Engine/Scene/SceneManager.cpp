@@ -1,7 +1,7 @@
 #include "SceneManager.h"
 #include <cassert>
 #include "Core/DirectXSetter.h"
-#include "Model/Model.h"
+#include "Model/RigidModel.h"
 #include "Particle/Particle3D.h"
 #include "Sprite/Sprite.h"
 #include "Core/Render/PostEffect/PostEffectDrawer.h"
@@ -9,6 +9,8 @@
 #include "Line/LineDrawer.h"
 #include "Core/Render/RenderManager.h"
 #include "Core/Render/ParticleManager.h"
+#include "BaseScene.h"
+
 
 using namespace MLEngine::Core::Render;
 using namespace MLEngine::Core;
@@ -35,7 +37,7 @@ void Scene::Manager::Update() {
 		scene_.reset(nextScene_.release());
 
 		scene_->SetSceneManager(this);
-
+		scene_->SetCamera();
 		scene_->Initialize();
 
 	}
@@ -48,6 +50,7 @@ void Scene::Manager::Finalize()
 {
 
 	scene_->Finalize();
+	scene_.reset();
 
 }
 
@@ -69,5 +72,16 @@ void Scene::Manager::ChangeScene(BaseScene* nextScene) {
 	assert(nextScene_ == nullptr);
 
 	nextScene_.reset(nextScene);
+
+}
+
+void MLEngine::Scene::Manager::ChangeScene(const std::string& sceneName)
+{
+
+	assert(sceneFactory_);
+
+	assert(nextScene_ == nullptr);
+
+	nextScene_.reset(sceneFactory_->CreateScene(sceneName));
 
 }

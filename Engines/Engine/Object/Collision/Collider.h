@@ -1,10 +1,11 @@
 #pragma once
-#include <Vector3.h>
+#include "Vector3.h"
 #include <stdint.h>
 #include "Collision.h"
 #include <variant>
 #include <functional>
 #include "Object/GameObject.h"
+#include <unordered_map>
 
 namespace MLEngine::Object::Collision {
 
@@ -20,17 +21,19 @@ namespace MLEngine::Object::Collision {
 		~Collider();
 
 		// 衝突時に呼ばれる関数
-		virtual void OnCollision(Collider* collider) { if (function_) { function_(collider); } }
+		void Hit(Collider* collider);
+		//衝突していない時に呼ばれる関数
+		void NoHit(Collider* collider);
 		// コライダーの中心位置取得
 		virtual MLEngine::Math::Vector3 GetPosition() = 0;
 		//中心位置セット
 		virtual void SetPosition(const MLEngine::Math::Vector3& position) = 0;
 		// 衝突属性(自分)を取得
-		uint32_t GetCollisionAttribute() { return collisionAttribute_; }
+		uint32_t GetCollisionAttribute() const { return collisionAttribute_; }
 		// 衝突属性(自分)を設定
 		void SetCollisionAttribute(uint32_t collisionAttribute) { collisionAttribute_ = collisionAttribute; }
 		// 衝突マスク(相手)を取得
-		uint32_t GetCollisionMask() { return collisionMask_; }
+		uint32_t GetCollisionMask() const { return collisionMask_; }
 		// 衝突マスク(相手)を設定
 		void SetCollisionMask(uint32_t collisionMask) { collisionMask_ = collisionMask; }
 		// 判定処理
@@ -43,8 +46,12 @@ namespace MLEngine::Object::Collision {
 		void SetIsActive(bool flag) { isActive_ = flag; }
 		//アクティブ状態かどうか
 		bool GetIsActive() const { return isActive_; }
-		//関数セット
-		void SetFunction(const std::function<void(Collider*)>& func) { function_ = func; }
+		//当たった瞬間の関数セット
+		void SetEnterFunction(const std::function<void(Collider*)>& func) { enterFunc_ = func; }
+		//当たっている時の関数セット
+		void SetStayFunction(const std::function<void(Collider*)>& func) { stayFunc_ = func; }
+		//離れた時の関数セット
+		void SetExitFunction(const std::function<void(Collider*)>& func) { exitFunc_ = func; }
 		//ゲームオブジェクトゲッター
 		GameObject* GetGameObject() { return object_; }
 		//ゲームオブジェクトセッター
@@ -54,13 +61,19 @@ namespace MLEngine::Object::Collision {
 		virtual MLEngine::Math::Vector3 GetSize() const { return MLEngine::Math::Vector3(0.0f, 0.0f, 0.0f); }
 		//半径取得(Sphere用)
 		virtual float GetRadius() const { return 0.0f; }
+		//デバッグ機能
+		virtual void Debug() = 0;
 
 	protected:
 
 		GameObject* object_ = nullptr;
 
-		//衝突時に呼び出す関数
-		std::function<void(Collider*)> function_;
+		//衝突中に呼び出す関数
+		std::function<void(Collider*)> stayFunc_;
+		//衝突した瞬間に呼び出す関数
+		std::function<void(Collider*)> enterFunc_;
+		//離れた瞬間に呼び出す関数
+		std::function<void(Collider*)> exitFunc_;
 
 		// 衝突属性(自分)
 		uint32_t collisionAttribute_ = 0xffffffff;
@@ -68,6 +81,10 @@ namespace MLEngine::Object::Collision {
 		uint32_t collisionMask_ = 0xffffffff;
 
 		bool isActive_ = true;
+		//コライダーのID
+		uint32_t id_;
+		//どのコライダーと衝突したか
+		std::unordered_map<int, int> idMap_;
 
 	};
 
@@ -83,6 +100,8 @@ namespace MLEngine::Object::Collision {
 		bool CollideWithBox(BoxCollider* box) override;
 		bool CollideWithSphere(SphereCollider* sphere) override;
 		MLEngine::Math::Vector3 GetSize() const override { return collider_.size; }
+
+		void Debug() override;
 
 		MLEngine::Math::OBB collider_;
 
@@ -101,7 +120,9 @@ namespace MLEngine::Object::Collision {
 		bool CollideWithSphere(SphereCollider* sphere) override { return IsCollision(this->collider_, sphere->collider_); }
 		float GetRadius() const override { return collider_.radius; }
 
-		Sphere collider_;
+		void Debug() override;
+
+		MLEngine::Math::Sphere collider_;
 
 	};
 

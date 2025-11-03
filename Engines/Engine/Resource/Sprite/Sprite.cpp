@@ -7,6 +7,7 @@
 #include "Core/ImGuiManager.h"
 #include "Buffer/BufferResource.h"
 #include "Core/Render/RenderManager.h"
+#include "../ResourceManager.h"
 
 #pragma comment(lib, "dxcompiler.lib")
 
@@ -175,8 +176,14 @@ Sprite::Sprite(Texture texture, Vector2 position, Vector2 size, Vector4 color) {
 	texture_ = texture;
 	position_ = position;
 	size_ = size;
+	anchorPoint_ = Vector2(0.5f, 0.5f);
 	viewRect_ = { 1.0f,1.0f };
 	color_ = color;
+}
+
+MLEngine::Resource::Sprite::~Sprite()
+{
+	Resource::Manager::GetInstance()->RemoveSprite(this);
 }
 
 Sprite* Sprite::Create(Texture texture, Vector2 position, Vector4 color) {
@@ -192,11 +199,13 @@ Sprite* Sprite::Create(Texture texture, Vector2 position, Vector4 color) {
 		return nullptr;
 	}
 
-	if (!sprite->Initialize()) {
+	if (not sprite->Initialize()) {
 		delete sprite;
 		assert(0);
 		return nullptr;
 	}
+
+	Resource::Manager::GetInstance()->AddSprite(sprite);
 
 	return sprite;
 

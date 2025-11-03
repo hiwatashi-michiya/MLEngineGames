@@ -14,9 +14,9 @@ void BulletManager::Update()
 	{
 		bullet->Update();
 
-		if (input->GetKeyboard()->TriggerKey(DIK_R)) {
+		/*if (input->GetKeyboard()->TriggerKey(DIK_R)) {
 			bullet->Reverse();
-		}
+		}*/
 
 	}
 

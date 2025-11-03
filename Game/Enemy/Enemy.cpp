@@ -36,10 +36,10 @@ void Enemy::Update()
 
 	MLEngine::Input::Manager* input = MLEngine::Input::Manager::GetInstance();
 
-	if (input->GetKeyboard()->TriggerKey(DIK_H)) {
+	if (input->GetKeyboard()->Trigger(DIK_H)) {
 		hp_ = maxHp_ * 0.3f;
 	}
-	if (input->GetKeyboard()->TriggerKey(DIK_J)) {
+	if (input->GetKeyboard()->Trigger(DIK_J)) {
 		ChangeState(std::make_unique<EnemyDownState>());
 	}
 

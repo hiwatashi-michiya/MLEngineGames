@@ -61,8 +61,12 @@ void Manager::CreateGameWindow(const wchar_t* windowName, int32_t clientWidth, i
 	//ウィンドウクラスを登録する
 	RegisterClass(&wc_);
 
+	//ウィンドウサイズセット
+	clientWidth_ = clientWidth;
+	clientHeight_ = clientHeight;
+
 	//ウィンドウサイズを表す構造体にクライアント領域を入れる
-	RECT wrc = { 0,0, clientWidth, clientHeight };
+	RECT wrc = { 0,0, clientWidth_, clientHeight_ };
 
 	//クライアント領域を元に実際のサイズにwrcを変更してもらう
 	AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);
@@ -76,7 +80,7 @@ void Manager::CreateGameWindow(const wchar_t* windowName, int32_t clientWidth, i
 		CW_USEDEFAULT,         //表示Y座標(WindowsOSに任せる)
 		wrc.right - wrc.left,  //ウィンドウ横幅
 		wrc.bottom - wrc.top,  //ウィンドウ縦幅
-		nullptr,               //横ウィンドウハンドル
+		nullptr,               //親ウィンドウハンドル
 		nullptr,               //メニューハンドル
 		wc_.hInstance,          //インスタンスハンドル
 		nullptr);              //オプション

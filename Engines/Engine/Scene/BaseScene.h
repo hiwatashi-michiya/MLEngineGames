@@ -1,8 +1,6 @@
 #pragma once
-
-namespace MLEngine::Scene {
-	class Manager;
-}
+#include "Camera.h"
+#include "SceneManager.h"
 
 /// <summary>
 /// シーンの基底クラス
@@ -10,6 +8,11 @@ namespace MLEngine::Scene {
 class BaseScene
 {
 public:
+	//カメラをマネージャーにセット
+	void SetCamera() {
+		camera_.position_ = { 0.0f,0.0f,-20.0f };
+		sceneManager_->SetMainCamera(&camera_);
+	}
 	//初期化
 	virtual void Initialize() = 0;
 	//終了処理
@@ -23,8 +26,11 @@ public:
 	//シーンマネージャーセット
 	virtual void SetSceneManager(MLEngine::Scene::Manager* sceneManager) { sceneManager_ = sceneManager; }
 
-private:
+protected:
 
 	MLEngine::Scene::Manager* sceneManager_ = nullptr;
+
+	//カメラ
+	MLEngine::Object::Camera camera_;
 
 };
