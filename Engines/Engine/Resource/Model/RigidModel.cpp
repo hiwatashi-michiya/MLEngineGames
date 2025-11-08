@@ -24,10 +24,10 @@ RigidModel::~RigidModel()
 
 void RigidModel::Initialize(const std::string& filename, [[maybe_unused]] const std::string& texturename) {
 
-	localMatrix_ = Matrix4x4::Identity();
-	worldMatrix_ = Matrix4x4::Identity();
-	worldViewProjectionMatrix_ = Matrix4x4::Identity();
-	color_ = { 1.0f,1.0f,1.0f,1.0f };
+	localMatrix = Matrix4x4::Identity();
+	worldMatrix = Matrix4x4::Identity();
+	worldViewProjectionMatrix = Matrix4x4::Identity();
+	color = { 1.0f,1.0f,1.0f,1.0f };
 	//初期化時に描画用のリストに登録
 	Resource::Manager::GetInstance()->AddRigidModel(this);
 	//既にインスタンシング用のモデルを作成している場合、それを返す
@@ -59,7 +59,7 @@ void RigidModel::LoadAnimation(const std::string& filename) {
 
 	}
 
-	*skeleton_ = CreateSkeleton(instancingModel_->mesh_->modelData_.rootNode);
+	*skeleton_ = CreateSkeleton(instancingModel_->mesh_->GetModelData().rootNode);
 
 }
 
@@ -69,11 +69,11 @@ void RigidModel::ResetAnimation() {
 	if (animation_ and animation_->nodeAnimations.size() != 0) {
 
 		animationTime_ = 0.0f;
-		NodeAnimation& rootNodeAnimation = animation_->nodeAnimations[instancingModel_->mesh_->modelData_.rootNode.name]; //rootNodeのanimationを取得
+		NodeAnimation& rootNodeAnimation = animation_->nodeAnimations[instancingModel_->mesh_->GetModelData().rootNode.name]; //rootNodeのanimationを取得
 		Vector3 translate = CalculateValue(rootNodeAnimation.translate.keyFrames, animationTime_);
 		Quaternion rotate = CalculateValue(rootNodeAnimation.rotate.keyFrames, animationTime_);
 		Vector3 scale = CalculateValue(rootNodeAnimation.scale.keyFrames, animationTime_);
-		localMatrix_ = MakeAffineMatrix(scale, rotate, translate);
+		localMatrix = MakeAffineMatrix(scale, rotate, translate);
 
 	}
 
@@ -112,24 +112,22 @@ void RigidModel::UpdateAnimation() {
 
 		}
 
-		NodeAnimation& rootNodeAnimation = animation_->nodeAnimations[instancingModel_->mesh_->modelData_.rootNode.name]; //rootNodeのanimationを取得
+		NodeAnimation& rootNodeAnimation = animation_->nodeAnimations[instancingModel_->mesh_->GetModelData().rootNode.name]; //rootNodeのanimationを取得
 		Vector3 translate = CalculateValue(rootNodeAnimation.translate.keyFrames, animationTime_);
 		Quaternion rotate = CalculateValue(rootNodeAnimation.rotate.keyFrames, animationTime_);
 		Vector3 scale = CalculateValue(rootNodeAnimation.scale.keyFrames, animationTime_);
-		localMatrix_ = MakeAffineMatrix(scale, rotate, translate);
+		localMatrix = MakeAffineMatrix(scale, rotate, translate);
 
 	}
 
 }
 
-void RigidModel::Draw(Camera* camera) {
+void RigidModel::Regist()
+{
 
-	//ワールドビュープロジェクション更新
-	worldViewProjectionMatrix_ = localMatrix_ * worldMatrix_ * camera->matViewProjection_;
-	//カメラセット
-	instancingModel_->SetCamera(camera);
-	//モデルのデータを追加
-	instancingModel_->AddModelData(this);
+	if (instancingModel_) {
+		instancingModel_->Regist(this);
+	}
 
 }
 

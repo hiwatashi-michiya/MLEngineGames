@@ -172,13 +172,13 @@ void Sprite::StaticInitialize(ID3D12Device* device) {
 
 }
 
-Sprite::Sprite(Texture texture, Vector2 position, Vector2 size, Vector4 color) {
+Sprite::Sprite(Texture texture, Vector2 pos, Vector2 s, Vector4 col) {
 	texture_ = texture;
-	position_ = position;
-	size_ = size;
-	anchorPoint_ = Vector2(0.5f, 0.5f);
-	viewRect_ = { 1.0f,1.0f };
-	color_ = color;
+	position = pos;
+	size = s;
+	anchorPoint = Vector2(0.5f, 0.5f);
+	viewRect = { 1.0f,1.0f };
+	color = col;
 }
 
 MLEngine::Resource::Sprite::~Sprite()
@@ -186,14 +186,14 @@ MLEngine::Resource::Sprite::~Sprite()
 	Resource::Manager::GetInstance()->RemoveSprite(this);
 }
 
-Sprite* Sprite::Create(Texture texture, Vector2 position, Vector4 color) {
+Sprite* Sprite::Create(Texture texture, Vector2 pos, Vector4 col) {
 
 	Vector2 tmpSize = { 100.0f,100.0f };
 
 	tmpSize = { static_cast<float>(texture.GetResource()->GetDesc().Width),
 	static_cast<float>(texture.GetResource()->GetDesc().Height)};
 
-	Sprite* sprite = new Sprite(texture, position, tmpSize, color);
+	Sprite* sprite = new Sprite(texture, pos, tmpSize, col);
 
 	if (sprite == nullptr) {
 		return nullptr;
@@ -229,16 +229,16 @@ bool Sprite::Initialize() {
 		vertBuff_->Map(0, nullptr, reinterpret_cast<void**>(&vertMap_));
 
 		//左下
-		vertMap_[0].position = { 0.0f,size_.y, 0.0f,1.0f };
+		vertMap_[0].position = { 0.0f,size.y, 0.0f,1.0f };
 		vertMap_[0].texcoord = { 0.0f,1.0f };
 		//左上
 		vertMap_[1].position = { 0.0f,0.0f, 0.0f,1.0f };
 		vertMap_[1].texcoord = { 0.0f,0.0f };
 		//右下
-		vertMap_[2].position = { size_.x,size_.y, 0.0f,1.0f };
+		vertMap_[2].position = { size.x,size.y, 0.0f,1.0f };
 		vertMap_[2].texcoord = { 1.0f,1.0f };
 		//右上
-		vertMap_[3].position = { size_.x,0.0f, 0.0f,1.0f };
+		vertMap_[3].position = { size.x,0.0f, 0.0f,1.0f };
 		vertMap_[3].texcoord = { 1.0f,0.0f };
 
 		//アンマップ
@@ -278,7 +278,7 @@ bool Sprite::Initialize() {
 		//マッピングしてデータ転送
 		constBuff_->Map(0, nullptr, reinterpret_cast<void**>(&constMap_));
 
-		constMap_->color = color_;
+		constMap_->color = color;
 		constMap_->uvTransform = MakeIdentity4x4();
 
 		//アンマップ
@@ -327,28 +327,28 @@ void Sprite::PostDraw() {
 void Sprite::Draw() {
 
 	//左下
-	vertMap_[0].position = { 0.0f - anchorPoint_.x * size_.x,size_.y - anchorPoint_.y * size_.y, 0.0f,1.0f };
-	vertMap_[0].texcoord = { 0.0f,viewRect_.y };
+	vertMap_[0].position = { 0.0f - anchorPoint.x * size.x,size.y - anchorPoint.y * size.y, 0.0f,1.0f };
+	vertMap_[0].texcoord = { 0.0f,viewRect.y };
 	//左上
-	vertMap_[1].position = { 0.0f - anchorPoint_.x * size_.x,0.0f - anchorPoint_.y * size_.y, 0.0f,1.0f };
+	vertMap_[1].position = { 0.0f - anchorPoint.x * size.x,0.0f - anchorPoint.y * size.y, 0.0f,1.0f };
 	vertMap_[1].texcoord = { 0.0f,0.0f };
 	//右下
-	vertMap_[2].position = { size_.x - anchorPoint_.x * size_.x,size_.y - anchorPoint_.y * size_.y, 0.0f,1.0f };
-	vertMap_[2].texcoord = { viewRect_.x,viewRect_.y };
+	vertMap_[2].position = { size.x - anchorPoint.x * size.x,size.y - anchorPoint.y * size.y, 0.0f,1.0f };
+	vertMap_[2].texcoord = { viewRect.x,viewRect.y };
 	//右上
-	vertMap_[3].position = { size_.x - anchorPoint_.x * size_.x,0.0f - anchorPoint_.y * size_.y, 0.0f,1.0f };
-	vertMap_[3].texcoord = { viewRect_.x,0.0f };
+	vertMap_[3].position = { size.x - anchorPoint.x * size.x,0.0f - anchorPoint.y * size.y, 0.0f,1.0f };
+	vertMap_[3].texcoord = { viewRect.x,0.0f };
 
-	Matrix4x4 worldMatrix = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, { 0.0f,0.0f,0.0f }, { position_.x, position_.y, 0.5f });
+	Matrix4x4 worldMatrix = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, { 0.0f,0.0f,0.0f }, { position.x, position.y, 0.5f });
 	Matrix4x4 viewMatrix = MakeIdentity4x4();
 	Matrix4x4 projectionMatrix = MakeOrthographicMatrix(0.0f, 0.0f, 1280.0f, 720.0f, 0.0f, 100.0f);
 	Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
 	*matTransformMap_ = worldViewProjectionMatrix;
 
-	constMap_->color = color_;
+	constMap_->color = color;
 
-	Matrix4x4 matUVTransform = MakeScaleMatrix(Vector3(uvScale_.x, uvScale_.y, 1.0f)) * MakeRotateZMatrix(uvRotate_) *
-		MakeTranslateMatrix(Vector3(uvTranslate_.x, uvTranslate_.y, 0.0f));
+	Matrix4x4 matUVTransform = MakeScaleMatrix(Vector3(uvScale.x, uvScale.y, 1.0f)) * MakeRotateZMatrix(uvRotate) *
+		MakeTranslateMatrix(Vector3(uvTranslate.x, uvTranslate.y, 0.0f));
 
 	constMap_->uvTransform = matUVTransform;
 
@@ -381,12 +381,12 @@ void Sprite::ImGuiUpdate(const std::string name) {
 #ifdef _DEBUG
 
 	ImGui::Begin(name.c_str());
-	ImGui::DragFloat2("position", &position_.x, 0.1f);
-	ImGui::DragFloat2("size", &size_.x, 0.01f);
-	ImGui::DragFloat2("view rect", &viewRect_.x, 0.01f, 0.0f, 1.0f);
-	ImGui::DragFloat2("uv scale", &uvScale_.x, 0.01f);
-	ImGui::DragFloat("uv rotate", &uvRotate_, 0.01f);
-	ImGui::DragFloat2("uv translate", &uvTranslate_.x, 0.01f);
+	ImGui::DragFloat2("position", &position.x, 0.1f);
+	ImGui::DragFloat2("size", &size.x, 0.01f);
+	ImGui::DragFloat2("view rect", &viewRect.x, 0.01f, 0.0f, 1.0f);
+	ImGui::DragFloat2("uv scale", &uvScale.x, 0.01f);
+	ImGui::DragFloat("uv rotate", &uvRotate, 0.01f);
+	ImGui::DragFloat2("uv translate", &uvTranslate.x, 0.01f);
 	ImGui::End();
 
 #endif // _DEBUG

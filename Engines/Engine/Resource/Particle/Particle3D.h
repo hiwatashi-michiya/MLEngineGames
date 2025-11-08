@@ -22,6 +22,8 @@ namespace MLEngine::Resource {
 	{
 	public:
 
+		~Particle3D();
+
 		//静的初期化
 		static void StaticInitialize(ID3D12Device* device);
 		//GPUに使う用のパーティクルデータ
@@ -41,6 +43,15 @@ namespace MLEngine::Resource {
 
 			kCountBlend
 		};
+		//パーティクル1粒分の構造体
+		struct ParticleData {
+			Object::Transform transform;
+			Math::Vector4 color;
+			Math::Vector3 velocity;
+			int32_t lifeTime;
+			bool isActive;
+		};
+
 		//ブレンドモードの名前
 		static const char* BlendTexts[BlendMode::kCountBlend];
 		//生成
@@ -78,17 +89,10 @@ namespace MLEngine::Resource {
 
 		//ビルボードを使うかどうか
 		bool isBillboard_ = true;
-		//トランスフォームリスト
-		std::vector<MLEngine::Object::Transform> transforms_{};
-		//色リスト
-		std::vector<MLEngine::Math::Vector4> colors_{};
-		//速度リスト
-		std::vector<MLEngine::Math::Vector3> velocities_{};
-		//アクティブフラグリスト
-		std::vector<bool> isActive_{};
-		//生存時間リスト
-		std::vector<int32_t> lifeTimes_{};
-
+		//粒のリスト
+		std::vector<ParticleData> particleData;
+		//アクティブかどうか
+		bool isActive = true;
 		//インスタンシングの数
 		uint32_t maxInstanceCount_;
 
@@ -137,7 +141,7 @@ namespace MLEngine::Resource {
 		std::string texturePath_;
 
 		//ワールド行列リスト
-		std::vector<MLEngine::Math::Matrix4x4> worldMatrices{};
+		std::vector<MLEngine::Math::Matrix4x4> worldMatrices_{};
 
 		//ビルボード行列
 		MLEngine::Math::Matrix4x4 matBillboard_;

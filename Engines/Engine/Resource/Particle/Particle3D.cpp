@@ -15,6 +15,7 @@
 #include "Core/Render/Config/InputElement.h"
 #include "Core/Render/Config/InputLayout.h"
 #include "Core/Render/Config/DescriptorRange.h"
+#include "../ResourceManager.h"
 
 #pragma comment(lib, "dxcompiler.lib")
 
@@ -35,6 +36,14 @@ IDxcBlob* Particle3D::ps3dParticleBlob_ = nullptr;
 Particle3D::BlendMode Particle3D::currentBlendMode_ = Particle3D::BlendMode::kNormal;
 std::unordered_map<std::string, std::shared_ptr<Graphics::Mesh>> Particle3D::meshes_;
 const char* Particle3D::BlendTexts[Particle3D::BlendMode::kCountBlend] = { "Normal", "Add", "Subtract", "Multiply", "Screen" };
+
+MLEngine::Resource::Particle3D::~Particle3D()
+{
+
+	//リソースマネージャーに登録
+	Resource::Manager::GetInstance()->RemoveParticle3D(this);
+
+}
 
 void Particle3D::StaticInitialize(ID3D12Device* device) {
 
@@ -235,22 +244,19 @@ void Particle3D::Initialize(const std::string& filename, uint32_t instanceCount)
 	material_ = std::make_unique<Graphics::Material>();
 	material_->Create();
 
-	texture_.Load(mesh_->textureFilePath_);
-	texturePath_ = mesh_->textureFilePath_;
+	texture_.Load(mesh_->GetTextureFilePath());
+	texturePath_ = mesh_->GetTextureFilePath();
 
 	maxInstanceCount_ = instanceCount;
 
 	//トランスフォーム情報をインスタンス数に合わせてリサイズする
-	transforms_.resize(maxInstanceCount_);
-	colors_.resize(maxInstanceCount_);
-	worldMatrices.resize(maxInstanceCount_);
-	velocities_.resize(maxInstanceCount_);
-	isActive_.resize(maxInstanceCount_);
-	lifeTimes_.resize(maxInstanceCount_);
+	particleData.resize(maxInstanceCount_);
+
+	worldMatrices_.resize(maxInstanceCount_);
 
 	for (uint32_t i = 0; i < maxInstanceCount_; i++) {
-		colors_[i] = { 1.0f,1.0f,1.0f,1.0f };
-		worldMatrices[i] = MakeIdentity4x4();
+		particleData[i].color = { 1.0f,1.0f,1.0f,1.0f };
+		worldMatrices_[i] = MakeIdentity4x4();
 	}
 
 	instanceCount_ = maxInstanceCount_;
@@ -279,6 +285,9 @@ void Particle3D::Initialize(const std::string& filename, uint32_t instanceCount)
 		instancingResource_.Initialize(maxInstanceCount_, matBuff_);
 
 	}
+
+	//リソースマネージャーに登録
+	Resource::Manager::GetInstance()->AddParticle3D(this);
 
 }
 
@@ -315,26 +324,26 @@ void Particle3D::Draw(Camera* camera) {
 
 	for (uint32_t i = 0; i < instanceCount_; i++) {
 
-		Vector3 scale = transforms_[i].scale_;
+		Vector3 scale = particleData[i].transform.scale_;
 
 		//アクティブ状態でない場合、スケールを0にして表示しない
-		if (not isActive_[i]) {
+		if (not particleData[i].isActive) {
 			scale = Vector3::Zero();
 		}
 
 		if (isBillboard_) {
-			worldMatrices[i] = MakeScaleMatrix(scale) * matBillboard_ * MakeTranslateMatrix(transforms_[i].translate_);
+			worldMatrices_[i] = MakeScaleMatrix(scale) * matBillboard_ * MakeTranslateMatrix(particleData[i].transform.translate_);
 		}
 		else {
-			worldMatrices[i] = MakeAffineMatrix(scale, transforms_[i].rotateQuaternion_, transforms_[i].translate_);
+			worldMatrices_[i] = MakeAffineMatrix(scale, particleData[i].transform.rotateQuaternion_, particleData[i].transform.translate_);
 		}
 
 		/*Matrix4x4 worldMatrix = worldTransform[i].matWorld_;*/
-		Matrix4x4 worldViewProjectionMatrix = worldMatrices[i] * camera->matViewProjection_;
+		Matrix4x4 worldViewProjectionMatrix = worldMatrices_[i] * camera->matViewProjection_;
 		matTransformMap_[i].WVP = worldViewProjectionMatrix;
-		matTransformMap_[i].World = worldMatrices[i];
-		matTransformMap_[i].WorldInverseTranspose = Transpose(Inverse(worldMatrices[i]));
-		matTransformMap_[i].color = colors_[i];
+		matTransformMap_[i].World = worldMatrices_[i];
+		matTransformMap_[i].WorldInverseTranspose = Transpose(Inverse(worldMatrices_[i]));
+		matTransformMap_[i].color = particleData[i].color;
 
 	}
 
@@ -390,7 +399,7 @@ bool Particle3D::IsAnyActive() {
 
 	for (uint32_t i = 0; i < instanceCount_; i++) {
 
-		if (isActive_[i]) {
+		if (particleData[i].isActive) {
 			return true;
 		}
 
