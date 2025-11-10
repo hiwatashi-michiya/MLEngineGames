@@ -85,6 +85,14 @@ void DebugScene::Update()
 
 		}
 
+		if (ImGui::Checkbox("show box", &showBox_)) {
+			lineBox_.SetIsActive(showBox_);
+		}
+
+		if (ImGui::Checkbox("show sphere", &showSphere_)) {
+			lineSphere_.SetIsActive(showSphere_);
+		}
+
 		ImGui::End();
 
 #endif // _DEBUG
@@ -148,9 +156,8 @@ void DebugScene::Update()
 void DebugScene::Draw()
 {
 
-	lineSphere_.Draw(&camera_);
+	
 
-	lineBox_.Draw(&camera_);
 
 }
 

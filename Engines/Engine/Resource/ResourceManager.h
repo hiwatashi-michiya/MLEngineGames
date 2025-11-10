@@ -3,6 +3,7 @@
 #include "Model/RigidModel.h"
 #include "Sprite/Sprite.h"
 #include "Particle/Particle3D.h"
+#include "Line/LineDrawer.h"
 #include "Camera.h"
 
 namespace MLEngine::Resource {
@@ -33,6 +34,10 @@ namespace MLEngine::Resource {
 		void AddParticle3D(Particle3D* particle) { particle3ds_.push_back(particle); }
 		//スプライト削除
 		void RemoveParticle3D(Particle3D* particle) { particle3ds_.remove(particle); }
+		//ライン追加
+		void AddLine(Line* line) { lines_.push_back(line); }
+		//ライン削除
+		void RemoveLine(Line* line) { lines_.remove(line); }
 
 	private:
 		//モデルのポインタリスト
@@ -41,6 +46,8 @@ namespace MLEngine::Resource {
 		std::list<Sprite*> sprites_;
 		//パーティクルのポインタリスト
 		std::list<Particle3D*> particle3ds_;
+		//ラインポインタのリスト
+		std::list<Line*> lines_;
 		//メインカメラのポインタ
 		MLEngine::Object::Camera* camera_;
 

@@ -54,4 +54,13 @@ void Manager::Update() {
 
 	}
 
+	//ライン描画
+	for (Line* line : lines_) {
+
+		if (line->isActive) {
+			line->Draw(camera_);
+		}
+
+	}
+
 }
