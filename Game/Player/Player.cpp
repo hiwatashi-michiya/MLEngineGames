@@ -7,7 +7,7 @@ Player::Player(){
 	//必須となる情報の読み込み
 	texture_.Load("./Resources/white.png");
 
-	sprite_ = MLEngine::Resource::Sprite::Create(texture_, MLEngine::Math::Vector2(pos_.x, pos_.y), color_);
+	sprite_.reset(MLEngine::Resource::Sprite::Create(texture_, MLEngine::Math::Vector2(pos_.x, pos_.y), color_));
 
 	vController_ = &VirtualController::GetInstance();
 	config_ = GameConfig::GetInstance();
@@ -32,11 +32,19 @@ void Player::Finalize(){
 }
 
 void Player::Update(const float deltaTime){
+	deltaTime;
 	DebugDraw();
-	TimeProcess(deltaTime);
 	
+	
+#ifdef CLIENT_BUILD
+	// Client専用処理
+#else
+	// Server Debug処理
+	TimeProcess(deltaTime);
 	PlayerRecovery();
 	PlayerMove();
+#endif
+	
 
 	PlayerInfoInsertion();
 

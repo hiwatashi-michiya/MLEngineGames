@@ -1,6 +1,6 @@
 #pragma once
 #include "Scene/BaseScene.h"
-#include "Model/Model.h"
+#include "Model/RigidModel.h"
 #include "Object/Camera.h"
 #include "Sprite/Sprite.h"
 #include "Audio/Audio.h"

@@ -1,4 +1,4 @@
-#include "Model.h"
+#include "RigidModel.h"
 #include <cassert>
 #include "Engine/Convert.h"
 #include "Engine/Core/Render/ShaderManager.h"
@@ -8,6 +8,7 @@
 #include "Buffer/BufferResource.h"
 #include "ModelManager.h"
 #include "InstancingModel.h"
+#include "../ResourceManager.h"
 
 #pragma comment(lib, "dxcompiler.lib")
 
@@ -16,12 +17,19 @@ using namespace MLEngine::Core::Render;
 using namespace MLEngine::Math;
 using namespace MLEngine::Object;
 
+RigidModel::~RigidModel()
+{
+	Resource::Manager::GetInstance()->RemoveRigidModel(this);
+}
+
 void RigidModel::Initialize(const std::string& filename, [[maybe_unused]] const std::string& texturename) {
 
 	localMatrix_ = Matrix4x4::Identity();
 	worldMatrix_ = Matrix4x4::Identity();
 	worldViewProjectionMatrix_ = Matrix4x4::Identity();
 	color_ = { 1.0f,1.0f,1.0f,1.0f };
+	//初期化時に描画用のリストに登録
+	Resource::Manager::GetInstance()->AddRigidModel(this);
 	//既にインスタンシング用のモデルを作成している場合、それを返す
 	if (Model::Manager::GetInstance()->IsExistModel(filename)) {
 		instancingModel_ = Model::Manager::GetInstance()->GetModel(filename);

@@ -35,7 +35,12 @@ void PlayScene::Update(){
 
 	config_->Update();
 
+#ifdef CLIENT_BUILD
+	// Client専用処理
+#else
+	// Server Debug処理
 	gameManager_->Update();
+#endif	
 
 	playerManager_->Update(gameManager_->GetDeltaTime());
 

@@ -1,17 +1,31 @@
 #pragma once
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#include <thread>
-#include <mutex>
-#include <queue>
-#include <vector>
+#include <Engine/Core/WindowManager.h>
+#include <process.h>
+#include <mmsystem.h>
+#include <fstream>
 #include <iostream>
-#include <cstring>
+#include <atomic>
 
-#pragma comment(lib, "ws2_32.lib")
+
+#pragma comment(lib, "wsock32.lib")
+#pragma comment(lib, "winmm.lib")
 
 class NetworkManager {
 public:
+#pragma pack(push, 1)	
+    //通信で送る情報をまとめた構造体
+    struct SendPlayerState {
+        //前を向いているか
+        bool isForwardFlug;
+        //攻撃をくらったか
+        bool isDamagedFlug;
+        //体力
+        int life;
+        //現在いるラインの番号
+        int nowLine;
+    };
+#pragma pack(pop)
+
     // シングルトンインスタンス
     static NetworkManager& GetInstance() {
         static NetworkManager instance;
@@ -38,14 +52,30 @@ private:
     NetworkManager(const NetworkManager&) = delete;
     NetworkManager& operator=(const NetworkManager&) = delete;
 
-    // 内部関数
     void RecvLoop();
 
-    // メンバ変数
-    SOCKET sock_ = INVALID_SOCKET;
-    std::thread recvThread_;
-    std::mutex mutex_;
-    std::queue<std::vector<char>> recvQueue_;
-    bool running_ = false;
+    static DWORD WINAPI RecvLoopWrapper(void* param) {
+        NetworkManager* self = reinterpret_cast<NetworkManager*>(param);
+        self->RecvLoop();
+        return 0;
+    }
+
+    HANDLE hThread_;
+    DWORD dwID_;
+
+    SOCKET sWait_, sConnect_;                // 待機用と接続用
+    struct sockaddr_in saConnect_, recvConnect_ {};
+    WORD wPort_ = 8000;
+    int iLen_;
+    int fromlen_ = 0;
+    char addr_[20]; //IPアドレス用文字列を設定
+
+    int waitSecond_ = 5;
+
+    // 接続状態を管理するフラグ
+    std::atomic<bool> isRunning_;
+
+    SendPlayerState playerState_{};
+
 };
 

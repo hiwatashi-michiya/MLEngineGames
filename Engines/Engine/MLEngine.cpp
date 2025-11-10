@@ -91,6 +91,8 @@ void Engine::Initialize(const char* title, int width, int height) {
 	Render::Particle::Manager::GetInstance()->Initialize();
 	Render::Manager::GetInstance()->Clear();
 
+	resourceManager_ = Resource::Manager::GetInstance();
+	resourceManager_->Initialize();
 	sceneManager_ = Scene::Manager::GetInstance();
 
 }
@@ -119,6 +121,7 @@ void Engine::Run(BaseScene* startScene, BaseSceneFactory* sceneFactory) {
 		}
 
 		//ゲームシーン描画
+		resourceManager_->Update();
 		sceneManager_->Draw();
 		sceneManager_->Render();
 

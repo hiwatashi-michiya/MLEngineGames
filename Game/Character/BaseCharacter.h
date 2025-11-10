@@ -1,5 +1,5 @@
 #pragma once
-#include "Model/Model.h"
+#include "Model/RigidModel.h"
 #include "Sprite/Sprite.h"
 #include "Audio/Audio.h"
 #include"Config/GameConfig.h"
