@@ -1,6 +1,7 @@
 #pragma once
 #include"Character/BaseCharacter.h"
 #include"VirtualController.h"
+#include<../Network/NetworkManager.h>
 //プレイヤーが操作する自機
 class Player : public BaseCharacter{
 public:
@@ -23,25 +24,13 @@ public:
 	int GetNowLine()const {
 		return nowLine_;
 	}
-#pragma pack(push, 1)	
-	//通信で送る情報をまとめた構造体
-	struct SendPlayerState {
-		//前を向いているか
-		bool isForwardFlug;
-		//攻撃をくらったか
-		bool isDamagedFlug;
-		//体力
-		int life;
-		//現在いるラインの番号
-		int nowLine;
-	};
-#pragma pack(pop)
 
-	SendPlayerState GetSendPlayerState() const {
+
+	NetworkManager::SendPlayerState GetSendPlayerState() const {
 		return plState_;
 	}
 
-	void SetSendPlayerState(const SendPlayerState plState){
+	void SetSendPlayerState(const NetworkManager::SendPlayerState plState){
 		plState_ = plState;
 	}
 
@@ -62,7 +51,7 @@ private:
 private:
 	GameConfig* config_ = nullptr;
 
-	SendPlayerState plState_{};
+	NetworkManager::SendPlayerState plState_{};
 
 	//入力デバイス
 	VirtualController* vController_ = nullptr;

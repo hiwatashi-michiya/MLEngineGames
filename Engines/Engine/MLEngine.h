@@ -27,6 +27,7 @@
 #include "ModelManager.h"
 #include "Scene/SceneManager.h"
 #include"VirtualController.h"
+#include"../Network/NetworkManager.h"
 #include <memory>
 #include "Resource/ResourceManager.h"
 
@@ -95,14 +96,24 @@ namespace MLEngine {
 
 		//エンジンの生成
 		Engine* engine = new Engine();
+		//ローカル通信開始
+		NetworkManager* network = &NetworkManager::GetInstance();
+
 		//シーンファクトリー生成
 		std::unique_ptr<BaseSceneFactory> factory = std::make_unique<Factory>();
 
 		engine->Initialize(title, 1280, 720);
+#ifdef CLIENT_BUILD
+		network->Initialize(false);
+#else
+		network->Initialize(true);
+#endif
 
 		engine->Run(new BaseScene(), factory.get());
 
 		engine->Finalize();
+
+		network->Finalize();
 
 		//エンジンの開放
 		delete engine;

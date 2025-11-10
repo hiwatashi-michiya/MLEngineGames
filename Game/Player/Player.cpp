@@ -32,11 +32,19 @@ void Player::Finalize(){
 }
 
 void Player::Update(const float deltaTime){
+	deltaTime;
 	DebugDraw();
-	TimeProcess(deltaTime);
 	
+	
+#ifdef CLIENT_BUILD
+	// Client専用処理
+#else
+	// Server Debug処理
+	TimeProcess(deltaTime);
 	PlayerRecovery();
 	PlayerMove();
+#endif
+	
 
 	PlayerInfoInsertion();
 
