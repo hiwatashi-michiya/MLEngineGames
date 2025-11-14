@@ -46,6 +46,7 @@ public:
     // 毎フレーム呼び出す（内部キュー更新など）
     void Update();
 
+    bool GetLatestPlayerState(SendPlayerState& out) const;
 private:
     NetworkManager() = default;
     ~NetworkManager() = default;
@@ -69,8 +70,10 @@ private:
     int iLen_;
     int fromlen_ = 0;
     char addr_[20]; //IPアドレス用文字列を設定
-
+    /*ネットにつなぐときの待機時間*/
     int waitSecond_ = 5;
+
+    bool isServer_ = false;
 
     // 接続状態を管理するフラグ
     std::atomic<bool> isRunning_;
