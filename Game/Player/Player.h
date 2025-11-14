@@ -47,6 +47,8 @@ private:
 	//送る情報を更新
 	void PlayerInfoInsertion();
 
+	//通信相手のplayer情報を取得
+	void SyncFromNetwork();
 
 private:
 	GameConfig* config_ = nullptr;

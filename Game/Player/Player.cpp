@@ -33,6 +33,8 @@ void Player::Finalize(){
 
 void Player::Update(const float deltaTime){
 	deltaTime;
+	SyncFromNetwork();
+
 	DebugDraw();
 	
 	
@@ -47,6 +49,8 @@ void Player::Update(const float deltaTime){
 	
 
 	PlayerInfoInsertion();
+	//managerを介してクライアントに送る
+	NetworkManager::GetInstance().Send(plState_);
 
 	pos_.x = LaneSpecificCalculation();
 
@@ -99,14 +103,7 @@ void Player::PlayerMove(){
 		isForward_ = !isForward_;
 	}
 
-	if (not isForward_){
-		//後ろを向いているなら青色
- 		sprite_->color_ = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
-	}
-	else {
-		//前を向いているなら赤色
-		sprite_->color_ = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
-	}
+	
 
 }
 
@@ -163,4 +160,47 @@ void Player::PlayerInfoInsertion(){
 	plState_.isForwardFlug = isForward_;
 	plState_.life = life_;
 	plState_.nowLine = nowLine_;
+
+	if (not isForward_) {
+		//後ろを向いているなら青色
+		sprite_->color_ = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
+	}
+	else {
+		//前を向いているなら赤色
+		sprite_->color_ = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
+	}
 }
+
+void Player::SyncFromNetwork(){
+	NetworkManager::SendPlayerState netState{};
+
+	// 最新の受信データを NetworkManager から取得
+	if (NetworkManager::GetInstance().GetLatestPlayerState(netState)){
+
+#ifdef CLIENT_BUILD
+		// Client専用処理
+		// 受信状態を自プレイヤーに適用
+		life_ = netState.life;
+		isForward_ = !netState.isForwardFlug;
+		isDamaged_ = netState.isDamagedFlug;
+		if (netState.nowLine == 0){
+			nowLine_ = 2;
+		}
+		else if (netState.nowLine == 2){
+			nowLine_ = 0;
+		}
+		else {
+			nowLine_ = netState.nowLine;
+		}
+
+#else
+		// Server処理
+		// 受信状態を自プレイヤーに適用
+		life_ = netState.life;
+		isDamaged_ = netState.isDamagedFlug;
+#endif
+
+		
+	}
+}
+

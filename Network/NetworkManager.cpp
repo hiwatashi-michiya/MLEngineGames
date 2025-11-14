@@ -1,6 +1,11 @@
 #include "NetworkManager.h"
+#include <thread>
+#include <chrono>
+
 
 bool NetworkManager::Initialize(bool isServer, const std::string& ip, int port) {
+    isRunning_ = false;
+    playerState_.life = -1;
     WSADATA wsaData;
     if (WSAStartup(MAKEWORD(2, 0), &wsaData) != 0) {
         std::cerr << "WSAStartup failed." << std::endl;
@@ -64,17 +69,6 @@ bool NetworkManager::Initialize(bool isServer, const std::string& ip, int port) 
             return false;
         }
 
-        //// sConnectで接続受け入れ
-        //sConnect_ = accept(sWait_, (LPSOCKADDR)&saConnect_, &iLen_);
-
-        //if (sConnect_ == INVALID_SOCKET) {
-        //    shutdown(sConnect_, 2);
-        //    closesocket(sConnect_);
-        //    shutdown(sWait_, 2);
-        //    closesocket(sWait_);
-        //    return false;
-        //}
-
         // 接続待ちソケット解放
         shutdown(sWait_, 2);
         closesocket(sWait_);
@@ -83,7 +77,8 @@ bool NetworkManager::Initialize(bool isServer, const std::string& ip, int port) 
         /*クライアント側の処理*/
 
         // ipアドレスは外部テキストファイルから読むようにする
-        std::ifstream ifs("ip.txt");
+        //学校の場合は"schoolip.txt"(net名"kmt-neec")それぞれのネットは"ip.txt"でアドレスを読む 
+        std::ifstream ifs("schoolip.txt");
         ifs.getline(addr_, sizeof(addr_));
 
         sConnect_ = socket(AF_INET, SOCK_STREAM, 0);
@@ -115,7 +110,7 @@ bool NetworkManager::Initialize(bool isServer, const std::string& ip, int port) 
             FD_SET(sConnect_, &writefds);
 
             TIMEVAL timeout{};
-            timeout.tv_sec = 10; // 10秒
+            timeout.tv_sec = waitSecond_; // 10秒
             timeout.tv_usec = 0;
 
             result = select(0, NULL, &writefds, NULL, &timeout);
@@ -137,8 +132,11 @@ bool NetworkManager::Initialize(bool isServer, const std::string& ip, int port) 
         return false;
     }
    
+    
+
     // クライアント接続があるときのみスレッド起動
-    hThread_ = (HANDLE)CreateThread(NULL, 0, &RecvLoopWrapper, (LPVOID)&playerState_, 0, &dwID_);
+    isRunning_ = true;
+    hThread_ = (HANDLE)CreateThread(NULL, 0, &RecvLoopWrapper, this, 0, &dwID_);
     return true;
 }
 
@@ -153,7 +151,20 @@ void NetworkManager::Finalize() {
 
 void NetworkManager::RecvLoop() {
     /*確認するだけなので現時点では空*/
+    while (isRunning_){
+        SendPlayerState tmp;
+        // テンプレート受信関数
+        if (!Receive(tmp)) {
 
+            isRunning_ = false;
+           
+        }
+        else {
+            playerState_ = tmp;
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(3));
+
+    }
   
 
 }
@@ -166,6 +177,7 @@ void NetworkManager::Send(const T& data) {
 
 template <typename T>
 bool NetworkManager::Receive(T& outData) {
+    if (sConnect_ == INVALID_SOCKET) return false;
     // データ受信
     int nRcv = recv(sConnect_, reinterpret_cast<char*>(&outData), sizeof(T), 0);
 
@@ -176,6 +188,17 @@ bool NetworkManager::Receive(T& outData) {
 
 void NetworkManager::Update() {
    
+}
+
+bool NetworkManager::GetLatestPlayerState(SendPlayerState& out) const{
+
+    if (playerState_.life < 0){
+        return false;
+    }
+
+    out = playerState_;
+
+    return true;
 }
 
 // 明示的なテンプレートインスタンス化
