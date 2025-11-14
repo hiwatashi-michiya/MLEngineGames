@@ -181,9 +181,18 @@ void Player::SyncFromNetwork(){
 		// Client専用処理
 		// 受信状態を自プレイヤーに適用
 		life_ = netState.life;
-		nowLine_ = netState.nowLine;
-		isForward_ = netState.isForwardFlug;
+		isForward_ = !netState.isForwardFlug;
 		isDamaged_ = netState.isDamagedFlug;
+		if (netState.nowLine == 0){
+			nowLine_ = 2;
+		}
+		else if (netState.nowLine == 2){
+			nowLine_ = 0;
+		}
+		else {
+			nowLine_ = netState.nowLine;
+		}
+
 #else
 		// Server処理
 		// 受信状態を自プレイヤーに適用
@@ -194,3 +203,4 @@ void Player::SyncFromNetwork(){
 		
 	}
 }
+

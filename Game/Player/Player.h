@@ -50,7 +50,6 @@ private:
 	//通信相手のplayer情報を取得
 	void SyncFromNetwork();
 
-
 private:
 	GameConfig* config_ = nullptr;
 
