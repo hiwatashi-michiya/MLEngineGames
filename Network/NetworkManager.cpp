@@ -177,6 +177,7 @@ void NetworkManager::Send(const T& data) {
 
 template <typename T>
 bool NetworkManager::Receive(T& outData) {
+    if (sConnect_ == INVALID_SOCKET) return false;
     // データ受信
     int nRcv = recv(sConnect_, reinterpret_cast<char*>(&outData), sizeof(T), 0);
 
