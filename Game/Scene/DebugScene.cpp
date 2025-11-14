@@ -28,7 +28,7 @@ inline void DebugScene::Initialize()
 	model_.Initialize("./Resources/EngineResources/testObjects/axis.obj");
 	particle_.reset(Particle3D::Create("./Resources/model/plane/plane.obj", 32));
 	sprite_.reset(Sprite::Create(tex_, { 200.0f,200.0f }, { 0.0f,1.0f,0.0f,1.0f }));
-	sprite_->size_ = { 200.0f,200.0f };
+	sprite_->size = { 200.0f,200.0f };
 	//読み込み("./Resources/audio/"以降のパスでOK)
 	se1_.Load("SE/test.mp3");
 
@@ -73,8 +73,24 @@ void DebugScene::Update()
 			ImGui::TreePop();
 		}
 
-		if (ImGui::Checkbox("show axis", &model_.isActive_)) {
+		if (ImGui::Checkbox("show axis", &model_.isActive)) {
 
+		}
+
+		if (ImGui::Checkbox("show sprite", &sprite_->isActive)) {
+
+		}
+
+		if (ImGui::Checkbox("show particle", &particle_->isActive)) {
+
+		}
+
+		if (ImGui::Checkbox("show box", &showBox_)) {
+			lineBox_.SetIsActive(showBox_);
+		}
+
+		if (ImGui::Checkbox("show sphere", &showSphere_)) {
+			lineSphere_.SetIsActive(showSphere_);
 		}
 
 		ImGui::End();
@@ -108,6 +124,10 @@ void DebugScene::Update()
 
 	}
 
+	if (input_->GetKeyboard()->Trigger(DIK_SPACE)) {
+		sceneManager_->ChangeScene(new PlayScene());
+	}
+
 	//Particle3D
 	{
 
@@ -115,38 +135,29 @@ void DebugScene::Update()
 			//ビルボードフラグ
 			particle_->isBillboard_ = true;
 			//モデル一つ一つのアクティブフラグ
-			particle_->isActive_[i] = true;
+			particle_->particleData[i].isActive = true;
 			//トランスフォーム
-			particle_->transforms_[i].translate_ = { i * 0.1f, 0.0f,0.0f };
-			particle_->transforms_[i].scale_ = { 1.0f,1.0f,1.0f };
-			particle_->transforms_[i].rotateQuaternion_ = MLEngine::Math::IdentityQuaternion();
+			particle_->particleData[i].transform.translate_ = { i * 0.1f, 0.0f,0.0f };
+			particle_->particleData[i].transform.scale_ = { 1.0f,1.0f,1.0f };
+			particle_->particleData[i].transform.rotateQuaternion_ = MLEngine::Math::IdentityQuaternion();
 			//色
-			particle_->colors_[i] = { 1.0f, i / 32.0f, 1.0f, 1.0f };
+			particle_->particleData[i].color = { 1.0f, i / 32.0f, 1.0f, 1.0f };
 		}
 
-		if (input_->GetKeyboard()->Trigger(DIK_SPACE)) {
-			sceneManager_->ChangeScene(new PlayScene());
-		}
-
-
-
-		camera_.Update();
-
-		lineBox_.Update();
-		lineSphere_.Update();
 	}
+
+	camera_.Update();
+
+	lineBox_.Update();
+	lineSphere_.Update();
+
 }
 
 void DebugScene::Draw()
 {
+
 	
 
-	sprite_->Draw();
-	particle_->Draw(&camera_);
-
-	lineSphere_.Draw(&camera_);
-
-	lineBox_.Draw(&camera_);
 
 }
 

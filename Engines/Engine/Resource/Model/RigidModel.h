@@ -30,13 +30,11 @@ namespace MLEngine::Resource {
 
 		//初期化
 		void Initialize(const std::string& filename, const std::string& texturename = "");
-		//描画コマンド積む
-		void Draw(MLEngine::Object::Camera* camera);
 		//メッシュ切り替え
 		void SetMesh(const std::string& filename, const std::string& texturename = "");
 
 		//ワールド行列セット
-		void SetWorldMatrix(const MLEngine::Math::Matrix4x4& matrix) { worldMatrix_ = matrix; }
+		void SetWorldMatrix(const MLEngine::Math::Matrix4x4& matrix) { worldMatrix = matrix; }
 		//アニメーション読み込み
 		void LoadAnimation(const std::string& filename);
 
@@ -62,18 +60,18 @@ namespace MLEngine::Resource {
 		void SetIsLoop(bool flag) { isLoop_ = flag; }
 		//インスタンシングモデル取得
 		InstancingModel* GetInstancingModel() { return instancingModel_; }
-
-
+		//自分自身をインスタンシングモデルに登録
+		void Regist();
 		//ワールド行列
-		MLEngine::Math::Matrix4x4 worldMatrix_;
+		MLEngine::Math::Matrix4x4 worldMatrix;
 		//アニメーションのマトリックス
-		MLEngine::Math::Matrix4x4 localMatrix_;
+		MLEngine::Math::Matrix4x4 localMatrix;
 		//ワールドビュープロジェクション行列
-		MLEngine::Math::Matrix4x4 worldViewProjectionMatrix_;
+		MLEngine::Math::Matrix4x4 worldViewProjectionMatrix;
 		//色
-		MLEngine::Math::Vector4 color_;
+		MLEngine::Math::Vector4 color;
 		//アクティブフラグ
-		bool isActive_ = true;
+		bool isActive = true;
 
 	private:
 

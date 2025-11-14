@@ -58,10 +58,9 @@ namespace MLEngine::Resource {
 		//インスタンスカウント増加
 		void AddInstanceCount() { instanceCount_++; }
 		//描画データ追加
-		void AddModelData(MLEngine::Resource::RigidModel* model);
+		void Regist(MLEngine::Resource::RigidModel* model);
 		//カメラセット
 		void SetCamera(MLEngine::Object::Camera* camera);
-
 		//メッシュ
 		MLEngine::Graphics::Mesh* mesh_;
 

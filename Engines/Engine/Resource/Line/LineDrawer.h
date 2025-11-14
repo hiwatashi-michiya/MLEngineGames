@@ -21,8 +21,6 @@ namespace MLEngine::Resource {
 		~Line();
 		//頂点数
 		static const int32_t kVertexNum_ = 2;
-		//デバッグ用の線の可視化フラグ
-		static bool showCollisionLine_;
 		//静的初期化
 		static void Initialize(ID3D12Device* device);
 		//描画前処理
@@ -33,14 +31,14 @@ namespace MLEngine::Resource {
 		void Draw(MLEngine::Object::Camera* camera, const MLEngine::Math::Matrix4x4& matrix = MLEngine::Math::MakeIdentity4x4());
 		//実際の描画
 		void Render();
-		//デバッグ用の線かどうかの判定フラグセット
-		void SetIsCollisionLine(bool flag) { isCollisionLine_ = flag; }
 		//始点
-		MLEngine::Math::Vector3 start_;
+		MLEngine::Math::Vector3 start;
 		//終点
-		MLEngine::Math::Vector3 end_;
+		MLEngine::Math::Vector3 end;
 		//色
-		MLEngine::Math::Vector4 color_;
+		MLEngine::Math::Vector4 color;
+		//表示フラグ
+		bool isActive = true;
 
 	private:
 
@@ -72,9 +70,6 @@ namespace MLEngine::Resource {
 
 		LineVertexData* vertexMap_ = nullptr;
 
-		//当たり判定の線かどうか
-		bool isCollisionLine_ = true;
-
 	};
 
 	/// <summary>
@@ -87,14 +82,14 @@ namespace MLEngine::Resource {
 		~LineBox();
 		//OBBセット
 		void SetOBB(MLEngine::Math::OBB* obb) { obb_ = obb; }
-		//デバッグ用の線かどうかのフラグセット
-		void SetIsCollisionLine(bool flag);
 		//更新
 		void Update();
 		//色セット
 		void SetColor(MLEngine::Math::Vector4 color);
 		//描画コマンド積む
 		void Draw(MLEngine::Object::Camera* camera, const MLEngine::Math::Matrix4x4& matrix = MLEngine::Math::MakeIdentity4x4());
+		//表示フラグセット
+		void SetIsActive(bool flag);
 
 	private:
 
@@ -117,14 +112,14 @@ namespace MLEngine::Resource {
 		~LineSphere();
 		//OBBセット
 		void SetSphere(MLEngine::Math::Sphere* sphere) { sphere_ = sphere; }
-		//デバッグ用の線かどうかのフラグセット
-		void SetIsCollisionLine(bool flag);
 		//更新
 		void Update();
 		//色セット
 		void SetColor(MLEngine::Math::Vector4 color);
 		//描画コマンド積む
 		void Draw(MLEngine::Object::Camera* camera, const MLEngine::Math::Matrix4x4& matrix = MLEngine::Math::MakeIdentity4x4());
+		//表示フラグセット
+		void SetIsActive(bool flag);
 
 	private:
 

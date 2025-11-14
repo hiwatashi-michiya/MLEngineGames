@@ -18,7 +18,7 @@ namespace MLEngine::Resource {
 	{
 	public:
 
-		Sprite(MLEngine::Resource::Texture texture, MLEngine::Math::Vector2 position, MLEngine::Math::Vector2 size, MLEngine::Math::Vector4 color);
+		Sprite(MLEngine::Resource::Texture texture, MLEngine::Math::Vector2 position, MLEngine::Math::Vector2 s, MLEngine::Math::Vector4 color);
 		~Sprite();
 		//静的初期化
 		static void StaticInitialize(ID3D12Device* device);
@@ -38,7 +38,7 @@ namespace MLEngine::Resource {
 			MLEngine::Math::Matrix4x4 uvTransform;
 		};
 		//生成
-		static Sprite* Create(MLEngine::Resource::Texture texture, MLEngine::Math::Vector2 position, MLEngine::Math::Vector4 color = { 1.0f,1.0f,1.0f,1.0f });
+		static Sprite* Create(MLEngine::Resource::Texture texture, MLEngine::Math::Vector2 pos, MLEngine::Math::Vector4 col = { 1.0f,1.0f,1.0f,1.0f });
 		//描画前処理
 		static void PreDraw(ID3D12GraphicsCommandList* commandList);
 		//描画後処理
@@ -47,42 +47,42 @@ namespace MLEngine::Resource {
 		static void Finalize();
 
 		//位置
-		MLEngine::Math::Vector2 position_{};
+		MLEngine::Math::Vector2 position{};
 
 		//サイズ
-		MLEngine::Math::Vector2 size_{};
+		MLEngine::Math::Vector2 size{};
 
 		//スプライト上の表示範囲
-		MLEngine::Math::Vector2 viewRect_{};
+		MLEngine::Math::Vector2 viewRect{};
 
 		//アンカーポイント
-		MLEngine::Math::Vector2 anchorPoint_{};
+		MLEngine::Math::Vector2 anchorPoint{};
 
 		//UVの位置
-		MLEngine::Math::Vector2 uvTranslate_{};
+		MLEngine::Math::Vector2 uvTranslate{};
 
 		//UV回転
-		float uvRotate_ = 0.0f;
+		float uvRotate = 0.0f;
 
 		//UVスケール
-		MLEngine::Math::Vector2 uvScale_{ 1.0f,1.0f };
+		MLEngine::Math::Vector2 uvScale{ 1.0f,1.0f };
 
 		//色
-		MLEngine::Math::Vector4 color_ = { 1.0f,1.0f,1.0f,1.0f };
+		MLEngine::Math::Vector4 color = { 1.0f,1.0f,1.0f,1.0f };
 		//アクティブフラグ
-		bool isActive_ = true;
+		bool isActive = true;
 
 	public:
-		//描画コマンド積む
+		//描画コマンド積む(アプリ層での呼び出し不要)
 		void Draw();
 		//実際の描画
 		void Render();
 		//テクスチャセット
 		void SetTexture(MLEngine::Resource::Texture tex) { texture_ = tex; }
 		//ポジションセット
-		void SetPosition(MLEngine::Math::Vector2 pos) { position_ = pos; }
+		void SetPosition(MLEngine::Math::Vector2 pos) { position = pos; }
 		//ポジション取得
-		MLEngine::Math::Vector2 GetPosition() { return position_; }
+		MLEngine::Math::Vector2 GetPosition() { return position; }
 		//デバッグ更新
 		void ImGuiUpdate(const std::string name);
 

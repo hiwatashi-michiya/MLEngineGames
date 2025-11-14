@@ -309,7 +309,7 @@ void SkinningModel::Initialize(const std::string& filename, int32_t number) {
 
 	meshFilePath_ = filename;
 
-	texture_.Load(mesh_->textureFilePath_);
+	texture_.Load(mesh_->GetTextureFilePath());
 	maskTexture_.Load("./Resources/EngineResources/defaultMask.png");
 
 	//skeleton,skinCluster設定
@@ -319,11 +319,11 @@ void SkinningModel::Initialize(const std::string& filename, int32_t number) {
 
 		skeleton_ = std::make_unique<Skeleton>();
 
-		*skeleton_ = CreateSkeleton(mesh_->modelData_.rootNode);
+		*skeleton_ = CreateSkeleton(mesh_->GetModelData().rootNode);
 
 		skinCluster_ = std::make_unique<Skinning::SkinCluster>();
 
-		skinCluster_->Create(device_, *skeleton_, mesh_->modelData_);
+		skinCluster_->Create(device_, *skeleton_, mesh_->GetModelData());
 
 		currentFileName_ = stringMap_[number];
 
@@ -511,7 +511,7 @@ void SkinningModel::Render()
 {
 
 	D3D12_VERTEX_BUFFER_VIEW vbvs[2] = {
-		mesh_->vbView_,
+		mesh_->GetVBView(),
 		skinCluster_->influenceBufferView_
 	};
 
@@ -576,7 +576,7 @@ void SkinningModel::SetMesh(const std::string& objFileName) {
 
 	meshFilePath_ = objFileName;
 
-	texture_.Load(mesh_->textureFilePath_);
+	texture_.Load(mesh_->GetTextureFilePath());
 
 }
 
