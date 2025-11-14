@@ -69,15 +69,18 @@ void Enemy::Update()
 	if (dynamic_cast<EnemyNormalState*>(currentState_.get())) {
 		ImGui::DragFloat("弾速度", &dynamic_cast<EnemyNormalState*>(currentState_.get())->bulletSpeed_, 0.1f);
 		ImGui::DragFloat("発射間隔", &dynamic_cast<EnemyNormalState*>(currentState_.get())->fireInterval, 0.1f);
+		ImGui::Text("経過時間 : %f" ,dynamic_cast<EnemyNormalState*>(currentState_.get())->intervalTime_);
 		stateIndex = 0;
 	}
 	else if (dynamic_cast<EnemyDownState*>(currentState_.get())) {
 		ImGui::DragFloat("ダウン時間", &dynamic_cast<EnemyDownState*>(currentState_.get())->downTime, 0.1f);
+		ImGui::Text("経過時間 : %f", dynamic_cast<EnemyDownState*>(currentState_.get())->elapsedTime_);
 		stateIndex = 1;
 	}
 	else if (dynamic_cast<EnemyBerserkState*>(currentState_.get())) {
 		ImGui::DragFloat("弾速度", &dynamic_cast<EnemyBerserkState*>(currentState_.get())->bulletSpeed_, 0.1f);
 		ImGui::DragFloat("発射間隔", &dynamic_cast<EnemyBerserkState*>(currentState_.get())->fireInterval, 0.1f);
+		ImGui::Text("経過時間 : %f", dynamic_cast<EnemyBerserkState*>(currentState_.get())->intervalTime_);
 		stateIndex = 2;
 	}
 
