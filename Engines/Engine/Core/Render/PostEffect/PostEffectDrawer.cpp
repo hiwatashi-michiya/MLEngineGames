@@ -92,31 +92,10 @@ void PostEffectDrawer::Initialize() {
 
 }
 
-void PostEffectDrawer::Draw(int32_t textureNum) {
-
-	if (textureNum < 0 or textureNum > 1) {
-		return;
-	}
-
-	ID3D12GraphicsCommandList* commandList = DirectXSetter::GetInstance()->GetCommandList();
-
-	//TransitionBarrierの設定
-	D3D12_RESOURCE_BARRIER barrier{};
-	//今回のバリアはTransition
-	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	//Noneにしておく
-	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	//バリアを張る対象のリソース。現在のバックバッファに対して行う
-	barrier.Transition.pResource = renderTextures_[textureNum].Get();
-	//遷移前(現在)のResourceState
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	//遷移後のResourceState
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-	//TransitionBarrierを張る
-	commandList->ResourceBarrier(1, &barrier);
+void PostEffectDrawer::Draw(int32_t drawNum) {
 
 	//最初の一回だけ全部描画する
-	if (!isUsedAllEffects_) {
+	/*if (not isUsedAllEffects_) {
 
 		for (int32_t i = 0; i < postEffects_.size(); i++) {
 			postEffects_[i]->Render();
@@ -125,30 +104,26 @@ void PostEffectDrawer::Draw(int32_t textureNum) {
 
 		isUsedAllEffects_ = true;
 
-	}
+	}*/
 	//指定したタイプのエフェクト描画
 	if (type_ < postEffects_.size()) {
 		postEffects_[type_]->Render();
 	}
 
-	renderTextures_[textureNum].Draw();
+	//書き込み先を設定
+	renderTextures_[drawNum].Draw(renderTextures_[drawNum].GetGPUHandle());
 
 	if (type_ < postEffects_.size()) {
 		postEffects_[type_]->PostRender();
 	}
 
-	//今回のバリアはTransition
-	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	//Noneにしておく
-	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	//バリアを張る対象のリソース。現在のバックバッファに対して行う
-	barrier.Transition.pResource = renderTextures_[textureNum].Get();
-	//遷移前(現在)のResourceState
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-	//遷移後のResourceState
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	//TransitionBarrierを張る
-	commandList->ResourceBarrier(1, &barrier);
+}
+
+void PostEffectDrawer::SetBarrier(int32_t index, D3D12_RESOURCE_STATES before, D3D12_RESOURCE_STATES after)
+{
+
+	Core::DirectXFunction::SetBarrier(D3D12_RESOURCE_BARRIER_TYPE_TRANSITION, D3D12_RESOURCE_BARRIER_FLAG_NONE,
+		before, after, renderTextures_[index].Get());
 
 }
 
