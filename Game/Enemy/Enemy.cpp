@@ -1,22 +1,24 @@
 #include "Enemy.h"
 
 #include "Input/Input.h"
+#include"Externals/imgui/imgui.h"
 
 void Enemy::Initialize()
 {
-	position_ = { 640.0f, 200.0f };
+	position_ = initialPosition_;
 
 	MLEngine::Resource::Texture texture;
 	texture.Load("./Resources/EngineResources/defaultMask.png");
-	sprite_.reset(MLEngine::Resource::Sprite::Create(texture, initialPosition_, { 1.0f,1.0f,1.0f,1.0f }));
-	sprite_->anchorPoint_ = { 0.5f,0.5f };
-	sprite_->size_ = { 320.0f,160.0f };
+	sprite_.reset(MLEngine::Resource::Sprite::Create(texture, position_, { 1.0f,1.0f,1.0f,1.0f }));
+	sprite_->anchorPoint = { 0.5f,0.5f };
+	sprite_->size = { 320.0f,160.0f };
 
 
 	ChangeState(std::make_unique<EnemyNormalState>());
 
 	bulletManager_ = std::make_unique<BulletManager>();
 	bulletManager_->Initialize();
+	bulletManager_->SetLaunchPosition(LaunchPosition());
 
 	for (int i = 0; i < 3; ++i) {
 		bulletManager_->SpawnBullet({ LaunchPosition().x + distance_ * (i - 1), LaunchPosition().y}, {(i - 1) * 0.8f , 1.0f}, 4.0f);
@@ -45,6 +47,55 @@ void Enemy::Update()
 
 	currentState_->Update(this);
 	bulletManager_->Update();
+	bulletManager_->SetLaunchPosition(LaunchPosition());
+
+
+
+	ImGui::Begin("敵パラメーター");
+
+	// 状態
+	if (ImGui::Combo("モード", &stateIndex, states, IM_ARRAYSIZE(states))) {
+		if (stateIndex == 0) {
+			ChangeState(std::make_unique<EnemyNormalState>());
+		}
+		else if (stateIndex == 1) {
+			ChangeState(std::make_unique<EnemyDownState>());
+		}
+		else if (stateIndex == 2) {
+			ChangeState(std::make_unique<EnemyBerserkState>());
+		}
+	}
+	// 状態ごとのパラメーター
+	if (dynamic_cast<EnemyNormalState*>(currentState_.get())) {
+		ImGui::DragFloat("弾速度", &dynamic_cast<EnemyNormalState*>(currentState_.get())->bulletSpeed_, 0.1f);
+		ImGui::DragFloat("発射間隔", &dynamic_cast<EnemyNormalState*>(currentState_.get())->fireInterval, 0.1f);
+		stateIndex = 0;
+	}
+	else if (dynamic_cast<EnemyDownState*>(currentState_.get())) {
+		ImGui::DragFloat("ダウン時間", &dynamic_cast<EnemyDownState*>(currentState_.get())->downTime, 0.1f);
+		stateIndex = 1;
+	}
+	else if (dynamic_cast<EnemyBerserkState*>(currentState_.get())) {
+		ImGui::DragFloat("弾速度", &dynamic_cast<EnemyBerserkState*>(currentState_.get())->bulletSpeed_, 0.1f);
+		ImGui::DragFloat("発射間隔", &dynamic_cast<EnemyBerserkState*>(currentState_.get())->fireInterval, 0.1f);
+		stateIndex = 2;
+	}
+
+
+	ImGui::Separator();
+
+	// 位置、サイズ
+	ImGui::DragFloat2("位置", &sprite_->position.x, 1.0f);
+	ImGui::DragFloat2("サイズ", &sprite_->size.x, 1.0f);
+
+	// 体力
+	ImGui::SliderInt("体力", &hp_, 0, maxHp_);
+	ImGui::SliderInt("最大体力", &maxHp_, 1, 10000);
+	if (maxHp_ < hp_) {
+		hp_ = maxHp_;
+	}
+
+	ImGui::End();
 
 
 }
@@ -67,7 +118,7 @@ void Enemy::ChangeState(std::unique_ptr<EnemyState> newState)
 
 MLEngine::Math::Vector2 Enemy::LaunchPosition()
 {
-	MLEngine::Math::Vector2 launchPosition = initialPosition_;
-	launchPosition.y += sprite_->size_.y / 2.0f;
+	MLEngine::Math::Vector2 launchPosition = position_;
+	launchPosition.y += sprite_->size.y / 2.0f;
 	return launchPosition;
 }

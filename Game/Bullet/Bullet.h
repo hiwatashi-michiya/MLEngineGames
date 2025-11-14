@@ -35,6 +35,10 @@ public:
 	void SetTargetPosition(MLEngine::Math::Vector2 targetPosition) { targetPosition_ = targetPosition; }
 	// 移動時間セット
 	void SetTravelTime(float time) { travelTime_ = time; elapsedTime_ = 0.0f; }
+	// サイズ(最小・最大)セット
+	void SetSize(float minSize, float maxSize) { minSize_ = minSize; maxSize_ = maxSize; }
+	// 終点ラインセット
+	void SetEndLine(float endLine) { endLine_ = endLine; }
 
 private:
 	// スプライト
@@ -46,11 +50,13 @@ private:
 	//アクティブ状態かどうか
 	bool isActive_ = true;
 	// 最小サイズ
-	const float minSize_ = 32.0f;
+	float minSize_ = 32.0f;
+	// 最大サイズ
+	float maxSize_ = 128.0f;
 	// サイズ倍率
 	const float multiplier_ = 4.0f;
-	// 画面下端ライン
-	const float bottomLine_ = 640.0f;
+	// 終点ライン
+	float endLine_ = 640.0f;
 
 	MLEngine::Math::Vector2 startPosition_;
 	// 目標位置

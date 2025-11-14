@@ -9,11 +9,19 @@
 class Enemy :public MLEngine::Object::GameObject
 {
 public:
+	const char* states[3] = {
+	"Normal",
+	"Down",
+	"Berserk"
+	};
+
+public:
 	Enemy() {};
 	~Enemy() {};
 	void Initialize() override;
 	void Update() override;
 	void Draw(MLEngine::Object::Camera* camera) override;
+	void ImguiDraw();
 
 	// 状態変更
 	void ChangeState(std::unique_ptr<EnemyState> newState);
@@ -39,6 +47,9 @@ private:
 	// 体力
 	int maxHp_ = 500;
 	int hp_ = 0;
+
+	// ImGui用状態選択インデックス
+	int stateIndex = 0;
 
 	
 };
