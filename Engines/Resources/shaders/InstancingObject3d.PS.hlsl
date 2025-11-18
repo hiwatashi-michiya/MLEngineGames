@@ -1,4 +1,4 @@
-#include "Particle3d.hlsli"
+#include "InstancingObject3d.hlsli"
 #include "Material3d.hlsli"
 
 struct DirectionalLight {

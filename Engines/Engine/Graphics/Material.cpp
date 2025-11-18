@@ -76,12 +76,12 @@ Material* Material::Create() {
 		constBuff_->SetName(L"constBuff");
 
 		//マッピングしてデータ転送
-		constBuff_->Map(0, nullptr, reinterpret_cast<void**>(&constMap_));
+		constBuff_->Map(0, nullptr, reinterpret_cast<void**>(&constMap));
 
-		constMap_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-		constMap_->enableLighting = true;
-		constMap_->shininess = 50.0f;
-		constMap_->uvTransform = MakeIdentity4x4();
+		constMap->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+		constMap->enableLighting = true;
+		constMap->shininess = 50.0f;
+		constMap->uvTransform = MakeIdentity4x4();
 
 		//アンマップ
 		constBuff_->Unmap(0, nullptr);
@@ -95,11 +95,11 @@ Material* Material::Create() {
 
 		dLightBuff_->SetName(L"dLightBuff");
 
-		dLightBuff_->Map(0, nullptr, reinterpret_cast<void**>(&dLightMap_));
+		dLightBuff_->Map(0, nullptr, reinterpret_cast<void**>(&dLightMap));
 
-		dLightMap_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-		dLightMap_->direction = { 0.0f,1.0f,-1.0f };
-		dLightMap_->intensity = 0.0f;
+		dLightMap->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+		dLightMap->direction = { 0.0f,1.0f,-1.0f };
+		dLightMap->intensity = 0.0f;
 
 		dLightBuff_->Unmap(0, nullptr);
 
@@ -112,13 +112,13 @@ Material* Material::Create() {
 
 		pLightBuff_->SetName(L"pLightBuff");
 
-		pLightBuff_->Map(0, nullptr, reinterpret_cast<void**>(&pLightMap_));
+		pLightBuff_->Map(0, nullptr, reinterpret_cast<void**>(&pLightMap));
 
-		pLightMap_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-		pLightMap_->position = { 0.0f,50.0f,-10.0f };
-		pLightMap_->intensity = 1.0f;
-		pLightMap_->radius = 200.0f;
-		pLightMap_->decay = 1.0f;
+		pLightMap->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+		pLightMap->position = { 0.0f,50.0f,-10.0f };
+		pLightMap->intensity = 1.0f;
+		pLightMap->radius = 200.0f;
+		pLightMap->decay = 1.0f;
 
 	}
 
@@ -130,7 +130,7 @@ Material* Material::Create() {
 
 void Material::SetCommandMaterial(ID3D12GraphicsCommandList* commandList) {
 
-	dLightMap_->direction = Normalize(dLightMap_->direction);
+	dLightMap->direction = Normalize(dLightMap->direction);
 
 	//平行光源設定
 	commandList->SetGraphicsRootConstantBufferView(3, dLightBuff_->GetGPUVirtualAddress());
@@ -157,23 +157,23 @@ void Material::ImGuiUpdate() {
 #ifdef _DEBUG
 
 	if (ImGui::TreeNode("Base Material")) {
-		ImGui::ColorEdit4("C_color", &constMap_->color.x);
-		ImGui::SliderInt("C_Lighting", &constMap_->enableLighting, 0, 1);
-		ImGui::DragFloat("C_shininess", &constMap_->shininess, 0.05f, 0.0f, 100.0f);
+		ImGui::ColorEdit4("C_color", &constMap->color.x);
+		ImGui::SliderInt("C_Lighting", &constMap->enableLighting, 0, 1);
+		ImGui::DragFloat("C_shininess", &constMap->shininess, 0.05f, 0.0f, 100.0f);
 		ImGui::TreePop();
 	}
 	if (ImGui::TreeNode("Directional Light")) {
-		ImGui::ColorEdit4("D_color", &dLightMap_->color.x);
-		ImGui::DragFloat3("D_direction", &dLightMap_->direction.x, 0.01f, -1.0f, 1.0f);
-		ImGui::DragFloat("D_intencity", &dLightMap_->intensity, 0.01f, 0.0f, 100.0f);
+		ImGui::ColorEdit4("D_color", &dLightMap->color.x);
+		ImGui::DragFloat3("D_direction", &dLightMap->direction.x, 0.01f, -1.0f, 1.0f);
+		ImGui::DragFloat("D_intencity", &dLightMap->intensity, 0.01f, 0.0f, 100.0f);
 		ImGui::TreePop();
 	}
 	if (ImGui::TreeNode("Point Light")) {
-		ImGui::ColorEdit4("P_color", &pLightMap_->color.x);
-		ImGui::DragFloat3("P_position", &pLightMap_->position.x, 0.01f);
-		ImGui::DragFloat("P_intencity", &pLightMap_->intensity, 0.01f, 0.0f, 100.0f);
-		ImGui::DragFloat("P_radius", &pLightMap_->radius, 0.01f);
-		ImGui::DragFloat("P_decay", &pLightMap_->decay, 0.05f, 0.0f, 100.0f);
+		ImGui::ColorEdit4("P_color", &pLightMap->color.x);
+		ImGui::DragFloat3("P_position", &pLightMap->position.x, 0.01f);
+		ImGui::DragFloat("P_intencity", &pLightMap->intensity, 0.01f, 0.0f, 100.0f);
+		ImGui::DragFloat("P_radius", &pLightMap->radius, 0.01f);
+		ImGui::DragFloat("P_decay", &pLightMap->decay, 0.05f, 0.0f, 100.0f);
 		ImGui::TreePop();
 	}
 

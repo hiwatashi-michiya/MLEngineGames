@@ -2,6 +2,7 @@
 #include "BaseScene.h"
 #include "RigidModel.h"
 #include "Camera.h"
+#include "DebugCamera.h"
 #include "Sprite.h"
 #include "Audio.h"
 #include "Input.h"
@@ -35,7 +36,8 @@ private:
 	//入力デバイス
 	MLEngine::Input::Manager* input_ = nullptr;
 
-	
+	//
+	MLEngine::Object::DebugCamera debugCamera_;
 	//オーディオ
 	MLEngine::Resource::Audio se1_;
 	//通常モデル
@@ -57,6 +59,7 @@ private:
 
 	bool showBox_ = true;
 	bool showSphere_ = true;
+	bool isDebugCamera_ = false;
 
 };
 

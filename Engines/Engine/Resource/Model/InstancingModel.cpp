@@ -41,21 +41,21 @@ void InstancingModel::Initialize(const std::string& filename) {
 
 	if (Render::Mesh::Manager::GetInstance()->IsExistMesh(filename)) {
 
-		mesh_ = Render::Mesh::Manager::GetInstance()->GetMesh(filename);
+		mesh = Render::Mesh::Manager::GetInstance()->GetMesh(filename);
 
 	}
 	else {
 
 		//メッシュを登録
 		Render::Mesh::Manager::GetInstance()->CreateMesh(filename);
-		mesh_ = Render::Mesh::Manager::GetInstance()->GetMesh(filename);
+		mesh = Render::Mesh::Manager::GetInstance()->GetMesh(filename);
 
 	}
 
-	material_ = std::make_unique<Graphics::Material>();
-	material_->Create();
+	material = std::make_unique<Graphics::Material>();
+	material->Create();
 
-	texture_.Load(mesh_->GetTextureFilePath());
+	texture_.Load(mesh->GetTextureFilePath());
 
 	//transformMatrix
 	{
@@ -74,6 +74,21 @@ void InstancingModel::Initialize(const std::string& filename) {
 		}
 
 		matBuff_->Unmap(0, nullptr);
+
+	}
+
+	//オプション
+	{
+
+		optionsBuff_ = CreateBufferResource(DirectXSetter::GetInstance()->GetDevice(), sizeof(MaterialOptions));
+
+		optionsBuff_->SetName(L"matrixBuff");
+
+		optionsBuff_->Map(0, nullptr, reinterpret_cast<void**>(&optionsMap));
+
+		optionsMap->enableNormalMap = true;
+
+		optionsBuff_->Unmap(0, nullptr);
 
 	}
 
@@ -112,15 +127,18 @@ void InstancingModel::Render(ID3D12GraphicsCommandList* commandList)
 
 	//カメラ設定
 	commandList->SetGraphicsRootConstantBufferView(4, cameraBuff_->GetGPUVirtualAddress());
-	commandList->SetGraphicsRootConstantBufferView(1, matBuff_->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootConstantBufferView(1, optionsBuff_->GetGPUVirtualAddress());
 
 	commandList->SetGraphicsRootDescriptorTable(2, texture_.GetGPUHandle());
 	commandList->SetGraphicsRootDescriptorTable(6, instancingResource_.GetGPUHandle());
+	commandList->SetGraphicsRootDescriptorTable(7, texture_.GetGPUHandle());
 
-	//描画
-	material_->SetCommandMaterial(commandList);
+	commandList->SetGraphicsRootConstantBufferView(8, material->GetConstBuffer()->GetGPUVirtualAddress());
 
-	mesh_->SetCommandMesh(commandList, instanceCount_);
+	//コマンドセット
+	material->SetCommandMaterial(commandList);
+
+	mesh->SetCommandMesh(commandList, instanceCount_);
 	//インスタンスカウントリセット
 	instanceCount_ = 0;
 
@@ -141,7 +159,7 @@ void InstancingModel::ImGuiUpdate(const std::string& name) {
 	if (ImGui::BeginTabBar("InstancingModel", ImGuiTabBarFlags_None)) {
 
 		if (ImGui::BeginTabItem("material")) {
-			material_->ImGuiUpdate();
+			material->ImGuiUpdate();
 			ImGui::EndTabItem();
 		}
 

@@ -49,13 +49,17 @@ void Model::Manager::Initialize()
 	DescriptorRange descriptorRange{};
 	descriptorRange.SetSize(1);
 	descriptorRange.SetDescriptorRange(0, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND, 0);
-
+	//インスタンシング描画用
 	DescriptorRange descriptorRangeForInstancing{};
 	descriptorRangeForInstancing.SetSize(1);
 	descriptorRangeForInstancing.SetDescriptorRange(0, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND, 0);
+	//ノーマルマップ用
+	DescriptorRange descriptorRangeForNormalMap{};
+	descriptorRangeForNormalMap.SetSize(1);
+	descriptorRangeForNormalMap.SetDescriptorRange(1, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND, 0);
 
 	RootParameter rootParameter{};
-	rootParameter.SetSize(8);
+	rootParameter.SetSize(9);
 	rootParameter.SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 0, 0);
 	rootParameter.SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_VERTEX, 0, 1);
 	rootParameter.SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, descriptorRange.Get(), 2);
@@ -63,14 +67,18 @@ void Model::Manager::Initialize()
 	rootParameter.SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 2, 4);
 	rootParameter.SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 3, 5);
 	rootParameter.SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_VERTEX, descriptorRangeForInstancing.Get(), 6);
-
+	rootParameter.SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_VERTEX, descriptorRangeForNormalMap.Get(), 7);
+	rootParameter.SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_VERTEX, 1, 8);
+	
 	rootSignatureDesc.SetRootParameter(rootParameter.Get());
 
 	//Samplerの設定
 	StaticSampler staticSampler{};
-	staticSampler.SetSize(1);
+	staticSampler.SetSize(2);
 	staticSampler.SetSampler(D3D12_FILTER_MIN_MAG_MIP_LINEAR, D3D12_TEXTURE_ADDRESS_MODE_WRAP,
 		D3D12_COMPARISON_FUNC_NEVER, D3D12_FLOAT32_MAX, 0, D3D12_SHADER_VISIBILITY_PIXEL, 0);
+	staticSampler.SetSampler(D3D12_FILTER_MIN_MAG_MIP_LINEAR, D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+		D3D12_COMPARISON_FUNC_NEVER, D3D12_FLOAT32_MAX, 0, D3D12_SHADER_VISIBILITY_VERTEX, 1);
 
 	rootSignatureDesc.SetSamplers(staticSampler.Get());
 

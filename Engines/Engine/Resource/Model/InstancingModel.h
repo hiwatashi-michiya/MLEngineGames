@@ -47,10 +47,10 @@ namespace MLEngine::Resource {
 		void SetTexture(const std::string& name);
 
 		//ライト切り替え
-		void SetLight(bool flag) { material_->constMap_->enableLighting = flag; }
+		void SetLight(bool flag) { material->constMap->enableLighting = flag; }
 
 		//色変更
-		void SetColor(const MLEngine::Math::Vector4& color) { material_->constMap_->color = color; }
+		void SetColor(const MLEngine::Math::Vector4& color) { material->constMap->color = color; }
 
 		//ImGui表示
 		void ImGuiUpdate(const std::string& name);
@@ -62,10 +62,13 @@ namespace MLEngine::Resource {
 		//カメラセット
 		void SetCamera(MLEngine::Object::Camera* camera);
 		//メッシュ
-		MLEngine::Graphics::Mesh* mesh_;
+		MLEngine::Graphics::Mesh* mesh;
 
 		//マテリアル
-		std::unique_ptr<MLEngine::Graphics::Material> material_;
+		std::unique_ptr<MLEngine::Graphics::Material> material;
+
+		//マテリアルオプション
+		MaterialOptions* optionsMap = nullptr;
 
 	private:
 
@@ -73,7 +76,8 @@ namespace MLEngine::Resource {
 		Microsoft::WRL::ComPtr<ID3D12Resource> cameraBuff_;
 		//画面上のワールド座標バッファ
 		Microsoft::WRL::ComPtr<ID3D12Resource> matBuff_;
-
+		//描画オプションバッファ
+		Microsoft::WRL::ComPtr<ID3D12Resource> optionsBuff_;
 		//現在のインスタンスカウント
 		int32_t instanceCount_ = 0;
 

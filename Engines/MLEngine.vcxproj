@@ -85,7 +85,7 @@
       <AdditionalOptions>/utf-8</AdditionalOptions>
       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Editor;$(ProjectDir)Engine;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Utility;$(ProjectDir)Engine\Tool;$(ProjectDir)Engine\Resource;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\Core;$(ProjectDir)Engine\Core\Render;$(ProjectDir)Engine\Core\Buffer;$(ProjectDir)Engine\Core\DescriptorHeap;$(ProjectDir)Engine\Input;$(ProjectDir)Externals\assimp\include;$(ProjectDir)Game</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 </AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Editor;$(ProjectDir)Engine;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Utility;$(ProjectDir)Engine\Tool;$(ProjectDir)Engine\Resource;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\Core;$(ProjectDir)Engine\Core\Render;$(ProjectDir)Engine\Core\Buffer;$(ProjectDir)Engine\Core\DescriptorHeap;$(ProjectDir)Engine\Input;$(ProjectDir)Externals\assimp\include;$(ProjectDir)Externals\imgui;$(ProjectDir)Engine\Object</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Editor;$(ProjectDir)Engine;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Utility;$(ProjectDir)Engine\Tool;$(ProjectDir)Engine\Resource;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\Core;$(ProjectDir)Engine\Core\Render;$(ProjectDir)Engine\Core\Buffer;$(ProjectDir)Engine\Core\DescriptorHeap;$(ProjectDir)Engine\Input;$(ProjectDir)Externals\assimp\include;$(ProjectDir)Externals\imgui;$(ProjectDir)Engine\Object;$(ProjectDir)Engine\Core\Render\Config</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
       <Optimization>Disabled</Optimization>
@@ -114,7 +114,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 </AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Editor;$(ProjectDir)Engine;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Utility;$(ProjectDir)Engine\Tool;$(ProjectDir)Engine\Resource;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\Core;$(ProjectDir)Engine\Core\Render;$(ProjectDir)Engine\Core\Buffer;$(ProjectDir)Engine\Core\DescriptorHeap;$(ProjectDir)Engine\Input;$(ProjectDir)Externals\assimp\include;$(ProjectDir)Externals\imgui;$(ProjectDir)Engine\Object</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Editor;$(ProjectDir)Engine;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Utility;$(ProjectDir)Engine\Tool;$(ProjectDir)Engine\Resource;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\Core;$(ProjectDir)Engine\Core\Render;$(ProjectDir)Engine\Core\Buffer;$(ProjectDir)Engine\Core\DescriptorHeap;$(ProjectDir)Engine\Input;$(ProjectDir)Externals\assimp\include;$(ProjectDir)Externals\imgui;$(ProjectDir)Engine\Object;$(ProjectDir)Engine\Core\Render\Config</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <Optimization>MinSpace</Optimization>
@@ -144,7 +144,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 </AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Editor;$(ProjectDir)Engine;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Utility;$(ProjectDir)Engine\Tool;$(ProjectDir)Engine\Resource;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\Core;$(ProjectDir)Engine\Core\Render;$(ProjectDir)Engine\Core\Buffer;$(ProjectDir)Engine\Core\DescriptorHeap;$(ProjectDir)Engine\Input;$(ProjectDir)Externals\assimp\include;$(ProjectDir)Externals\imgui;$(ProjectDir)Engine\Object</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Editor;$(ProjectDir)Engine;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Utility;$(ProjectDir)Engine\Tool;$(ProjectDir)Engine\Resource;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\Core;$(ProjectDir)Engine\Core\Render;$(ProjectDir)Engine\Core\Buffer;$(ProjectDir)Engine\Core\DescriptorHeap;$(ProjectDir)Engine\Input;$(ProjectDir)Externals\assimp\include;$(ProjectDir)Externals\imgui;$(ProjectDir)Engine\Object;$(ProjectDir)Engine\Core\Render\Config</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <Optimization>MinSpace</Optimization>
@@ -233,6 +233,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Editor\ParticleEditor.h" />
+    <ClInclude Include="Engine\Core\Render\Config\PipelineConfig.h" />
     <ClInclude Include="Engine\Core\Render\ResourceView.h" />
     <ClInclude Include="Engine\Resource\Audio\Audio.h" />
     <ClInclude Include="Engine\Resource\InstancingResource.h" />
@@ -318,6 +319,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\FullScreen.hlsli" />
+    <None Include="Resources\shaders\InstancingObject3d.hlsli" />
     <None Include="Resources\shaders\Line.hlsli" />
     <None Include="Resources\shaders\Material3d.hlsli" />
     <None Include="resources\shaders\Object3d.hlsli" />
@@ -413,6 +415,14 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Resources\shaders\Paper.PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">Pixel</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Resources\shaders\Particle2d.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

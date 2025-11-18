@@ -73,10 +73,10 @@ namespace MLEngine::Resource {
 		void SetMesh(const std::string& objFileName);
 
 		//ライト切り替え
-		void SetLight(bool flag) { material_->constMap_->enableLighting = flag; }
+		void SetLight(bool flag) { material_->constMap->enableLighting = flag; }
 
 		//色変更
-		void SetColor(const MLEngine::Math::Vector4& color) { material_->constMap_->color = color; }
+		void SetColor(const MLEngine::Math::Vector4& color) { material_->constMap->color = color; }
 
 		//ImGui表示
 		void ImGuiUpdate(const std::string& name);

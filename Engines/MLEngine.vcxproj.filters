@@ -449,6 +449,9 @@
     <ClInclude Include="Engine\Resource\ResourceManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Core\Render\Config\PipelineConfig.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\FullScreen.hlsli">
@@ -475,6 +478,7 @@
     <None Include="resources\shaders\Sprite.hlsli">
       <Filter>shader</Filter>
     </None>
+    <None Include="Resources\shaders\InstancingObject3d.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shaders\BoxFilter.PS.hlsl">
@@ -555,5 +559,6 @@
     <FxCompile Include="Resources\shaders\Vignette.PS.hlsl">
       <Filter>shader</Filter>
     </FxCompile>
+    <FxCompile Include="Resources\shaders\Paper.PS.hlsl" />
   </ItemGroup>
 </Project>

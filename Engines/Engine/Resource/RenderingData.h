@@ -61,6 +61,11 @@ namespace MLEngine::Resource {
 		MLEngine::Math::Vector3 worldPosition;
 	};
 
+	//描画オプション構造体
+	struct MaterialOptions {
+		int32_t enableNormalMap;
+	};
+
 	//マップエディター用のデータ構造体
 	struct ObjectData
 	{

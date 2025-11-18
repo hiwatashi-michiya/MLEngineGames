@@ -3,6 +3,7 @@
 #include"Externals/imgui/imgui.h"
 #include"SceneManager.h"
 #include"PlayScene.h"
+#include "InstancingModel.h"
 
 using namespace MLEngine::Resource;
 using namespace MLEngine::Object::Collision;
@@ -22,10 +23,11 @@ inline void DebugScene::Initialize()
 
 	camera_.Initialize();
 	camera_.position_ = { 0.0f,0.0f,-10.0f };
+	debugCamera_.Initialize();
 
 	tex_.Load("./Resources/white.png");
 
-	model_.Initialize("./Resources/EngineResources/testObjects/axis.obj");
+	model_.Initialize("./Resources/model/block/glassBlock.obj");
 	particle_.reset(Particle3D::Create("./Resources/model/plane/plane.obj", 32));
 	sprite_.reset(Sprite::Create(tex_, { 200.0f,200.0f }, { 0.0f,1.0f,0.0f,1.0f }));
 	sprite_->size = { 200.0f,200.0f };
@@ -73,7 +75,22 @@ void DebugScene::Update()
 			ImGui::TreePop();
 		}
 
-		if (ImGui::Checkbox("show axis", &model_.isActive)) {
+		if (ImGui::Checkbox("debug Camera", &isDebugCamera_)) {
+
+			if (isDebugCamera_) {
+				sceneManager_->SetMainCamera(debugCamera_.GetCamera());
+			}
+			else {
+				sceneManager_->SetMainCamera(&camera_);
+			}
+
+		}
+
+		if (ImGui::DragInt("use normal map", &model_.GetInstancingModel()->optionsMap->enableNormalMap, 0.1f,0, 1)) {
+
+		}
+
+		if (ImGui::Checkbox("show model", &model_.isActive)) {
 
 		}
 
@@ -146,7 +163,12 @@ void DebugScene::Update()
 
 	}
 
-	camera_.Update();
+	if (isDebugCamera_) {
+		debugCamera_.Update();
+	}
+	else {
+		camera_.Update();
+	}
 
 	lineBox_.Update();
 	lineSphere_.Update();

@@ -21,7 +21,6 @@ namespace MLEngine::Core::Render::PostEffect {
 		/// <summary>
 		/// 描画コマンド積む
 		/// </summary>
-		/// <param name="readNum">読み込むレンダーテクスチャのインデックス</param>
 		/// <param name="drawNum">書き込むレンダーテクスチャのインデックス</param>
 		void Draw(int32_t drawNum);
 		/// <summary>

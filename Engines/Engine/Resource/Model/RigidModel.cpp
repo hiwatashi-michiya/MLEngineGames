@@ -59,7 +59,7 @@ void RigidModel::LoadAnimation(const std::string& filename) {
 
 	}
 
-	*skeleton_ = CreateSkeleton(instancingModel_->mesh_->GetModelData().rootNode);
+	*skeleton_ = CreateSkeleton(instancingModel_->mesh->GetModelData().rootNode);
 
 }
 
@@ -69,7 +69,7 @@ void RigidModel::ResetAnimation() {
 	if (animation_ and animation_->nodeAnimations.size() != 0) {
 
 		animationTime_ = 0.0f;
-		NodeAnimation& rootNodeAnimation = animation_->nodeAnimations[instancingModel_->mesh_->GetModelData().rootNode.name]; //rootNodeのanimationを取得
+		NodeAnimation& rootNodeAnimation = animation_->nodeAnimations[instancingModel_->mesh->GetModelData().rootNode.name]; //rootNodeのanimationを取得
 		Vector3 translate = CalculateValue(rootNodeAnimation.translate.keyFrames, animationTime_);
 		Quaternion rotate = CalculateValue(rootNodeAnimation.rotate.keyFrames, animationTime_);
 		Vector3 scale = CalculateValue(rootNodeAnimation.scale.keyFrames, animationTime_);
@@ -112,7 +112,7 @@ void RigidModel::UpdateAnimation() {
 
 		}
 
-		NodeAnimation& rootNodeAnimation = animation_->nodeAnimations[instancingModel_->mesh_->GetModelData().rootNode.name]; //rootNodeのanimationを取得
+		NodeAnimation& rootNodeAnimation = animation_->nodeAnimations[instancingModel_->mesh->GetModelData().rootNode.name]; //rootNodeのanimationを取得
 		Vector3 translate = CalculateValue(rootNodeAnimation.translate.keyFrames, animationTime_);
 		Quaternion rotate = CalculateValue(rootNodeAnimation.rotate.keyFrames, animationTime_);
 		Vector3 scale = CalculateValue(rootNodeAnimation.scale.keyFrames, animationTime_);
