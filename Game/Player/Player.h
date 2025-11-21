@@ -2,6 +2,8 @@
 #include"Character/BaseCharacter.h"
 #include"VirtualController.h"
 #include<../Network/NetworkManager.h>
+#include<Engine/Tool/GlobalVariables.h>
+
 //プレイヤーが操作する自機
 class Player : public BaseCharacter{
 public:

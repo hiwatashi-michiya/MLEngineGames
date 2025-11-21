@@ -27,11 +27,13 @@ bool NetworkManager::Initialize(bool isServer, const std::string& ip, int port) 
 
         if (bind(sWait_, (LPSOCKADDR)&recvConnect_, sizeof((sockaddr&)(recvConnect_))) == SOCKET_ERROR) {
             closesocket(sWait_);
+            WSACleanup();
             return false;
         }
 
         if (listen(sWait_, 2) == SOCKET_ERROR) {
             closesocket(sWait_);
+            WSACleanup();
             return false;
         }
 
@@ -53,6 +55,7 @@ bool NetworkManager::Initialize(bool isServer, const std::string& ip, int port) 
             if (sConnect_ == INVALID_SOCKET) {
                 std::cerr << "accept failed: " << WSAGetLastError() << std::endl;
                 closesocket(sWait_);
+                WSACleanup();
                 return false;
             }
             std::cout << "[Server] Client connected!" << std::endl;
@@ -66,6 +69,7 @@ bool NetworkManager::Initialize(bool isServer, const std::string& ip, int port) 
             // select() エラー
             std::cerr << "[Server] select() failed: " << WSAGetLastError() << std::endl;
             closesocket(sWait_);
+            WSACleanup();
             return false;
         }
 
@@ -129,6 +133,7 @@ bool NetworkManager::Initialize(bool isServer, const std::string& ip, int port) 
    
     if (sConnect_ == INVALID_SOCKET) {
         std::cout << "[Server] Running without network." << std::endl;
+        WSACleanup();
         return false;
     }
    

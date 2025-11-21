@@ -19,6 +19,9 @@ Player::~Player(){
 }
 
 void Player::Initialize(){
+	GlobalVariables* global = GlobalVariables::GetInstance();
+
+	global->SetValue("PlayerState", "Life", lifeMax_);
 	nowLine_ = config_->centerLane_;
 	time_ = 0.0f;
 	recoverySpeed_ = 1.0f;
@@ -32,10 +35,17 @@ void Player::Finalize(){
 }
 
 void Player::Update(const float deltaTime){
+	GlobalVariables* global = GlobalVariables::GetInstance();
+
 	deltaTime;
 	SyncFromNetwork();
 
+	lifeMax_ = global->GetIntValue("PlayerState", "Life");
+#ifdef _DEBUG
 	DebugDraw();
+
+#endif // _DEBUG
+
 	
 	
 #ifdef CLIENT_BUILD

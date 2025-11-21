@@ -71,7 +71,7 @@ private:
     int fromlen_ = 0;
     char addr_[20]; //IPアドレス用文字列を設定
     /*ネットにつなぐときの待機時間*/
-    int waitSecond_ = 5;
+    int waitSecond_ = 2;
 
     bool isServer_ = false;
 
