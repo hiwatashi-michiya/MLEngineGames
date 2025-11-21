@@ -4,6 +4,7 @@
 #include <vector>
 #include "Object/Camera.h"
 #include "Bullet.h"
+#include ".vs/../Engine/Tool/GlobalVariables.h"
 
 class BulletManager {
 	public:
@@ -46,6 +47,8 @@ private:
 	//// 最大サイズ
 	//float maxSize_ = 128.0f;
 
+	GlobalVariables* global_;
+
 	// モデル
 	std::vector<std::unique_ptr<MLEngine::Resource::RigidModel>> startModels_;
 
@@ -56,6 +59,6 @@ private:
 	// 平行移動
 	MLEngine::Math::Vector3 startTranslate_ = { 0.0f, 0.0f,0.0f };
 	MLEngine::Math::Vector3 endTranslate_ = { 0.0f, -0.18f, -9.0f };
-	float startD_ = 1.7f;
-	float endD_ = 0.28f;
+	float startDistance_ = 1.7f;
+	float endDistance_ = 0.28f;
 };

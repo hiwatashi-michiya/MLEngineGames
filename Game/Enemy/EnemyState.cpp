@@ -9,6 +9,9 @@ void EnemyNormalState::Enter(Enemy* enemy)
 {
 	intervalTime_ = 0.0f;
 	prevLaneNumber = -1;
+	GlobalVariables* global_ = GlobalVariables::GetInstance();
+	bulletSpeed_ = global_->GetFloatValue("EnemyState", "NormalBulletSpeed");
+	fireInterval = global_->GetFloatValue("EnemyState", "NormalFireInterval");
 }
 
 void EnemyNormalState::Update(Enemy* enemy)
@@ -46,6 +49,8 @@ void EnemyNormalState::Exit(Enemy* enemy)
 void EnemyDownState::Enter(Enemy* enemy)
 {
 	elapsedTime_ = 0.0f;
+	GlobalVariables* global_ = GlobalVariables::GetInstance();
+	downTime = global_->GetFloatValue("EnemyState", "DownTime");
 }
 
 void EnemyDownState::Update(Enemy* enemy)
@@ -70,6 +75,9 @@ void EnemyBerserkState::Enter(Enemy* enemy)
 {
 	intervalTime_ = 0.0f;
 	prevLaneNumber = -1;
+	GlobalVariables* global_ = GlobalVariables::GetInstance();
+	bulletSpeed_ = global_->GetFloatValue("EnemyState", "BerserkBulletSpeed");
+	fireInterval = global_->GetFloatValue("EnemyState", "BerserkFireInterval");
 }
 
 void EnemyBerserkState::Update(Enemy* enemy)

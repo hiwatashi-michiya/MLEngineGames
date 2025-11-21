@@ -6,6 +6,7 @@
 #include "EnemyState.h"
 #include "../Bullet/BulletManager.h"
 #include "RigidModel.h"
+#include ".vs/../Engine/Tool/GlobalVariables.h"
 
 class Enemy :public MLEngine::Object::GameObject
 {
@@ -33,6 +34,8 @@ public:
 	//float GetDistance() const { return distance_; }
 
 private:
+	GlobalVariables* global_;
+
 	std::unique_ptr<EnemyState> currentState_;
 	MLEngine::Resource::RigidModel model_;
 	MLEngine::Math::Vector3 scale_ = { 2.0f, 1.0f, 1.0f };

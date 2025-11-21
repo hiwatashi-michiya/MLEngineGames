@@ -28,8 +28,8 @@ inline void PlayScene::Initialize(){
 	enemy_ = std::make_unique<Enemy>();
 	enemy_->Initialize();
 
-	model_.Initialize(/*"./Resources/model/plane/plane.obj"*/ "./Resources/EngineResources/testObjects/axis.obj");
-	model_.worldMatrix = MLEngine::Math::MakeAffineMatrix({1.0f, 1.0f, 1.0f}, { 0.0f, 0.0f, 0.0f, 1.0f }, {0.0f, 0.0f, 0.0f});
+	model_.Initialize("./Resources/model/plane/plane.obj" /*"./Resources/EngineResources/testObjects/axis.obj"*/);
+	model_.worldMatrix = MLEngine::Math::MakeAffineMatrix({100.0f, 100.0f, 100.0f}, { 0.0f, 0.0f, 0.0f, 1.0f }, {0.0f, 0.0f, 0.0f});
 }
 
 void PlayScene::Finalize(){

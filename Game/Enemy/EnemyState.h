@@ -1,5 +1,7 @@
 #pragma once
 
+#include ".vs/../Engine/Tool/GlobalVariables.h"	
+
 class Enemy;
 
 class EnemyState {

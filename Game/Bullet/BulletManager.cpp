@@ -1,10 +1,14 @@
 #include "BulletManager.h"
 
+#include <format>
+
 #include "Input/Input.h"
 #include"Externals/imgui/imgui.h"
 
 void BulletManager::Initialize()
 {
+	global_ = GlobalVariables::GetInstance();
+
 	bullets_.clear();
 
 	/*MLEngine::Resource::Texture texture;
@@ -21,6 +25,19 @@ void BulletManager::Initialize()
 		targetSprite->anchorPoint = { 0.5f,0.5f };
 		targetSprites_.push_back(std::move(targetSprite));
 	}*/
+
+	global_->AddItem("BulletParameters", "StartScale", startScale_);
+	startScale_ = global_->GetVector3Value("BulletParameters", "StartScale");
+	global_->AddItem("BulletParameters", "EndScale", endScale_);
+	endScale_ = global_->GetVector3Value("BulletParameters", "EndScale");
+	global_->AddItem("BulletParameters", "StartTranslate", startTranslate_);
+	startTranslate_ = global_->GetVector3Value("BulletParameters", "StartTranslate");
+	global_->AddItem("BulletParameters", "EndTranslate", endTranslate_);
+	endTranslate_ = global_->GetVector3Value("BulletParameters", "EndTranslate");
+	global_->AddItem("BulletParameters", "StartDistance", startDistance_);
+	startDistance_ = global_->GetFloatValue("BulletParameters", "StartDistance");
+	global_->AddItem("BulletParameters", "EndDistance", endDistance_);
+	endDistance_ = global_->GetFloatValue("BulletParameters", "EndDistance");
 
 	startModels_.clear();
 	endModels_.clear();
@@ -47,6 +64,7 @@ void BulletManager::Update()
 {
 	MLEngine::Input::Manager* input = MLEngine::Input::Manager::GetInstance();
 
+	// 弾の更新
 	for(auto& bullet : bullets_)
 	{
 		bullet->Update();
@@ -57,31 +75,39 @@ void BulletManager::Update()
 
 	}
 
+	// 死んだ弾をリストから削除
 	bullets_.remove_if([](const std::unique_ptr<Bullet>& bullet) {
 		return bullet->IsDead();
 	});
 
+	// 始点・終点モデルの更新
 	for (int i = 0; i < 3; ++i) {
 		/*startSprites_[i]->SetPosition({ launchPosition_.x + startDistance_ * (i - 1), launchPosition_.y });
 		startSprites_[i]->size = { minSize_, minSize_ };
 		targetSprites_[i]->SetPosition({ launchPosition_.x + endDistance_ * (i - 1), endLine_ });
 		targetSprites_[i]->size = { maxSize_, maxSize_ };*/
 
-		startModels_[i]->worldMatrix = MLEngine::Math::MakeAffineMatrix(startScale_, { 0.0f, 0.0f, 0.0f, 1.0f }, { startTranslate_.x + startD_ * (i - 1), startTranslate_.y, startTranslate_.z });
-		endModels_[i]->worldMatrix = MLEngine::Math::MakeAffineMatrix(endScale_, { 0.0f, 0.0f, 0.0f, 1.0f }, { endTranslate_.x + endD_ * (i - 1), endTranslate_.y, endTranslate_.z });
+		startModels_[i]->worldMatrix = MLEngine::Math::MakeAffineMatrix(startScale_, { 0.0f, 0.0f, 0.0f, 1.0f }, { startTranslate_.x + startDistance_ * (i - 1), startTranslate_.y, startTranslate_.z });
+		endModels_[i]->worldMatrix = MLEngine::Math::MakeAffineMatrix(endScale_, { 0.0f, 0.0f, 0.0f, 1.0f }, { endTranslate_.x + endDistance_ * (i - 1), endTranslate_.y, endTranslate_.z });
 
 	}
+
+#ifdef _DEBUG
 
 	ImGui::Begin("弾パラメーター");
 
 	// 間隔
 	/*ImGui::DragFloat("始点間隔", &startDistance_, 1.0f);
 	ImGui::DragFloat("終点間隔", &endDistance_, 1.0f);*/
-	ImGui::DragFloat("始点D", &startD_, 0.1f);
-	ImGui::DragFloat("終点D", &endD_, 0.01f);
+	ImGui::DragFloat("始点D", &startDistance_, 0.1f);
+	global_->datas_["BulletParameters"].items["StartDistance"].value = startDistance_;
+	ImGui::DragFloat("終点D", &endDistance_, 0.01f);
+	global_->datas_["BulletParameters"].items["EndDistance"].value = endDistance_;
 
 	ImGui::DragFloat3("始点平行移動", &startTranslate_.x, 0.1f);
+	global_->datas_["BulletParameters"].items["StartTranslate"].value = startTranslate_;
 	ImGui::DragFloat3("終点平行移動", &endTranslate_.x, 0.1f);
+	global_->datas_["BulletParameters"].items["EndTranslate"].value = endTranslate_;
 
 	// サイズ
 	/*ImGui::DragFloat("最小サイズ", &minSize_, 1.0f);
@@ -90,14 +116,24 @@ void BulletManager::Update()
 	float startSize = startScale_.x;
 	ImGui::DragFloat("始点サイズ", &startSize, 0.01f);
 	startScale_ = { startSize, startSize, 1.0f };
+	global_->datas_["BulletParameters"].items["StartScale"].value = startScale_;
 
 	float endSize = endScale_.x;
 	ImGui::DragFloat("終点サイズ", &endSize, 0.01f);
 	endScale_ = { endSize, endSize, 1.0f };
+	global_->datas_["BulletParameters"].items["EndScale"].value = endScale_;
 
 	//ImGui::DragFloat("終点ライン", &endLine_, 1.0f);
 
+	if (ImGui::Button("Save")) {
+		global_->SaveFile("BulletParameters");
+		std::string message = std::format("{}.json saved", "BulletParameters");
+		MessageBoxA(nullptr, message.c_str(), "GlobalVariables", 0);
+	}
+
 	ImGui::End();
+
+#endif // _DEBUG
 
 }
 
@@ -137,8 +173,8 @@ void BulletManager::SpawnBullet(int laneNumber, float time)
 	std::unique_ptr<Bullet> newBullet = std::make_unique<Bullet>();
 	newBullet->Initialize();
 	newBullet->SetPosition(
-		{ startTranslate_.x + startD_ * (laneNumber - 1), startTranslate_.y, startTranslate_.z },
-		{ endTranslate_.x + endD_ * (laneNumber - 1), endTranslate_.y, endTranslate_.z }
+		{ startTranslate_.x + startDistance_ * (laneNumber - 1), startTranslate_.y, startTranslate_.z },
+		{ endTranslate_.x + endDistance_ * (laneNumber - 1), endTranslate_.y, endTranslate_.z }
 	);
 	newBullet->SetScale(startScale_, endScale_);
 	newBullet->SetTravelTime(time);
