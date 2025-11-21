@@ -9,7 +9,7 @@ Player::Player(){
 
 	sprite_.reset(MLEngine::Resource::Sprite::Create(texture_, MLEngine::Math::Vector2(pos_.x, pos_.y), color_));
 
-	input_ = MLEngine::Input::Manager::GetInstance();
+	vController_ = &VirtualController::GetInstance();
 	config_ = GameConfig::GetInstance();
 
 }
@@ -19,6 +19,9 @@ Player::~Player(){
 }
 
 void Player::Initialize(){
+	GlobalVariables* global = GlobalVariables::GetInstance();
+
+	global->SetValue("PlayerState", "Life", lifeMax_);
 	nowLine_ = config_->centerLane_;
 	time_ = 0.0f;
 	recoverySpeed_ = 1.0f;
@@ -32,11 +35,32 @@ void Player::Finalize(){
 }
 
 void Player::Update(const float deltaTime){
+	GlobalVariables* global = GlobalVariables::GetInstance();
+
+	deltaTime;
+	SyncFromNetwork();
+
+	lifeMax_ = global->GetIntValue("PlayerState", "Life");
+#ifdef _DEBUG
 	DebugDraw();
-	TimeProcess(deltaTime);
+
+#endif // _DEBUG
+
 	
+	
+#ifdef CLIENT_BUILD
+	// Client専用処理
+#else
+	// Server Debug処理
+	TimeProcess(deltaTime);
 	PlayerRecovery();
 	PlayerMove();
+#endif
+	
+
+	PlayerInfoInsertion();
+	//managerを介してクライアントに送る
+	NetworkManager::GetInstance().Send(plState_);
 
 	pos_.x = LaneSpecificCalculation();
 
@@ -52,9 +76,9 @@ void Player::DebugDraw(){
 #ifdef _DEBUG
 	ImGui::Begin("プレイヤー");
 	ImGui::DragFloat2("座標", &pos_.x, 1.0f);
-	ImGui::Text("今のレーン	%d", nowLine_);
-	ImGui::Text("今の体力	%d", life_);
-	ImGui::Text("傷コンボ	%d", isDamaged_);
+	ImGui::Text("今のレーン	%d", plState_.nowLine);
+	ImGui::Text("今の体力	%d", plState_.life);
+	ImGui::Text("傷コンボ	%d", plState_.isDamagedFlug);
 	if (ImGui::Button("体力を減らす")){
 		isDamaged_ = true;
 		life_ -= 20;
@@ -71,32 +95,25 @@ void Player::OnCollision(const int damege){
 
 void Player::PlayerMove(){
 	//左入力
-	if (input_->GetKeyboard()->Trigger(DIK_A) || input_->GetKeyboard()->Trigger(DIK_LEFT)) {
+	if (vController_->LeftTriger()) {
 		if (nowLine_ > 0){
 			nowLine_--;
 		}
 		
 	}
 	//右入力
-	if (input_->GetKeyboard()->Trigger(DIK_D) || input_->GetKeyboard()->Trigger(DIK_RIGHT)) {
+	if (vController_->RightTriger()) {
 		if (nowLine_ < config_->maxLane_ - 1) {
 			nowLine_++;
 		}
 	}
 
 	//反転入力
-	if (input_->GetKeyboard()->Trigger(DIK_SPACE) || input_->GetKeyboard()->Trigger(DIK_RETURN)) {
-		isforward_ = !isforward_;
+	if (vController_->Decide()) {
+		isForward_ = !isForward_;
 	}
 
-	if (not isforward_){
-		//後ろを向いているなら青色
- 		sprite_->color = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
-	}
-	else {
-		//前を向いているなら赤色
-		sprite_->color = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
-	}
+	
 
 }
 
@@ -147,3 +164,53 @@ void Player::PlayerRecovery(){
 		
 	}
 }
+
+void Player::PlayerInfoInsertion(){
+	plState_.isDamagedFlug = isDamaged_;
+	plState_.isForwardFlug = isForward_;
+	plState_.life = life_;
+	plState_.nowLine = nowLine_;
+
+	if (not isForward_) {
+		//後ろを向いているなら青色
+		sprite_->color_ = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
+	}
+	else {
+		//前を向いているなら赤色
+		sprite_->color_ = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
+	}
+}
+
+void Player::SyncFromNetwork(){
+	NetworkManager::SendPlayerState netState{};
+
+	// 最新の受信データを NetworkManager から取得
+	if (NetworkManager::GetInstance().GetLatestPlayerState(netState)){
+
+#ifdef CLIENT_BUILD
+		// Client専用処理
+		// 受信状態を自プレイヤーに適用
+		life_ = netState.life;
+		isForward_ = !netState.isForwardFlug;
+		isDamaged_ = netState.isDamagedFlug;
+		if (netState.nowLine == 0){
+			nowLine_ = 2;
+		}
+		else if (netState.nowLine == 2){
+			nowLine_ = 0;
+		}
+		else {
+			nowLine_ = netState.nowLine;
+		}
+
+#else
+		// Server処理
+		// 受信状態を自プレイヤーに適用
+		life_ = netState.life;
+		isDamaged_ = netState.isDamagedFlug;
+#endif
+
+		
+	}
+}
+

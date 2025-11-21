@@ -1,5 +1,9 @@
 #pragma once
 #include"Character/BaseCharacter.h"
+#include"VirtualController.h"
+#include<../Network/NetworkManager.h>
+#include<Engine/Tool/GlobalVariables.h>
+
 //プレイヤーが操作する自機
 class Player : public BaseCharacter{
 public:
@@ -23,6 +27,15 @@ public:
 		return nowLine_;
 	}
 
+
+	NetworkManager::SendPlayerState GetSendPlayerState() const {
+		return plState_;
+	}
+
+	void SetSendPlayerState(const NetworkManager::SendPlayerState plState){
+		plState_ = plState;
+	}
+
 private:
 	//プレイヤーのボタンによる操作
 	void PlayerMove();
@@ -33,20 +46,27 @@ private:
 	float LaneSpecificCalculation();
 	//時間による回復
 	void PlayerRecovery();
+	//送る情報を更新
+	void PlayerInfoInsertion();
+
+	//通信相手のplayer情報を取得
+	void SyncFromNetwork();
 
 private:
 	GameConfig* config_ = nullptr;
 
+	NetworkManager::SendPlayerState plState_{};
+
 	//入力デバイス
-	MLEngine::Input::Manager* input_ = nullptr;
+	VirtualController* vController_ = nullptr;
 
 	std::unique_ptr<MLEngine::Resource::Sprite> sprite_;
 
 	MLEngine::Resource::Texture texture_;
 
 	//前を向いているか
-	bool isforward_ = true;
-	//前を向いているか
+	bool isForward_ = true;
+	//体力が最大かどうか
 	bool isLifeMax_ = true;
 	//攻撃をくらったか
 	bool isDamaged_ = false;

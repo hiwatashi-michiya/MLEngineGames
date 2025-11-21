@@ -57,8 +57,9 @@ void Engine::Initialize(const char* title, int width, int height) {
 #ifdef _DEBUG
 
 	ImGuiManager::GetInstance()->Initialize();
-
+	
 #endif // _DEBUG
+	GlobalVariables::GetInstance()->LoadFiles();
 
 	textureManager_ = Core::TextureManager::GetInstance();
 	shaderManager_ = Core::Render::Shader::Manager::GetInstance();
@@ -84,6 +85,7 @@ void Engine::Initialize(const char* title, int width, int height) {
 	Render::PostEffect::PostEffectDrawer::GetInstance()->Initialize();
 
 	Input::Manager::GetInstance()->Initialize();
+	VirtualController::GetInstance().Initialize();
 
 	//Engineクラスでインスタンス生成をしておく
 	collisionManager_->Initialize();
@@ -97,6 +99,7 @@ void Engine::Initialize(const char* title, int width, int height) {
 }
 
 void Engine::Run(BaseScene* startScene, BaseSceneFactory* sceneFactory) {
+	
 
 	sceneManager_->SetSceneFactory(sceneFactory);
 	sceneManager_->ChangeScene(startScene);
@@ -107,8 +110,14 @@ void Engine::Run(BaseScene* startScene, BaseSceneFactory* sceneFactory) {
 		//フレーム開始
 		BeginFrame();
 
+#ifdef _DEBUG
+		GlobalVariables::GetInstance()->Update();
+
+#endif //DEBUG
 		//ゲームシーン更新
 		sceneManager_->Update();
+
+
 		//当たり判定チェック
 		collisionManager_->CheckAllCollisions();
 

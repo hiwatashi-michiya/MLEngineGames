@@ -4,7 +4,7 @@
 #include "Camera.h"
 #include "Sprite.h"
 #include "Audio.h"
-#include "Input.h"
+#include "VirtualController.h"
 #include "Particle3D.h"
 #include <memory>
 #include "Collider.h"
@@ -36,7 +36,7 @@ private:
 	//入力デバイス
 	MLEngine::Input::Manager* input_ = nullptr;
 
-	
+	VirtualController* vController_ = nullptr;
 	//オーディオ
 	MLEngine::Resource::Audio se1_;
 	//通常モデル
