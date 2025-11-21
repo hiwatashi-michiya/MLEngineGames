@@ -35,14 +35,13 @@ private:
 	MLEngine::Input::Manager* input_ = nullptr;
 
 	//カメラ
-	MLEngine::Object::Camera camera_;
+	//MLEngine::Object::Camera camera_;
 
 	GameManager* gameManager_ = nullptr;
 	GameConfig* config_ = nullptr;
 	
 
 	std::unique_ptr<PlayerManager> playerManager_;
-	MLEngine::Resource::RigidModel model_;
 
 	std::unique_ptr<Enemy> enemy_;
 

@@ -10,7 +10,7 @@ class BaseScene
 public:
 	//カメラをマネージャーにセット
 	void SetCamera() {
-		camera_.position_ = { 0.0f,0.0f,-20.0f };
+		//camera_.position_ = { 0.0f,0.0f,-20.0f };
 		sceneManager_->SetMainCamera(&camera_);
 	}
 	//初期化
