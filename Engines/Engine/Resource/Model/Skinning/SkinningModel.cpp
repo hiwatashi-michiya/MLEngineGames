@@ -350,21 +350,6 @@ void SkinningModel::Initialize(const std::string& filename, int32_t number) {
 
 	}
 
-	//カメラ設定
-	{
-
-		cameraBuff_ = CreateBufferResource(device_, sizeof(CameraForGPU));
-
-		cameraBuff_->SetName(L"cameraBuff");
-
-		cameraBuff_->Map(0, nullptr, reinterpret_cast<void**>(&cameraMap_));
-
-		cameraMap_->worldPosition = Vector3::Zero();
-
-		cameraBuff_->Unmap(0, nullptr);
-
-	}
-
 	localMatrix_ = MakeIdentity4x4();
 	worldMatrix_ = Matrix4x4::Identity();
 
@@ -488,8 +473,6 @@ void SkinningModel::Draw(Camera* camera) {
 	matTransformMap_->World = worldMatrix_;
 	matTransformMap_->WorldInverseTranspose = Transpose(Inverse(worldMatrix_));
 
-	cameraMap_->worldPosition = camera->GetWorldPosition();
-
 	Render::Manager::GetInstance()->AddSkinningModel(this);
 
 }
@@ -500,8 +483,6 @@ void SkinningModel::Draw(const Matrix4x4& localMatrix, Camera* camera) {
 	matTransformMap_->WVP = worldViewProjectionMatrix;
 	matTransformMap_->World = localMatrix * worldMatrix_;
 	matTransformMap_->WorldInverseTranspose = Transpose(Inverse(localMatrix * worldMatrix_));
-
-	cameraMap_->worldPosition = camera->GetWorldPosition();
 
 	Render::Manager::GetInstance()->AddSkinningModel(this);
 
@@ -514,9 +495,6 @@ void SkinningModel::Render()
 		mesh_->GetVBView(),
 		skinCluster_->influenceBufferView_
 	};
-
-	//カメラ設定
-	commandList_->SetGraphicsRootConstantBufferView(4, cameraBuff_->GetGPUVirtualAddress());
 
 	commandList_->SetGraphicsRootConstantBufferView(1, matBuff_->GetGPUVirtualAddress());
 

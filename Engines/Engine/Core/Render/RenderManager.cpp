@@ -29,9 +29,13 @@ void Manager::Render()
 {
 	//レンダーテクスチャの対象設定
 	MLEngine::Core::DirectXSetter::GetInstance()->RenderTexturePreDraw(0);
+
 	//モデル描画
 	Model::Manager::GetInstance()->PreDraw(MLEngine::Core::DirectXSetter::GetInstance()->GetCommandList());
-
+	//ライトのCBuffer設定(3番目に設定)
+	dLight_->SetLightCBV(3);
+	//カメラのCBuffer設定(4番目に設定)
+	camera_->SetCameraCBV(4);
 	Model::Manager::GetInstance()->Render();
 
 	Model::Manager::GetInstance()->PostDraw();

@@ -163,6 +163,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Editor\ParticleEditor.cpp" />
+    <ClCompile Include="Engine\Lighting\DirectionalLight.cpp" />
     <ClCompile Include="Engine\Resource\Audio\Audio.cpp" />
     <ClCompile Include="Engine\Resource\InstancingResource.cpp" />
     <ClCompile Include="Engine\Resource\Particle\Particle2D.cpp" />
@@ -235,6 +236,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Editor\ParticleEditor.h" />
     <ClInclude Include="Engine\Core\Render\Config\PipelineConfig.h" />
     <ClInclude Include="Engine\Core\Render\ResourceView.h" />
+    <ClInclude Include="Engine\Lighting\DirectionalLight.h" />
     <ClInclude Include="Engine\Resource\Audio\Audio.h" />
     <ClInclude Include="Engine\Resource\InstancingResource.h" />
     <ClInclude Include="Engine\Resource\Particle\Particle2D.h" />

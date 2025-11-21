@@ -38,6 +38,7 @@ void Scene::Manager::Update() {
 
 		scene_->SetSceneManager(this);
 		scene_->SetCamera();
+		scene_->SetLight();
 		scene_->Initialize();
 
 	}

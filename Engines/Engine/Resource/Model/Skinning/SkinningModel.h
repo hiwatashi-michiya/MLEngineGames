@@ -150,8 +150,6 @@ namespace MLEngine::Resource {
 
 	private:
 
-		//カメラ座標バッファ
-		Microsoft::WRL::ComPtr<ID3D12Resource> cameraBuff_;
 		//画面上のワールド座標バッファ
 		Microsoft::WRL::ComPtr<ID3D12Resource> matBuff_;
 
@@ -190,8 +188,6 @@ namespace MLEngine::Resource {
 
 		//TransformMatrix
 		MLEngine::Math::TransformationMatrix* matTransformMap_ = nullptr;
-		//カメラ座標マップ
-		CameraForGPU* cameraMap_ = nullptr;
 
 		//テクスチャ
 		MLEngine::Resource::Texture texture_;

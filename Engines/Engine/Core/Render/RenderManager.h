@@ -5,6 +5,8 @@
 #include "Sprite/Sprite.h"
 #include "Line/LineDrawer.h"
 #include <vector>
+#include "Lighting/DirectionalLight.h"
+#include "Camera.h"
 
 namespace MLEngine::Core::Render {
 
@@ -30,6 +32,10 @@ namespace MLEngine::Core::Render {
 		void AddSprite(MLEngine::Resource::Sprite* sprite) { sprites_.push_back(sprite); }
 		//ラインの追加
 		void AddLine(MLEngine::Resource::Line* line) { lines_.push_back(line); }
+		//平行光源ポインタセット
+		void SetLight(MLEngine::Lighting::DirectionalLight* light) { dLight_ = light; }
+		//カメラポインタセット
+		void SetCamera(MLEngine::Object::Camera* camera) { camera_ = camera; }
 
 	private:
 
@@ -39,7 +45,10 @@ namespace MLEngine::Core::Render {
 		std::vector<MLEngine::Resource::Particle3D*> particles_;
 		std::vector<MLEngine::Resource::Sprite*> sprites_;
 		std::vector<MLEngine::Resource::Line*> lines_;
-
+		//平行光源ポインタ
+		MLEngine::Lighting::DirectionalLight* dLight_;
+		//カメラポインタ
+		MLEngine::Object::Camera* camera_;
 
 	private:
 		//シングルトン化

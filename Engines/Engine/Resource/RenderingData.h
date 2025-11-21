@@ -31,12 +31,6 @@ namespace MLEngine::Resource {
 		MLEngine::Math::Matrix4x4 uvTransform;
 
 	};
-	//平行光源
-	struct DirectionalLight {
-		MLEngine::Math::Vector4 color;
-		MLEngine::Math::Vector3 direction;
-		float intensity;
-	};
 	//点光源
 	struct PointLight {
 		MLEngine::Math::Vector4 color; //ライトの色

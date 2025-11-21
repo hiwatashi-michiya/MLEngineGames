@@ -92,21 +92,6 @@ void InstancingModel::Initialize(const std::string& filename) {
 
 	}
 
-	//カメラ設定
-	{
-
-		cameraBuff_ = CreateBufferResource(DirectXSetter::GetInstance()->GetDevice(), sizeof(CameraForGPU));
-
-		cameraBuff_->SetName(L"cameraBuff");
-
-		cameraBuff_->Map(0, nullptr, reinterpret_cast<void**>(&cameraMap_));
-
-		cameraMap_->worldPosition = Vector3::Zero();
-
-		cameraBuff_->Unmap(0, nullptr);
-
-	}
-
 	//インスタンシングリソース設定
 	{
 
@@ -125,8 +110,6 @@ void InstancingModel::Render(ID3D12GraphicsCommandList* commandList)
 		return;
 	}
 
-	//カメラ設定
-	commandList->SetGraphicsRootConstantBufferView(4, cameraBuff_->GetGPUVirtualAddress());
 	commandList->SetGraphicsRootConstantBufferView(1, optionsBuff_->GetGPUVirtualAddress());
 
 	commandList->SetGraphicsRootDescriptorTable(2, texture_.GetGPUHandle());
@@ -188,9 +171,3 @@ void InstancingModel::Regist(RigidModel* model)
 
 }
 
-void InstancingModel::SetCamera(Camera* camera)
-{
-
-	cameraMap_->worldPosition = camera->GetWorldPosition();
-
-}

@@ -88,23 +88,6 @@ Material* Material::Create() {
 
 	}
 
-	//平行光源バッファ設定
-	{
-
-		dLightBuff_ = CreateBufferResource(device_, sizeof(DirectionalLight));
-
-		dLightBuff_->SetName(L"dLightBuff");
-
-		dLightBuff_->Map(0, nullptr, reinterpret_cast<void**>(&dLightMap));
-
-		dLightMap->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-		dLightMap->direction = { 0.0f,1.0f,-1.0f };
-		dLightMap->intensity = 0.0f;
-
-		dLightBuff_->Unmap(0, nullptr);
-
-	}
-
 	//点光源バッファ設定
 	{
 
@@ -130,10 +113,6 @@ Material* Material::Create() {
 
 void Material::SetCommandMaterial(ID3D12GraphicsCommandList* commandList) {
 
-	dLightMap->direction = Normalize(dLightMap->direction);
-
-	//平行光源設定
-	commandList->SetGraphicsRootConstantBufferView(3, dLightBuff_->GetGPUVirtualAddress());
 	//点光源設定
 	commandList->SetGraphicsRootConstantBufferView(5, pLightBuff_->GetGPUVirtualAddress());
 	////SRVの設定
@@ -144,8 +123,6 @@ void Material::SetCommandMaterial(ID3D12GraphicsCommandList* commandList) {
 
 void Material::SetCommandMaterialForParticle(ID3D12GraphicsCommandList* commandList) {
 
-	//平行光源設定
-	commandList->SetGraphicsRootConstantBufferView(3, dLightBuff_->GetGPUVirtualAddress());
 	////SRVの設定
 	/*commandList->SetGraphicsRootDescriptorTable(2, texture_->srvHandleGPU);*/
 	commandList->SetGraphicsRootConstantBufferView(0, constBuff_->GetGPUVirtualAddress());
@@ -160,12 +137,6 @@ void Material::ImGuiUpdate() {
 		ImGui::ColorEdit4("C_color", &constMap->color.x);
 		ImGui::SliderInt("C_Lighting", &constMap->enableLighting, 0, 1);
 		ImGui::DragFloat("C_shininess", &constMap->shininess, 0.05f, 0.0f, 100.0f);
-		ImGui::TreePop();
-	}
-	if (ImGui::TreeNode("Directional Light")) {
-		ImGui::ColorEdit4("D_color", &dLightMap->color.x);
-		ImGui::DragFloat3("D_direction", &dLightMap->direction.x, 0.01f, -1.0f, 1.0f);
-		ImGui::DragFloat("D_intencity", &dLightMap->intensity, 0.01f, 0.0f, 100.0f);
 		ImGui::TreePop();
 	}
 	if (ImGui::TreeNode("Point Light")) {

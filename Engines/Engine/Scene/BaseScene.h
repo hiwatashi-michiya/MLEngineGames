@@ -1,6 +1,8 @@
 #pragma once
 #include "Camera.h"
+#include "Lighting/DirectionalLight.h"
 #include "SceneManager.h"
+#include "RenderManager.h"
 
 /// <summary>
 /// シーンの基底クラス
@@ -11,7 +13,12 @@ public:
 	//カメラをマネージャーにセット
 	void SetCamera() {
 		camera_.position_ = { 0.0f,0.0f,-20.0f };
+		MLEngine::Core::Render::Manager::GetInstance()->SetCamera(&camera_);
 		sceneManager_->SetMainCamera(&camera_);
+	}
+	//平行光源をマネージャーにセット
+	void SetLight() {
+		MLEngine::Core::Render::Manager::GetInstance()->SetLight(&dLight_);
 	}
 	//初期化
 	virtual void Initialize() = 0;
@@ -32,5 +39,7 @@ protected:
 
 	//カメラ
 	MLEngine::Object::Camera camera_;
+	//平行光源
+	MLEngine::Lighting::DirectionalLight dLight_;
 
 };

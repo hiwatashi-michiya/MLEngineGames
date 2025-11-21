@@ -59,8 +59,6 @@ namespace MLEngine::Resource {
 		void AddInstanceCount() { instanceCount_++; }
 		//描画データ追加
 		void Regist(MLEngine::Resource::RigidModel* model);
-		//カメラセット
-		void SetCamera(MLEngine::Object::Camera* camera);
 		//メッシュ
 		MLEngine::Graphics::Mesh* mesh;
 
@@ -72,8 +70,6 @@ namespace MLEngine::Resource {
 
 	private:
 
-		//カメラ座標バッファ
-		Microsoft::WRL::ComPtr<ID3D12Resource> cameraBuff_;
 		//画面上のワールド座標バッファ
 		Microsoft::WRL::ComPtr<ID3D12Resource> matBuff_;
 		//描画オプションバッファ
@@ -83,8 +79,6 @@ namespace MLEngine::Resource {
 
 		//TransformMatrix
 		InstancingForGPU* matTransformMap_ = nullptr;
-		//カメラ座標マップ
-		CameraForGPU* cameraMap_ = nullptr;
 
 		//テクスチャ
 		MLEngine::Resource::Texture texture_;

@@ -37,8 +37,6 @@ namespace MLEngine::Graphics {
 
 		//定数バッファマップ
 		MLEngine::Resource::MaterialData* constMap = nullptr;
-		//平行光源バッファマップ
-		MLEngine::Resource::DirectionalLight* dLightMap = nullptr;
 		//ポイントライト
 		MLEngine::Resource::PointLight* pLightMap = nullptr;
 
@@ -51,8 +49,6 @@ namespace MLEngine::Graphics {
 
 		//定数バッファ
 		Microsoft::WRL::ComPtr<ID3D12Resource> constBuff_;
-		//平行光源バッファ
-		Microsoft::WRL::ComPtr<ID3D12Resource> dLightBuff_;
 		//点光源バッファ
 		Microsoft::WRL::ComPtr<ID3D12Resource> pLightBuff_;
 
