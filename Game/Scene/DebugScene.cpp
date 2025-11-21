@@ -55,6 +55,7 @@ void DebugScene::Finalize()
 
 void DebugScene::Update()
 {
+	joyconInput->Update();
 	//トランスフォーム
 	Matrix4x4 result;
 	result = MakeAffineMatrix(Vector3(1.0f,1.0f,1.0f), ConvertFromEuler(Vector3(0.0f, 0.0f, 0.0f)),Vector3(0.0f,0.0f,0.0f));
