@@ -4,10 +4,11 @@
 #include"SceneManager.h"
 #include"PlayScene.h"
 
+using namespace MLEngine::Math;
 using namespace MLEngine::Resource;
 using namespace MLEngine::Object::Collision;
 
-DebugScene::DebugScene(){
+DebugScene::DebugScene() {
 	input_ = MLEngine::Input::Manager::GetInstance();
 }
 
@@ -54,42 +55,24 @@ void DebugScene::Finalize()
 
 void DebugScene::Update()
 {
+	//トランスフォーム
+	Matrix4x4 result;
+	result = MakeAffineMatrix(Vector3(1.0f,1.0f,1.0f), ConvertFromEuler(Vector3(0.0f, 0.0f, 0.0f)),Vector3(0.0f,0.0f,0.0f));
 
-
-	//Audio
-	{
-
-	
-	for (int32_t i = 0; i < 32; i++) {
-		//ビルボードフラグ
-		//particle_->isBillboard_ = true;
-		//モデル一つ一つのアクティブフラグ
-		particle_->isActive_[i] = true;
-		//トランスフォーム
-		particle_->transforms_[i].translate_ = { i * 0.1f, 0.0f,-1.0f };
-		particle_->transforms_[i].scale_ = { 1.0f,1.0f,1.0f };
-		//particle_->transforms_[i].rotateQuaternion_ = MLEngine::Math::ConvertFromEuler(Vector3(0.0f,0.0f,0.0f));
-		//色
-		particle_->colors_[i] = { 1.0f, i / 32.0f, 1.0f, 1.0f };
+	if (input_->GetKeyboard()->Trigger(DIK_SPACE)) {
+		sceneManager_->ChangeScene(new PlayScene());
 	}
 
-		if (input_->GetKeyboard()->Trigger(DIK_SPACE)) {
-			sceneManager_->ChangeScene(new PlayScene());
-		}
+	camera_.Update();
 
-
-
-		camera_.Update();
-
-		lineBox_.Update();
-		lineSphere_.Update();
-	}
+	lineBox_.Update();
+	lineSphere_.Update();
 }
 
 void DebugScene::Draw()
 {
-	
-	//model_.Draw(&camera_);
+
+	model_.Draw(&camera_);
 
 	//particle_->Draw(&camera_);
 
@@ -100,7 +83,7 @@ void DebugScene::Draw()
 }
 
 
-void DebugScene::DrawImgui(){
+void DebugScene::DrawImgui() {
 #ifdef _DEBUG
 
 
