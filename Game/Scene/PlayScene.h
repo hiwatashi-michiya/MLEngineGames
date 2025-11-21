@@ -9,6 +9,7 @@
 #include"Manager/GameManager.h"
 #include"Config/GameConfig.h"
 #include"Manager/PlayerManager.h"
+#include"LifeUI/LifeUI.h"
 #include <memory>
 
 class PlayScene : public BaseScene
@@ -42,5 +43,6 @@ private:
 
 	std::unique_ptr<PlayerManager> playerManager_;
 
+	std::unique_ptr<LifeUI> lifeUI_;;
 };
 

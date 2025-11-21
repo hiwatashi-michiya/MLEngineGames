@@ -27,10 +27,18 @@ public:
 		return nowLine_;
 	}
 
-
 	NetworkManager::SendPlayerState GetSendPlayerState() const {
 		return plState_;
 	}
+
+	int GetLifeMax()const {
+		return lifeMax_;
+	}
+
+	int GetLife()const {
+		return life_;
+	}
+
 
 	void SetSendPlayerState(const NetworkManager::SendPlayerState plState){
 		plState_ = plState;

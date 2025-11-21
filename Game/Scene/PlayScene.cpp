@@ -23,6 +23,9 @@ inline void PlayScene::Initialize(){
 
 	playerManager_ = std::make_unique<PlayerManager>();
 	playerManager_->Initialize();
+
+	lifeUI_ = std::make_unique<LifeUI>(playerManager_->GetPlayer());
+	lifeUI_->Initialize();
 }
 
 void PlayScene::Finalize(){
@@ -35,6 +38,7 @@ void PlayScene::Update(){
 
 	config_->Update();
 
+	
 #ifdef CLIENT_BUILD
 	// Client専用処理
 #else
@@ -43,6 +47,8 @@ void PlayScene::Update(){
 #endif	
 
 	playerManager_->Update(gameManager_->GetDeltaTime());
+
+	lifeUI_->Update();
 
 	camera_.Update();
 
