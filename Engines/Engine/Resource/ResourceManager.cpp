@@ -23,22 +23,42 @@ void Manager::Update() {
 	for (RigidModel* model : rigidModels_) {
 
 		//モデルがアクティブなら
-		if (model->isActive_) {
+		if (model->isActive) {
 			//ワールドビュープロジェクション更新
-			model->worldViewProjectionMatrix_ = model->localMatrix_ * model->worldMatrix_ * camera_->matViewProjection_;
+			model->worldViewProjectionMatrix = model->localMatrix * model->worldMatrix * camera_->matViewProjection_;
 			//モデルのデータを追加
-			model->GetInstancingModel()->AddModelData(model);
+			model->Regist();
 		}
 
 	}
 
-	//スプライト更新
+	//スプライト描画
 	for (Sprite* sprite : sprites_) {
 
-		if (sprite->isActive_) {
+		if (sprite->isActive) {
 
+			sprite->Draw();
 
+		}
 
+	}
+
+	//パーティクル描画
+	for (Particle3D* particle : particle3ds_) {
+
+		if (particle->isActive) {
+
+			particle->Draw(camera_);
+
+		}
+
+	}
+
+	//ライン描画
+	for (Line* line : lines_) {
+
+		if (line->isActive) {
+			line->Draw(camera_);
 		}
 
 	}

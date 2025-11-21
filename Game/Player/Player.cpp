@@ -64,12 +64,12 @@ void Player::Update(const float deltaTime){
 
 	pos_.x = LaneSpecificCalculation();
 
-	sprite_->position_ = Vector2(pos_.x, pos_.y);
-	sprite_->size_ = Vector2(128.0f, 128.0f);
+	sprite_->position = Vector2(pos_.x, pos_.y);
+	sprite_->size = Vector2(128.0f, 128.0f);
 }
 
 void Player::Draw(){
-	sprite_->Draw();
+	/*sprite_->Draw();*/
 }
 
 void Player::DebugDraw(){
@@ -172,11 +172,11 @@ void Player::PlayerInfoInsertion(){
 
 	if (not isForward_) {
 		//後ろを向いているなら青色
-		sprite_->color_ = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
+		sprite_->color = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
 	}
 	else {
 		//前を向いているなら赤色
-		sprite_->color_ = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
+		sprite_->color = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
 	}
 }
 

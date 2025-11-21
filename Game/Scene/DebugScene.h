@@ -55,6 +55,9 @@ private:
 	MLEngine::Resource::LineBox lineBox_;
 	MLEngine::Resource::Texture tex_;
 
+	bool showBox_ = true;
+	bool showSphere_ = true;
+
 };
 
 

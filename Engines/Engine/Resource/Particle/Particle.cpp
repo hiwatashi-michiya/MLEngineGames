@@ -33,22 +33,22 @@ void Particle::Update() {
 
 	for (int32_t i = 0; i < instanceCount_; i++) {
 		//非アクティブのパーティクルを出現させる
-		if ((isLoop_ or particleLifeTime_ > 0) and not particle_->isActive_[i]) {
+		if ((isLoop_ or particleLifeTime_ > 0) and not particle_->particleData[i].isActive) {
 
-			particle_->transforms_[i].translate_ = RandomVector3(spawnPoint_ + minSpawnPoint_, spawnPoint_ + maxSpawnPoint_);
+			particle_->particleData[i].transform.translate_ = RandomVector3(spawnPoint_ + minSpawnPoint_, spawnPoint_ + maxSpawnPoint_);
 			//追従対象がいたら対象の座標分加算
 			if (followPoint_) {
-				particle_->transforms_[i].translate_ += *followPoint_;
+				particle_->particleData[i].transform.translate_ += *followPoint_;
 			}
 
-			particle_->transforms_[i].rotateQuaternion_ = ConvertFromEuler(RandomVector3(-3.14f, 3.14f));
-			particle_->transforms_[i].scale_ = Vector3{ 1.0f,1.0f,1.0f } * RandomFloat(minScale_, maxScale_);
+			particle_->particleData[i].transform.rotateQuaternion_ = ConvertFromEuler(RandomVector3(-3.14f, 3.14f));
+			particle_->particleData[i].transform.scale_ = Vector3{ 1.0f,1.0f,1.0f } * RandomFloat(minScale_, maxScale_);
 
-			particle_->velocities_[i] = RandomVector3(minSpeed_, maxSpeed_);
-			particle_->lifeTimes_[i] = RandomInt(minLifeTime_, maxLifeTime_);
-			particle_->colors_[i] = RandomVector4(minStartColor_, maxStartColor_);
+			particle_->particleData[i].velocity = RandomVector3(minSpeed_, maxSpeed_);
+			particle_->particleData[i].lifeTime = RandomInt(minLifeTime_, maxLifeTime_);
+			particle_->particleData[i].color = RandomVector4(minStartColor_, maxStartColor_);
 
-			particle_->isActive_[i] = true;
+			particle_->particleData[i].isActive = true;
 
 			break;
 
@@ -59,37 +59,37 @@ void Particle::Update() {
 	for (int32_t i = 0; i < instanceCount_; i++) {
 
 		//アクティブ状態のパーティクルを更新
-		if (particle_->isActive_[i]) {
+		if (particle_->particleData[i].isActive) {
 
 			//ターゲットがある場合、ターゲットに向かう
 			if (targetPoint_) {
 
-				particle_->transforms_[i].translate_ = Lerp(particle_->transforms_[i].translate_, *targetPoint_, float(maxLifeTime_ + 1 - particle_->lifeTimes_[i]) / float(maxLifeTime_ + 1));
-				particle_->transforms_[i].scale_ += {changeScale_, changeScale_, changeScale_};
+				particle_->particleData[i].transform.translate_ = Lerp(particle_->particleData[i].transform.translate_, *targetPoint_, float(maxLifeTime_ + 1 - particle_->particleData[i].lifeTime) / float(maxLifeTime_ + 1));
+				particle_->particleData[i].transform.scale_ += {changeScale_, changeScale_, changeScale_};
 
 			}
 			//ターゲットが無い場合は速度に合わせる
 			else {
 
-				particle_->transforms_[i].translate_ += particle_->velocities_[i];
-				particle_->transforms_[i].scale_ += {changeScale_, changeScale_, changeScale_};
+				particle_->particleData[i].transform.translate_ += particle_->particleData[i].velocity;
+				particle_->particleData[i].transform.scale_ += {changeScale_, changeScale_, changeScale_};
 				/*particle_->colors_[i] = Lerp(endColor_, minStartColor_, float(particle_->transforms_[i]->scale_.x) / maxScale_);*/
 
-				particle_->velocities_[i] += changeSpeed_;
+				particle_->particleData[i].velocity += changeSpeed_;
 
 			}
 
-			if (particle_->transforms_[i].scale_.x <= 0.0f or 
-				particle_->transforms_[i].scale_.y <= 0.0f or 
-				particle_->transforms_[i].scale_.z <= 0.0f or
-				particle_->lifeTimes_[i] <= 0) {
-				particle_->transforms_[i].scale_ = Vector3::Zero();
+			if (particle_->particleData[i].transform.scale_.x <= 0.0f or
+				particle_->particleData[i].transform.scale_.y <= 0.0f or
+				particle_->particleData[i].transform.scale_.z <= 0.0f or
+				particle_->particleData[i].lifeTime <= 0) {
+				particle_->particleData[i].transform.scale_ = Vector3::Zero();
 
-				particle_->isActive_[i] = false;
+				particle_->particleData[i].isActive = false;
 
 			}
 
-			particle_->lifeTimes_[i]--;
+			particle_->particleData[i].lifeTime--;
 
 		}
 
@@ -155,14 +155,14 @@ void Particle::SetDefault()
 
 	//全てを初期値にリセット
 	for (int32_t i = 0; i < kMaxParticle_; i++) {
-		particle_->transforms_[i].translate_ = Vector3::Zero();
-		particle_->transforms_[i].rotateQuaternion_ = { 0.0f,0.0f,0.0f,1.0f };
-		particle_->transforms_[i].scale_ = Vector3::Zero();
+		particle_->particleData[i].transform.translate_ = Vector3::Zero();
+		particle_->particleData[i].transform.rotateQuaternion_ = { 0.0f,0.0f,0.0f,1.0f };
+		particle_->particleData[i].transform.scale_ = Vector3::Zero();
 
-		particle_->velocities_[i] = Vector3::Zero();
-		particle_->lifeTimes_[i] = 0;
-		particle_->colors_[i] = { 1.0f,1.0f,1.0f,1.0f };
-		particle_->isActive_[i] = false;
+		particle_->particleData[i].velocity = Vector3::Zero();
+		particle_->particleData[i].lifeTime = 0;
+		particle_->particleData[i].color = { 1.0f,1.0f,1.0f,1.0f };
+		particle_->particleData[i].isActive = false;
 	}
 
 }

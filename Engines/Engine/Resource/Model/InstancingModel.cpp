@@ -55,7 +55,7 @@ void InstancingModel::Initialize(const std::string& filename) {
 	material_ = std::make_unique<Graphics::Material>();
 	material_->Create();
 
-	texture_.Load(mesh_->textureFilePath_);
+	texture_.Load(mesh_->GetTextureFilePath());
 
 	//transformMatrix
 	{
@@ -154,17 +154,17 @@ void InstancingModel::ImGuiUpdate(const std::string& name) {
 
 }
 
-void InstancingModel::AddModelData(RigidModel* model)
+void InstancingModel::Regist(RigidModel* model)
 {
 	//最大数を超えていたら追加しない
 	if (instanceCount_ >= kMaxInstance_) {
 		return;
 	}
 
-	matTransformMap_[instanceCount_].WVP = model->worldViewProjectionMatrix_;
-	matTransformMap_[instanceCount_].World = model->localMatrix_ * model->worldMatrix_;
-	matTransformMap_[instanceCount_].WorldInverseTranspose = Transpose(Inverse(model->localMatrix_ * model->worldMatrix_));
-	matTransformMap_[instanceCount_].color = model->color_;
+	matTransformMap_[instanceCount_].WVP = model->worldViewProjectionMatrix;
+	matTransformMap_[instanceCount_].World = model->localMatrix * model->worldMatrix;
+	matTransformMap_[instanceCount_].WorldInverseTranspose = Transpose(Inverse(model->localMatrix * model->worldMatrix));
+	matTransformMap_[instanceCount_].color = model->color;
 
 	AddInstanceCount();
 

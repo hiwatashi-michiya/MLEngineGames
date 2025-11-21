@@ -16,7 +16,7 @@
 namespace MLEngine::Resource {
 
 	/// <summary>
-	/// 2D空間上のパーティクル描画クラス
+	/// 2D空間上のパーティクル描画クラス、作成途中なので使用不可
 	/// </summary>
 	class Particle2D
 	{
@@ -45,7 +45,22 @@ namespace MLEngine::Resource {
 			MLEngine::Math::Vector4 color;
 			MLEngine::Math::Matrix4x4 uvTransform;
 		};
-		//生成
+
+		//パーティクル1粒分の構造体
+		struct ParticleData {
+			Object::Transform transform;
+			Math::Vector4 color;
+			Math::Vector3 velocity;
+			int32_t lifeTime;
+			bool isActive;
+		};
+
+		/// <summary>
+		/// 生成
+		/// </summary>
+		/// <param name="filename">テクスチャのパス</param>
+		/// <param name="instanceCount">インスタンス数</param>
+		/// <returns></returns>
 		static Particle2D* Create(const std::string& filename, uint32_t instanceCount = 1);
 		//描画前処理
 		static void PreDraw(ID3D12GraphicsCommandList* commandList);
@@ -55,7 +70,11 @@ namespace MLEngine::Resource {
 		static void Finalize();
 
 	public:
-		//初期化
+		/// <summary>
+		/// 初期化
+		/// </summary>
+		/// <param name="filename">テクスチャのパス</param>
+		/// <param name="instanceCount">インスタンス数</param>
 		void Initialize(const std::string& filename, uint32_t instanceCount);
 		//描画コマンド積む
 		void Draw(MLEngine::Object::Camera* camera);
