@@ -386,12 +386,8 @@ namespace MLEngine::Core::Render::PostEffect {
 	public:
 		//固有のパラメータ
 		struct Parameter {
-			//色相
-			MLEngine::Math::Vector3 edgeColor = { 1.0f,1.0f,1.0f };
 			//彩度
 			float Threshold = 0.5f;
-			//明度
-			float edgeValue = 0.53f;
 		};
 
 	public:

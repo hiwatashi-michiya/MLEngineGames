@@ -65,15 +65,10 @@ namespace MLEngine::Resource {
 		//マテリアル
 		std::unique_ptr<MLEngine::Graphics::Material> material;
 
-		//マテリアルオプション
-		MaterialOptions* optionsMap = nullptr;
-
 	private:
 
 		//画面上のワールド座標バッファ
 		Microsoft::WRL::ComPtr<ID3D12Resource> matBuff_;
-		//描画オプションバッファ
-		Microsoft::WRL::ComPtr<ID3D12Resource> optionsBuff_;
 		//現在のインスタンスカウント
 		int32_t instanceCount_ = 0;
 

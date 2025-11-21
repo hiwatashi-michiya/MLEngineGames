@@ -4,16 +4,16 @@
 struct DirectionalLight {
 	float32_t4 color;
 	float32_t3 direction;
-	float intensity;
+	float32_t intensity;
 };
 
 struct PointLight
 {
-    float32_t4 color; //ライトの色
-    float32_t3 position; //ライトの位置
-    float intensity; //輝度
-    float radius; //ライトの届く最大距離
-    float decay; //減衰率
+    float32_t4 color;
+    float32_t3 position;
+    float32_t intensity;
+    float32_t radius;
+    float32_t decay;
 };
 
 struct Camera {
@@ -27,6 +27,7 @@ ConstantBuffer<PointLight> gPointLight : register(b3);
 
 Texture2D<float32_t4> gTexture : register(t0);
 Texture2D<float32_t> gMaskTexture : register(t1);
+StructuredBuffer<InstancingForGPU> gInstancing : register(t2);
 SamplerState gSampler : register(s0);
 
 struct PixelShaderOutput {
@@ -91,8 +92,17 @@ float32_t FractalSumNoise(float32_t density, float32_t2 uv)
 
 PixelShaderOutput main(VertexShaderOutput input) {
 	PixelShaderOutput output;
-	float4 transformedUV = mul(float32_t4(input.texcoord, 0.0f, 1.0f), gMaterial.uvTransform);
+	float4 transformedUV = mul(float32_t4(input.texcoord.xy, 0.0f, 1.0f), gMaterial.uvTransform);
 	float32_t4 textureColor = gTexture.Sample(gSampler, transformedUV.xy);
+    float32_t4 nMap = textureColor * 2 - 1;
+    
+    float32_t3 normal = input.normal;
+    
+    //normal map
+    if (gMaterial.enableNormalMap != 0)
+    {
+        normal = normalize(mul(normalize(nMap.xyz), (float32_t3x3) gInstancing[input.texcoord.z].WorldInverseTranspose));
+    }
     
     float32_t density = 20.0f;
     float32_t pn = 1.0f;
@@ -109,16 +119,16 @@ PixelShaderOutput main(VertexShaderOutput input) {
         {
             
             //half lambert
-            float NdotL = dot(normalize(input.normal), -gDirectionalLight.direction);
+            float NdotL = dot(normalize(normal), -gDirectionalLight.direction);
             float cos = pow(NdotL * 0.5f + 0.5f, 2.0f);
         
             float32_t3 toEye = normalize(gCamera.worldPosition - input.worldPosition);
     
-            //float32_t3 reflectLight = reflect(gDirectionalLight.direction, normalize(input.normal));
+            //float32_t3 reflectLight = reflect(gDirectionalLight.direction, normalize(normal));
         
             float32_t3 halfVector = normalize(-gDirectionalLight.direction + toEye);
         
-            float NdotH = dot(normalize(input.normal), halfVector);
+            float NdotH = dot(normalize(normal), halfVector);
             float specularPow = pow(saturate(NdotH), gMaterial.shininess);
     
             //拡散反射
@@ -139,16 +149,16 @@ PixelShaderOutput main(VertexShaderOutput input) {
             float32_t factor = pow(saturate(-distance / gPointLight.radius + 1.0), gPointLight.decay); //指数によるコントロール
             
             //half lambert
-            float NdotL = dot(normalize(input.normal), -pointLightDirection);
+            float NdotL = dot(normalize(normal), -pointLightDirection);
             float cos = pow(NdotL * 0.5f + 0.5f, 2.0f);
         
             float32_t3 toEye = normalize(gCamera.worldPosition - input.worldPosition);
     
-            //float32_t3 reflectLight = reflect(gDirectionalLight.direction, normalize(input.normal));
+            //float32_t3 reflectLight = reflect(gDirectionalLight.direction, normalize(normal));
         
             float32_t3 halfVector = normalize(-pointLightDirection + toEye);
         
-            float NdotH = dot(normalize(input.normal), halfVector);
+            float NdotH = dot(normalize(normal), halfVector);
             float specularPow = pow(saturate(NdotH), gMaterial.shininess);
     
             //拡散反射

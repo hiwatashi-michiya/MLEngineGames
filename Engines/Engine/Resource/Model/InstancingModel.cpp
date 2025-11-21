@@ -77,21 +77,6 @@ void InstancingModel::Initialize(const std::string& filename) {
 
 	}
 
-	//オプション
-	{
-
-		optionsBuff_ = CreateBufferResource(DirectXSetter::GetInstance()->GetDevice(), sizeof(MaterialOptions));
-
-		optionsBuff_->SetName(L"matrixBuff");
-
-		optionsBuff_->Map(0, nullptr, reinterpret_cast<void**>(&optionsMap));
-
-		optionsMap->enableNormalMap = true;
-
-		optionsBuff_->Unmap(0, nullptr);
-
-	}
-
 	//インスタンシングリソース設定
 	{
 
@@ -110,13 +95,10 @@ void InstancingModel::Render(ID3D12GraphicsCommandList* commandList)
 		return;
 	}
 
-	commandList->SetGraphicsRootConstantBufferView(1, optionsBuff_->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootDescriptorTable(1, instancingResource_.GetGPUHandle());
 
 	commandList->SetGraphicsRootDescriptorTable(2, texture_.GetGPUHandle());
 	commandList->SetGraphicsRootDescriptorTable(6, instancingResource_.GetGPUHandle());
-	commandList->SetGraphicsRootDescriptorTable(7, texture_.GetGPUHandle());
-
-	commandList->SetGraphicsRootConstantBufferView(8, material->GetConstBuffer()->GetGPUVirtualAddress());
 
 	//コマンドセット
 	material->SetCommandMaterial(commandList);

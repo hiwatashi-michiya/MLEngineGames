@@ -86,7 +86,7 @@ void DebugScene::Update()
 
 		}
 
-		if (ImGui::DragInt("use normal map", &model_.GetInstancingModel()->optionsMap->enableNormalMap, 0.1f,0, 1)) {
+		if (ImGui::DragInt("use normal map", &model_.GetInstancingModel()->material->constMap->enableNormalMap, 0.1f,0, 1)) {
 
 		}
 

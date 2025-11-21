@@ -1637,8 +1637,8 @@ void Paper::Create() {
 	descriptorRange.SetDescriptorRange(0, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND, 0);
 	//マスク画像用
 	DescriptorRange descriptorRangeForMask{};
-	descriptorRange.SetSize(1);
-	descriptorRange.SetDescriptorRange(1, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND, 0);
+	descriptorRangeForMask.SetSize(1);
+	descriptorRangeForMask.SetDescriptorRange(1, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND, 0);
 	//ルートパラメータ
 	RootParameter rootParameter{};
 	rootParameter.SetSize(3);
@@ -1727,16 +1727,30 @@ void Paper::Create() {
 
 		buffer_->Map(0, nullptr, reinterpret_cast<void**>(&parameter_));
 
-		parameter_->edgeColor = { 1.0f,1.0f,1.0f };
-		parameter_->Threshold = 0.0f;
-		parameter_->edgeValue = 0.0f;
+		parameter_->Threshold = 0.2f;
 
 		buffer_->Unmap(0, nullptr);
 
 	}
 
-	maskTexture_.Load("./Resources/EngineResources/paperMask.png");
+	maskTexture_.Load("./Resources/EngineResources/paperMask2.png");
 
 	name_ = "Paper";
 
+}
+
+void Paper::Render()
+{
+
+	ID3D12GraphicsCommandList* commandList = DirectXSetter::GetInstance()->GetCommandList();
+
+	commandList->SetGraphicsRootSignature(rootSignature_);
+	commandList->SetPipelineState(pipelineState_);
+	commandList->SetGraphicsRootConstantBufferView(1, buffer_->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootDescriptorTable(2, maskTexture_.GetGPUHandle());
+
+}
+
+void Paper::Debug()
+{
 }

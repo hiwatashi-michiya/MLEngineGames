@@ -24,9 +24,10 @@ namespace MLEngine::Resource {
 		MLEngine::Math::Vector4 color;
 
 		int32_t enableLighting;
+		int32_t enableNormalMap;
 		float shininess; //光沢度
 
-		float padding[2];
+		float padding[1];
 
 		MLEngine::Math::Matrix4x4 uvTransform;
 
@@ -53,11 +54,6 @@ namespace MLEngine::Resource {
 	struct CameraForGPU
 	{
 		MLEngine::Math::Vector3 worldPosition;
-	};
-
-	//描画オプション構造体
-	struct MaterialOptions {
-		int32_t enableNormalMap;
 	};
 
 	//マップエディター用のデータ構造体
