@@ -6,26 +6,72 @@ void Joycon::Init() {
 
 	device_ = hidManager_->Get(JOYCON_L_PRODUCT_ID);
 
+
 	std::byte arg;
 	arg = std::byte(0x1);
-	Joycon::SendSubcommand(device_, std::byte(0x40u), { &arg,1 });
+	Joycon::SendSubcommand(device_, std::byte(0x40), { &arg,1 });
+	arg = std::byte(0x30);
+	Joycon::SendSubcommand(device_, std::byte(0x03), { &arg,1 });
+
 }
 
 void Joycon::Update() {
-	//            read input report
-	uint8_t buff[0x40]; memset(buff, 0x40, size_t(0x40));
-	// 読み込むサイズを指定。
-	size_t size = 49;
-	// buff に input report が入る。
-	int ret = hid_read(device_, buff, size);
-	printf("\ninput report id: %d\n", *buff);
-	// ボタンの押し込みがビットフラグで表現されている。
-	if (buff[0x05] != 0) {
-		OutputDebugStringA("A");
-	}
-	printf("input report id: %d\n", buff[5]);
-}
 
+	// read input report
+	std::array<uint8_t, 0x40> buff; 
+	memset(buff.data(), 0x40, size_t(0x40));
+	// 読み込むサイズを指定。
+	static constexpr size_t kSize = 49;
+	while (true) {
+		// buff に input report が入る。
+		int ret = hid_read_timeout(device_, buff.data(), kSize, 1);
+		const std::span<uint8_t> mem(buff.data(), ret);
+
+		if (mem.empty()) {
+			break;
+		}
+	}
+
+	// ボタンの押し込みがビットフラグで表現されている。
+	if (Buttan == false) {
+		if (buff[5] & 0x01) {
+			OutputDebugStringA("Down");
+		}
+		if (buff[5] & 0x02) {
+			OutputDebugStringA("Up");
+		}
+		if (buff[5] & 0x04) {
+			OutputDebugStringA("Right");
+		}
+		if (buff[5] & 0x08) {
+			OutputDebugStringA("Left");
+		}
+		Buttan = true;
+	}
+	static constexpr float kRotCalc = 4588.f / 65535;
+	std::array<int16_t,1> GyroX;
+	std::array<int16_t,1> GyroY;
+	std::array<int16_t,1> GyroZ;
+	for () {
+		
+		ImGui::Begin("Joycon Bit");
+		ImGui::Text("%d", buff.begin());
+		ImGui::End();
+	}
+
+	std::memcpy(GyroX.data(), buff.data() + 18, sizeof(int8_t) * 2);
+	std::memcpy(GyroY.data(), buff.data() + 22, sizeof(int8_t) * 2);
+	std::memcpy(GyroZ.data(), buff.data() + 24, sizeof(int8_t) * 2);
+	ImGui::Begin("Gyro");
+	ImGui::Text("GyroX:%d", GyroX.data());
+	ImGui::Text("GyroY:%d", GyroY.data());
+	ImGui::Text("GyroZ:%d", GyroZ.data());
+
+	ImGui::End();
+	if (buff[5] == 0) {
+		Buttan = false;
+	}
+}
 bool Joycon::SendSubcommand(hid_device* device, std::byte subcommandId, const std::span<std::byte>& args)
 {
 	static uint8_t packetNumber = 0;
@@ -33,9 +79,6 @@ bool Joycon::SendSubcommand(hid_device* device, std::byte subcommandId, const st
 	buffer[0] = std::byte(0x01); // Output report ID（固定）
 
 	buffer[1] = std::byte(packetNumber++);	// パケットカウント
-
-	// 振動データ(8バイト)を全て0に（今回は無効化）
-	std::fill(buffer.begin() + 2, buffer.begin() + 10, std::byte(0x00));
 
 	buffer[10] = subcommandId;			// サブコマンドID
 	std::copy(args.begin(), args.end(), buffer.begin() + 11); // 引数コピー
