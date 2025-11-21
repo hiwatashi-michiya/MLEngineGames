@@ -43,7 +43,7 @@ inline void DebugScene::Initialize()
 #pragma endregion
 
 #pragma region
-	joyconInput = std::make_unique<hidManager>();
+	joyconInput = std::make_unique<Joycon>();
 	joyconInput->Init();
 #pragma endregion ジョイコン
 

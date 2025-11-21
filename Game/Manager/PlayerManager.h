@@ -1,5 +1,5 @@
 #pragma once
-#include"Player/Player.h"
+#include"../Player/Player.h"
 //プレイヤーの生成、更新、参照
 class PlayerManager{
 public:

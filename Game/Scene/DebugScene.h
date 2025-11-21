@@ -9,7 +9,7 @@
 #include <memory>
 #include "Collider.h"
 
-#include "hidapi/hidManager.h"
+#include "../Joycon/Joycon.h"
 
 /// <summary>
 /// デバッグシーン、エンジン機能理解用
@@ -54,7 +54,7 @@ private:
 	MLEngine::Object::Collision::BoxCollider box_;
 	MLEngine::Resource::LineBox lineBox_;
 
-	std::unique_ptr<hidManager> joyconInput;
+	std::unique_ptr<Joycon> joyconInput;
 };
 
 

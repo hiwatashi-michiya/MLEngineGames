@@ -32,7 +32,7 @@ hid_device* hidManager::Get(unsigned short product_id)
     hid_device_info* cheakDevice = hid_enumerate(0, product_id);
 
     if (cheakDevice) {
-        return hid_open(device->vendor_id, device->product_id, device->serial_number);
+        return hid_open(cheakDevice->vendor_id, cheakDevice->product_id, cheakDevice->serial_number);
     }
 
     return nullptr;

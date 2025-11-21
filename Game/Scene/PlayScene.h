@@ -6,9 +6,9 @@
 #include "Audio/Audio.h"
 #include "Input/Input.h"
 #include "Particle/Particle3D.h"
-#include"Manager/GameManager.h"
-#include"Config/GameConfig.h"
-#include"Manager/PlayerManager.h"
+#include"../Manager/GameManager.h"
+#include"../Config/GameConfig.h"
+#include"../Manager/PlayerManager.h"
 #include <memory>
 
 class PlayScene : public BaseScene

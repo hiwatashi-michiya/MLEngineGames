@@ -7,3 +7,10 @@ void Joycon::Init() {
 	device_ = hidManager_->Get(JOYCON_L_PRODUCT_ID);
 }
 
+void Joycon::CheckConeect()
+{
+	
+}
+
+
+

@@ -1,5 +1,5 @@
 #pragma once
-#include"Character/BaseCharacter.h"
+#include"../Character/BaseCharacter.h"
 //プレイヤーが操作する自機
 class Player : public BaseCharacter{
 public:
