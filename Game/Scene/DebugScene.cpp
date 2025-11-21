@@ -152,21 +152,18 @@ void DebugScene::Update()
 			sceneManager_->ChangeScene(new PlayScene());
 		}
 
-	camera_.Update();
+		camera_.Update();
 
-	lineBox_.Update();
-	lineSphere_.Update();
+		lineBox_.Update();
+		lineSphere_.Update();
 
-	enemy_->Update();
+		enemy_->Update();
 
+	}
 }
 
 void DebugScene::Draw()
 {
-
-	
-
-
 }
 
 

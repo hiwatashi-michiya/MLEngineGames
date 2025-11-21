@@ -23,6 +23,9 @@ inline void PlayScene::Initialize(){
 
 	playerManager_ = std::make_unique<PlayerManager>();
 	playerManager_->Initialize();
+
+	enemy_ = std::make_unique<Enemy>();
+	enemy_->Initialize();
 }
 
 void PlayScene::Finalize(){
@@ -43,6 +46,8 @@ void PlayScene::Update(){
 #endif	
 
 	playerManager_->Update(gameManager_->GetDeltaTime());
+
+	enemy_->Update();
 
 	camera_.Update();
 

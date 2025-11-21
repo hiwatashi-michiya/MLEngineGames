@@ -173,11 +173,11 @@ void Player::PlayerInfoInsertion(){
 
 	if (not isForward_) {
 		//後ろを向いているなら青色
-		sprite_->color_ = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
+		sprite_->color = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
 	}
 	else {
 		//前を向いているなら赤色
-		sprite_->color_ = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
+		sprite_->color = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
 	}
 }
 

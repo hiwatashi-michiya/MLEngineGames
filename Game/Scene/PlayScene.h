@@ -10,6 +10,7 @@
 #include"Config/GameConfig.h"
 #include"Manager/PlayerManager.h"
 #include <memory>
+#include "Enemy/Enemy.h"
 
 class PlayScene : public BaseScene
 {
@@ -41,6 +42,8 @@ private:
 	
 
 	std::unique_ptr<PlayerManager> playerManager_;
+
+	std::unique_ptr<Enemy> enemy_;
 
 };
 
