@@ -4,21 +4,28 @@
 
 void Bullet::Initialize()
 {
-	MLEngine::Resource::Texture texture;
+	model_.Initialize("./Resources/model/plane/plane.obj");
+	model_.worldMatrix = MLEngine::Math::MakeAffineMatrix(scale_, { 0.0f, 0.0f, 0.0f, 1.0f }, position_);
+
+	/*MLEngine::Resource::Texture texture;
 	texture.Load("./Resources/EngineResources/blockMask.png");
 	sprite_.reset(MLEngine::Resource::Sprite::Create(texture, position_, { 1.0f,1.0f,1.0f,1.0f }));
-	sprite_->anchorPoint = { 0.5f,0.5f };
+	sprite_->anchorPoint = { 0.5f,0.5f };*/
 }
 
 void Bullet::Update()
 {
+	//position_ = MLEngine::Math::Lerp(startPosition_, targetPosition_, elapsedTime_ / travelTime_);
+	//sprite_->SetPosition(position_);
+
+	//float t = (position_.y - startPosition_.y) / (endLine_ - startPosition_.y);
+
+	//float size =/* t * multiplier_*/minSize_ + t * (maxSize_ - minSize_);
+	//sprite_->size = {size, size };
+
 	position_ = MLEngine::Math::Lerp(startPosition_, targetPosition_, elapsedTime_ / travelTime_);
-	sprite_->SetPosition(position_);
-
-	float t = (position_.y - startPosition_.y) / (endLine_ - startPosition_.y);
-
-	float size =/* t * multiplier_*/minSize_ + t * (maxSize_ - minSize_);
-	sprite_->size = {size, size };
+	scale_ = MLEngine::Math::Lerp(startScale_, endScale_, elapsedTime_ / travelTime_);
+	model_.worldMatrix = MLEngine::Math::MakeAffineMatrix(scale_, { 0.0f, 0.0f, 0.0f, 1.0f }, position_);
 
 	if (elapsedTime_ > travelTime_)
 	{
@@ -49,5 +56,5 @@ void Bullet::Update()
 
 void Bullet::Draw(MLEngine::Object::Camera* camera)
 {
-	sprite_->Draw();
+	
 }

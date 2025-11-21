@@ -5,23 +5,26 @@
 
 void Enemy::Initialize()
 {
-	position_ = initialPosition_;
+	//position_ = initialPosition_;
 
-	MLEngine::Resource::Texture texture;
+	model_.Initialize("./Resources/model/plane/plane.obj");
+	model_.worldMatrix = MLEngine::Math::MakeAffineMatrix(scale_, { 0.0f, 0.0f, 0.0f, 1.0f }, translate_);
+
+	/*MLEngine::Resource::Texture texture;
 	texture.Load("./Resources/EngineResources/defaultMask.png");
 	sprite_.reset(MLEngine::Resource::Sprite::Create(texture, position_, { 1.0f,1.0f,1.0f,1.0f }));
 	sprite_->anchorPoint = { 0.5f,0.5f };
-	sprite_->size = { 320.0f,160.0f };
+	sprite_->size = { 320.0f,160.0f };*/
 
 
 	ChangeState(std::make_unique<EnemyNormalState>());
 
 	bulletManager_ = std::make_unique<BulletManager>();
 	bulletManager_->Initialize();
-	bulletManager_->SetLaunchPosition(LaunchPosition());
+	//bulletManager_->SetLaunchPosition(LaunchPosition());
 
 	for (int i = 0; i < 3; ++i) {
-		bulletManager_->SpawnBullet({ LaunchPosition().x + distance_ * (i - 1), LaunchPosition().y}, {(i - 1) * 0.8f , 1.0f}, 4.0f);
+		//bulletManager_->SpawnBullet({ LaunchPosition().x + distance_ * (i - 1), LaunchPosition().y}, {(i - 1) * 0.8f , 1.0f}, 4.0f);
 	}
 
 	hp_ = maxHp_;
@@ -47,7 +50,7 @@ void Enemy::Update()
 
 	currentState_->Update(this);
 	bulletManager_->Update();
-	bulletManager_->SetLaunchPosition(LaunchPosition());
+	//bulletManager_->SetLaunchPosition(LaunchPosition());
 
 
 
@@ -88,8 +91,11 @@ void Enemy::Update()
 	ImGui::Separator();
 
 	// 位置、サイズ
-	ImGui::DragFloat2("位置", &sprite_->position.x, 1.0f);
-	ImGui::DragFloat2("サイズ", &sprite_->size.x, 1.0f);
+	/*ImGui::DragFloat2("位置", &sprite_->position.x, 1.0f);
+	ImGui::DragFloat2("サイズ", &sprite_->size.x, 1.0f);*/
+
+	ImGui::DragFloat3("スケール", &scale_.x, 0.1f);
+	ImGui::DragFloat3("平行移動", &translate_.x, 0.1f);
 
 	// 体力
 	ImGui::SliderInt("体力", &hp_, 0, maxHp_);
@@ -105,8 +111,6 @@ void Enemy::Update()
 
 void Enemy::Draw(MLEngine::Object::Camera* camera)
 {
-	sprite_->Draw();
-	bulletManager_->Draw(camera);
 }
 
 void Enemy::ChangeState(std::unique_ptr<EnemyState> newState)
@@ -119,9 +123,9 @@ void Enemy::ChangeState(std::unique_ptr<EnemyState> newState)
 	currentState_->Enter(this);
 }
 
-MLEngine::Math::Vector2 Enemy::LaunchPosition()
-{
-	MLEngine::Math::Vector2 launchPosition = position_;
-	launchPosition.y += sprite_->size.y / 2.0f;
-	return launchPosition;
-}
+//MLEngine::Math::Vector2 Enemy::LaunchPosition()
+//{
+//	/*MLEngine::Math::Vector2 launchPosition = position_;
+//	launchPosition.y += sprite_->size.y / 2.0f;
+//	return launchPosition;*/
+//}
