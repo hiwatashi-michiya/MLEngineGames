@@ -157,11 +157,10 @@ void DebugScene::Update()
 		lineBox_.Update();
 		lineSphere_.Update();
 
-		enemy_->Update();
-
 	}
-}
 
+	enemy_->Update();
+}
 void DebugScene::Draw()
 {
 }

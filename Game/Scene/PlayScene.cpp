@@ -1,5 +1,6 @@
 #include "PlayScene.h"
 #include"Externals/imgui/imgui.h"
+#include "DebugScene.h"
 
 using namespace MLEngine::Resource;
 
@@ -26,6 +27,9 @@ inline void PlayScene::Initialize(){
 
 	enemy_ = std::make_unique<Enemy>();
 	enemy_->Initialize();
+
+	model_.Initialize(/*"./Resources/model/plane/plane.obj"*/ "./Resources/EngineResources/testObjects/axis.obj");
+	model_.worldMatrix = MLEngine::Math::MakeAffineMatrix({1.0f, 1.0f, 1.0f}, { 0.0f, 0.0f, 0.0f, 1.0f }, {0.0f, 0.0f, 0.0f});
 }
 
 void PlayScene::Finalize(){
@@ -51,11 +55,15 @@ void PlayScene::Update(){
 
 	camera_.Update();
 
+	if (input_->GetKeyboard()->Trigger(DIK_C)) {
+		sceneManager_->ChangeScene(new DebugScene());
+	}
+
 }
 
 void PlayScene::Draw(){
 	playerManager_->Draw();
-
+	enemy_->Draw(&camera_);
 }
 
 

@@ -35,7 +35,7 @@ void BulletManager::Initialize()
 		std::unique_ptr<MLEngine::Resource::RigidModel> endModel = std::make_unique<MLEngine::Resource::RigidModel>();
 		endModel->Initialize("./Resources/model/plane/plane.obj");
 		endModel->worldMatrix = MLEngine::Math::MakeAffineMatrix(endScale_, { 0.0f, 0.0f, 0.0f, 1.0f }, endTranslate_);
-		endModel->color = { 0.0f,0.0f,1.0f,0.5f };
+		endModel->color = { 0.0f,1.0f,0.0f,0.5f };
 		endModels_.push_back(std::move(endModel));
 	}
 

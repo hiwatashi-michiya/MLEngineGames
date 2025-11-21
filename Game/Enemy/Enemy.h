@@ -42,7 +42,7 @@ private:
 	std::unique_ptr<BulletManager> bulletManager_;
 
 	//// スプライト
-	//std::unique_ptr<MLEngine::Resource::Sprite> sprite_;
+	std::unique_ptr<MLEngine::Resource::Sprite> sprite_;
 	//// 位置
 	//MLEngine::Math::Vector2 position_;
 	//// 初期位置

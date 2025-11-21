@@ -80,8 +80,7 @@ void Player::DebugDraw(){
 	ImGui::Text("今の体力	%d", plState_.life);
 	ImGui::Text("傷コンボ	%d", plState_.isDamagedFlug);
 	if (ImGui::Button("体力を減らす")){
-		isDamaged_ = true;
-		life_ -= 20;
+		OnCollision(20);
 	}
 	ImGui::End();
 #endif // _DEBUG
