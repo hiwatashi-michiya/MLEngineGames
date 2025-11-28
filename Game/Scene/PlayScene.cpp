@@ -37,6 +37,9 @@ inline void PlayScene::Initialize(){
 	enemy_->SetBulletManager(bulletManager_.get());
 
 	BaseScene::SetCamera();
+
+	lifeUI_ = std::make_unique<LifeUI>(playerManager_->GetPlayer());
+	lifeUI_->Initialize();
 }
 
 void PlayScene::Finalize(){
@@ -49,6 +52,7 @@ void PlayScene::Update(){
 
 	config_->Update();
 
+	
 #ifdef CLIENT_BUILD
 	// Client専用処理
 #else
@@ -61,6 +65,8 @@ void PlayScene::Update(){
 	enemy_->Update();
 
 	bulletManager_->Update();
+
+	lifeUI_->Update();
 
 	camera_.Update();
 

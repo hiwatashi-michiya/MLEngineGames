@@ -9,6 +9,7 @@
 #include"Manager/GameManager.h"
 #include"Config/GameConfig.h"
 #include"Manager/PlayerManager.h"
+#include"LifeUI/LifeUI.h"
 #include <memory>
 #include "Enemy/Enemy.h"
 #include "Bullet/BulletManager.h"
@@ -50,5 +51,6 @@ private:
 	// 弾マネージャー
 	std::unique_ptr<BulletManager> bulletManager_;
 
+	std::unique_ptr<LifeUI> lifeUI_;;
 };
 
