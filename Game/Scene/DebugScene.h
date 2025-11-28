@@ -8,6 +8,7 @@
 #include "Particle3D.h"
 #include <memory>
 #include "Collider.h"
+#include "Enemy/Enemy.h"
 
 /// <summary>
 /// デバッグシーン、エンジン機能理解用
@@ -57,6 +58,8 @@ private:
 
 	bool showBox_ = true;
 	bool showSphere_ = true;
+
+	std::unique_ptr<Enemy> enemy_;
 
 };
 

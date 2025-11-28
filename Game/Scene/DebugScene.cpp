@@ -45,6 +45,9 @@ inline void DebugScene::Initialize()
 	sphere_.SetCollisionAttribute(0x00000001);
 	lineSphere_.SetSphere(&sphere_.collider_);
 
+	enemy_ = std::make_unique<Enemy>();
+	enemy_->Initialize();
+
 }
 
 void DebugScene::Finalize()
@@ -155,13 +158,11 @@ void DebugScene::Update()
 		lineSphere_.Update();
 
 	}
+
+	enemy_->Update();
 }
 void DebugScene::Draw()
 {
-
-	
-
-
 }
 
 
@@ -174,6 +175,7 @@ void DebugScene::DrawImgui(){
 	ImGui::Text("テスト");
 
 	ImGui::End();
+
 #endif // _DEBUG
 
 }
