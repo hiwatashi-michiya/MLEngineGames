@@ -1,5 +1,6 @@
 {
     "BulletParameters": {
+        "BulletDamege": 10,
         "EndDistance": 0.22499999403953552,
         "EndScale": [
             0.03999999910593033,

@@ -56,6 +56,9 @@ private:
 	int maxHp_ = 500;
 	int hp_ = 0;
 
+	int maxDownCount_ = 10;
+	int downCount_ = 0;
+
 	// ImGui用状態選択インデックス
 	int stateIndex = 0;
 

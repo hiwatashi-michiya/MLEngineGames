@@ -14,12 +14,17 @@ void Enemy::Initialize()
 	maxHp_ = global_->GetIntValue("EnemyState", "MaxHp");
 	hp_ = global_->GetIntValue("EnemyState", "MaxHp");
 
+	global_->AddItem("EnemyState", "MaxDownCount", maxDownCount_);
+	maxDownCount_ = global_->GetIntValue("EnemyState", "MaxDownCount");
+
 	model_.Initialize("./Resources/model/plane/plane.obj");
 	model_.worldMatrix = MLEngine::Math::MakeAffineMatrix(scale_, { 0.0f, 0.0f, 0.0f, 1.0f }, translate_);
 
 	ChangeState(std::make_unique<EnemyNormalState>());
 
 	hp_ = maxHp_;
+
+	downCount_ = 0;
 
 }
 
@@ -28,6 +33,13 @@ void Enemy::Update()
 	if (!dynamic_cast<EnemyBerserkState*>(currentState_.get())) {
 		if(hp_ <= maxHp_ * 0.3f) {
 			ChangeState(std::make_unique<EnemyBerserkState>());
+		}
+	}
+
+	if (!dynamic_cast<EnemyDownState*>(currentState_.get())) {
+		if(downCount_ >= maxDownCount_) {
+			ChangeState(std::make_unique<EnemyDownState>());
+			downCount_ = 0;
 		}
 	}
 
@@ -100,6 +112,9 @@ void Enemy::Update()
 	if (maxHp_ < hp_) {
 		hp_ = maxHp_;
 	}
+	
+	ImGui::SliderInt("ダウン回数上限", &maxDownCount_, 1, 100);
+	global_->datas_["EnemyState"].items["MaxDownCount"].value = maxDownCount_;
 
 	if (ImGui::Button("Save")) {
 		global_->SaveFile("EnemyState");
@@ -125,6 +140,10 @@ void Enemy::ChangeState(std::unique_ptr<EnemyState> newState)
 
 void Enemy::OnCollision(int damege)
 {
+	if(!dynamic_cast<EnemyDownState*>(currentState_.get())) {
+		downCount_++;
+	}
+
 	hp_ -= damege;
 	if (hp_ < 0) {
 		hp_ = 0;

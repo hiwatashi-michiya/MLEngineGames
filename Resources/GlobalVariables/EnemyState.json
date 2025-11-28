@@ -3,6 +3,7 @@
         "BerserkBulletSpeed": 1.5,
         "BerserkFireInterval": 1.5,
         "DownTime": 15.0,
+        "MaxDownCount": 10,
         "MaxHp": 500,
         "NormalBulletSpeed": 2.0,
         "NormalFireInterval": 3.0,
