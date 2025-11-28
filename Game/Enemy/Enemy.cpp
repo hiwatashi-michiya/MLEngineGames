@@ -26,6 +26,9 @@ void Enemy::Initialize()
 
 	downCount_ = 0;
 
+	enemyUI_ = std::make_unique<EnemyUI>();
+	enemyUI_->Initialize(this);
+
 }
 
 void Enemy::Update()
@@ -45,14 +48,9 @@ void Enemy::Update()
 
 	MLEngine::Input::Manager* input = MLEngine::Input::Manager::GetInstance();
 
-	if (input->GetKeyboard()->Trigger(DIK_H)) {
-		hp_ = maxHp_ * 0.3f;
-	}
-	if (input->GetKeyboard()->Trigger(DIK_J)) {
-		ChangeState(std::make_unique<EnemyDownState>());
-	}
-
 	currentState_->Update(this);
+
+	enemyUI_->Update();
 
 #ifdef _DEBUG
 

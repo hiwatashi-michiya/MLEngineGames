@@ -273,6 +273,7 @@
   <ItemGroup>
     <ClCompile Include="Game\Character\BaseCharacter.cpp" />
     <ClCompile Include="Game\Config\GameConfig.cpp" />
+    <ClCompile Include="Game\Enemy\EnemyUI.cpp" />
     <ClCompile Include="Game\LifeUI\LifeUI.cpp" />
     <ClCompile Include="Game\Manager\GameManager.cpp" />
     <ClCompile Include="Game\Manager\PlayerManager.cpp" />
@@ -290,6 +291,7 @@
   <ItemGroup>
     <ClInclude Include="Game\Character\BaseCharacter.h" />
     <ClInclude Include="Game\Config\GameConfig.h" />
+    <ClInclude Include="Game\Enemy\EnemyUI.h" />
     <ClInclude Include="Game\LifeUI\LifeUI.h" />
     <ClInclude Include="Game\Manager\GameManager.h" />
     <ClInclude Include="Game\Manager\PlayerManager.h" />

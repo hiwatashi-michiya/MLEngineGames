@@ -1,0 +1,20 @@
+{
+    "EnemyUI": {
+        "FramePosition": [
+            640.0,
+            34.0
+        ],
+        "FrameSize": [
+            700.0,
+            50.0
+        ],
+        "HPBarPosition": [
+            640.0,
+            34.0
+        ],
+        "HPBarSize": [
+            650.0,
+            40.0
+        ]
+    }
+}

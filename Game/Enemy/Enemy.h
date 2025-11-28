@@ -6,6 +6,7 @@
 #include "Bullet/BulletManager.h"
 #include "RigidModel.h"
 #include ".vs/../Engine/Tool/GlobalVariables.h"
+#include "Enemy/EnemyUI.h"
 
 
 class Enemy
@@ -31,6 +32,9 @@ public:
 
 	BulletManager* GetBulletManager() { return bulletManager_; }
 
+	int GetHp() const { return hp_; }
+	int GetMaxHp() const { return maxHp_; }
+
 	// 弾マネージャー取得
 	void SetBulletManager(BulletManager* bulletManager) {
 		bulletManager_ = bulletManager;
@@ -38,6 +42,8 @@ public:
 
 private:
 	GlobalVariables* global_;
+
+	std::unique_ptr<EnemyUI> enemyUI_;
 
 	// 現在の状態
 	std::unique_ptr<EnemyState> currentState_;
