@@ -4,6 +4,7 @@
 
 #include "Input/Input.h"
 #include"Externals/imgui/imgui.h"
+#include "Enemy/Enemy.h"
 
 void BulletManager::Initialize()
 {
@@ -38,6 +39,8 @@ void BulletManager::Initialize()
 	startDistance_ = global_->GetFloatValue("BulletParameters", "StartDistance");
 	global_->AddItem("BulletParameters", "EndDistance", endDistance_);
 	endDistance_ = global_->GetFloatValue("BulletParameters", "EndDistance");
+	global_->AddItem("BulletParameters", "BulletDamege", bulletDamege_);
+	bulletDamege_ = global_->GetIntValue("BulletParameters", "BulletDamege");
 
 	startModels_.clear();
 	endModels_.clear();
@@ -69,15 +72,28 @@ void BulletManager::Update()
 	{
 		bullet->Update();
 
-		/*if (input->GetKeyboard()->TriggerKey(DIK_R)) {
-			bullet->Reverse();
-		}*/
-
 	}
 
 	// 死んだ弾をリストから削除
-	bullets_.remove_if([](const std::unique_ptr<Bullet>& bullet) {
-		return bullet->IsDead();
+	bullets_.remove_if([this](const std::unique_ptr<Bullet>& bullet) {
+		if (bullet->IsDead()) {
+
+			
+			if (player_->GetNowLine() != bullet->GetNowLine()) { // レーンが違う場合は当たらない
+				return true;
+			}
+
+
+			if (player_->GetIsForward()) { // プレイヤーが前を向いている場合のみダメージを受ける
+				player_->OnCollision(bulletDamege_);
+			}
+			else { // 敵がダメージを受ける
+				enemy_->OnCollision(bulletDamege_);
+			}
+
+			return true;
+		}
+		return false;
 	});
 
 	// 始点・終点モデルの更新
@@ -97,8 +113,6 @@ void BulletManager::Update()
 	ImGui::Begin("弾パラメーター");
 
 	// 間隔
-	/*ImGui::DragFloat("始点間隔", &startDistance_, 1.0f);
-	ImGui::DragFloat("終点間隔", &endDistance_, 1.0f);*/
 	ImGui::DragFloat("始点D", &startDistance_, 0.1f);
 	global_->datas_["BulletParameters"].items["StartDistance"].value = startDistance_;
 	ImGui::DragFloat("終点D", &endDistance_, 0.01f);
@@ -110,9 +124,6 @@ void BulletManager::Update()
 	global_->datas_["BulletParameters"].items["EndTranslate"].value = endTranslate_;
 
 	// サイズ
-	/*ImGui::DragFloat("最小サイズ", &minSize_, 1.0f);
-	ImGui::DragFloat("最大サイズ", &maxSize_, 1.0f);*/
-
 	float startSize = startScale_.x;
 	ImGui::DragFloat("始点サイズ", &startSize, 0.01f);
 	startScale_ = { startSize, startSize, 1.0f };
@@ -123,7 +134,8 @@ void BulletManager::Update()
 	endScale_ = { endSize, endSize, 1.0f };
 	global_->datas_["BulletParameters"].items["EndScale"].value = endScale_;
 
-	//ImGui::DragFloat("終点ライン", &endLine_, 1.0f);
+	ImGui::DragInt("弾ダメージ", &bulletDamege_, 1);
+	global_->datas_["BulletParameters"].items["BulletDamege"].value = bulletDamege_;
 
 	if (ImGui::Button("Save")) {
 		global_->SaveFile("BulletParameters");
@@ -137,36 +149,6 @@ void BulletManager::Update()
 
 }
 
-void BulletManager::Draw(MLEngine::Object::Camera* camera)
-{
-	for(auto& bullet : bullets_)
-	{
-		bullet->Draw(camera);
-	}
-}
-
-void BulletManager::SpawnBullet(const MLEngine::Math::Vector2& position, const MLEngine::Math::Vector2& direction, float speed)
-{
-	/*std::unique_ptr<Bullet> newBullet = std::make_unique<Bullet>();
-	newBullet->Initialize();
-	newBullet->SetPosition(position);
-	newBullet->SetVelocity(direction, speed);
-	bullets_.push_back(std::move(newBullet));*/
-
-
-}
-
-void BulletManager::SpawnBullet(const MLEngine::Math::Vector2& position, int laneNumber, float time)
-{
-	std::unique_ptr<Bullet> newBullet = std::make_unique<Bullet>();
-	newBullet->Initialize();
-	/*newBullet->SetPosition({ position.x + startDistance_ * (laneNumber - 1), position.y });
-	newBullet->SetTargetPosition({ position.x + endDistance_ * (laneNumber - 1), endLine_ });
-	newBullet->SetSize(minSize_, maxSize_);
-	newBullet->SetEndLine(endLine_);*/
-	newBullet->SetTravelTime(time);
-	bullets_.push_back(std::move(newBullet));
-}
 
 void BulletManager::SpawnBullet(int laneNumber, float time)
 {
@@ -178,6 +160,7 @@ void BulletManager::SpawnBullet(int laneNumber, float time)
 	);
 	newBullet->SetScale(startScale_, endScale_);
 	newBullet->SetTravelTime(time);
+	newBullet->SetNowLine(laneNumber);
 	bullets_.push_back(std::move(newBullet));
 }
 

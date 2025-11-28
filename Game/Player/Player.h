@@ -27,6 +27,10 @@ public:
 		return nowLine_;
 	}
 
+	bool GetIsForward() const {
+		return isForward_;
+	}
+
 
 	NetworkManager::SendPlayerState GetSendPlayerState() const {
 		return plState_;

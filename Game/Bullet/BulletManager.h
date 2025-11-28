@@ -2,9 +2,13 @@
 
 #include <list>
 #include <vector>
+
 #include "Object/Camera.h"
 #include "Bullet.h"
 #include ".vs/../Engine/Tool/GlobalVariables.h"
+#include "Player/Player.h"
+
+class Enemy;
 
 class BulletManager {
 	public:
@@ -12,13 +16,14 @@ class BulletManager {
 		~BulletManager() {};
 		void Initialize();
 		void Update();
-		void Draw(MLEngine::Object::Camera* camera);
 
-        //void SetLaunchPosition(MLEngine::Math::Vector2 position) { launchPosition_ = position; }
 		// 弾を生成する
-		void SpawnBullet(const MLEngine::Math::Vector2& position, const MLEngine::Math::Vector2& direction, float speed);
-		void SpawnBullet(const MLEngine::Math::Vector2& position, int laneNumber, float time);
 		void SpawnBullet(int laneNumber, float time);
+
+		void SetPlayer(Player* player) { player_ = player; }
+		void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
+
+
 private:
 	// 弾のリスト
 	std::list<std::unique_ptr<Bullet>> bullets_;
@@ -49,6 +54,12 @@ private:
 
 	GlobalVariables* global_;
 
+	// プレイヤー情報
+	Player* player_ = nullptr;
+
+	// 敵情報
+	Enemy* enemy_ = nullptr;
+
 	// モデル
 	std::vector<std::unique_ptr<MLEngine::Resource::RigidModel>> startModels_;
 
@@ -61,4 +72,6 @@ private:
 	MLEngine::Math::Vector3 endTranslate_ = { 0.0f, -0.18f, -9.0f };
 	float startDistance_ = 1.7f;
 	float endDistance_ = 0.28f;
+
+	int bulletDamege_ = 10;
 };

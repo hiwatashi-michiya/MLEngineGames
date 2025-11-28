@@ -11,6 +11,7 @@
 #include"Manager/PlayerManager.h"
 #include <memory>
 #include "Enemy/Enemy.h"
+#include "Bullet/BulletManager.h"
 
 class PlayScene : public BaseScene
 {
@@ -40,10 +41,14 @@ private:
 	GameManager* gameManager_ = nullptr;
 	GameConfig* config_ = nullptr;
 	
-
+	// プレイヤーマネージャー
 	std::unique_ptr<PlayerManager> playerManager_;
 
+	// 敵
 	std::unique_ptr<Enemy> enemy_;
+
+	// 弾マネージャー
+	std::unique_ptr<BulletManager> bulletManager_;
 
 };
 

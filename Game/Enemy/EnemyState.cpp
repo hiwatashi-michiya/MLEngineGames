@@ -24,10 +24,7 @@ void EnemyNormalState::Update(Enemy* enemy)
 		{
 			laneNumber = MLEngine::Math::RandomInt(0, 2);
 		}
-		//MLEngine::Math::Vector2 launchPos = enemy->LaunchPosition();
-		//enemy->GetBulletManger()->SpawnBullet({ launchPos.x + enemy->GetDistance() * (laneNumber - 1), launchPos.y}, {(laneNumber - 1.0f) * wide_ , 1.0f}, speed_);
-		//enemy->GetBulletManger()->SpawnBullet(launchPos, laneNumber, bulletSpeed_);
-		enemy->GetBulletManger()->SpawnBullet(laneNumber, bulletSpeed_);
+		enemy->GetBulletManager()->SpawnBullet(laneNumber, bulletSpeed_);
 		intervalTime_ = 0.0f;
 		prevLaneNumber = laneNumber;
 	}
@@ -90,10 +87,7 @@ void EnemyBerserkState::Update(Enemy* enemy)
 		{
 			laneNumber = MLEngine::Math::RandomInt(0, 2);
 		}
-		//MLEngine::Math::Vector2 launchPos = enemy->LaunchPosition();
-		//enemy->GetBulletManger()->SpawnBullet({ launchPos.x + enemy->GetDistance() * (laneNumber - 1), launchPos.y }, { (laneNumber - 1.0f) * wide_ , 1.0f }, speed_);
-		//enemy->GetBulletManger()->SpawnBullet({ launchPos.x + enemy->GetDistance() * (laneNumber - 1), launchPos.y }, laneNumber, bulletSpeed_);
-		enemy->GetBulletManger()->SpawnBullet(laneNumber, bulletSpeed_);
+		enemy->GetBulletManager()->SpawnBullet(laneNumber, bulletSpeed_);
 		intervalTime_ = 0.0f;
 		prevLaneNumber = laneNumber;
 	}

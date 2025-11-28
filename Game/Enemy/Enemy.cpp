@@ -9,35 +9,15 @@ void Enemy::Initialize()
 {
 	global_ = GlobalVariables::GetInstance();
 
-	global_->SetValue("EnemyState", "Scale", scale_);
 	scale_ = global_->GetVector3Value("EnemyState", "Scale");
-	global_->SetValue("EnemyState", "Translate", translate_);
 	translate_ = global_->GetVector3Value("EnemyState", "Translate");
-	global_->SetValue("EnemyState", "MaxHp", maxHp_);
 	maxHp_ = global_->GetIntValue("EnemyState", "MaxHp");
 	hp_ = global_->GetIntValue("EnemyState", "MaxHp");
-
-	//position_ = initialPosition_;
 
 	model_.Initialize("./Resources/model/plane/plane.obj");
 	model_.worldMatrix = MLEngine::Math::MakeAffineMatrix(scale_, { 0.0f, 0.0f, 0.0f, 1.0f }, translate_);
 
-	/*MLEngine::Resource::Texture texture;
-	texture.Load("./Resources/EngineResources/defaultMask.png");
-	sprite_.reset(MLEngine::Resource::Sprite::Create(texture, position_, { 1.0f,1.0f,1.0f,1.0f }));
-	sprite_->anchorPoint = { 0.5f,0.5f };
-	sprite_->size = { 320.0f,160.0f };*/
-
-
 	ChangeState(std::make_unique<EnemyNormalState>());
-
-	bulletManager_ = std::make_unique<BulletManager>();
-	bulletManager_->Initialize();
-	//bulletManager_->SetLaunchPosition(LaunchPosition());
-
-	for (int i = 0; i < 3; ++i) {
-		//bulletManager_->SpawnBullet({ LaunchPosition().x + distance_ * (i - 1), LaunchPosition().y}, {(i - 1) * 0.8f , 1.0f}, 4.0f);
-	}
 
 	hp_ = maxHp_;
 
@@ -61,11 +41,6 @@ void Enemy::Update()
 	}
 
 	currentState_->Update(this);
-	bulletManager_->Update();
-	//bulletManager_->SetLaunchPosition(LaunchPosition());
-
-
-
 
 #ifdef _DEBUG
 
@@ -84,7 +59,7 @@ void Enemy::Update()
 		}
 	}
 	// 状態ごとのパラメーター
-	if (dynamic_cast<EnemyNormalState*>(currentState_.get())) {
+	if (dynamic_cast<EnemyNormalState*>(currentState_.get())) { // 通常状態
 		ImGui::DragFloat("弾速度", &dynamic_cast<EnemyNormalState*>(currentState_.get())->bulletSpeed_, 0.1f);
 		ImGui::DragFloat("発射間隔", &dynamic_cast<EnemyNormalState*>(currentState_.get())->fireInterval, 0.1f);
 		ImGui::Text("経過時間 : %f" ,dynamic_cast<EnemyNormalState*>(currentState_.get())->intervalTime_);
@@ -92,13 +67,13 @@ void Enemy::Update()
 		global_->datas_["EnemyState"].items["NormalFireInterval"].value = dynamic_cast<EnemyNormalState*>(currentState_.get())->fireInterval;
 		stateIndex = 0;
 	}
-	else if (dynamic_cast<EnemyDownState*>(currentState_.get())) {
+	else if (dynamic_cast<EnemyDownState*>(currentState_.get())) { // ダウン状態
 		ImGui::DragFloat("ダウン時間", &dynamic_cast<EnemyDownState*>(currentState_.get())->downTime, 0.1f);
 		ImGui::Text("経過時間 : %f", dynamic_cast<EnemyDownState*>(currentState_.get())->elapsedTime_);
 		global_->datas_["EnemyState"].items["DownTime"].value = dynamic_cast<EnemyDownState*>(currentState_.get())->downTime;
 		stateIndex = 1;
 	}
-	else if (dynamic_cast<EnemyBerserkState*>(currentState_.get())) {
+	else if (dynamic_cast<EnemyBerserkState*>(currentState_.get())) { // 猛攻状態
 		ImGui::DragFloat("弾速度", &dynamic_cast<EnemyBerserkState*>(currentState_.get())->bulletSpeed_, 0.1f);
 		ImGui::DragFloat("発射間隔", &dynamic_cast<EnemyBerserkState*>(currentState_.get())->fireInterval, 0.1f);
 		ImGui::Text("経過時間 : %f", dynamic_cast<EnemyBerserkState*>(currentState_.get())->intervalTime_);
@@ -110,9 +85,6 @@ void Enemy::Update()
 
 	ImGui::Separator();
 
-	// 位置、サイズ
-	/*ImGui::DragFloat2("位置", &sprite_->position.x, 1.0f);
-	ImGui::DragFloat2("サイズ", &sprite_->size.x, 1.0f);*/
 
 	ImGui::DragFloat3("スケール", &scale_.x, 0.1f);
 	global_->datas_["EnemyState"].items["Scale"].value = scale_;
@@ -141,10 +113,6 @@ void Enemy::Update()
 
 }
 
-void Enemy::Draw(MLEngine::Object::Camera* camera)
-{
-}
-
 void Enemy::ChangeState(std::unique_ptr<EnemyState> newState)
 {
 	if (currentState_) {
@@ -155,9 +123,10 @@ void Enemy::ChangeState(std::unique_ptr<EnemyState> newState)
 	currentState_->Enter(this);
 }
 
-//MLEngine::Math::Vector2 Enemy::LaunchPosition()
-//{
-//	/*MLEngine::Math::Vector2 launchPosition = position_;
-//	launchPosition.y += sprite_->size.y / 2.0f;
-//	return launchPosition;*/
-//}
+void Enemy::OnCollision(int damege)
+{
+	hp_ -= damege;
+	if (hp_ < 0) {
+		hp_ = 0;
+	}
+}
