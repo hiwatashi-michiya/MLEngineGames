@@ -35,4 +35,6 @@ private:
 	MLEngine::Math::Vector2 frameSize_{};
 	MLEngine::Math::Vector4 frameColor_ = { 0.0f,0.0f,0.0f,1.0f };
 
+	bool changeFlag_ = false;
+
 };
