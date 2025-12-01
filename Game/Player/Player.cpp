@@ -10,6 +10,8 @@ Player::Player(){
 	sprite_.reset(MLEngine::Resource::Sprite::Create(texture_, MLEngine::Math::Vector2(pos_.x, pos_.y), color_));
 
 	vController_ = &VirtualController::GetInstance();
+	input_ = MLEngine::Input::Manager::GetInstance();
+
 	config_ = GameConfig::GetInstance();
 
 }
@@ -93,6 +95,8 @@ void Player::OnCollision(const int damege){
 }
 
 void Player::PlayerMove(){
+	
+
 	//左入力
 	if (vController_->LeftTriger()) {
 		if (nowLine_ > 0){
@@ -106,6 +110,17 @@ void Player::PlayerMove(){
 			nowLine_++;
 		}
 	}
+
+	if (input_->GetKeyboard()->Trigger(DIK_1)){
+		nowLine_ = 0;
+	}
+	else if (input_->GetKeyboard()->Trigger(DIK_2)) {
+		nowLine_ = 1;
+	}
+	else if (input_->GetKeyboard()->Trigger(DIK_3)) {
+		nowLine_ = 2;
+	}
+	
 
 	//反転入力
 	if (vController_->Decide()) {
