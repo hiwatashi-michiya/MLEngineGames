@@ -155,7 +155,6 @@ void NetworkManager::Finalize() {
 }
 
 void NetworkManager::RecvLoop() {
-    /*確認するだけなので現時点では空*/
     while (isRunning_){
         SendPlayerState tmp;
         // テンプレート受信関数
