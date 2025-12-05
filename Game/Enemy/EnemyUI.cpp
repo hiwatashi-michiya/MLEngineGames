@@ -20,13 +20,16 @@ void EnemyUI::Initialize(Enemy* enemy)
 	//必須となる情報の読み込み
 	texture_.Load("./Resources/white.png");
 
+	frame_.reset(MLEngine::Resource::Sprite::Create(texture_, framePosition_, frameColor_));
+	frame_->color = { 0.0f,0.0f,0.0f,1.0f };
+
+	//必須となる情報の読み込み
+	texture_.Load("./Resources/white.png");
+
 	hpBar_.reset(MLEngine::Resource::Sprite::Create(texture_, barPosition_, barColor_));
 	//hpBar_->anchorPoint = { 0.0f,0.5f };
 
-	//必須となる情報の読み込み
-	texture_.Load("./Resources/frame.png");
-
-	frame_.reset(MLEngine::Resource::Sprite::Create(texture_, framePosition_, frameColor_));
+	
 }
 
 void EnemyUI::Update() {
