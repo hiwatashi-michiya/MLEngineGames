@@ -22,7 +22,7 @@ RigidModel::~RigidModel()
 	Resource::Manager::GetInstance()->RemoveRigidModel(this);
 }
 
-void RigidModel::Initialize(const std::string& filename, [[maybe_unused]] const std::string& texturename) {
+void RigidModel::Initialize(const std::string& filename) {
 
 	localMatrix = Matrix4x4::Identity();
 	worldMatrix = Matrix4x4::Identity();
@@ -140,7 +140,7 @@ void RigidModel::Regist()
 
 }
 
-void RigidModel::SetMesh(const std::string& filename, [[maybe_unused]] const std::string& texturename)
+void RigidModel::SetMesh(const std::string& filename)
 {
 
 	//既にインスタンシング用のモデルを作成している場合、それを返す

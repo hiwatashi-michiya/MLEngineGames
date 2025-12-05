@@ -22,15 +22,14 @@ inline void DebugScene::Initialize()
 
 
 	camera_.Initialize();
-	camera_.position_ = { 0.0f,0.0f,-10.0f };
+	camera_.position_ = { 0.0f,0.0f,-30.0f };
 	debugCamera_.Initialize();
 
 	tex_.Load("./Resources/white.png");
 
-	model_.Initialize("./Resources/model/block/glassBlock.obj");
+	sprite3D_.Initialize("./Resources/texture/renban.png", 4);
 	model2_.Initialize("./Resources/model/block/glassBlock.obj");
 	model3_.Initialize("./Resources/model/block/glassBlock.obj");
-	model_.SetTexture("./Resources/model/plane/uvChecker.png");
 	model3_.SetTexture("./Resources/EngineResources/paperMask.png");
 	particle_.reset(Particle3D::Create("./Resources/model/plane/plane.obj", 32));
 	sprite_.reset(Sprite2D::Create(tex_, { 200.0f,200.0f }, { 0.0f,1.0f,0.0f,1.0f }));
@@ -81,8 +80,8 @@ void DebugScene::Update()
 			ImGui::TreePop();
 		}
 
-		if (ImGui::TreeNode("Transform1")) {
-			transform_.Debug();
+		if (ImGui::TreeNode("Sprite3D")) {
+			sprite3D_.Debug();
 			ImGui::TreePop();
 		}
 
@@ -107,11 +106,11 @@ void DebugScene::Update()
 
 		}
 
-		if (ImGui::DragInt("use normal map", &model_.materialData.enableNormalMap, 0.1f,0, 1)) {
+		if (ImGui::DragInt("use normal map", &sprite3D_.materialData.enableNormalMap, 0.1f,0, 1)) {
 
 		}
 
-		if (ImGui::Checkbox("show model", &model_.isActive)) {
+		if (ImGui::Checkbox("show model", &sprite3D_.isActive)) {
 
 		}
 
@@ -175,9 +174,9 @@ void DebugScene::Update()
 			//モデル一つ一つのアクティブフラグ
 			particle_->particleData[i].isActive = true;
 			//トランスフォーム
-			particle_->particleData[i].transform.translate_ = { i * 0.1f, 0.0f,0.0f };
-			particle_->particleData[i].transform.scale_ = { 1.0f,1.0f,1.0f };
-			particle_->particleData[i].transform.rotateQuaternion_ = MLEngine::Math::IdentityQuaternion();
+			particle_->particleData[i].transform.translate = { i * 0.1f, 0.0f,0.0f };
+			particle_->particleData[i].transform.scale = { 1.0f,1.0f,1.0f };
+			particle_->particleData[i].transform.rotateQuaternion = MLEngine::Math::IdentityQuaternion();
 			//色
 			particle_->particleData[i].color = { 1.0f, i / 32.0f, 1.0f, 1.0f };
 		}
@@ -194,14 +193,12 @@ void DebugScene::Update()
 	lineBox_.Update();
 	lineSphere_.Update();
 
-	transform_.UpdateMatrix();
 	transform2_.UpdateMatrix();
 	transform3_.UpdateMatrix();
 
-
-	model_.SetWorldMatrix(transform_.worldMatrix_);
-	model2_.SetWorldMatrix(transform2_.worldMatrix_);
-	model3_.SetWorldMatrix(transform3_.worldMatrix_);
+	sprite3D_.UpdateAnimation();
+	model2_.SetWorldMatrix(transform2_.worldMatrix);
+	model3_.SetWorldMatrix(transform3_.worldMatrix);
 
 }
 

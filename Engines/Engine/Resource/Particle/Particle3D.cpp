@@ -330,7 +330,7 @@ void Particle3D::Draw(Camera* camera) {
 
 	for (uint32_t i = 0; i < instanceCount_; i++) {
 
-		Vector3 scale = particleData[i].transform.scale_;
+		Vector3 scale = particleData[i].transform.scale;
 
 		//アクティブ状態でない場合、スケールを0にして表示しない
 		if (not particleData[i].isActive) {
@@ -338,10 +338,10 @@ void Particle3D::Draw(Camera* camera) {
 		}
 
 		if (isBillboard_) {
-			worldMatrices_[i] = MakeScaleMatrix(scale) * matBillboard_ * MakeTranslateMatrix(particleData[i].transform.translate_);
+			worldMatrices_[i] = MakeScaleMatrix(scale) * matBillboard_ * MakeTranslateMatrix(particleData[i].transform.translate);
 		}
 		else {
-			worldMatrices_[i] = MakeAffineMatrix(scale, particleData[i].transform.rotateQuaternion_, particleData[i].transform.translate_);
+			worldMatrices_[i] = MakeAffineMatrix(scale, particleData[i].transform.rotateQuaternion, particleData[i].transform.translate);
 		}
 
 		/*Matrix4x4 worldMatrix = worldTransform[i].matWorld_;*/

@@ -29,9 +29,9 @@ namespace MLEngine::Resource {
 		~RigidModel();
 
 		//初期化
-		void Initialize(const std::string& filename, const std::string& texturename = "");
+		void Initialize(const std::string& filename);
 		//メッシュ切り替え
-		void SetMesh(const std::string& filename, const std::string& texturename = "");
+		void SetMesh(const std::string& filename);
 
 		//ワールド行列セット
 		void SetWorldMatrix(const MLEngine::Math::Matrix4x4& matrix) { worldMatrix = matrix; }

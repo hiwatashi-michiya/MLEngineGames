@@ -158,9 +158,10 @@ void InstancingModel::Regist(Sprite3D* sprite3D)
 	}
 
 	matTransformMap_[instanceCount_].WVP = sprite3D->worldViewProjectionMatrix;
-	matTransformMap_[instanceCount_].World = sprite3D->localMatrix * sprite3D->worldMatrix;
-	matTransformMap_[instanceCount_].WorldInverseTranspose = Transpose(Inverse(sprite3D->localMatrix * sprite3D->worldMatrix));
+	matTransformMap_[instanceCount_].World = sprite3D->localMatrix * sprite3D->transform.worldMatrix;
+	matTransformMap_[instanceCount_].WorldInverseTranspose = Transpose(Inverse(sprite3D->localMatrix * sprite3D->transform.worldMatrix));
 	matTransformMap_[instanceCount_].color = sprite3D->color;
+	matTransformMap_[instanceCount_].textureIndex = sprite3D->GetTextureIndex();
 
 	material_->SetMaterialData(instanceCount_, sprite3D->materialData);
 

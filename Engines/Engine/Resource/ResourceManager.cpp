@@ -32,6 +32,17 @@ void Manager::Update() {
 
 	}
 
+	for (Sprite3D* sprite3d : sprite3Ds_) {
+
+		if (sprite3d->isActive) {
+			//ワールドビュープロジェクション更新
+			sprite3d->worldViewProjectionMatrix = sprite3d->localMatrix * sprite3d->transform.worldMatrix * camera_->matViewProjection_;
+			//モデルのデータを追加
+			sprite3d->Regist();
+		}
+
+	}
+
 	//スプライト描画
 	for (Sprite2D* sprite : sprite2Ds_) {
 

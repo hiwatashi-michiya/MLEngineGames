@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include "DebugCamera.h"
 #include "Sprite2D.h"
+#include "Sprite3D.h"
 #include "Audio.h"
 #include "Input.h"
 #include "Particle3D.h"
@@ -42,11 +43,10 @@ private:
 	//オーディオ
 	MLEngine::Resource::Audio se1_;
 	//通常モデル
-	MLEngine::Resource::RigidModel model_;
+	MLEngine::Resource::Sprite3D sprite3D_;
 	MLEngine::Resource::RigidModel model2_;
 	MLEngine::Resource::RigidModel model3_;
 	//トランスフォーム
-	MLEngine::Object::Transform transform_;
 	MLEngine::Object::Transform transform2_;
 	MLEngine::Object::Transform transform3_;
 	//Vector3宣言
