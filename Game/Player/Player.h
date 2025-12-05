@@ -49,6 +49,10 @@ public:
 		plState_ = plState;
 	}
 
+	void SetIsTitleScene(bool isTitleScene) {
+		isTitleScene_ = isTitleScene;
+	}
+
 private:
 	//プレイヤーのボタンによる操作
 	void PlayerMove();
@@ -80,6 +84,8 @@ private:
 	MLEngine::Resource::Texture frontTexture_;
 	MLEngine::Resource::Texture backTexture_;
 
+
+	bool isTitleScene_ = false;
 	//前を向いているか
 	bool isForward_ = true;
 	//体力が最大かどうか
@@ -101,6 +107,9 @@ private:
 	int recoveryValue_ = 1;
 	//現在いるラインの番号
 	int nowLine_ = 2;
+
+
+	int bulletDamege_ = 10;
 
 };
 

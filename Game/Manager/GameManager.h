@@ -2,6 +2,7 @@
 #include<memory>
 #include <cstdint>
 #include <string>
+#include"Player/Player.h"
 #include"VirtualController.h"
 
 class GameManager
@@ -17,15 +18,25 @@ public:
     // フレーム更新
     void Update();
 
+    // シーン更新
+    void SceneUpdate(Player* player);
+
     // 状態管理
-    enum class GameState {
+    enum class GameState : uint8_t {
         Title,      //タイトル
         Tutorial,   //チュートリアル
         Playing,    //本編
         Result      //リザルト
     };
 
-    void SetState(GameState newState) { state_ = newState; }
+    // 状態管理
+    enum class TutorialState : uint8_t {
+        LaneMove,      //レーン移動
+        FlontBack,   //振り向き
+        Wait      //待機
+    };
+
+    void SetState(GameState newState) { nextState_ = newState; }
     GameState GetState() const { return state_; }
 
     // スコア管理
@@ -52,6 +63,10 @@ private:
 private:
     // ゲーム全体の状態
     GameState state_ = GameState::Title;
+    GameState nextState_ = GameState::Title;
+
+    // チュートリアルの状態
+    TutorialState tuState_ = TutorialState::LaneMove;
 
     //入力デバイス
     VirtualController* vController_ = nullptr;
@@ -70,4 +85,6 @@ private:
 
     // 難易度などの設定
     int difficulty_ = 1;
+
+
 };

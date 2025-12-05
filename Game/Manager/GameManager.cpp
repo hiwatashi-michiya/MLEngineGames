@@ -11,6 +11,9 @@ void GameManager::Initialize() {
     score_ = 0;
     remainingTime_ = timeLimit_;
     state_ = GameState::Title;
+    nextState_ = GameState::Playing;
+    tuState_ = TutorialState::LaneMove;
+    isTutorialClear_ = false;
 }
 
 void GameManager::Finalize() {
@@ -21,14 +24,28 @@ void GameManager::Update() {
     switch (state_){
     case GameManager::GameState::Title:
         if (vController_->Decide()) {
-            state_ = GameState::Tutorial;
+            nextState_ = GameState::Tutorial;
         };
 
 
         break;
     case GameManager::GameState::Tutorial:
 
+        switch (tuState_){
+        case GameManager::TutorialState::LaneMove:
+            break;
+        case GameManager::TutorialState::FlontBack:
+            break;
+        case GameManager::TutorialState::Wait:
+            break;
+        default:
+            break;
+        }
 
+
+        if (isTutorialClear_){
+            nextState_ = GameState::Playing;
+        }
 
         break;
     case GameManager::GameState::Playing:
@@ -37,7 +54,9 @@ void GameManager::Update() {
 
         break;
     case GameManager::GameState::Result:
-
+        if (vController_->Decide()) {
+            nextState_ = GameState::Title;
+        };
 
 
         break;
@@ -45,13 +64,13 @@ void GameManager::Update() {
         break;
     }
 
+    
+   
+}
 
-    if (state_ == GameState::Playing) {
-        remainingTime_ -= deltaTime_;
-        if (remainingTime_ <= 0.0f) {
-            remainingTime_ = 0.0f;
-            state_ = GameState::Result;
-        }
+void GameManager::SceneUpdate(Player* player){
+    if (nextState_ != state_) {
+        state_ = nextState_;
     }
 }
 

@@ -19,6 +19,8 @@ public:
         bool isForwardFlug;
         //攻撃をくらったか
         bool isDamagedFlug;
+        //クライアントが攻撃を食らったか
+        bool isClientHited;
         //体力
         int life;
         //現在いるラインの番号
@@ -38,15 +40,28 @@ public:
 
     // 構造体を送受信（任意の型に対応）
     template <typename T>
-    void Send(const T& data);
+    void Send(const T& data) {
+        if (sConnect_ == INVALID_SOCKET) return;
+        send(sConnect_, reinterpret_cast<const char*>(&data), sizeof(T), 0);
+    }
 
     template <typename T>
-    bool Receive(T& outData);
+    bool Receive(T& outData) {
+        if (sConnect_ == INVALID_SOCKET) return false;
+        // データ受信
+        int nRcv = recv(sConnect_, reinterpret_cast<char*>(&outData), sizeof(T), 0);
+
+        if (nRcv == SOCKET_ERROR)return false;
+
+        return true;
+    }
 
     // 毎フレーム呼び出す（内部キュー更新など）
     void Update();
 
     bool GetLatestPlayerState(SendPlayerState& out) const;
+
+    void GetSceneState(uint8_t& out)const;
 private:
     NetworkManager() = default;
     ~NetworkManager() = default;
@@ -71,7 +86,7 @@ private:
     int fromlen_ = 0;
     char addr_[20]; //IPアドレス用文字列を設定
     /*ネットにつなぐときの待機時間*/
-    int waitSecond_ = 2;
+    int waitSecond_ = 7;
 
     bool isServer_ = false;
 
@@ -79,6 +94,7 @@ private:
     std::atomic<bool> isRunning_;
 
     SendPlayerState playerState_{};
-
+    //後に変換するが送受信のためuintで定義
+    uint8_t sceneState_ = 0;
 };
 

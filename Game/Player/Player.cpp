@@ -32,6 +32,8 @@ void Player::Initialize(){
 	life_ = lifeMax_ ;
 	pos_ = Vector3(640.0f, 650.0f, 0.0f);
 	color_ = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
+
+	bulletDamege_ = 10;
 }
 
 void Player::Finalize(){
@@ -100,12 +102,25 @@ void Player::DebugDraw(){
 }
 
 void Player::OnCollision(const int damege){
+#ifdef CLIENT_BUILD
+	// Client専用処理
+	plState_.isClientHited = true;
+	//managerを介してクライアントに送る
+	NetworkManager::GetInstance().Send(plState_);
+#else
+	// Server Debug処理
 	life_ -= damege;
+#endif
+
+
+	
 	isDamaged_ = true;
 }
 
 void Player::PlayerMove(){
-	
+	if (isTitleScene_){
+		return;
+	}
 
 	//左入力
 	if (vController_->LeftTriger()) {
@@ -132,7 +147,7 @@ void Player::PlayerMove(){
 	}
 	
 
-	//反転入力
+	//タイトルシーンでなければ反転入力
 	if (vController_->Decide()) {
 		isForward_ = !isForward_;
 	}
@@ -195,6 +210,8 @@ void Player::PlayerInfoInsertion(){
 	plState_.life = life_;
 	plState_.nowLine = nowLine_;
 
+
+	
 	//if (not isForward_) {
 	//	//後ろを向いているなら青色
 	//	sprite_->color = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
@@ -226,12 +243,20 @@ void Player::SyncFromNetwork(){
 		else {
 			nowLine_ = netState.nowLine;
 		}
-
+		
+		plState_.isClientHited = netState.isClientHited;
+		
 #else
 		// Server処理
 		// 受信状態を自プレイヤーに適用
-		life_ = netState.life;
+		plState_.isClientHited = netState.isClientHited;
+
+		if (plState_.isClientHited){
+			life_ -= bulletDamege_;
+			plState_.isClientHited = false;
+		}
 		isDamaged_ = netState.isDamagedFlug;
+
 #endif
 
 		

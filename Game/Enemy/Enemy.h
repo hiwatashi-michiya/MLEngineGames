@@ -36,6 +36,10 @@ public:
 		bulletManager_ = bulletManager;
 	}
 
+	void SetIsActive(const bool isActive) {
+		model_.isActive = isActive;
+	}
+
 private:
 	GlobalVariables* global_;
 

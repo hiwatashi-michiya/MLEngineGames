@@ -166,28 +166,20 @@ void NetworkManager::RecvLoop() {
         else {
             playerState_ = tmp;
         }
+       /* uint8_t state = 0;
+        if (!Receive(state)) {
+
+            isRunning_ = false;
+
+        }
+        else {
+            sceneState_ = state;
+        }*/
         std::this_thread::sleep_for(std::chrono::milliseconds(3));
 
     }
   
 
-}
-
-template <typename T>
-void NetworkManager::Send(const T& data) {
-    if (sConnect_ == INVALID_SOCKET) return;
-    send(sConnect_, reinterpret_cast<const char*>(&data), sizeof(T), 0);
-}
-
-template <typename T>
-bool NetworkManager::Receive(T& outData) {
-    if (sConnect_ == INVALID_SOCKET) return false;
-    // データ受信
-    int nRcv = recv(sConnect_, reinterpret_cast<char*>(&outData), sizeof(T), 0);
-
-    if (nRcv == SOCKET_ERROR)return false;
-
-    return true;
 }
 
 void NetworkManager::Update() {
@@ -205,6 +197,14 @@ bool NetworkManager::GetLatestPlayerState(SendPlayerState& out) const{
     return true;
 }
 
+void NetworkManager::GetSceneState(uint8_t& out) const{
+    out = sceneState_;
+}
+
 // 明示的なテンプレートインスタンス化
 template void NetworkManager::Send(const struct SendPlayerState& data);
 template bool NetworkManager::Receive(struct SendPlayerState& outData);
+
+//// 明示的なテンプレートインスタンス化
+//template void NetworkManager::Send(const struct uint8_t& data);
+//template bool NetworkManager::Receive(struct uint8_t& outData);

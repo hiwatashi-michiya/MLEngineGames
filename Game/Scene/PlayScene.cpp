@@ -2,6 +2,7 @@
 #include"Externals/imgui/imgui.h"
 #include "DebugScene.h"
 
+
 using namespace MLEngine::Resource;
 
 PlayScene::PlayScene(){
@@ -54,23 +55,60 @@ void PlayScene::Update(){
 
 	
 #ifdef CLIENT_BUILD
-	// Client専用処理
+	//// Client専用処理
+	//uint8_t recvData;
+	//NetworkManager::GetInstance().Receive(recvData);
+	//gameManager_->SetState(static_cast<GameManager::GameState>(recvData));
 #else
 	// Server Debug処理
-	gameManager_->Update();
+
 #endif	
+	
+	gameManager_->Update();
+	if (gameManager_->GetState() == GameManager::GameState::Title){
+		playerManager_->GetPlayer()->SetIsTitleScene(true);
+	}
+	else {
+		playerManager_->GetPlayer()->SetIsTitleScene(false);
+	}
 
 	playerManager_->Update(gameManager_->GetDeltaTime());
 
-	enemy_->Update();
+	if (gameManager_->GetState() == GameManager::GameState::Playing){
+		enemy_->SetIsActive(true);
+		enemy_->Update();
+		bulletManager_->SetIsModelActive(true);
+		bulletManager_->Update();
 
-	bulletManager_->Update();
-
-	lifeUI_->Update();
+		lifeUI_->Update();
+	}
+	else {
+		bulletManager_->SetIsModelActive(false);
+		enemy_->SetIsActive(false);
+	}
+	
 
 	camera_.Update();
 
+	gameManager_->SceneUpdate(playerManager_->GetPlayer());
+
+
+#ifdef CLIENT_BUILD
+	// Client専用処理
+#else
+	//// Server Debug処理
+	//uint8_t sendData = static_cast<uint8_t>(gameManager_->GetState());
+	//NetworkManager::GetInstance().Send(sendData);
+#endif	
+
 	
+#ifdef _DEBUG
+	if (input_->GetKeyboard()->Trigger(DIK_0)){
+		sceneManager_->ChangeScene("Play");
+	}
+
+#endif // _DEBUG
+
 }
 
 void PlayScene::Draw(){
@@ -82,9 +120,30 @@ void PlayScene::DrawImgui() {
 #ifdef _DEBUG
 	config_->Debug();
 
-	ImGui::Begin("お試しプレイ");
+	ImGui::Begin("シーン");
 
-	ImGui::Text("テスト");
+	switch (gameManager_->GetState()) {
+	case GameManager::GameState::Title:
+		ImGui::Text("タイトル");
+
+		break;
+	case GameManager::GameState::Tutorial:
+		ImGui::Text("チュートリアル");
+		break;
+	case GameManager::GameState::Playing:
+		ImGui::Text("ゲームプレイ");
+
+
+		break;
+	case GameManager::GameState::Result:
+		ImGui::Text("リザルト");
+
+		break;
+	default:
+		break;
+	}
+
+	
 
 	ImGui::End();
 

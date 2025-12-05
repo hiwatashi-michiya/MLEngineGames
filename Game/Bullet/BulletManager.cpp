@@ -50,13 +50,16 @@ void BulletManager::Initialize()
 		startModel->Initialize("./Resources/model/plane/plane.obj");
 		startModel->worldMatrix = MLEngine::Math::MakeAffineMatrix(startScale_, { 0.0f, 0.0f, 0.0f, 1.0f }, startTranslate_);
 		startModel->color = { 1.0f,0.0f,0.0f,0.5f };
+		startModel->isActive = false;
 		startModels_.push_back(std::move(startModel));
 
 		std::unique_ptr<MLEngine::Resource::RigidModel> endModel = std::make_unique<MLEngine::Resource::RigidModel>();
 		endModel->Initialize("./Resources/model/plane/plane.obj");
 		endModel->worldMatrix = MLEngine::Math::MakeAffineMatrix(endScale_, { 0.0f, 0.0f, 0.0f, 1.0f }, endTranslate_);
 		endModel->color = { 0.0f,1.0f,0.0f,0.5f };
+		endModel->isActive = false;
 		endModels_.push_back(std::move(endModel));
+
 	}
 
 	
@@ -103,9 +106,12 @@ void BulletManager::Update()
 		targetSprites_[i]->SetPosition({ launchPosition_.x + endDistance_ * (i - 1), endLine_ });
 		targetSprites_[i]->size = { maxSize_, maxSize_ };*/
 
-		startModels_[i]->worldMatrix = MLEngine::Math::MakeAffineMatrix(startScale_, { 0.0f, 0.0f, 0.0f, 1.0f }, { startTranslate_.x + startDistance_ * (i - 1), startTranslate_.y, startTranslate_.z });
-		endModels_[i]->worldMatrix = MLEngine::Math::MakeAffineMatrix(endScale_, { 0.0f, 0.0f, 0.0f, 1.0f }, { endTranslate_.x + endDistance_ * (i - 1), endTranslate_.y, endTranslate_.z });
 
+		
+		startModels_[i]->worldMatrix = MLEngine::Math::MakeAffineMatrix(startScale_, { 0.0f, 0.0f, 0.0f, 1.0f }, { startTranslate_.x + startDistance_ * (i - 1), startTranslate_.y, startTranslate_.z });
+		startModels_[i]->isActive = isModelActive_;
+		endModels_[i]->worldMatrix = MLEngine::Math::MakeAffineMatrix(endScale_, { 0.0f, 0.0f, 0.0f, 1.0f }, { endTranslate_.x + endDistance_ * (i - 1), endTranslate_.y, endTranslate_.z });
+		endModels_[i]->isActive = isModelActive_;
 	}
 
 #ifdef _DEBUG
