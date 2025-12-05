@@ -9,9 +9,9 @@ void EnemyNormalState::Enter(Enemy* enemy)
 {
 	intervalTime_ = 0.0f;
 	prevLaneNumber = -1;
-	GlobalVariables* global_ = GlobalVariables::GetInstance();
-	bulletSpeed_ = global_->GetFloatValue("EnemyState", "NormalBulletSpeed");
-	fireInterval = global_->GetFloatValue("EnemyState", "NormalFireInterval");
+	GlobalVariables* global = GlobalVariables::GetInstance();
+	bulletSpeed_ = global->GetFloatValue("EnemyState", "NormalBulletSpeed");
+	fireInterval = global->GetFloatValue("EnemyState", "NormalFireInterval");
 }
 
 void EnemyNormalState::Update(Enemy* enemy)
@@ -25,6 +25,7 @@ void EnemyNormalState::Update(Enemy* enemy)
 			laneNumber = MLEngine::Math::RandomInt(0, 2);
 		}
 		enemy->GetBulletManager()->SpawnBullet(laneNumber, bulletSpeed_);
+		enemy->ChangeMotionState(std::make_unique<EnemyAttackState>());
 		intervalTime_ = 0.0f;
 		prevLaneNumber = laneNumber;
 	}
@@ -46,8 +47,8 @@ void EnemyNormalState::Exit(Enemy* enemy)
 void EnemyDownState::Enter(Enemy* enemy)
 {
 	elapsedTime_ = 0.0f;
-	GlobalVariables* global_ = GlobalVariables::GetInstance();
-	downTime = global_->GetFloatValue("EnemyState", "DownTime");
+	GlobalVariables* global = GlobalVariables::GetInstance();
+	downTime = global->GetFloatValue("EnemyState", "DownTime");
 }
 
 void EnemyDownState::Update(Enemy* enemy)
@@ -72,9 +73,9 @@ void EnemyBerserkState::Enter(Enemy* enemy)
 {
 	intervalTime_ = 0.0f;
 	prevLaneNumber = -1;
-	GlobalVariables* global_ = GlobalVariables::GetInstance();
-	bulletSpeed_ = global_->GetFloatValue("EnemyState", "BerserkBulletSpeed");
-	fireInterval = global_->GetFloatValue("EnemyState", "BerserkFireInterval");
+	GlobalVariables* global = GlobalVariables::GetInstance();
+	bulletSpeed_ = global->GetFloatValue("EnemyState", "BerserkBulletSpeed");
+	fireInterval = global->GetFloatValue("EnemyState", "BerserkFireInterval");
 }
 
 void EnemyBerserkState::Update(Enemy* enemy)
@@ -88,6 +89,7 @@ void EnemyBerserkState::Update(Enemy* enemy)
 			laneNumber = MLEngine::Math::RandomInt(0, 2);
 		}
 		enemy->GetBulletManager()->SpawnBullet(laneNumber, bulletSpeed_);
+		enemy->ChangeMotionState(std::make_unique<EnemyAttackState>());
 		intervalTime_ = 0.0f;
 		prevLaneNumber = laneNumber;
 	}

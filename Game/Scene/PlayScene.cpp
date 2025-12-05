@@ -27,6 +27,7 @@ inline void PlayScene::Initialize(){
 
 	enemy_ = std::make_unique<Enemy>();
 	enemy_->Initialize();
+	enemy_->SetCamera(&camera_);
 
 	bulletManager_ = std::make_unique<BulletManager>();
 	bulletManager_->Initialize();

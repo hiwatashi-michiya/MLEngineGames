@@ -9,6 +9,7 @@ void Enemy::Initialize()
 {
 	global_ = GlobalVariables::GetInstance();
 
+	// 
 	scale_ = global_->GetVector3Value("EnemyState", "Scale");
 	translate_ = global_->GetVector3Value("EnemyState", "Translate");
 	maxHp_ = global_->GetIntValue("EnemyState", "MaxHp");
@@ -21,6 +22,8 @@ void Enemy::Initialize()
 	model_.worldMatrix = MLEngine::Math::MakeAffineMatrix(scale_, { 0.0f, 0.0f, 0.0f, 1.0f }, translate_);
 
 	ChangeState(std::make_unique<EnemyNormalState>());
+	// 
+	ChangeMotionState(std::make_unique<EnemyIdleState>());
 
 	hp_ = maxHp_;
 
@@ -42,6 +45,7 @@ void Enemy::Update()
 	if (!dynamic_cast<EnemyDownState*>(currentState_.get())) {
 		if(downCount_ >= maxDownCount_) {
 			ChangeState(std::make_unique<EnemyDownState>());
+			ChangeMotionState(std::make_unique<EnemyknockDownState>());
 			downCount_ = 0;
 		}
 	}
@@ -101,7 +105,7 @@ void Enemy::Update()
 	ImGui::DragFloat3("平行移動", &translate_.x, 0.1f);
 	global_->datas_["EnemyState"].items["Translate"].value = translate_;
 
-	model_.worldMatrix = MLEngine::Math::MakeAffineMatrix(scale_, { 0.0f, 0.0f, 0.0f, 1.0f }, translate_);
+	model_.worldMatrix = MLEngine::Math::MakeAffineMatrix(scale_, {0.0f, 0.0f, 0.0f}, translate_);
 
 	// 体力
 	ImGui::SliderInt("体力", &hp_, 0, maxHp_);
@@ -122,7 +126,55 @@ void Enemy::Update()
 
 	ImGui::End();
 
+	ImGui::Begin("敵アニメーション");
+	
+	ImGui::Text("ダメージモーション");
+	std::unique_ptr<EnemyOnHitState> onHitState = std::make_unique<EnemyOnHitState>();
+	onHitState->Enter(this);
+
+	ImGui::DragFloat("時間", &onHitState->targetTime_, 0.01f);
+	global_->datas_["EnemyMotionState"].items["OnHit"].value = onHitState->targetTime_;
+	ImGui::DragFloat("加算角度", &onHitState->addDegrees_, 0.1f);
+	global_->datas_["EnemyMotionState"].items["AddDegrees"].value = onHitState->addDegrees_;
+	ImGui::SliderFloat("最大角度", &onHitState->limitDegrees_, 0.0f, 90.0f);
+	global_->datas_["EnemyMotionState"].items["LimitDegrees"].value = onHitState->limitDegrees_;
+
+	ImGui::Separator();
+
+	ImGui::Text("攻撃モーション");
+	std::unique_ptr<EnemyAttackState> attackState = std::make_unique<EnemyAttackState>();
+	attackState->Enter(this);
+
+	ImGui::DragFloat("時間", &attackState->targetTime_, 0.01f);
+	global_->datas_["EnemyMotionState"].items["Attack"].value = attackState->targetTime_;
+	ImGui::SliderFloat2("揺れ幅", &attackState->shakeOffset_.x, 0.0f, 1.0f);
+	global_->datas_["EnemyMotionState"].items["ShakeOffset"].value = attackState->shakeOffset_;
+
+	ImGui::Separator();
+
+	ImGui::Text("ダウンモーション");
+	std::unique_ptr<EnemyknockDownState>knockDownState = std::make_unique<EnemyknockDownState>();
+	knockDownState->Enter(this);
+
+	ImGui::SliderFloat("回転モーションの割合", &knockDownState->rotateSection_, 0.0f, 1.0f);
+	global_->datas_["EnemyMotionState"].items["RotateSection"].value = knockDownState->rotateSection_;
+	ImGui::SliderFloat("横たわるモーションの割合", &knockDownState->liedownSection_, 0.0f, 1.0f);
+	global_->datas_["EnemyMotionState"].items["LieDownSection"].value = knockDownState->liedownSection_;
+	ImGui::SliderFloat("起き上がるモーションの割合", &knockDownState->getupSection_, 0.0f, 1.0f);
+	global_->datas_["EnemyMotionState"].items["GetUpSection"].value = knockDownState->getupSection_;
+
+	ImGui::Separator();
+
+	if (ImGui::Button("Save")) {
+		global_->SaveFile("EnemyMotionState");
+		std::string message = std::format("{}.json saved", "EnemyMotionState");
+		MessageBoxA(nullptr, message.c_str(), "GlobalVariables", 0);
+	}
+	ImGui::End();
+
 #endif // _DEBUG
+
+	motionState_->Update(this);
 
 }
 
@@ -136,6 +188,15 @@ void Enemy::ChangeState(std::unique_ptr<EnemyState> newState)
 	currentState_->Enter(this);
 }
 
+void Enemy::ChangeMotionState(std::unique_ptr<EnemyMotionState> newMotionState)
+{
+	if (motionState_) {
+		motionState_->Exit(this);
+	}
+	motionState_ = std::move(newMotionState);
+	motionState_->Enter(this);
+}
+
 void Enemy::OnCollision(int damege)
 {
 	if(!dynamic_cast<EnemyDownState*>(currentState_.get())) {
@@ -146,4 +207,6 @@ void Enemy::OnCollision(int damege)
 	if (hp_ < 0) {
 		hp_ = 0;
 	}
+
+	ChangeMotionState(std::make_unique<EnemyOnHitState>());
 }

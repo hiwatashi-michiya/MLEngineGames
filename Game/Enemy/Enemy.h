@@ -7,6 +7,7 @@
 #include "RigidModel.h"
 #include ".vs/../Engine/Tool/GlobalVariables.h"
 #include "Enemy/EnemyUI.h"
+#include "Enemy/EnemyMotionState.h"
 
 
 class Enemy
@@ -27,11 +28,18 @@ public:
 	// 状態変更
 	void ChangeState(std::unique_ptr<EnemyState> newState);
 
+	// モーション状態変更
+	void ChangeMotionState(std::unique_ptr<EnemyMotionState> newMotionState);
+
 	// 衝突処理
 	void OnCollision(int damege);
 
-	BulletManager* GetBulletManager() { return bulletManager_; }
 
+
+	// ゲット関数
+	MLEngine::Object::Camera* GetCamera() { return camera_; }
+	BulletManager* GetBulletManager() { return bulletManager_; }
+	MLEngine::Resource::RigidModel& GetModel() { return model_; }
 	int GetHp() const { return hp_; }
 	int GetMaxHp() const { return maxHp_; }
 
@@ -40,13 +48,23 @@ public:
 		bulletManager_ = bulletManager;
 	}
 
+	void SetCamera(MLEngine::Object::Camera* camera) {
+		camera_ = camera;
+	}
+
 private:
+
+	MLEngine::Object::Camera* camera_;
+
 	GlobalVariables* global_;
 
 	std::unique_ptr<EnemyUI> enemyUI_;
 
 	// 現在の状態
 	std::unique_ptr<EnemyState> currentState_;
+
+	// 現在のモーション状態
+	std::unique_ptr<EnemyMotionState> motionState_;
 
 	// モデル
 	MLEngine::Resource::RigidModel model_;
