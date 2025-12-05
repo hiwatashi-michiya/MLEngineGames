@@ -83,6 +83,7 @@ Material* Material::Create(uint32_t instanceCount) {
 			constMap[i].color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 			constMap[i].enableLighting = true;
 			constMap[i].enableNormalMap = true;
+			constMap[i].enableToonshading = true;
 			constMap[i].shininess = 50.0f;
 			constMap[i].uvTransform = MakeIdentity4x4();
 

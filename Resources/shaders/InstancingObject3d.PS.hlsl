@@ -59,13 +59,13 @@ float32_t PerlinNoise(float32_t density, float32_t2 uv)
     float32_t2 uvFloor = floor(uv * density);
     float32_t2 uvFrac = frac(uv * density);
     
-    //各頂点のランダムなベクトルを取得
+    //randomVec
     float32_t2 v00 = randomVec(uvFloor + float32_t2(0, 0));
     float32_t2 v01 = randomVec(uvFloor + float32_t2(0, 1));
     float32_t2 v10 = randomVec(uvFloor + float32_t2(1, 0));
     float32_t2 v11 = randomVec(uvFloor + float32_t2(1, 1));
     
-    //内積を取る
+    //dot
     float32_t c00 = dot(v00, uvFrac - float32_t2(0, 0));
     float32_t c01 = dot(v01, uvFrac - float32_t2(0, 1));
     float32_t c10 = dot(v10, uvFrac - float32_t2(1, 0));
@@ -110,12 +110,14 @@ PixelShaderOutput main(VertexShaderOutput input) {
     
     float32_t4 usingColor = gMaterial[instanceID].color * input.color;
     
-	if (gMaterial[instanceID].enableLighting != 0) { //Lightingする場合
+	if (gMaterial[instanceID].enableLighting != 0) { //Lighting
         
         float32_t3 diffuseDirectionalLight;
         float32_t3 specularDirectionalLight;
         float32_t3 diffusePointLight;
         float32_t3 specularPointLight;
+        float32_t3 totalDirectionalLight;
+        float32_t3 totalPointLight;
         
         {
             
@@ -132,13 +134,21 @@ PixelShaderOutput main(VertexShaderOutput input) {
             float NdotH = dot(normalize(normal), halfVector);
             float specularPow = pow(saturate(NdotH), gMaterial[instanceID].shininess);
     
-            //拡散反射
             diffuseDirectionalLight =
             usingColor.rgb * textureColor.rgb * gDirectionalLight.color.rgb * cos * gDirectionalLight.intensity;
         
-            //鏡面反射
             specularDirectionalLight =
             gDirectionalLight.color.rgb * gDirectionalLight.intensity * specularPow * float32_t3(1.0f, 1.0f, 1.0f);
+            
+            totalDirectionalLight = diffuseDirectionalLight + specularDirectionalLight;
+            
+            //Toonshading
+            if (gMaterial[instanceID].enableToonshading != 0)
+            {
+                
+                totalDirectionalLight = (0.5f + step(0.4f, NdotL) * 0.3f + step(0.7f, NdotL) * 0.2f) * totalDirectionalLight;
+                
+            }
             
         }
         
@@ -147,7 +157,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
             float32_t3 pointLightDirection = normalize(input.worldPosition - gPointLight.position);
             
             float32_t distance = length(gPointLight.position - input.worldPosition); //distance to point light
-            float32_t factor = pow(saturate(-distance / gPointLight.radius + 1.0), gPointLight.decay); //指数によるコントロール
+            float32_t factor = pow(saturate(-distance / gPointLight.radius + 1.0), gPointLight.decay); 
             
             //half lambert
             float NdotL = dot(normalize(normal), -pointLightDirection);
@@ -162,25 +172,44 @@ PixelShaderOutput main(VertexShaderOutput input) {
             float NdotH = dot(normalize(normal), halfVector);
             float specularPow = pow(saturate(NdotH), gMaterial[instanceID].shininess);
     
-            //拡散反射
             diffusePointLight =
             usingColor.rgb * textureColor.rgb * gPointLight.color.rgb * cos * gPointLight.intensity * factor;
         
-            //鏡面反射
             specularPointLight =
             gPointLight.color.rgb * gPointLight.intensity * specularPow * float32_t3(1.0f, 1.0f, 1.0f) * factor;
             
+            totalPointLight = diffusePointLight + specularPointLight;
+            
+            //Toonshading
+            if (gMaterial[instanceID].enableToonshading != 0)
+            {
+                
+                totalPointLight = (0.5f + step(0.4f, NdotL) * 0.3f + step(0.7f, NdotL) * 0.2f) * totalPointLight;
+                
+            }
+            
         }
         
-        //拡散反射+鏡面反射
-        output.color.rgb = (diffuseDirectionalLight + specularDirectionalLight + diffusePointLight + specularPointLight) * pn;
+        output.color.rgb = (totalDirectionalLight + totalPointLight) * pn;
         output.color.a = usingColor.a * textureColor.a;
     }
-	else { //Lightingしない場合
-        output.color = usingColor * textureColor;
+	else { //No Lighting
+        
+        float32_t4 totalColor = usingColor * textureColor;
+        
+         //Toonshading
+        if (gMaterial[instanceID].enableToonshading != 0)
+        {
+                
+            totalColor.r = 0.1f + step(0.4f, totalColor.r) * 0.4f + step(0.7f, totalColor.r) * 0.5f;
+            totalColor.g = 0.1f + step(0.4f, totalColor.g) * 0.4f + step(0.7f, totalColor.g) * 0.5f;
+            totalColor.b = 0.1f + step(0.4f, totalColor.b) * 0.4f + step(0.7f, totalColor.b) * 0.5f;
+                
+        }
+        
+        output.color = totalColor;
     }
     
-	//output.colorのα値が0のときにPixelを棄却
     if (output.color.a == 0.0)
     {
         discard;

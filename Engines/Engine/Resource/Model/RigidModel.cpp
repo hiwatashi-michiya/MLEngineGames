@@ -30,8 +30,9 @@ void RigidModel::Initialize(const std::string& filename) {
 	color = { 1.0f,1.0f,1.0f,1.0f };
 
 	materialData.color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	materialData.enableLighting = true;
+	materialData.enableLighting = false;
 	materialData.enableNormalMap = true;
+	materialData.enableToonshading = true;
 	materialData.shininess = 50.0f;
 	materialData.uvTransform = MakeIdentity4x4();
 

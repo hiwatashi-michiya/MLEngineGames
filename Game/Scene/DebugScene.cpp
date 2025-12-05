@@ -106,7 +106,7 @@ void DebugScene::Update()
 
 		}
 
-		if (ImGui::DragInt("use normal map", &sprite3D_.materialData.enableNormalMap, 0.1f,0, 1)) {
+		if (ImGui::DragInt("use normal map", &model2_.materialData.enableNormalMap, 0.1f,0, 1)) {
 
 		}
 

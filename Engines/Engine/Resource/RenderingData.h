@@ -25,9 +25,8 @@ namespace MLEngine::Resource {
 
 		int32_t enableLighting;
 		int32_t enableNormalMap;
+		int32_t enableToonshading;
 		float shininess; //光沢度
-
-		float padding;
 
 		MLEngine::Math::Matrix4x4 uvTransform;
 
