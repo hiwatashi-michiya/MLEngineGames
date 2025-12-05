@@ -6,8 +6,8 @@ struct Material
     
     int32_t enableLighting;
     int32_t enableNormalMap;
+    int32_t enableToonshading;
     float32_t shininess;
-    float32_t padding;
     float32_t4x4 uvTransform;
     
 };
