@@ -1,4 +1,6 @@
 #include "Joycon.h"
+#include<ranges>
+#include<algorithm>
 
 void Joycon::Init() {
 	hidManager_ = std::make_unique<hidManager>();
@@ -18,17 +20,21 @@ void Joycon::Init() {
 void Joycon::Update() {
 
 	// read input report
-	std::array<uint8_t, 0x40> buff; 
+	std::array<uint8_t, 0x40> buff;
 	memset(buff.data(), 0x40, size_t(0x40));
 	// 読み込むサイズを指定。
 	static constexpr size_t kSize = 49;
 	while (true) {
+		std::array<uint8_t, 0x40> tmp;
 		// buff に input report が入る。
-		int ret = hid_read_timeout(device_, buff.data(), kSize, 1);
-		const std::span<uint8_t> mem(buff.data(), ret);
+		int ret = hid_read_timeout(device_, tmp.data(), kSize, 1);
+		const std::span<uint8_t> mem(tmp.data(), ret);
 
 		if (mem.empty()) {
 			break;
+		}
+		else {
+			buff = tmp;
 		}
 	}
 
@@ -48,26 +54,33 @@ void Joycon::Update() {
 		}
 		Buttan = true;
 	}
-	static constexpr float kRotCalc = 4588.f / 65535;
-	std::array<int16_t,1> GyroX;
-	std::array<int16_t,1> GyroY;
-	std::array<int16_t,1> GyroZ;
-	for () {
-		
-		ImGui::Begin("Joycon Bit");
-		ImGui::Text("%d", buff.begin());
-		ImGui::End();
-	}
+	static constexpr float kRotCalc = (4588.f / 65535) / 360;
 
-	std::memcpy(GyroX.data(), buff.data() + 18, sizeof(int8_t) * 2);
-	std::memcpy(GyroY.data(), buff.data() + 22, sizeof(int8_t) * 2);
-	std::memcpy(GyroZ.data(), buff.data() + 24, sizeof(int8_t) * 2);
+	std::array<int16_t,3> Gyro;
+
+
+	std::memcpy(Gyro.data(), buff.data() + 19, sizeof(int8_t) * 6);
+
+	//std::transform(Gyro.begin(), Gyro.end(), Gyro_Normalized.begin(), [](int16_t v) {return v; });
+
+	//デッドゾーンの設定
+	
+	uint16_t cal_gyro_coeff = 590;
+	uint16_t cal_gyro_offset = 1;
+
+	float gyro_cal_coeff = (float)(816.0 / (cal_gyro_coeff - (cal_gyro_offset)));
+
+	std::transform(Gyro.begin(), Gyro.end(), Gyro_Normalized.begin(), [&](int16_t v)->float {return v - ((int16_t)cal_gyro_offset * gyro_cal_coeff * 0.0027777778); });
+
+	std::transform(Gyro_Normalized.begin(), Gyro_Normalized.end(), &Vrotate_.x, [](float v) {return v * kRotCalc; });
+
 	ImGui::Begin("Gyro");
-	ImGui::Text("GyroX:%d", GyroX.data());
-	ImGui::Text("GyroY:%d", GyroY.data());
-	ImGui::Text("GyroZ:%d", GyroZ.data());
+	ImGui::Text("GyroX:%f", Vrotate_.x);
+	ImGui::Text("GyroY:%f", Vrotate_.y);
+	ImGui::Text("GyroZ:%f", Vrotate_.z);
 
 	ImGui::End();
+
 	if (buff[5] == 0) {
 		Buttan = false;
 	}
@@ -85,22 +98,5 @@ bool Joycon::SendSubcommand(hid_device* device, std::byte subcommandId, const st
 
 	return hid_write(device, std::bit_cast<const uint8_t*>(buffer.data()), buffer.size()) >= 0;
 }
-
-//bool Joycon::SendSubCommand(hid_device* device, std::byte subcommandID, uint8_t PacetNumber)
-//{
-//
-//
-//	uint8_t buf[0x40]; bzero(buf, 0x40);
-//
-//	//buf[0] = 1; // 0x10 for rumble only
-//	//buf[1] = GlobalPacketNumber; // Increment by 1 for each packet sent. It loops in 0x0 - 0xF range.
-//	//memcpy(buf + 2, rumbleData, 8);
-//	//buf[10] = subcommandID;
-//	//memcpy(buf + 11, subcommandData, subcommandDataLen);
-//
-//
-//	return hid_write(handle, buf, 0x40);
-//}
-
 
 

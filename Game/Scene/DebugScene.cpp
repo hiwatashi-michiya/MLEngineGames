@@ -58,7 +58,12 @@ void DebugScene::Update()
 	joyconInput->Update();
 	//トランスフォーム
 	Matrix4x4 result;
-	result = MakeAffineMatrix(Vector3(1.0f,1.0f,1.0f), ConvertFromEuler(Vector3(0.0f, 0.0f, 0.0f)),Vector3(0.0f,0.0f,0.0f));
+
+	modelRot_ *= ConvertFromEuler(joyconInput->GetVecRotate());
+	//ジョイコンの回転情報からアフィン行列を作成
+	result = MakeAffineMatrix(Vector3(1.0f,1.0f,1.0f), modelRot_,Vector3(0.0f,0.0f,0.0f));
+	//モデルに行列をセット
+	model_.SetWorldMatrix(result);
 
 	if (input_->GetKeyboard()->Trigger(DIK_SPACE)) {
 		sceneManager_->ChangeScene(new PlayScene());

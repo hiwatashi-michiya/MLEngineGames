@@ -21,14 +21,17 @@ public:
 	void Update();
 
 	bool SendSubcommand(hid_device* device, std::byte subcommandId, const std::span<std::byte>& args);
-	//bool SendSubCommand(hid_device* device,std::byte subcommandID,uint8_t PacetNumber);
 
-	Quaternion GetRotate() { return rotate_; };
+	Quaternion GetQuaRotate() { return Qrotate_; };
+	Vector3 GetVecRotate() { return Vrotate_; };
+
 private:
 	std::unique_ptr<hidManager> hidManager_;
 	hid_device* device_;
 	bool Buttan = false;
 	std::array<std::byte, 0x40> data_{};
 
-	Quaternion rotate_;
+	Quaternion Qrotate_;
+	std::array<float, 3> Gyro_Normalized;
+	Vector3 Vrotate_;
 };

@@ -55,6 +55,7 @@ private:
 	MLEngine::Resource::LineBox lineBox_;
 
 	std::unique_ptr<Joycon> joyconInput;
+	Quaternion modelRot_;
 };
 
 
