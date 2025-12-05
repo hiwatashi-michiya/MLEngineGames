@@ -42,6 +42,8 @@ private:
 	GameManager* gameManager_ = nullptr;
 	GameConfig* config_ = nullptr;
 	
+	GameManager::GameState state_ = GameManager::GameState::Title;
+
 	// プレイヤーマネージャー
 	std::unique_ptr<PlayerManager> playerManager_;
 
@@ -51,6 +53,6 @@ private:
 	// 弾マネージャー
 	std::unique_ptr<BulletManager> bulletManager_;
 
-	std::unique_ptr<LifeUI> lifeUI_;;
+	std::unique_ptr<LifeUI> lifeUI_;
 };
 
