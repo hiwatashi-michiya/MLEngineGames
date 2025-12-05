@@ -9,12 +9,18 @@ bool VirtualController::UpTriger() const{
         || input_->GetGamePad()->TriggerButton(MLEngine::Input::UP)){
         return true;
     }
+    if (input_->GetGamePad()->TriggerLStick(MLEngine::Input::S_UP) || input_->GetGamePad()->TriggerButton(MLEngine::Input::UP)){
+        return true;
+    }
     return false;
 }
 
 bool VirtualController::DownTriger()const {
     if (input_->GetKeyboard()->Trigger(DIK_S) || input_->GetKeyboard()->Trigger(DIK_DOWN)
         || input_->GetGamePad()->TriggerButton(MLEngine::Input::DOWN)) {
+        return true;
+    }
+    if (input_->GetGamePad()->TriggerLStick(MLEngine::Input::S_DOWN) || input_->GetGamePad()->TriggerButton(MLEngine::Input::DOWN)) {
         return true;
     }
     return false;
@@ -25,12 +31,18 @@ bool VirtualController::RightTriger() const {
         || input_->GetGamePad()->TriggerButton(MLEngine::Input::RIGHT)) {
         return true;
     }
+    if (input_->GetGamePad()->TriggerLStick(MLEngine::Input::S_RIGHT) || input_->GetGamePad()->TriggerButton(MLEngine::Input::RIGHT)) {
+        return true;
+    }
     return false;
 }
 
 bool VirtualController::LeftTriger() const {
     if (input_->GetKeyboard()->Trigger(DIK_A) || input_->GetKeyboard()->Trigger(DIK_LEFT)
         || input_->GetGamePad()->TriggerButton(MLEngine::Input::LEFT)) {
+        return true;
+    }
+    if (input_->GetGamePad()->TriggerLStick(MLEngine::Input::S_LEFT) || input_->GetGamePad()->TriggerButton(MLEngine::Input::LEFT)) {
         return true;
     }
     return false;
