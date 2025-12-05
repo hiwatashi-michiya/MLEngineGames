@@ -4,9 +4,9 @@
 using namespace MLEngine::Resource;
 using namespace MLEngine::Core;
 
-void InstancingResource::Initialize(uint32_t instanceCount, Microsoft::WRL::ComPtr<ID3D12Resource> mapResource)
+void InstancingResource::Initialize(uint32_t instanceCount, Microsoft::WRL::ComPtr<ID3D12Resource> mapResource, UINT size)
 {
 
-	instancingResource_ = TextureManager::GetInstance()->SetInstancingResource(instanceCount, mapResource);
+	instancingResource_ = TextureManager::GetInstance()->SetInstancingResource(instanceCount, mapResource, size);
 
 }

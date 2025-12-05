@@ -20,14 +20,14 @@ struct Camera {
     float32_t3 worldPosition;
 };
 
-ConstantBuffer<Material> gMaterial : register(b0);
 ConstantBuffer<DirectionalLight> gDirectionalLight : register(b1);
 ConstantBuffer<Camera> gCamera : register(b2);
 ConstantBuffer<PointLight> gPointLight : register(b3);
 
-Texture2D<float32_t4> gTexture : register(t0);
-Texture2D<float32_t> gMaskTexture : register(t1);
-StructuredBuffer<InstancingForGPU> gInstancing : register(t2);
+Texture2D<float32_t> gMaskTexture : register(t0);
+StructuredBuffer<InstancingForGPU> gInstancing : register(t1);
+StructuredBuffer<Material> gMaterial : register(t2);
+Texture2D<float32_t4> gTextures[] : register(t3);
 SamplerState gSampler : register(s0);
 
 struct PixelShaderOutput {
@@ -92,24 +92,25 @@ float32_t FractalSumNoise(float32_t density, float32_t2 uv)
 
 PixelShaderOutput main(VertexShaderOutput input) {
 	PixelShaderOutput output;
-	float4 transformedUV = mul(float32_t4(input.texcoord.xy, 0.0f, 1.0f), gMaterial.uvTransform);
-	float32_t4 textureColor = gTexture.Sample(gSampler, transformedUV.xy);
+    uint32_t instanceID = input.intanceID;
+    float4 transformedUV = mul(float32_t4(input.texcoord.xy, 0.0f, 1.0f), gMaterial[instanceID].uvTransform);
+    float32_t4 textureColor = gTextures[gInstancing[instanceID].textureIndex].Sample(gSampler, transformedUV.xy);
     float32_t4 nMap = textureColor * 2 - 1;
     
     float32_t3 normal = input.normal;
     
     //normal map
-    if (gMaterial.enableNormalMap != 0)
+    if (gMaterial[instanceID].enableNormalMap != 0)
     {
-        normal = normalize(mul(normalize(nMap.xyz), (float32_t3x3) gInstancing[input.texcoord.z].WorldInverseTranspose));
+        normal = normalize(mul(normalize(nMap.xyz), (float32_t3x3) gInstancing[instanceID].WorldInverseTranspose));
     }
     
     float32_t density = 20.0f;
     float32_t pn = 1.0f;
     
-    float32_t4 usingColor = gMaterial.color * input.color;
+    float32_t4 usingColor = gMaterial[instanceID].color * input.color;
     
-	if (gMaterial.enableLighting != 0) { //Lightingする場合
+	if (gMaterial[instanceID].enableLighting != 0) { //Lightingする場合
         
         float32_t3 diffuseDirectionalLight;
         float32_t3 specularDirectionalLight;
@@ -129,7 +130,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
             float32_t3 halfVector = normalize(-gDirectionalLight.direction + toEye);
         
             float NdotH = dot(normalize(normal), halfVector);
-            float specularPow = pow(saturate(NdotH), gMaterial.shininess);
+            float specularPow = pow(saturate(NdotH), gMaterial[instanceID].shininess);
     
             //拡散反射
             diffuseDirectionalLight =
@@ -145,7 +146,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
             
             float32_t3 pointLightDirection = normalize(input.worldPosition - gPointLight.position);
             
-            float32_t distance = length(gPointLight.position - input.worldPosition); //点光源への距離
+            float32_t distance = length(gPointLight.position - input.worldPosition); //distance to point light
             float32_t factor = pow(saturate(-distance / gPointLight.radius + 1.0), gPointLight.decay); //指数によるコントロール
             
             //half lambert
@@ -159,7 +160,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
             float32_t3 halfVector = normalize(-pointLightDirection + toEye);
         
             float NdotH = dot(normalize(normal), halfVector);
-            float specularPow = pow(saturate(NdotH), gMaterial.shininess);
+            float specularPow = pow(saturate(NdotH), gMaterial[instanceID].shininess);
     
             //拡散反射
             diffusePointLight =

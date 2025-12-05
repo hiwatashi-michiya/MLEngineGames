@@ -18,6 +18,8 @@ namespace MLEngine::Object {
 		void UpdateMatrix();
 		//親セット
 		void SetParent(Transform* transform) { parent_ = transform; }
+		//デバッグ用
+		void Debug();
 		//ワールド行列
 		MLEngine::Math::Matrix4x4 worldMatrix_;
 		//平行移動

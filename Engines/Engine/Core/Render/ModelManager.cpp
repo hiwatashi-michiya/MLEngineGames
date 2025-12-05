@@ -45,26 +45,30 @@ void Model::Manager::Initialize()
 	//RootSignature作成
 	RootSignatureDesc rootSignatureDesc{};
 	rootSignatureDesc.SetFlags(D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
-
+	//テクスチャ用
 	DescriptorRange descriptorRange{};
 	descriptorRange.SetSize(1);
-	descriptorRange.SetDescriptorRange(0, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND, 0);
+	descriptorRange.SetDescriptorRange(3, 512, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, D3D12_APPEND_ALIGNED_ELEMENT, 0, 0);
 	//インスタンシング描画用
 	DescriptorRange descriptorRangeForInstancing{};
 	descriptorRangeForInstancing.SetSize(1);
-	descriptorRangeForInstancing.SetDescriptorRange(0, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND, 0);
+	descriptorRangeForInstancing.SetDescriptorRange(0, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND, 0, 0);
 	//インスタンシング描画用(ピクセル)
 	DescriptorRange descriptorRangeForInstancingPS{};
 	descriptorRangeForInstancingPS.SetSize(1);
-	descriptorRangeForInstancingPS.SetDescriptorRange(2, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND, 0);
+	descriptorRangeForInstancingPS.SetDescriptorRange(1, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND, 0, 0);
 	//ノーマルマップ用
 	DescriptorRange descriptorRangeForNormalMap{};
 	descriptorRangeForNormalMap.SetSize(1);
-	descriptorRangeForNormalMap.SetDescriptorRange(1, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND, 0);
+	descriptorRangeForNormalMap.SetDescriptorRange(0, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND, 0, 0);
+	//マテリアル用
+	DescriptorRange descriptorRangeForMaterial{};
+	descriptorRangeForMaterial.SetSize(1);
+	descriptorRangeForMaterial.SetDescriptorRange(2, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND, 0, 0);
 
 	RootParameter rootParameter{};
 	rootParameter.SetSize(7);
-	rootParameter.SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 0, 0);
+	rootParameter.SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, descriptorRangeForMaterial.Get(), 0);
 	rootParameter.SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, descriptorRangeForInstancingPS.Get(), 1);
 	rootParameter.SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, descriptorRange.Get(), 2);
 	rootParameter.SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 1, 3);

@@ -1,7 +1,8 @@
 #pragma once
 #include <list>
 #include "Model/RigidModel.h"
-#include "Sprite/Sprite.h"
+#include "Sprite/Sprite2D.h"
+#include "Sprite/Sprite3D.h"
 #include "Particle/Particle3D.h"
 #include "Line/LineDrawer.h"
 #include "Camera.h"
@@ -27,9 +28,13 @@ namespace MLEngine::Resource {
 		//剛体モデル削除(重くなったらイテレータを利用してeraseに書き換える)
 		void RemoveRigidModel(RigidModel* model) { rigidModels_.remove(model); }
 		//スプライト追加
-		void AddSprite(Sprite* sprite) { sprites_.push_back(sprite); }
+		void AddSprite2D(Sprite2D* sprite) { sprite2Ds_.push_back(sprite); }
 		//スプライト削除
-		void RemoveSprite(Sprite* sprite) { sprites_.remove(sprite); }
+		void RemoveSprite2D(Sprite2D* sprite) { sprite2Ds_.remove(sprite); }
+		//スプライト追加
+		void AddSprite3D(Sprite3D* sprite) { sprite3Ds_.push_back(sprite); }
+		//スプライト削除
+		void RemoveSprite3D(Sprite3D* sprite) { sprite3Ds_.remove(sprite); }
 		//スプライト追加
 		void AddParticle3D(Particle3D* particle) { particle3ds_.push_back(particle); }
 		//スプライト削除
@@ -42,8 +47,10 @@ namespace MLEngine::Resource {
 	private:
 		//モデルのポインタリスト
 		std::list<RigidModel*> rigidModels_;
-		//スプライトのポインタリスト
-		std::list<Sprite*> sprites_;
+		//スプライト2Dのポインタリスト
+		std::list<Sprite2D*> sprite2Ds_;
+		//スプライト3Dのポインタリスト
+		std::list<Sprite3D*> sprite3Ds_;
 		//パーティクルのポインタリスト
 		std::list<Particle3D*> particle3ds_;
 		//ラインポインタのリスト

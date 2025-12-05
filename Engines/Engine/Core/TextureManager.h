@@ -22,17 +22,18 @@ namespace MLEngine::Core {
 		//初期化
 		void Initialize(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvHeap);
 		//テクスチャ読み込み
-		Render::ResourceView* Load(const std::string& filePath);
+		uint32_t Load(const std::string& filePath);
 		//インスタンシングリソースセット
-		Render::ResourceView SetInstancingResource(uint32_t instanceCount, Microsoft::WRL::ComPtr<ID3D12Resource> mapResource);
+		Render::ResourceView SetInstancingResource(uint32_t instanceCount, Microsoft::WRL::ComPtr<ID3D12Resource> mapResource, 
+			UINT size);
+		//ハンドルからテクスチャを取得
+		Render::ResourceView* GetTexture(uint32_t index) { return textureList_[index].get(); }
+		//テクスチャの0番目を取得
+		Render::ResourceView* GetTexturesFirst();
 		//終了処理
 		void Finalize();
 		//SRVデスクリプタヒープ取得
 		ID3D12DescriptorHeap* GetSRVDescHeap() { return srvDescHeap_.Get(); }
-		//テクスチャの番号取得
-		const uint32_t& GetTextureIndex() { return textureIndex_; }
-		//インデックス加算
-		void AddIndex() { textureIndex_++; }
 
 	private:
 		//シングルトン化
@@ -47,13 +48,12 @@ namespace MLEngine::Core {
 
 		ID3D12Device* device_;
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescHeap_;
-		std::unordered_map<std::string, std::unique_ptr<Render::ResourceView>> textureMap_;
-
+		//ファイルパスとリソースビューを繋げたマップ
+		std::vector<std::unique_ptr<Render::ResourceView>> textureList_;
+		//ファイルパスとインデックスを繋げたマップ
+		std::unordered_map<std::string, uint32_t> intMap_;
 		//intermediateResourceを保持しておくためのvector
 		std::unordered_map<uint32_t, Microsoft::WRL::ComPtr<ID3D12Resource>> intermediateResources_;
-
-		//ロードしたテクスチャの数
-		uint32_t textureIndex_ = 0;
 
 	};
 

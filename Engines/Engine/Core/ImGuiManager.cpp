@@ -3,8 +3,8 @@
 #include "ImGuiManager.h"
 #include "WindowManager.h"
 #include "DirectXSetter.h"
+#include "DXDevice.h"
 #include "TextureManager.h"
-#include "DescriptorHandle.h"
 
 using namespace MLEngine::Core;
 
@@ -17,9 +17,7 @@ ImGuiManager* ImGuiManager::GetInstance()
 void ImGuiManager::Initialize()
 {
 
-	uint32_t index = Core::DirectXSetter::GetInstance()->GetSrvHeap()->GetUnUsedIndex();
-	uint32_t descriptorSizeSRV_ = 
-		Core::DirectXSetter::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	uint32_t index = DirectXSetter::GetInstance()->GetSrvHeap()->GetUnUsedIndex();
 
 	//ImGuiの初期化
 	IMGUI_CHECKVERSION();
@@ -46,13 +44,13 @@ void ImGuiManager::Initialize()
 	imguiIO.Fonts->Build();
 
 	ImGui::StyleColorsDark();
-	ImGui_ImplWin32_Init(Core::Window::Manager::GetInstance()->GetHwnd());
-	ImGui_ImplDX12_Init(Core::DirectXSetter::GetInstance()->GetDevice(),
+	ImGui_ImplWin32_Init(Window::Manager::GetInstance()->GetHwnd());
+	ImGui_ImplDX12_Init(DXDevice::GetInstance()->GetDevice(),
 		2,
 		DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
-		Core::DirectXSetter::GetInstance()->GetSrvHeap()->Get(),
-		MLEngine::Core::GetCPUDescriptorHandle(Core::DirectXSetter::GetInstance()->GetSrvHeap()->Get(), descriptorSizeSRV_, index),
-		MLEngine::Core::GetGPUDescriptorHandle(Core::DirectXSetter::GetInstance()->GetSrvHeap()->Get(), descriptorSizeSRV_, index));
+		DirectXSetter::GetInstance()->GetSrvHeap()->Get(),
+		DirectXSetter::GetInstance()->GetSrvHeap()->GetCPUDescriptorHandle(index),
+		DirectXSetter::GetInstance()->GetSrvHeap()->GetGPUDescriptorHandle(index));
 
 
 

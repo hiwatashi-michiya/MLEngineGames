@@ -1,11 +1,11 @@
 #include "TextureManager.h"
-#include "Core/DirectXSetter.h"
+#include "DirectXSetter.h"
 #include "externals/DirectXTex/DirectXTex.h"
 #include"Engine/Convert.h"
 #include "Engine/math/Matrix4x4.h"
 #include "Externals/DirectXTex/d3dx12.h"
 #include "Buffer/BufferResource.h"
-#include "Core/DescriptorHandle.h"
+#include "DXDevice.h"
 
 using namespace MLEngine::Core;
 using namespace MLEngine::Core::Render;
@@ -120,16 +120,17 @@ TextureManager* TextureManager::GetInstance() {
 
 void TextureManager::Initialize(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvHeap) {
 
-	device_ = MLEngine::Core::DirectXSetter::GetInstance()->GetDevice();
+	device_ = MLEngine::Core::DXDevice::GetInstance()->GetDevice();
 
 	descriptorSizeSRV_ = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
 	srvDescHeap_ = srvHeap;
 	
+	textureList_.resize(DirectXSetter::GetInstance()->GetSrvHeap()->GetMaxTexture());
 
 }
 
-ResourceView* TextureManager::Load(const std::string& filePath) {
+uint32_t TextureManager::Load(const std::string& filePath) {
 
 	std::string path = filePath;
 
@@ -138,16 +139,16 @@ ResourceView* TextureManager::Load(const std::string& filePath) {
 	}
 
 
-	if (textureMap_.find(path) != textureMap_.end()) {
+	if (intMap_.find(path) != intMap_.end()) {
 
-		return textureMap_[path].get();
+		return intMap_[path];
 
 	}
 
-	uint32_t index = DirectXSetter::GetInstance()->GetSrvHeap()->GetUnUsedIndex();
+	uint32_t index = DirectXSetter::GetInstance()->GetSrvHeap()->GetUnUsedTextureIndex();
 
 	//制限数以上の読み込みで止める
-	assert(index < MLEngine::Core::DirectXSetter::kMaxSRVDescriptor_);
+	assert(index < DirectXSetter::GetInstance()->GetSrvHeap()->GetMaxTexture());
 
 	std::unique_ptr<ResourceView> tex = std::make_unique<ResourceView>();
 
@@ -176,27 +177,27 @@ ResourceView* TextureManager::Load(const std::string& filePath) {
 	}
 
 	//SRVを作成するDescriptorHeapの場所を決める
-	tex->srvHandleCPU = MLEngine::Core::GetCPUDescriptorHandle(srvDescHeap_, descriptorSizeSRV_, index);
-	tex->srvHandleGPU = MLEngine::Core::GetGPUDescriptorHandle(srvDescHeap_, descriptorSizeSRV_, index);
+	tex->srvHandleCPU = DirectXSetter::GetInstance()->GetSrvHeap()->GetCPUDescriptorHandle(index);
+	tex->srvHandleGPU = DirectXSetter::GetInstance()->GetSrvHeap()->GetGPUDescriptorHandle(index);
 
 	//SRVの生成
 	device_->CreateShaderResourceView(tex->resource.Get(), &srvDesc, tex->srvHandleCPU);
 
-	textureMap_[path] = std::move(tex);
+	textureList_[index] = std::move(tex);
+	//インデックスとパスを設定
+	intMap_[path] = index;
 
-	//使用カウント上昇
-	/*MLEngine::Core::DirectXSetter::srvHandleNumber_++;*/
-
-	return textureMap_[path].get();
+	return index;
 
 }
 
-ResourceView TextureManager::SetInstancingResource(uint32_t instanceCount, Microsoft::WRL::ComPtr<ID3D12Resource> mapResource) {
+ResourceView TextureManager::SetInstancingResource(uint32_t instanceCount, Microsoft::WRL::ComPtr<ID3D12Resource> mapResource,
+	UINT size) {
 
 	uint32_t index = DirectXSetter::GetInstance()->GetSrvHeap()->GetUnUsedIndex();
 
 	//制限数以上の読み込みで止める
-	assert(index < MLEngine::Core::DirectXSetter::kMaxSRVDescriptor_);
+	assert(index < DirectXSetter::GetInstance()->GetSrvHeap()->GetMaxDescriptor());
 
 	ResourceView instancingResource;
 
@@ -212,11 +213,11 @@ ResourceView TextureManager::SetInstancingResource(uint32_t instanceCount, Micro
 	srvDesc.Buffer.FirstElement = 0;
 	srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
 	srvDesc.Buffer.NumElements = instanceCount;
-	srvDesc.Buffer.StructureByteStride = sizeof(TransformationMatrix);
+	srvDesc.Buffer.StructureByteStride = size;
 
 	//SRVを作成するDescriptorHeapの場所を決める
-	instancingResource.srvHandleCPU = MLEngine::Core::GetCPUDescriptorHandle(srvDescHeap_, descriptorSizeSRV_, index);
-	instancingResource.srvHandleGPU = MLEngine::Core::GetGPUDescriptorHandle(srvDescHeap_, descriptorSizeSRV_, index);
+	instancingResource.srvHandleCPU = DirectXSetter::GetInstance()->GetSrvHeap()->GetCPUDescriptorHandle(index);
+	instancingResource.srvHandleGPU = DirectXSetter::GetInstance()->GetSrvHeap()->GetGPUDescriptorHandle(index);
 
 	//SRVの生成
 	device_->CreateShaderResourceView(instancingResource.resource.Get(), &srvDesc, instancingResource.srvHandleCPU);
@@ -228,8 +229,22 @@ ResourceView TextureManager::SetInstancingResource(uint32_t instanceCount, Micro
 
 }
 
+ResourceView* TextureManager::GetTexturesFirst()
+{
+	
+	//0番目が存在する場合に取得
+	if (textureList_[0].get()) {
+		return textureList_[0].get();
+	}
+
+	assert(false);
+
+	return nullptr;
+
+}
+
 void TextureManager::Finalize() {
 
-	textureMap_.clear();
+	textureList_.clear();
 
 }

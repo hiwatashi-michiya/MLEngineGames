@@ -16,10 +16,12 @@
 #include "Core/Render/Config/InputLayout.h"
 #include "Core/Render/Config/DescriptorRange.h"
 #include "../ResourceManager.h"
+#include "TextureManager.h"
 
 #pragma comment(lib, "dxcompiler.lib")
 
 using namespace MLEngine;
+using namespace MLEngine::Core;
 using namespace MLEngine::Core::Render;
 using namespace MLEngine::Core::Render::Config;
 using namespace MLEngine::Math;
@@ -74,15 +76,19 @@ void Particle3D::StaticInitialize(ID3D12Device* device) {
 
 	DescriptorRange descriptorRange{};
 	descriptorRange.SetSize(1);
-	descriptorRange.SetDescriptorRange(0, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND, 0);
+	descriptorRange.SetDescriptorRange(0, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND, 0, 0);
 
 	DescriptorRange descriptorRangeForInstancing{};
 	descriptorRangeForInstancing.SetSize(1);
-	descriptorRangeForInstancing.SetDescriptorRange(0, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND, 0);
+	descriptorRangeForInstancing.SetDescriptorRange(0, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND, 0, 0);
+
+	DescriptorRange descriptorRangeForMaterial{};
+	descriptorRangeForMaterial.SetSize(1);
+	descriptorRangeForMaterial.SetDescriptorRange(1, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND, 0, 0);
 
 	RootParameter rootParameters{};
 	rootParameters.SetSize(4);
-	rootParameters.SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 0, 0);
+	rootParameters.SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, descriptorRangeForMaterial.Get(), 0);
 	rootParameters.SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_VERTEX, descriptorRangeForInstancing.Get(), 1);
 	rootParameters.SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, descriptorRange.Get(), 2);
 	rootParameters.SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 1, 3);
@@ -242,7 +248,7 @@ void Particle3D::Initialize(const std::string& filename, uint32_t instanceCount)
 	}
 
 	material_ = std::make_unique<Graphics::Material>();
-	material_->Create();
+	material_->Create(instanceCount);
 
 	texture_.Load(mesh_->GetTextureFilePath());
 	texturePath_ = mesh_->GetTextureFilePath();
@@ -282,7 +288,7 @@ void Particle3D::Initialize(const std::string& filename, uint32_t instanceCount)
 	//インスタンシングリソース設定
 	{
 
-		instancingResource_.Initialize(maxInstanceCount_, matBuff_);
+		instancingResource_.Initialize(maxInstanceCount_, matBuff_, sizeof(ParticleForGPU));
 
 	}
 

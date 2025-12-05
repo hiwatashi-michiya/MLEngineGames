@@ -28,17 +28,26 @@ void RigidModel::Initialize(const std::string& filename, [[maybe_unused]] const 
 	worldMatrix = Matrix4x4::Identity();
 	worldViewProjectionMatrix = Matrix4x4::Identity();
 	color = { 1.0f,1.0f,1.0f,1.0f };
+
+	materialData.color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	materialData.enableLighting = true;
+	materialData.enableNormalMap = true;
+	materialData.shininess = 50.0f;
+	materialData.uvTransform = MakeIdentity4x4();
+
 	//初期化時に描画用のリストに登録
 	Resource::Manager::GetInstance()->AddRigidModel(this);
 	//既にインスタンシング用のモデルを作成している場合、それを返す
 	if (Model::Manager::GetInstance()->IsExistModel(filename)) {
 		instancingModel_ = Model::Manager::GetInstance()->GetModel(filename);
+		texture_.Load(instancingModel_->mesh->GetTextureFilePath());
 		return;
 	}
 	//新規でインスタンシング用のモデルを作成
 	Model::Manager::GetInstance()->AddModel(filename);
 	//ポインタを渡す
 	instancingModel_ = Model::Manager::GetInstance()->GetModel(filename);
+	texture_.Load(instancingModel_->mesh->GetTextureFilePath());
 
 }
 

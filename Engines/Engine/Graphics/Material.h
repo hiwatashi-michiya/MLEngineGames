@@ -3,6 +3,7 @@
 #include <d3d12.h>
 #include <wrl.h>
 #include "Texture/Texture.h"
+#include "InstancingResource.h"
 
 namespace MLEngine::Graphics {
 
@@ -15,7 +16,7 @@ namespace MLEngine::Graphics {
 		//静的初期化
 		static void StaticInitialize(ID3D12Device* device);
 		//生成
-		Material* Create();
+		Material* Create(uint32_t instanceCount = 1);
 
 		//マテリアルファイル読み込み
 		void LoadMaterialTemplateFile(const std::string& filename);
@@ -31,6 +32,9 @@ namespace MLEngine::Graphics {
 
 		//定数バッファ取得関数
 		Microsoft::WRL::ComPtr<ID3D12Resource> GetConstBuffer() { return constBuff_; }
+
+		//マテリアルデータセット
+		void SetMaterialData(uint32_t index, const MLEngine::Resource::MaterialData& data);
 
 		//ImGui表示
 		void ImGuiUpdate();
@@ -51,6 +55,8 @@ namespace MLEngine::Graphics {
 		Microsoft::WRL::ComPtr<ID3D12Resource> constBuff_;
 		//点光源バッファ
 		Microsoft::WRL::ComPtr<ID3D12Resource> pLightBuff_;
+		//インスタンシングリソース
+		MLEngine::Resource::InstancingResource instancingResource_;
 
 	};
 

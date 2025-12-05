@@ -166,6 +166,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
+    <None Include="Resources\shaders\Material3d.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Engines\MLEngine.vcxproj">

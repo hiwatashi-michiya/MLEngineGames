@@ -17,10 +17,9 @@ Manager* Manager::GetInstance()
 void Manager::Clear()
 {
 
-	models_.clear();
 	skinningModels_.clear();
 	particles_.clear();
-	sprites_.clear();
+	sprite2Ds_.clear();
 	lines_.clear();
 
 }
@@ -108,13 +107,13 @@ void Manager::Render()
 	PostEffect::PostEffectDrawer::GetInstance()->SetBarrier(1, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
 	//スプライト描画
-	Sprite::PreDraw(MLEngine::Core::DirectXSetter::GetInstance()->GetCommandList());
+	Sprite2D::PreDraw(MLEngine::Core::DirectXSetter::GetInstance()->GetCommandList());
 
-	for (int32_t i = 0; i < sprites_.size(); i++) {
-		sprites_[i]->Render();
+	for (int32_t i = 0; i < sprite2Ds_.size(); i++) {
+		sprite2Ds_[i]->Render();
 	}
 
-	Sprite::PostDraw();
+	Sprite2D::PostDraw();
 	//ライン描画
 	Line::PreDraw(MLEngine::Core::DirectXSetter::GetInstance()->GetCommandList());
 

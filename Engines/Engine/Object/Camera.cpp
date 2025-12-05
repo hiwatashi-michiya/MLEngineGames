@@ -1,6 +1,7 @@
 #include "Camera.h"
 #include "DirectXSetter.h"
 #include "BufferResource.h"
+#include "DXDevice.h"
 
 using namespace MLEngine::Math;
 using namespace MLEngine::Object;
@@ -9,7 +10,7 @@ using namespace MLEngine::Core;
 Camera::Camera()
 {
 
-	ID3D12Device* device = DirectXSetter::GetInstance()->GetDevice();
+	ID3D12Device* device = DXDevice::GetInstance()->GetDevice();
 
 	//平行光源バッファ設定
 	{

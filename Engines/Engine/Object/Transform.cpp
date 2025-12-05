@@ -1,4 +1,6 @@
 #include "Transform.h"
+#include "ImguiManager.h"
+
 
 using namespace MLEngine::Math;
 using namespace MLEngine::Object;
@@ -28,5 +30,14 @@ void Transform::UpdateMatrix() {
 	if (parent_) {
 		worldMatrix_ = worldMatrix_ * parent_->worldMatrix_;
 	}
+
+}
+
+void Transform::Debug() {
+
+#ifdef _DEBUG
+	ImGui::DragFloat3("translate", &translate_.x);
+	ImGui::DragFloat3("scale", &scale_.x);
+#endif // _DEBUG
 
 }

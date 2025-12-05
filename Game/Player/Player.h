@@ -40,7 +40,7 @@ private:
 	//入力デバイス
 	MLEngine::Input::Manager* input_ = nullptr;
 
-	std::unique_ptr<MLEngine::Resource::Sprite> sprite_;
+	std::unique_ptr<MLEngine::Resource::Sprite2D> sprite_;
 
 	MLEngine::Resource::Texture texture_;
 

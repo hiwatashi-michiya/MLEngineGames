@@ -1,5 +1,6 @@
 #include "DirectionalLight.h"
 #include "BufferResource.h"
+#include "DXDevice.h"
 #include "DirectXSetter.h"
 
 using namespace MLEngine::Lighting;
@@ -9,7 +10,7 @@ using namespace MLEngine::Core;
 DirectionalLight::DirectionalLight()
 {
 	
-	ID3D12Device* device = DirectXSetter::GetInstance()->GetDevice();
+	ID3D12Device* device = DXDevice::GetInstance()->GetDevice();
 
 	//平行光源バッファ設定
 	{

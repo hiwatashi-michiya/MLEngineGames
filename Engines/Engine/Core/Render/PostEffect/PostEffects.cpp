@@ -4,9 +4,9 @@
 #include "PipelineManager.h"
 #include "Convert.h"
 #include <cassert>
-#include "Core/DirectXSetter.h"
+#include "DirectXSetter.h"
+#include "DXDevice.h"
 #include "Buffer/BufferResource.h"
-#include "Core/DescriptorHandle.h"
 #include "TextureManager.h"
 #include "PipelineConfig.h"
 
@@ -272,7 +272,7 @@ void Grayscale::Create() {
 	//parameter
 	{
 
-		buffer_ = CreateBufferResource(DirectXSetter::GetInstance()->GetDevice(), sizeof(Parameter));
+		buffer_ = CreateBufferResource(DXDevice::GetInstance()->GetDevice(), sizeof(Parameter));
 
 		buffer_->SetName(L"GrayscaleParam");
 
@@ -422,7 +422,7 @@ void Vignette::Create() {
 	//parameter
 	{
 
-		buffer_ = CreateBufferResource(DirectXSetter::GetInstance()->GetDevice(), sizeof(Parameter));
+		buffer_ = CreateBufferResource(DXDevice::GetInstance()->GetDevice(), sizeof(Parameter));
 
 		buffer_->SetName(L"VignetteParam");
 
@@ -578,7 +578,7 @@ void BoxFilter::Create() {
 	//parameter
 	{
 
-		buffer_ = CreateBufferResource(DirectXSetter::GetInstance()->GetDevice(), sizeof(Parameter));
+		buffer_ = CreateBufferResource(DXDevice::GetInstance()->GetDevice(), sizeof(Parameter));
 
 		buffer_->SetName(L"BoxFilterParam");
 
@@ -728,7 +728,7 @@ void GaussianFilter::Create() {
 	//parameter
 	{
 
-		buffer_ = CreateBufferResource(DirectXSetter::GetInstance()->GetDevice(), sizeof(Parameter));
+		buffer_ = CreateBufferResource(DXDevice::GetInstance()->GetDevice(), sizeof(Parameter));
 
 		buffer_->SetName(L"GaussianFilterParam");
 
@@ -880,7 +880,7 @@ void LuminanceBasedOutline::Create() {
 	//parameter
 	{
 
-		buffer_ = CreateBufferResource(DirectXSetter::GetInstance()->GetDevice(), sizeof(Parameter));
+		buffer_ = CreateBufferResource(DXDevice::GetInstance()->GetDevice(), sizeof(Parameter));
 
 		buffer_->SetName(L"LuminanceBasedOutlineParam");
 
@@ -1051,7 +1051,7 @@ void DepthBasedOutline::Create() {
 	//parameter
 	{
 
-		buffer_ = CreateBufferResource(DirectXSetter::GetInstance()->GetDevice(), sizeof(Parameter));
+		buffer_ = CreateBufferResource(DXDevice::GetInstance()->GetDevice(), sizeof(Parameter));
 
 		buffer_->SetName(L"DepthBasedOutlineParam");
 
@@ -1073,14 +1073,12 @@ void DepthBasedOutline::Create() {
 	depthTextureSrvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 	depthTextureSrvDesc.Texture2D.MipLevels = 1;
 	
-	uint32_t descriptorSizeSRV = DirectXSetter::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-
 	uint32_t handleIndex = DirectXSetter::GetInstance()->GetSrvHeap()->GetUnUsedIndex();
 
-	handleCPU_= GetCPUDescriptorHandle(DirectXSetter::GetInstance()->GetSrvHeap()->Get(), descriptorSizeSRV, handleIndex);
-	handleGPU_ = GetGPUDescriptorHandle(DirectXSetter::GetInstance()->GetSrvHeap()->Get(), descriptorSizeSRV, handleIndex);
+	handleCPU_= DirectXSetter::GetInstance()->GetSrvHeap()->GetCPUDescriptorHandle(handleIndex);
+	handleGPU_ = DirectXSetter::GetInstance()->GetSrvHeap()->GetGPUDescriptorHandle(handleIndex);
 	
-	DirectXSetter::GetInstance()->GetDevice()->CreateShaderResourceView(DirectXSetter::GetInstance()->GetDepthStencilResource(), &depthTextureSrvDesc, handleCPU_);
+	DXDevice::GetInstance()->GetDevice()->CreateShaderResourceView(DirectXSetter::GetInstance()->GetDepthStencilResource(), &depthTextureSrvDesc, handleCPU_);
 
 }
 
@@ -1259,7 +1257,7 @@ void RadialBlur::Create() {
 	//parameter
 	{
 
-		buffer_ = CreateBufferResource(DirectXSetter::GetInstance()->GetDevice(), sizeof(Parameter));
+		buffer_ = CreateBufferResource(DXDevice::GetInstance()->GetDevice(), sizeof(Parameter));
 
 		buffer_->SetName(L"RadialBlurParam");
 
@@ -1414,7 +1412,7 @@ void HSVFilter::Create() {
 	//parameter
 	{
 
-		buffer_ = CreateBufferResource(DirectXSetter::GetInstance()->GetDevice(), sizeof(Parameter));
+		buffer_ = CreateBufferResource(DXDevice::GetInstance()->GetDevice(), sizeof(Parameter));
 
 		buffer_->SetName(L"HSVFilterParam");
 
@@ -1579,7 +1577,7 @@ void Dissolve::Create() {
 	//parameter
 	{
 
-		buffer_ = CreateBufferResource(DirectXSetter::GetInstance()->GetDevice(), sizeof(Parameter));
+		buffer_ = CreateBufferResource(DXDevice::GetInstance()->GetDevice(), sizeof(Parameter));
 
 		buffer_->SetName(L"DissolveParam");
 
@@ -1634,11 +1632,11 @@ void Paper::Create() {
 	//レンダーテクスチャ用
 	DescriptorRange descriptorRange{};
 	descriptorRange.SetSize(1);
-	descriptorRange.SetDescriptorRange(0, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND, 0);
+	descriptorRange.SetDescriptorRange(0, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND, 0, 0);
 	//マスク画像用
 	DescriptorRange descriptorRangeForMask{};
 	descriptorRangeForMask.SetSize(1);
-	descriptorRangeForMask.SetDescriptorRange(1, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND, 0);
+	descriptorRangeForMask.SetDescriptorRange(1, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND, 0, 0);
 	//ルートパラメータ
 	RootParameter rootParameter{};
 	rootParameter.SetSize(3);
@@ -1721,7 +1719,7 @@ void Paper::Create() {
 	//parameter
 	{
 
-		buffer_ = CreateBufferResource(DirectXSetter::GetInstance()->GetDevice(), sizeof(Parameter));
+		buffer_ = CreateBufferResource(DXDevice::GetInstance()->GetDevice(), sizeof(Parameter));
 
 		buffer_->SetName(L"PaperParam");
 

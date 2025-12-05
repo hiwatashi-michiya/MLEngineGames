@@ -66,23 +66,27 @@ void Material::LoadMaterialTemplateFile(const std::string& filename) {
 
 }
 
-Material* Material::Create() {
+Material* Material::Create(uint32_t instanceCount) {
 
 	//定数バッファ
 	{
 
-		constBuff_ = CreateBufferResource(device_, sizeof(MaterialData));
+		constBuff_ = CreateBufferResource(device_, sizeof(MaterialData) * instanceCount);
 		
 		constBuff_->SetName(L"constBuff");
 
 		//マッピングしてデータ転送
 		constBuff_->Map(0, nullptr, reinterpret_cast<void**>(&constMap));
 
-		constMap->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-		constMap->enableLighting = true;
-		constMap->enableNormalMap;
-		constMap->shininess = 50.0f;
-		constMap->uvTransform = MakeIdentity4x4();
+		for (uint32_t i = 0; i < instanceCount; i++) {
+
+			constMap[i].color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+			constMap[i].enableLighting = true;
+			constMap[i].enableNormalMap = true;
+			constMap[i].shininess = 50.0f;
+			constMap[i].uvTransform = MakeIdentity4x4();
+
+		}
 
 		//アンマップ
 		constBuff_->Unmap(0, nullptr);
@@ -106,7 +110,10 @@ Material* Material::Create() {
 
 	}
 
-	/*LoadMaterialTemplateFile(filename);*/
+	//インスタンシングリソース設定
+	{
+		instancingResource_.Initialize(instanceCount, constBuff_, sizeof(MaterialData));
+	}
 
 	return this;
 
@@ -118,7 +125,7 @@ void Material::SetCommandMaterial(ID3D12GraphicsCommandList* commandList) {
 	commandList->SetGraphicsRootConstantBufferView(5, pLightBuff_->GetGPUVirtualAddress());
 	////SRVの設定
 	/*commandList->SetGraphicsRootDescriptorTable(2, texture_->srvHandleGPU);*/
-	commandList->SetGraphicsRootConstantBufferView(0, constBuff_->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootDescriptorTable(0, instancingResource_.GetGPUHandle());
 
 }
 
@@ -126,7 +133,14 @@ void Material::SetCommandMaterialForParticle(ID3D12GraphicsCommandList* commandL
 
 	////SRVの設定
 	/*commandList->SetGraphicsRootDescriptorTable(2, texture_->srvHandleGPU);*/
-	commandList->SetGraphicsRootConstantBufferView(0, constBuff_->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootDescriptorTable(0, instancingResource_.GetGPUHandle());
+
+}
+
+void Material::SetMaterialData(uint32_t index, const MLEngine::Resource::MaterialData& data)
+{
+
+	constMap[index] = data;
 
 }
 

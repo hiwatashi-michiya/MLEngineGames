@@ -1,4 +1,4 @@
-#include "Sprite.h"
+#include "Sprite2D.h"
 #include <cassert>
 #include "Convert.h"
 #include "Core/Render/ShaderManager.h"
@@ -17,15 +17,15 @@ using namespace MLEngine::Core::Render;
 using namespace MLEngine::Math;
 
 
-ID3D12Device* Sprite::device_ = nullptr;
-ID3D12GraphicsCommandList* Sprite::commandList_ = nullptr;
-ID3D12RootSignature* Sprite::rootSignature2D_ = nullptr;
-ID3D12PipelineState* Sprite::pipelineState2D_ = nullptr;
-IDxcBlob* Sprite::vs2dBlob_ = nullptr;
-IDxcBlob* Sprite::ps2dBlob_ = nullptr;
+ID3D12Device* Sprite2D::device_ = nullptr;
+ID3D12GraphicsCommandList* Sprite2D::commandList_ = nullptr;
+ID3D12RootSignature* Sprite2D::rootSignature2D_ = nullptr;
+ID3D12PipelineState* Sprite2D::pipelineState2D_ = nullptr;
+IDxcBlob* Sprite2D::vs2dBlob_ = nullptr;
+IDxcBlob* Sprite2D::ps2dBlob_ = nullptr;
 
 //静的初期化
-void Sprite::StaticInitialize(ID3D12Device* device) {
+void Sprite2D::StaticInitialize(ID3D12Device* device) {
 
 	assert(device);
 
@@ -172,7 +172,7 @@ void Sprite::StaticInitialize(ID3D12Device* device) {
 
 }
 
-Sprite::Sprite(Texture texture, Vector2 pos, Vector2 s, Vector4 col) {
+Sprite2D::Sprite2D(Texture texture, Vector2 pos, Vector2 s, Vector4 col) {
 	texture_ = texture;
 	position = pos;
 	size = s;
@@ -181,19 +181,19 @@ Sprite::Sprite(Texture texture, Vector2 pos, Vector2 s, Vector4 col) {
 	color = col;
 }
 
-MLEngine::Resource::Sprite::~Sprite()
+MLEngine::Resource::Sprite2D::~Sprite2D()
 {
-	Resource::Manager::GetInstance()->RemoveSprite(this);
+	Resource::Manager::GetInstance()->RemoveSprite2D(this);
 }
 
-Sprite* Sprite::Create(Texture texture, Vector2 pos, Vector4 col) {
+Sprite2D* Sprite2D::Create(Texture texture, Vector2 pos, Vector4 col) {
 
 	Vector2 tmpSize = { 100.0f,100.0f };
 
 	tmpSize = { static_cast<float>(texture.GetResource()->GetDesc().Width),
 	static_cast<float>(texture.GetResource()->GetDesc().Height)};
 
-	Sprite* sprite = new Sprite(texture, pos, tmpSize, col);
+	Sprite2D* sprite = new Sprite2D(texture, pos, tmpSize, col);
 
 	if (sprite == nullptr) {
 		return nullptr;
@@ -205,25 +205,25 @@ Sprite* Sprite::Create(Texture texture, Vector2 pos, Vector4 col) {
 		return nullptr;
 	}
 
-	Resource::Manager::GetInstance()->AddSprite(sprite);
+	Resource::Manager::GetInstance()->AddSprite2D(sprite);
 
 	return sprite;
 
 }
 
-bool Sprite::Initialize() {
+bool Sprite2D::Initialize() {
 
 	assert(device_);
 
 	//頂点バッファ
 	{
 
-		vertBuff_ = CreateBufferResource(device_, sizeof(VertexData) * 4);
+		vertBuff_ = CreateBufferResource(device_, sizeof(SpriteVertexData) * 4);
 
 		//頂点バッファビュー設定
 		vbView_.BufferLocation = vertBuff_->GetGPUVirtualAddress();
-		vbView_.SizeInBytes = sizeof(VertexData) * 4;
-		vbView_.StrideInBytes = sizeof(VertexData);
+		vbView_.SizeInBytes = sizeof(SpriteVertexData) * 4;
+		vbView_.StrideInBytes = sizeof(SpriteVertexData);
 
 		//マッピングしてデータ転送
 		vertBuff_->Map(0, nullptr, reinterpret_cast<void**>(&vertMap_));
@@ -280,6 +280,7 @@ bool Sprite::Initialize() {
 
 		constMap_->color = color;
 		constMap_->uvTransform = MakeIdentity4x4();
+		constMap_->textureIndex = texture_.GetIndex();
 
 		//アンマップ
 		constBuff_->Unmap(0, nullptr);
@@ -303,7 +304,7 @@ bool Sprite::Initialize() {
 
 }
 
-void Sprite::PreDraw(ID3D12GraphicsCommandList* commandList) {
+void Sprite2D::PreDraw(ID3D12GraphicsCommandList* commandList) {
 
 	assert(commandList_ == nullptr);
 
@@ -318,13 +319,13 @@ void Sprite::PreDraw(ID3D12GraphicsCommandList* commandList) {
 
 }
 
-void Sprite::PostDraw() {
+void Sprite2D::PostDraw() {
 	//コマンドリスト解除
 	commandList_ = nullptr;
 
 }
 
-void Sprite::Draw() {
+void Sprite2D::Draw() {
 
 	//左下
 	vertMap_[0].position = { 0.0f - anchorPoint.x * size.x,size.y - anchorPoint.y * size.y, 0.0f,1.0f };
@@ -356,7 +357,7 @@ void Sprite::Draw() {
 
 }
 
-void Sprite::Render()
+void Sprite2D::Render()
 {
 
 	//Spriteの描画
@@ -372,11 +373,11 @@ void Sprite::Render()
 
 }
 
-void Sprite::Finalize() {
+void Sprite2D::Finalize() {
 
 }
 
-void Sprite::ImGuiUpdate(const std::string name) {
+void Sprite2D::ImGuiUpdate(const std::string name) {
 
 #ifdef _DEBUG
 

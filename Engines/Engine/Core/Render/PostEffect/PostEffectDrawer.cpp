@@ -1,7 +1,7 @@
 #include "PostEffectDrawer.h"
 #include <cassert>
-#include "Core/DescriptorHandle.h"
 #include "ImGuiManager.h"
+#include "DXDevice.h"
 
 using namespace MLEngine::Core::Render::PostEffect;
 using namespace MLEngine::Object;
@@ -16,11 +16,7 @@ void PostEffectDrawer::Initialize() {
 
 	dxSetter_ = DirectXSetter::GetInstance();
 
-	device_ = dxSetter_->GetDevice();
-
-	//DescriptorSizeを取得しておく
-	uint32_t descriptorSizeSRV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	uint32_t descriptorSizeRTV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	device_ = DXDevice::GetInstance()->GetDevice();
 
 	for (int32_t i = 0; i < 2; i++) {
 
@@ -37,7 +33,7 @@ void PostEffectDrawer::Initialize() {
 		const Vector4 kRenderTargetClearValue{ 0.05f,0.1f,0.5f,1.0f}; //青
 
 		//ディスクリプタヒープのハンドルを取得
-		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = GetCPUDescriptorHandle(dxSetter_->GetRtvHeap()->Get(), descriptorSizeRTV, 2 + i);
+		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = dxSetter_->GetRtvHeap()->GetCPUDescriptorHandle(2 + i);
 		newRenderTex.Create(device_, Window::Manager::GetInstance()->GetClientWidth(), Window::Manager::GetInstance()->GetClientHeight(),
 			DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, kRenderTargetClearValue);
 		device_->CreateRenderTargetView(newRenderTex.Get(), &renderTargetViewDesc, rtvHandle);
@@ -50,10 +46,10 @@ void PostEffectDrawer::Initialize() {
 		renderTextureSrvDesc.Texture2D.MipLevels = 1;
 
 		D3D12_CPU_DESCRIPTOR_HANDLE srvHandleCPU =
-			GetCPUDescriptorHandle(dxSetter_->GetSrvHeap()->Get(), descriptorSizeSRV, handleIndex);
+			dxSetter_->GetSrvHeap()->GetCPUDescriptorHandle(handleIndex);
 
 		D3D12_GPU_DESCRIPTOR_HANDLE srvHandleGPU =
-			GetGPUDescriptorHandle(dxSetter_->GetSrvHeap()->Get(), descriptorSizeSRV, handleIndex);
+			dxSetter_->GetSrvHeap()->GetGPUDescriptorHandle(handleIndex);
 
 		newRenderTex.SetCPUHandle(srvHandleCPU);
 		newRenderTex.SetGPUHandle(srvHandleGPU);

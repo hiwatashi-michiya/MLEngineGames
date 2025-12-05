@@ -15,4 +15,5 @@ struct InstancingForGPU
     float32_t4x4 World;
     float32_t4x4 WorldInverseTranspose;
     float32_t4 color;
+    uint32_t textureIndex;
 };

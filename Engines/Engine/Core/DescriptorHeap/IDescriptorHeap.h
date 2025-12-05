@@ -10,31 +10,51 @@ namespace MLEngine::Core {
 	/// <summary>
 	/// デスクリプタヒープをインデックスごと管理するクラス
 	/// </summary>
-	class DescriptorHeap
+	class IDescriptorHeap
 	{
 	public:
-		DescriptorHeap();
-		~DescriptorHeap();
 
-		void Create(ID3D12Device* device, D3D12_DESCRIPTOR_HEAP_TYPE heapType,
-			UINT numDescriptors, bool shaderVisible, const std::string& name);
+		IDescriptorHeap() = delete;
+
+		IDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE type, uint32_t maxDescriptor);
+
+		//CPUのDescriptorHandle取得
+		D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(uint32_t index);
+		//GPUのDescriptorHandle取得
+		D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(uint32_t index);
 		//ポインタ取得
 		ID3D12DescriptorHeap* Get() { return heap_.Get(); }
-		//現在の使用数を返す
-		const uint32_t& GetCurrentIndex();
-		//現在の使用数を返し、使用数をインクリメントする
-		uint32_t AddIndex();
 		//先頭のCPUハンドルを取得
 		D3D12_CPU_DESCRIPTOR_HANDLE GetCPUHandleStart() { return heap_->GetCPUDescriptorHandleForHeapStart(); }
 		//先頭のGPUハンドルを取得
 		D3D12_GPU_DESCRIPTOR_HANDLE GetGPUHandleStart() { return heap_->GetGPUDescriptorHandleForHeapStart(); }
 		//未使用のインデックスを使用済みにして返す
-		uint32_t GetUnUsedIndex();
+		virtual uint32_t GetUnUsedIndex();
 		//インデックスを未使用に戻す
 		void SetIndexUnUsed(uint32_t index);
-	private:
+		//サイズ取得
+		uint32_t GetDescriptorSize() const { return kDescriptorSize_; }
+		//最大数取得
+		uint32_t GetMaxDescriptor() const { return kMaxDescriptor_; }
+
+	protected:
+
+		/// <summary>
+		/// 生成
+		/// </summary>
+		/// <param name="heapType">ヒープの種類</param>
+		/// <param name="numDescriptors">デスクリプタ数</param>
+		/// <param name="shaderVisible"></param>
+		void Create(D3D12_DESCRIPTOR_HEAP_TYPE heapType,
+			UINT numDescriptors, bool shaderVisible);
+
+	protected:
 
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> heap_;
+		//サイズ
+		const uint32_t kDescriptorSize_;
+		//デスクリプタの最大数
+		const uint32_t kMaxDescriptor_;
 		//インデックスが仕様済かどうか
 		std::vector<bool> isUsed_;
 

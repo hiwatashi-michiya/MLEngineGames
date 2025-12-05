@@ -28,8 +28,12 @@ inline void DebugScene::Initialize()
 	tex_.Load("./Resources/white.png");
 
 	model_.Initialize("./Resources/model/block/glassBlock.obj");
+	model2_.Initialize("./Resources/model/block/glassBlock.obj");
+	model3_.Initialize("./Resources/model/block/glassBlock.obj");
+	model_.SetTexture("./Resources/model/plane/uvChecker.png");
+	model3_.SetTexture("./Resources/EngineResources/paperMask.png");
 	particle_.reset(Particle3D::Create("./Resources/model/plane/plane.obj", 32));
-	sprite_.reset(Sprite::Create(tex_, { 200.0f,200.0f }, { 0.0f,1.0f,0.0f,1.0f }));
+	sprite_.reset(Sprite2D::Create(tex_, { 200.0f,200.0f }, { 0.0f,1.0f,0.0f,1.0f }));
 	sprite_->size = { 200.0f,200.0f };
 	//読み込み("./Resources/audio/"以降のパスでOK)
 	se1_.Load("SE/test.mp3");
@@ -45,6 +49,8 @@ inline void DebugScene::Initialize()
 	lineBox_.SetOBB(&box_.collider_);
 	sphere_.SetCollisionAttribute(0x00000001);
 	lineSphere_.SetSphere(&sphere_.collider_);
+
+	dLight_.cbData->direction = MLEngine::Math::Normalize(dLight_.cbData->direction);
 
 }
 
@@ -75,6 +81,21 @@ void DebugScene::Update()
 			ImGui::TreePop();
 		}
 
+		if (ImGui::TreeNode("Transform1")) {
+			transform_.Debug();
+			ImGui::TreePop();
+		}
+
+		if (ImGui::TreeNode("Transform2")) {
+			transform2_.Debug();
+			ImGui::TreePop();
+		}
+
+		if (ImGui::TreeNode("Transform3")) {
+			transform3_.Debug();
+			ImGui::TreePop();
+		}
+
 		if (ImGui::Checkbox("debug Camera", &isDebugCamera_)) {
 
 			if (isDebugCamera_) {
@@ -86,7 +107,7 @@ void DebugScene::Update()
 
 		}
 
-		if (ImGui::DragInt("use normal map", &model_.GetInstancingModel()->material->constMap->enableNormalMap, 0.1f,0, 1)) {
+		if (ImGui::DragInt("use normal map", &model_.materialData.enableNormalMap, 0.1f,0, 1)) {
 
 		}
 
@@ -172,6 +193,15 @@ void DebugScene::Update()
 
 	lineBox_.Update();
 	lineSphere_.Update();
+
+	transform_.UpdateMatrix();
+	transform2_.UpdateMatrix();
+	transform3_.UpdateMatrix();
+
+
+	model_.SetWorldMatrix(transform_.worldMatrix_);
+	model2_.SetWorldMatrix(transform2_.worldMatrix_);
+	model3_.SetWorldMatrix(transform3_.worldMatrix_);
 
 }
 

@@ -17,6 +17,7 @@
 #include "Core/Render/Config/DescriptorRange.h"
 #include "Core/Render/RenderManager.h"
 #include "DirectXSetter.h"
+#include "DXDevice.h"
 
 #pragma comment(lib, "dxcompiler.lib")
 
@@ -37,7 +38,7 @@ InstancingModel* InstancingModel::Create(const std::string& filename) {
 
 void InstancingModel::Initialize(const std::string& filename) {
 
-	assert(DirectXSetter::GetInstance()->GetDevice());
+	assert(DXDevice::GetInstance()->GetDevice());
 
 	if (Render::Mesh::Manager::GetInstance()->IsExistMesh(filename)) {
 
@@ -52,15 +53,13 @@ void InstancingModel::Initialize(const std::string& filename) {
 
 	}
 
-	material = std::make_unique<Graphics::Material>();
-	material->Create();
-
-	texture_.Load(mesh->GetTextureFilePath());
+	material_ = std::make_unique<Graphics::Material>();
+	material_->Create(kMaxInstance_);
 
 	//transformMatrix
 	{
 
-		matBuff_ = CreateBufferResource(DirectXSetter::GetInstance()->GetDevice(), sizeof(InstancingForGPU) * kMaxInstance_);
+		matBuff_ = CreateBufferResource(DXDevice::GetInstance()->GetDevice(), sizeof(InstancingForGPU) * kMaxInstance_);
 
 		matBuff_->SetName(L"matrixBuff");
 
@@ -80,7 +79,7 @@ void InstancingModel::Initialize(const std::string& filename) {
 	//インスタンシングリソース設定
 	{
 
-		instancingResource_.Initialize(kMaxInstance_, matBuff_);
+		instancingResource_.Initialize(kMaxInstance_, matBuff_, sizeof(InstancingForGPU));
 
 	}
 
@@ -97,21 +96,15 @@ void InstancingModel::Render(ID3D12GraphicsCommandList* commandList)
 
 	commandList->SetGraphicsRootDescriptorTable(1, instancingResource_.GetGPUHandle());
 
-	commandList->SetGraphicsRootDescriptorTable(2, texture_.GetGPUHandle());
+	commandList->SetGraphicsRootDescriptorTable(2, DirectXSetter::GetInstance()->GetSrvHeap()->GetGPUHandleStart());
 	commandList->SetGraphicsRootDescriptorTable(6, instancingResource_.GetGPUHandle());
 
 	//コマンドセット
-	material->SetCommandMaterial(commandList);
+	material_->SetCommandMaterial(commandList);
 
 	mesh->SetCommandMesh(commandList, instanceCount_);
 	//インスタンスカウントリセット
 	instanceCount_ = 0;
-
-}
-
-void InstancingModel::SetTexture(const std::string& name) {
-
-	texture_ .Load(name);
 
 }
 
@@ -124,7 +117,7 @@ void InstancingModel::ImGuiUpdate(const std::string& name) {
 	if (ImGui::BeginTabBar("InstancingModel", ImGuiTabBarFlags_None)) {
 
 		if (ImGui::BeginTabItem("material")) {
-			material->ImGuiUpdate();
+			material_->ImGuiUpdate();
 			ImGui::EndTabItem();
 		}
 
@@ -148,6 +141,28 @@ void InstancingModel::Regist(RigidModel* model)
 	matTransformMap_[instanceCount_].World = model->localMatrix * model->worldMatrix;
 	matTransformMap_[instanceCount_].WorldInverseTranspose = Transpose(Inverse(model->localMatrix * model->worldMatrix));
 	matTransformMap_[instanceCount_].color = model->color;
+	matTransformMap_[instanceCount_].textureIndex = model->GetTextureIndex();
+
+	material_->SetMaterialData(instanceCount_, model->materialData);
+
+	AddInstanceCount();
+
+}
+
+void InstancingModel::Regist(Sprite3D* sprite3D)
+{
+
+	//最大数を超えていたら追加しない
+	if (instanceCount_ >= kMaxInstance_) {
+		return;
+	}
+
+	matTransformMap_[instanceCount_].WVP = sprite3D->worldViewProjectionMatrix;
+	matTransformMap_[instanceCount_].World = sprite3D->localMatrix * sprite3D->worldMatrix;
+	matTransformMap_[instanceCount_].WorldInverseTranspose = Transpose(Inverse(sprite3D->localMatrix * sprite3D->worldMatrix));
+	matTransformMap_[instanceCount_].color = sprite3D->color;
+
+	material_->SetMaterialData(instanceCount_, sprite3D->materialData);
 
 	AddInstanceCount();
 

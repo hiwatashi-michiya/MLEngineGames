@@ -18,7 +18,7 @@ namespace MLEngine::Resource {
 		/// </summary>
 		/// <param name="instanceCount"></param>
 		/// <param name="mapResource"></param>
-		void Initialize(uint32_t instanceCount, Microsoft::WRL::ComPtr<ID3D12Resource> mapResource);
+		void Initialize(uint32_t instanceCount, Microsoft::WRL::ComPtr<ID3D12Resource> mapResource, UINT size);
 
 		D3D12_GPU_DESCRIPTOR_HANDLE GetGPUHandle() { return instancingResource_.srvHandleGPU; }
 

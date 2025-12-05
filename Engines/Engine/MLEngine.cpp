@@ -11,23 +11,6 @@ using namespace MLEngine;
 using namespace MLEngine::Resource;
 using namespace MLEngine::Core;
 
-//template<class BaseScene>
-//void MLEngine::Run(const char* title) {
-//
-//	//エンジンの生成
-//	Engine* engine = new Engine();
-//
-//	engine->Initialize(title, 1280, 720);
-//
-//	engine->Run(new BaseScene());
-//
-//	engine->Finalize();
-//
-//	//エンジンの開放
-//	delete engine;
-//
-//}
-
 void Engine::Initialize(const char* title, int width, int height) {
 
 	HRESULT hr;
@@ -47,6 +30,10 @@ void Engine::Initialize(const char* title, int width, int height) {
 	windowManager_ = Core::Window::Manager::GetInstance();
 	windowManager_->CreateGameWindow(
 		titleString.c_str(), width, height);
+
+	//デバイス初期化
+	device_ = DXDevice::GetInstance();
+	device_->Initialize();
 
 	//初期化
 	//インスタンス取得
@@ -69,18 +56,18 @@ void Engine::Initialize(const char* title, int width, int height) {
 
 	textureManager_->Initialize(dxSetter_->GetSrvHeap()->Get());
 	shaderManager_->Initialize();
-	pipelineManager_->Initialize(dxSetter_->GetDevice());
-	rootSignatureManager_->Initialize(dxSetter_->GetDevice());
+	pipelineManager_->Initialize(device_->GetDevice());
+	rootSignatureManager_->Initialize(device_->GetDevice());
 
 	AudioManager::GetInstance()->Initialize();
-	Sprite::StaticInitialize(dxSetter_->GetDevice());
+	Sprite2D::StaticInitialize(device_->GetDevice());
 	modelManager_->Initialize();
-	Graphics::Mesh::StaticInitialize(dxSetter_->GetDevice());
-	Graphics::Material::StaticInitialize(dxSetter_->GetDevice());
-	SkinningModel::StaticInitialize(dxSetter_->GetDevice());
+	Graphics::Mesh::StaticInitialize(device_->GetDevice());
+	Graphics::Material::StaticInitialize(device_->GetDevice());
+	SkinningModel::StaticInitialize(device_->GetDevice());
 	Skybox::Initialize();
-	Particle3D::StaticInitialize(dxSetter_->GetDevice());
-	Line::Initialize(dxSetter_->GetDevice());
+	Particle3D::StaticInitialize(device_->GetDevice());
+	Line::Initialize(device_->GetDevice());
 	Render::PostEffect::PostEffectDrawer::GetInstance()->Initialize();
 
 	Input::Manager::GetInstance()->Initialize();
@@ -148,7 +135,7 @@ void Engine::Finalize() {
 	Render::Particle::Manager::GetInstance()->Finalize();
 	AudioManager::GetInstance()->Finalize();
 	SkinningModel::Finalize();
-	Sprite::Finalize();
+	Sprite2D::Finalize();
 	dxSetter_->Finalize();
 	dxSetter_ = nullptr;
 	CoUninitialize();

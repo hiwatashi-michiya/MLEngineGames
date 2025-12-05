@@ -2,7 +2,7 @@
 #include "Model/RigidModel.h"
 #include "Model/Skinning/SkinningModel.h"
 #include "Particle/Particle3D.h"
-#include "Sprite/Sprite.h"
+#include "Sprite/Sprite2D.h"
 #include "Line/LineDrawer.h"
 #include <vector>
 #include "Lighting/DirectionalLight.h"
@@ -22,14 +22,12 @@ namespace MLEngine::Core::Render {
 		void Clear();
 		//描画
 		void Render();
-		//モデルの追加
-		void AddModel(MLEngine::Resource::RigidModel* model) { models_.push_back(model); }
 		//スキニングモデルの追加
 		void AddSkinningModel(MLEngine::Resource::SkinningModel* skinningModel) { skinningModels_.push_back(skinningModel); }
 		//パーティクルの追加
 		void AddParticle3D(MLEngine::Resource::Particle3D* particle) { particles_.push_back(particle); }
 		//スプライトの追加
-		void AddSprite(MLEngine::Resource::Sprite* sprite) { sprites_.push_back(sprite); }
+		void AddSprite(MLEngine::Resource::Sprite2D* sprite) { sprite2Ds_.push_back(sprite); }
 		//ラインの追加
 		void AddLine(MLEngine::Resource::Line* line) { lines_.push_back(line); }
 		//平行光源ポインタセット
@@ -40,10 +38,9 @@ namespace MLEngine::Core::Render {
 	private:
 
 		//描画する対象のポインタを集めたリスト
-		std::vector<MLEngine::Resource::RigidModel*> models_;
 		std::vector<MLEngine::Resource::SkinningModel*> skinningModels_;
 		std::vector<MLEngine::Resource::Particle3D*> particles_;
-		std::vector<MLEngine::Resource::Sprite*> sprites_;
+		std::vector<MLEngine::Resource::Sprite2D*> sprite2Ds_;
 		std::vector<MLEngine::Resource::Line*> lines_;
 		//平行光源ポインタ
 		MLEngine::Lighting::DirectionalLight* dLight_;
