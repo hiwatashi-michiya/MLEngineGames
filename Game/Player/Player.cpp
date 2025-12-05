@@ -5,10 +5,11 @@ using namespace MLEngine::Math;
 
 Player::Player(){
 	//必須となる情報の読み込み
-	texture_.Load("./Resources/white.png");
+	backTexture_.Load("./Resources/Texture/player_back.png");
+	frontTexture_.Load("./Resources/Texture/player_front.png");
 
-	sprite_.reset(MLEngine::Resource::Sprite::Create(texture_, MLEngine::Math::Vector2(pos_.x, pos_.y), color_));
-
+	sprite_.reset(MLEngine::Resource::Sprite::Create(backTexture_, MLEngine::Math::Vector2(pos_.x, pos_.y), color_));
+	sprite_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	vController_ = &VirtualController::GetInstance();
 	input_ = MLEngine::Input::Manager::GetInstance();
 
@@ -24,6 +25,7 @@ void Player::Initialize(){
 	GlobalVariables* global = GlobalVariables::GetInstance();
 
 	global->SetValue("PlayerState", "Life", lifeMax_);
+	global->SetValue("PlayerState", "comboTime", damegeCount_);
 	nowLine_ = config_->centerLane_;
 	time_ = 0.0f;
 	recoverySpeed_ = 1.0f;
@@ -43,6 +45,7 @@ void Player::Update(const float deltaTime){
 	SyncFromNetwork();
 
 	lifeMax_ = global->GetIntValue("PlayerState", "Life");
+	damegeCount_ = global->GetFloatValue("PlayerState", "comboTime");
 #ifdef _DEBUG
 	DebugDraw();
 
@@ -68,6 +71,13 @@ void Player::Update(const float deltaTime){
 
 	sprite_->position = Vector2(pos_.x, pos_.y);
 	sprite_->size = Vector2(128.0f, 128.0f);
+
+	if (isForward_){
+		sprite_->SetTexture(backTexture_);
+	}
+	else {
+		sprite_->SetTexture(frontTexture_);
+	}
 }
 
 void Player::Draw(){
@@ -185,14 +195,14 @@ void Player::PlayerInfoInsertion(){
 	plState_.life = life_;
 	plState_.nowLine = nowLine_;
 
-	if (not isForward_) {
-		//後ろを向いているなら青色
-		sprite_->color = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
-	}
-	else {
-		//前を向いているなら赤色
-		sprite_->color = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
-	}
+	//if (not isForward_) {
+	//	//後ろを向いているなら青色
+	//	sprite_->color = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
+	//}
+	//else {
+	//	//前を向いているなら赤色
+	//	sprite_->color = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
+	//}
 }
 
 void Player::SyncFromNetwork(){

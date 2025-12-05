@@ -77,7 +77,8 @@ private:
 
 	std::unique_ptr<MLEngine::Resource::Sprite> sprite_;
 
-	MLEngine::Resource::Texture texture_;
+	MLEngine::Resource::Texture frontTexture_;
+	MLEngine::Resource::Texture backTexture_;
 
 	//前を向いているか
 	bool isForward_ = true;
