@@ -20,8 +20,7 @@ void Joycon::Init() {
 void Joycon::Update() {
 
 	// read input report
-	std::array<uint8_t, 0x40> buff;
-	memset(buff.data(), 0x40, size_t(0x40));
+	static std::array<uint8_t, 0x40> buff;
 	// 読み込むサイズを指定。
 	static constexpr size_t kSize = 49;
 	while (true) {
@@ -34,6 +33,10 @@ void Joycon::Update() {
 			break;
 		}
 		else {
+			// 時間
+			int32_t timeDiff = (int32_t(static_cast<int32_t>(0b1'0000'0000 + tmp[1])) - buff[1]) & 0b1111'1111;
+			ImGui::Text("TimeDiff: %s", std::to_string(timeDiff).c_str());
+
 			buff = tmp;
 		}
 	}
@@ -56,26 +59,25 @@ void Joycon::Update() {
 	}
 	static constexpr float kRotCalc = (4588.f / 65535) / 360;
 
-	std::array<int16_t,3> Gyro;
-
+	std::array<int16_t, 3> Gyro;
 
 	std::memcpy(Gyro.data(), buff.data() + 19, sizeof(int8_t) * 6);
 
-	//std::transform(Gyro.begin(), Gyro.end(), Gyro_Normalized.begin(), [](int16_t v) {return v; });
-
 	//デッドゾーンの設定
-	
-	uint16_t cal_gyro_coeff = 590;
-	uint16_t cal_gyro_offset = 1;
 
-	float gyro_cal_coeff = (float)(816.0 / (cal_gyro_coeff - (cal_gyro_offset)));
+	std::array<uint16_t, 3> cal_gyro_offset{ 0x000E, 0xFFDF, 0xFFD0 };
+	static constexpr uint16_t cal_gyro_coeff = 13371;
 
-	std::transform(Gyro.begin(), Gyro.end(), Gyro_Normalized.begin(), [&](int16_t v)->float {return v - ((int16_t)cal_gyro_offset * gyro_cal_coeff * 0.0027777778); });
+	std::transform(Gyro.begin(), Gyro.end(), cal_gyro_offset.begin(), Gyro_Normalized.begin(), [](int16_t gyro, uint16_t offset) {
+		const float gyro_cal_coeff = (float)(936.0f / static_cast<float>(cal_gyro_coeff - std::bit_cast<int16_t>(offset)));
+		return (gyro - std::bit_cast<int16_t>(offset)) * (gyro_cal_coeff); });
 
-	std::transform(Gyro_Normalized.begin(), Gyro_Normalized.end(), &Vrotate_.x, [](float v) {return v * kRotCalc; });
+	std::transform(Gyro_Normalized.begin(), Gyro_Normalized.end(), &Vrotate_.x, [](int16_t v)->float {return v * kRotCalc; });
 
+	Vrotate_.y *= -1;
+	Vrotate_.x *= -1;
 	ImGui::Begin("Gyro");
-	ImGui::Text("GyroX:%f", Vrotate_.x);
+	ImGui::Text(("GyroX:" + std::to_string(Vrotate_.x)).c_str());
 	ImGui::Text("GyroY:%f", Vrotate_.y);
 	ImGui::Text("GyroZ:%f", Vrotate_.z);
 

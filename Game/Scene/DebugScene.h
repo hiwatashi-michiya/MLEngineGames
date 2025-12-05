@@ -7,6 +7,7 @@
 #include "Input.h"
 #include "Particle3D.h"
 #include <memory>
+
 #include "Collider.h"
 
 #include "../Joycon/Joycon.h"
@@ -55,6 +56,7 @@ private:
 	MLEngine::Resource::LineBox lineBox_;
 
 	std::unique_ptr<Joycon> joyconInput;
+	Vector3 test;
 	Quaternion modelRot_;
 };
 

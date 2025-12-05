@@ -2,7 +2,7 @@
 #include <array>
 #include <span>
 #include <bit>
-
+#include <numbers>
 #include "imgui.h"
 
 #include "../hidapi/hidManager.h"
@@ -32,6 +32,6 @@ private:
 	std::array<std::byte, 0x40> data_{};
 
 	Quaternion Qrotate_;
-	std::array<float, 3> Gyro_Normalized;
+	std::array<uint16_t, 3> Gyro_Normalized;
 	Vector3 Vrotate_;
 };
