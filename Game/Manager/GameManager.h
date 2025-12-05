@@ -2,6 +2,7 @@
 #include<memory>
 #include <cstdint>
 #include <string>
+#include"VirtualController.h"
 
 class GameManager
 {
@@ -18,9 +19,10 @@ public:
 
     // 状態管理
     enum class GameState {
-        Title,
-        Playing,
-        Result
+        Title,      //タイトル
+        Tutorial,   //チュートリアル
+        Playing,    //本編
+        Result      //リザルト
     };
 
     void SetState(GameState newState) { state_ = newState; }
@@ -50,6 +52,12 @@ private:
 private:
     // ゲーム全体の状態
     GameState state_ = GameState::Title;
+
+    //入力デバイス
+    VirtualController* vController_ = nullptr;
+
+    //チュートリアルクリアしたかどうか
+    bool isTutorialClear_ = false;
 
     // スコア
     int score_ = 0;

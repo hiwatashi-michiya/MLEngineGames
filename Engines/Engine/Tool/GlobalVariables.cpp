@@ -25,18 +25,23 @@ void GlobalVariables::SetValue(
 	const std::string& groupName,
 	const std::string& key, int32_t value) {
 	
+	
 	//グループの参照を取得
 	Group& group = datas_[groupName];
 	//新しい項目のデータを設定
 	Item newItem{};
 	newItem.value = value;
 	//設定した項目をstd::mapに追加
-	group.items[key] = newItem;
+	if (!group.items.contains(key)) {
+		group.items[key] = newItem;
+	}
 }
 
 void GlobalVariables::SetValue(
 	const std::string& groupName,
 	const std::string& key, float value) {
+
+	
 
 	// グループの参照を取得
 	Group& group = datas_[groupName];
@@ -44,7 +49,9 @@ void GlobalVariables::SetValue(
 	Item newItem{};
 	newItem.value = value;
 	// 設定した項目をstd::mapに追加
-	group.items[key] = newItem;
+	if (!group.items.contains(key)) {
+		group.items[key] = newItem;
+	}
 
 }
 
@@ -52,13 +59,17 @@ void GlobalVariables::SetValue(
 	const std::string& groupName,
 	const std::string& key, const Vector3& value) {
 
+	
+
 	// グループの参照を取得
 	Group& group = datas_[groupName];
 	// 新しい項目のデータを設定
 	Item newItem{};
 	newItem.value = value;
 	// 設定した項目をstd::mapに追加
-	group.items[key] = newItem;
+	if (!group.items.contains(key)) {
+		group.items[key] = newItem;
+	}
 
 }
 
@@ -66,13 +77,17 @@ void GlobalVariables::SetValue(
 	const std::string& groupName,
 	const std::string& key, const ObjectData& value) {
 
+	
+
 	// グループの参照を取得
 	Group& group = datas_[groupName];
 	// 新しい項目のデータを設定
 	Item newItem{};
 	newItem.value = value;
 	// 設定した項目をstd::mapに追加
-	group.items[key] = newItem;
+	if (!group.items.contains(key)) {
+		group.items[key] = newItem;
+	}
 
 }
 
@@ -208,7 +223,7 @@ void GlobalVariables::Update() {
 			if (std::holds_alternative<int32_t>(item.value)) {
 
 				int32_t* ptr = std::get_if<int32_t>(&item.value);
-				ImGui::SliderInt(itemName.c_str(), ptr, 0, 100);
+				ImGui::DragInt(itemName.c_str(), ptr);
 
 			}
 
@@ -216,7 +231,7 @@ void GlobalVariables::Update() {
 			else if (std::holds_alternative<float>(item.value)) {
 				
 				float* ptr = std::get_if<float>(&item.value);
-				ImGui::SliderFloat(itemName.c_str(), ptr, 0.0f, 100.0f);
+				ImGui::DragFloat(itemName.c_str(), ptr);
 
 			}
 
@@ -224,7 +239,7 @@ void GlobalVariables::Update() {
 			else if (std::holds_alternative<Vector3>(item.value)) {
 
 				Vector3* ptr = std::get_if<Vector3>(&item.value);
-				ImGui::SliderFloat3(itemName.c_str(), reinterpret_cast<float*>(ptr), -10.0f, 10.0f);
+				ImGui::DragFloat3(itemName.c_str(), reinterpret_cast<float*>(ptr));
 
 			}
 
@@ -242,9 +257,9 @@ void GlobalVariables::Update() {
 				Vector3* rotPtr = &ptr->rotation;
 				Vector3* scaPtr = &ptr->scale;
 				ImGui::InputText(strName.c_str(), strPtr, 256);
-				ImGui::SliderFloat3(posName.c_str(), reinterpret_cast<float*>(posPtr), -10.0f, 10.0f);
-				ImGui::SliderFloat3(rotName.c_str(), reinterpret_cast<float*>(rotPtr), -10.0f, 10.0f);
-				ImGui::SliderFloat3(scaName.c_str(), reinterpret_cast<float*>(scaPtr), -10.0f, 10.0f);
+				ImGui::DragFloat3(posName.c_str(), reinterpret_cast<float*>(posPtr));
+				ImGui::DragFloat3(rotName.c_str(), reinterpret_cast<float*>(rotPtr));
+				ImGui::DragFloat3(scaName.c_str(), reinterpret_cast<float*>(scaPtr));
 
 				//入力した文字列を代入
 				ptr->objName = strPtr;

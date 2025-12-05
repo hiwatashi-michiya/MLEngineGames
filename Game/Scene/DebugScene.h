@@ -6,10 +6,11 @@
 #include "Sprite2D.h"
 #include "Sprite3D.h"
 #include "Audio.h"
-#include "Input.h"
+#include "VirtualController.h"
 #include "Particle3D.h"
 #include <memory>
 #include "Collider.h"
+#include "Enemy/Enemy.h"
 #include "Transform.h"
 
 /// <summary>
@@ -38,6 +39,7 @@ private:
 	//入力デバイス
 	MLEngine::Input::Manager* input_ = nullptr;
 
+	VirtualController* vController_ = nullptr;
 	//
 	MLEngine::Object::DebugCamera debugCamera_;
 	//オーディオ
@@ -67,6 +69,8 @@ private:
 	bool showBox_ = true;
 	bool showSphere_ = true;
 	bool isDebugCamera_ = false;
+
+	std::unique_ptr<Enemy> enemy_;
 
 };
 

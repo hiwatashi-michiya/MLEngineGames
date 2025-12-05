@@ -9,6 +9,7 @@ using namespace MLEngine::Resource;
 using namespace MLEngine::Object::Collision;
 
 DebugScene::DebugScene(){
+	
 	input_ = MLEngine::Input::Manager::GetInstance();
 }
 
@@ -19,7 +20,7 @@ DebugScene::~DebugScene()
 inline void DebugScene::Initialize()
 {
 	//お試しプッシュ
-
+	vController_ = &VirtualController::GetInstance();
 
 	camera_.Initialize();
 	camera_.position_ = { 0.0f,0.0f,-30.0f };
@@ -48,6 +49,9 @@ inline void DebugScene::Initialize()
 	lineBox_.SetOBB(&box_.collider_);
 	sphere_.SetCollisionAttribute(0x00000001);
 	lineSphere_.SetSphere(&sphere_.collider_);
+
+	enemy_ = std::make_unique<Enemy>();
+	enemy_->Initialize();
 
 	dLight_.cbData->direction = MLEngine::Math::Normalize(dLight_.cbData->direction);
 
@@ -181,7 +185,9 @@ void DebugScene::Update()
 			particle_->particleData[i].color = { 1.0f, i / 32.0f, 1.0f, 1.0f };
 		}
 
-	}
+		if (vController_->Decide()) {
+			sceneManager_->ChangeScene(new PlayScene());
+		}
 
 	if (isDebugCamera_) {
 		debugCamera_.Update();
@@ -190,8 +196,8 @@ void DebugScene::Update()
 		camera_.Update();
 	}
 
-	lineBox_.Update();
-	lineSphere_.Update();
+		lineBox_.Update();
+		lineSphere_.Update();
 
 	transform2_.UpdateMatrix();
 	transform3_.UpdateMatrix();
@@ -202,12 +208,10 @@ void DebugScene::Update()
 
 }
 
+	enemy_->Update();
+}
 void DebugScene::Draw()
 {
-
-	
-
-
 }
 
 
@@ -220,6 +224,7 @@ void DebugScene::DrawImgui(){
 	ImGui::Text("テスト");
 
 	ImGui::End();
+
 #endif // _DEBUG
 
 }

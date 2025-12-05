@@ -1,5 +1,6 @@
 #include "PlayScene.h"
 #include"Externals/imgui/imgui.h"
+#include "DebugScene.h"
 
 using namespace MLEngine::Resource;
 
@@ -23,6 +24,22 @@ inline void PlayScene::Initialize(){
 
 	playerManager_ = std::make_unique<PlayerManager>();
 	playerManager_->Initialize();
+
+	enemy_ = std::make_unique<Enemy>();
+	enemy_->Initialize();
+
+	bulletManager_ = std::make_unique<BulletManager>();
+	bulletManager_->Initialize();
+
+	bulletManager_->SetPlayer(playerManager_->GetPlayer());
+	bulletManager_->SetEnemy(enemy_.get());
+
+	enemy_->SetBulletManager(bulletManager_.get());
+
+	BaseScene::SetCamera();
+
+	lifeUI_ = std::make_unique<LifeUI>(playerManager_->GetPlayer());
+	lifeUI_->Initialize();
 }
 
 void PlayScene::Finalize(){
@@ -35,17 +52,29 @@ void PlayScene::Update(){
 
 	config_->Update();
 
+	
+#ifdef CLIENT_BUILD
+	// Client専用処理
+#else
+	// Server Debug処理
 	gameManager_->Update();
+#endif	
 
 	playerManager_->Update(gameManager_->GetDeltaTime());
 
+	enemy_->Update();
+
+	bulletManager_->Update();
+
+	lifeUI_->Update();
+
 	camera_.Update();
 
+	
 }
 
 void PlayScene::Draw(){
 	playerManager_->Draw();
-
 }
 
 
