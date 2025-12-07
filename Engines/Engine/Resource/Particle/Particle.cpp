@@ -35,14 +35,14 @@ void Particle::Update() {
 		//非アクティブのパーティクルを出現させる
 		if ((isLoop_ or particleLifeTime_ > 0) and not particle_->particleData[i].isActive) {
 
-			particle_->particleData[i].transform.translate_ = RandomVector3(spawnPoint_ + minSpawnPoint_, spawnPoint_ + maxSpawnPoint_);
+			particle_->particleData[i].transform.translate = RandomVector3(spawnPoint_ + minSpawnPoint_, spawnPoint_ + maxSpawnPoint_);
 			//追従対象がいたら対象の座標分加算
 			if (followPoint_) {
-				particle_->particleData[i].transform.translate_ += *followPoint_;
+				particle_->particleData[i].transform.translate += *followPoint_;
 			}
 
-			particle_->particleData[i].transform.rotateQuaternion_ = ConvertFromEuler(RandomVector3(-3.14f, 3.14f));
-			particle_->particleData[i].transform.scale_ = Vector3{ 1.0f,1.0f,1.0f } * RandomFloat(minScale_, maxScale_);
+			particle_->particleData[i].transform.rotateQuaternion = ConvertFromEuler(RandomVector3(-3.14f, 3.14f));
+			particle_->particleData[i].transform.scale = Vector3{ 1.0f,1.0f,1.0f } * RandomFloat(minScale_, maxScale_);
 
 			particle_->particleData[i].velocity = RandomVector3(minSpeed_, maxSpeed_);
 			particle_->particleData[i].lifeTime = RandomInt(minLifeTime_, maxLifeTime_);
@@ -64,26 +64,26 @@ void Particle::Update() {
 			//ターゲットがある場合、ターゲットに向かう
 			if (targetPoint_) {
 
-				particle_->particleData[i].transform.translate_ = Lerp(particle_->particleData[i].transform.translate_, *targetPoint_, float(maxLifeTime_ + 1 - particle_->particleData[i].lifeTime) / float(maxLifeTime_ + 1));
-				particle_->particleData[i].transform.scale_ += {changeScale_, changeScale_, changeScale_};
+				particle_->particleData[i].transform.translate = Lerp(particle_->particleData[i].transform.translate, *targetPoint_, float(maxLifeTime_ + 1 - particle_->particleData[i].lifeTime) / float(maxLifeTime_ + 1));
+				particle_->particleData[i].transform.scale += {changeScale_, changeScale_, changeScale_};
 
 			}
 			//ターゲットが無い場合は速度に合わせる
 			else {
 
-				particle_->particleData[i].transform.translate_ += particle_->particleData[i].velocity;
-				particle_->particleData[i].transform.scale_ += {changeScale_, changeScale_, changeScale_};
+				particle_->particleData[i].transform.translate += particle_->particleData[i].velocity;
+				particle_->particleData[i].transform.scale += {changeScale_, changeScale_, changeScale_};
 				/*particle_->colors_[i] = Lerp(endColor_, minStartColor_, float(particle_->transforms_[i]->scale_.x) / maxScale_);*/
 
 				particle_->particleData[i].velocity += changeSpeed_;
 
 			}
 
-			if (particle_->particleData[i].transform.scale_.x <= 0.0f or
-				particle_->particleData[i].transform.scale_.y <= 0.0f or
-				particle_->particleData[i].transform.scale_.z <= 0.0f or
+			if (particle_->particleData[i].transform.scale.x <= 0.0f or
+				particle_->particleData[i].transform.scale.y <= 0.0f or
+				particle_->particleData[i].transform.scale.z <= 0.0f or
 				particle_->particleData[i].lifeTime <= 0) {
-				particle_->particleData[i].transform.scale_ = Vector3::Zero();
+				particle_->particleData[i].transform.scale = Vector3::Zero();
 
 				particle_->particleData[i].isActive = false;
 
@@ -155,9 +155,9 @@ void Particle::SetDefault()
 
 	//全てを初期値にリセット
 	for (int32_t i = 0; i < kMaxParticle_; i++) {
-		particle_->particleData[i].transform.translate_ = Vector3::Zero();
-		particle_->particleData[i].transform.rotateQuaternion_ = { 0.0f,0.0f,0.0f,1.0f };
-		particle_->particleData[i].transform.scale_ = Vector3::Zero();
+		particle_->particleData[i].transform.translate = Vector3::Zero();
+		particle_->particleData[i].transform.rotateQuaternion = { 0.0f,0.0f,0.0f,1.0f };
+		particle_->particleData[i].transform.scale = Vector3::Zero();
 
 		particle_->particleData[i].velocity = Vector3::Zero();
 		particle_->particleData[i].lifeTime = 0;

@@ -1,12 +1,4 @@
-#include "Particle3d.hlsli"
-
-struct InstancingForGPU
-{
-    float32_t4x4 WVP;
-    float32_t4x4 World;
-    float32_t4x4 WorldInverseTranspose;
-    float32_t4 color;
-};
+#include "InstancingObject3d.hlsli"
 
 StructuredBuffer<InstancingForGPU> gInstancing : register(t0);
 
@@ -20,8 +12,10 @@ struct VertexShaderInput
 VertexShaderOutput main(VertexShaderInput input, uint32_t instanceId : SV_InstanceID)
 {
     VertexShaderOutput output;
+    
     output.position = mul(input.position, gInstancing[instanceId].WVP);
-    output.texcoord = input.texcoord;
+    output.texcoord.xy = input.texcoord;
+    output.texcoord.z = instanceId;
     output.normal = normalize(mul(input.normal, (float32_t3x3) gInstancing[instanceId].WorldInverseTranspose));
     output.worldPosition = mul(input.position, gInstancing[instanceId].World).xyz;
     output.color = gInstancing[instanceId].color;

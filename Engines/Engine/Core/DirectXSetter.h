@@ -12,7 +12,9 @@
 #include <vector>
 #include <Windows.h>
 #include <wrl.h>
-#include "DescriptorHeap/DescriptorHeap.h"
+#include "DescriptorHeap/RTVHeap.h"
+#include "DescriptorHeap/DSVHeap.h"
+#include "DescriptorHeap/SRVHeap.h"
 
 namespace MLEngine::Core {
 
@@ -39,11 +41,6 @@ namespace MLEngine::Core {
 
 		//srvHeapのHandle
 		static uint32_t srvHandleNumber_;
-
-		//各デスクリプタの最大数
-		static const uint32_t kMaxSRVDescriptor_ = 4096;
-		static const uint32_t kMaxRTVDescriptor_ = 4;
-		static const uint32_t kMaxDSVDescriptor_ = 1;
 
 		/// <summary>
 		/// 初期化
@@ -81,11 +78,6 @@ namespace MLEngine::Core {
 		/// </summary>
 		void Finalize();
 		/// <summary>
-		/// デバイス取得
-		/// </summary>
-		/// <returns></returns>
-		ID3D12Device* GetDevice() { return device_.Get(); }
-		/// <summary>
 		/// コマンドリスト取得
 		/// </summary>
 		/// <returns></returns>
@@ -94,12 +86,12 @@ namespace MLEngine::Core {
 		/// SRVデスクリプタヒープ取得
 		/// </summary>
 		/// <returns></returns>
-		DescriptorHeap* GetSrvHeap() { return &srvHeap_; }
+		SRVHeap* GetSrvHeap() { return &srvHeap_; }
 		/// <summary>
 		/// RTVデスクリプタヒープ取得
 		/// </summary>
 		/// <returns></returns>
-		DescriptorHeap* GetRtvHeap() { return &rtvHeap_; }
+		RTVHeap* GetRtvHeap() { return &rtvHeap_; }
 		/// <summary>
 		/// デプスステンシル取得
 		/// </summary>
@@ -110,10 +102,6 @@ namespace MLEngine::Core {
 
 		MLEngine::Core::Window::Manager* windowManager_;
 
-		//ファクトリー
-		Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory_;
-		//デバイス
-		Microsoft::WRL::ComPtr<ID3D12Device> device_;
 		//コマンドキュー
 		Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue_;
 		//アロケータ
@@ -129,11 +117,11 @@ namespace MLEngine::Core {
 		//デプスステンシル
 		MLEngine::Core::Render::DepthStencil depthStencil_;
 		//レンダーターゲットビューデスクリプタヒープ
-		DescriptorHeap rtvHeap_;
+		RTVHeap rtvHeap_;
 		//デプスステンシルビューデスクリプタヒープ
-		DescriptorHeap dsvHeap_;
+		DSVHeap dsvHeap_;
 		//シェーダーリソースビューデスクリプタヒープ
-		DescriptorHeap srvHeap_;
+		SRVHeap srvHeap_;
 		//フェンス
 		Microsoft::WRL::ComPtr<ID3D12Fence> fence_;
 		//フェンスの値
@@ -162,9 +150,6 @@ namespace MLEngine::Core {
 
 	private:
 
-		//デバイスの初期化
-		void InitializeDXGIDevice();
-
 		//コマンド関連の初期化
 		void InitializeCommand();
 
@@ -176,9 +161,6 @@ namespace MLEngine::Core {
 
 		//深度バッファ生成
 		void CreateDepthBuffer();
-
-		//シェーダーリソースビューのヒープ生成
-		void CreateSrvHeap();
 
 		//フェンス生成
 		void CreateFence();

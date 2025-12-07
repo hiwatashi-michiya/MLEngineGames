@@ -25,7 +25,7 @@ namespace MLEngine::Core::Render::PostEffect {
 		kRadialBlur, //放射状ブラー
 		kHSVFilter, //HSV
 		kDissolve, //ディゾルブ
-
+		kPaper, //紙っぽいシェーダー
 		kMaxEffects, //エフェクト最大数
 
 	};
@@ -360,6 +360,40 @@ namespace MLEngine::Core::Render::PostEffect {
 
 		Dissolve() = default;
 		~Dissolve() = default;
+
+		void Create() override;
+
+		void Render() override;
+
+		void Debug() override;
+
+		Parameter* parameter_ = nullptr;
+
+	private:
+
+		Microsoft::WRL::ComPtr<ID3D12Resource> buffer_;
+
+		MLEngine::Resource::Texture maskTexture_;
+
+	};
+
+	/// <summary>
+	/// 紙シェーダー
+	/// </summary>
+	class Paper : public PostEffects
+	{
+
+	public:
+		//固有のパラメータ
+		struct Parameter {
+			//彩度
+			float Threshold = 0.5f;
+		};
+
+	public:
+
+		Paper() = default;
+		~Paper() = default;
 
 		void Create() override;
 

@@ -14,9 +14,11 @@
 #include "Core/Render/Config/InputElement.h"
 #include "Core/Render/Config/InputLayout.h"
 #include "Core/Render/Config/DescriptorRange.h"
+#include "TextureManager.h"
 
 #pragma comment(lib, "dxcompiler.lib")
 
+using namespace MLEngine::Core;
 using namespace MLEngine::Core::Render;
 using namespace MLEngine::Core::Render::Config;
 using namespace MLEngine::Resource;
@@ -56,11 +58,11 @@ void Particle2D::StaticInitialize(ID3D12Device* device) {
 
 	DescriptorRange descriptorRange{};
 	descriptorRange.SetSize(1);
-	descriptorRange.SetDescriptorRange(0, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND, 0);
+	descriptorRange.SetDescriptorRange(0, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND, 0, 0);
 	
 	DescriptorRange descriptorRangeForInstancing{};
 	descriptorRangeForInstancing.SetSize(1);
-	descriptorRangeForInstancing.SetDescriptorRange(0, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND, 0);
+	descriptorRangeForInstancing.SetDescriptorRange(0, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND, 0, 0);
 
 	RootParameter rootParameters{};
 	rootParameters.SetSize(4);
@@ -206,7 +208,7 @@ void Particle2D::Initialize(const std::string& filename, uint32_t instanceCount)
 	//インスタンシングリソース設定
 	{
 
-		instancingResource_.Initialize(maxInstanceCount_, matBuff_);
+		instancingResource_.Initialize(maxInstanceCount_, matBuff_, sizeof(Particle2DForGPU));
 
 	}
 
@@ -353,7 +355,7 @@ void Particle2D::Render()
 
 	commandList_->SetGraphicsRootDescriptorTable(1, instancingResource_.GetGPUHandle());
 
-	commandList_->SetGraphicsRootDescriptorTable(2, texture_.GetGPUHandle());
+	commandList_->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetTexturesFirst()->srvHandleGPU);
 
 }
 

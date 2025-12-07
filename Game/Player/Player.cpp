@@ -11,6 +11,8 @@ Player::Player(){
 	sprite_.reset(MLEngine::Resource::Sprite::Create(backTexture_, MLEngine::Math::Vector2(pos_.x, pos_.y), color_));
 	sprite_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	vController_ = &VirtualController::GetInstance();
+	sprite_.reset(MLEngine::Resource::Sprite2D::Create(texture_, MLEngine::Math::Vector2(pos_.x, pos_.y), color_));
+
 	input_ = MLEngine::Input::Manager::GetInstance();
 
 	config_ = GameConfig::GetInstance();

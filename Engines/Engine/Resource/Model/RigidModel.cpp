@@ -22,23 +22,33 @@ RigidModel::~RigidModel()
 	Resource::Manager::GetInstance()->RemoveRigidModel(this);
 }
 
-void RigidModel::Initialize(const std::string& filename, [[maybe_unused]] const std::string& texturename) {
+void RigidModel::Initialize(const std::string& filename) {
 
 	localMatrix = Matrix4x4::Identity();
 	worldMatrix = Matrix4x4::Identity();
 	worldViewProjectionMatrix = Matrix4x4::Identity();
 	color = { 1.0f,1.0f,1.0f,1.0f };
+
+	materialData.color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	materialData.enableLighting = false;
+	materialData.enableNormalMap = true;
+	materialData.enableToonshading = true;
+	materialData.shininess = 50.0f;
+	materialData.uvTransform = MakeIdentity4x4();
+
 	//初期化時に描画用のリストに登録
 	Resource::Manager::GetInstance()->AddRigidModel(this);
 	//既にインスタンシング用のモデルを作成している場合、それを返す
 	if (Model::Manager::GetInstance()->IsExistModel(filename)) {
 		instancingModel_ = Model::Manager::GetInstance()->GetModel(filename);
+		texture_.Load(instancingModel_->mesh->GetTextureFilePath());
 		return;
 	}
 	//新規でインスタンシング用のモデルを作成
 	Model::Manager::GetInstance()->AddModel(filename);
 	//ポインタを渡す
 	instancingModel_ = Model::Manager::GetInstance()->GetModel(filename);
+	texture_.Load(instancingModel_->mesh->GetTextureFilePath());
 
 }
 
@@ -59,7 +69,7 @@ void RigidModel::LoadAnimation(const std::string& filename) {
 
 	}
 
-	*skeleton_ = CreateSkeleton(instancingModel_->mesh_->GetModelData().rootNode);
+	*skeleton_ = CreateSkeleton(instancingModel_->mesh->GetModelData().rootNode);
 
 }
 
@@ -69,7 +79,7 @@ void RigidModel::ResetAnimation() {
 	if (animation_ and animation_->nodeAnimations.size() != 0) {
 
 		animationTime_ = 0.0f;
-		NodeAnimation& rootNodeAnimation = animation_->nodeAnimations[instancingModel_->mesh_->GetModelData().rootNode.name]; //rootNodeのanimationを取得
+		NodeAnimation& rootNodeAnimation = animation_->nodeAnimations[instancingModel_->mesh->GetModelData().rootNode.name]; //rootNodeのanimationを取得
 		Vector3 translate = CalculateValue(rootNodeAnimation.translate.keyFrames, animationTime_);
 		Quaternion rotate = CalculateValue(rootNodeAnimation.rotate.keyFrames, animationTime_);
 		Vector3 scale = CalculateValue(rootNodeAnimation.scale.keyFrames, animationTime_);
@@ -112,7 +122,7 @@ void RigidModel::UpdateAnimation() {
 
 		}
 
-		NodeAnimation& rootNodeAnimation = animation_->nodeAnimations[instancingModel_->mesh_->GetModelData().rootNode.name]; //rootNodeのanimationを取得
+		NodeAnimation& rootNodeAnimation = animation_->nodeAnimations[instancingModel_->mesh->GetModelData().rootNode.name]; //rootNodeのanimationを取得
 		Vector3 translate = CalculateValue(rootNodeAnimation.translate.keyFrames, animationTime_);
 		Quaternion rotate = CalculateValue(rootNodeAnimation.rotate.keyFrames, animationTime_);
 		Vector3 scale = CalculateValue(rootNodeAnimation.scale.keyFrames, animationTime_);
@@ -131,7 +141,7 @@ void RigidModel::Regist()
 
 }
 
-void RigidModel::SetMesh(const std::string& filename, [[maybe_unused]] const std::string& texturename)
+void RigidModel::SetMesh(const std::string& filename)
 {
 
 	//既にインスタンシング用のモデルを作成している場合、それを返す

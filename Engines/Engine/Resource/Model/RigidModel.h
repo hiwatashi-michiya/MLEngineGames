@@ -29,9 +29,9 @@ namespace MLEngine::Resource {
 		~RigidModel();
 
 		//初期化
-		void Initialize(const std::string& filename, const std::string& texturename = "");
+		void Initialize(const std::string& filename);
 		//メッシュ切り替え
-		void SetMesh(const std::string& filename, const std::string& texturename = "");
+		void SetMesh(const std::string& filename);
 
 		//ワールド行列セット
 		void SetWorldMatrix(const MLEngine::Math::Matrix4x4& matrix) { worldMatrix = matrix; }
@@ -60,6 +60,11 @@ namespace MLEngine::Resource {
 		void SetIsLoop(bool flag) { isLoop_ = flag; }
 		//インスタンシングモデル取得
 		InstancingModel* GetInstancingModel() { return instancingModel_; }
+		//テクスチャのインデックスを取得
+		uint32_t GetTextureIndex() const { return texture_.GetIndex(); }
+		//テクスチャをセット
+		void SetTexture(const std::string& filePath) { texture_.Load(filePath); }
+
 		//自分自身をインスタンシングモデルに登録
 		void Regist();
 		//ワールド行列
@@ -72,6 +77,8 @@ namespace MLEngine::Resource {
 		MLEngine::Math::Vector4 color;
 		//アクティブフラグ
 		bool isActive = true;
+		//マテリアルデータ
+		MaterialData materialData;
 
 	private:
 
@@ -82,6 +89,9 @@ namespace MLEngine::Resource {
 
 		//スケルトン
 		std::unique_ptr<Skeleton> skeleton_;
+
+		//テクスチャ
+		MLEngine::Resource::Texture texture_;
 
 		//アニメーションタイム
 		float animationTime_ = 0.0f;

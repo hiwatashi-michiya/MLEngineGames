@@ -1,7 +1,6 @@
 #include "SkinCluster.h"
 #include "Buffer/BufferResource.h"
 #include "Core/TextureManager.h"
-#include "Core/DescriptorHandle.h"
 #include <cassert>
 #include "Core/DirectXSetter.h"
 
@@ -21,8 +20,6 @@ SkinCluster::~SkinCluster()
 void SkinCluster::Create(const Microsoft::WRL::ComPtr<ID3D12Device>& device, const Skeleton& skeleton,
 	const ModelData& modelData) {
 
-	uint32_t descriptorSizeSRV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-
 	uint32_t handleIndex = DirectXSetter::GetInstance()->GetSrvHeap()->GetUnUsedIndex();
 
 	//palette用のResourceを確保
@@ -30,8 +27,8 @@ void SkinCluster::Create(const Microsoft::WRL::ComPtr<ID3D12Device>& device, con
 	WellForGPU* mappedPalette = nullptr;
 	paletteResource_->Map(0, nullptr, reinterpret_cast<void**>(&mappedPalette));
 	mappedPalette_ = { mappedPalette, skeleton.joints.size() }; //spanを使ってアクセスするようにする
-	paletteSrvHandle_.first = GetCPUDescriptorHandle(DirectXSetter::GetInstance()->GetSrvHeap()->Get(), descriptorSizeSRV, handleIndex);
-	paletteSrvHandle_.second = GetGPUDescriptorHandle(DirectXSetter::GetInstance()->GetSrvHeap()->Get(), descriptorSizeSRV, handleIndex);
+	paletteSrvHandle_.first = DirectXSetter::GetInstance()->GetSrvHeap()->GetCPUDescriptorHandle(handleIndex);
+	paletteSrvHandle_.second = DirectXSetter::GetInstance()->GetSrvHeap()->GetGPUDescriptorHandle(handleIndex);
 	paletteResource_->Unmap(0, nullptr);
 
 	//palette用のsrvを作成。StructuredBufferでアクセスできるようにする

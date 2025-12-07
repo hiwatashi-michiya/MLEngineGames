@@ -1,19 +1,21 @@
-#include "DescriptorHeap.h"
+#include "IDescriptorHeap.h"
+#include "DXDevice.h"
 #include <cassert>
 #include <Windows.h>
 
 using namespace MLEngine::Core;
 
-DescriptorHeap::DescriptorHeap() {
+IDescriptorHeap::IDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE type, uint32_t maxDescriptor) : 
+	kDescriptorSize_(DXDevice::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(type)),
+	kMaxDescriptor_(maxDescriptor)
+{
 
 }
 
-DescriptorHeap::~DescriptorHeap() {
+void IDescriptorHeap::Create(D3D12_DESCRIPTOR_HEAP_TYPE heapType,
+	UINT numDescriptors, bool shaderVisible) {
 
-}
-
-void DescriptorHeap::Create(ID3D12Device* device, D3D12_DESCRIPTOR_HEAP_TYPE heapType,
-	UINT numDescriptors, bool shaderVisible, const std::string& name) {
+	ID3D12Device* device = DXDevice::GetInstance()->GetDevice();
 
 	//ディスクリプタヒープの生成
 	D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc{};
@@ -30,32 +32,31 @@ void DescriptorHeap::Create(ID3D12Device* device, D3D12_DESCRIPTOR_HEAP_TYPE hea
 
 	}
 
-	//セットネームを後でやる
-	name;
-
 	limit_ = numDescriptors;
 
 	isUsed_.resize(limit_);
 
 }
 
-const uint32_t& DescriptorHeap::GetCurrentIndex() {
+//CPUのDescriptorHandle取得
+D3D12_CPU_DESCRIPTOR_HANDLE IDescriptorHeap::GetCPUDescriptorHandle(uint32_t index) {
 
-	assert(index_ < limit_);
-
-	return index_;
-
-}
-
-uint32_t DescriptorHeap::AddIndex() {
-
-	assert(index_ < limit_);
-
-	return index_++;
+	D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = heap_->GetCPUDescriptorHandleForHeapStart();
+	handleCPU.ptr += (kDescriptorSize_ * index);
+	return handleCPU;
 
 }
 
-uint32_t DescriptorHeap::GetUnUsedIndex()
+//GPUのDescriptorHandle取得
+D3D12_GPU_DESCRIPTOR_HANDLE IDescriptorHeap::GetGPUDescriptorHandle(uint32_t index) {
+
+	D3D12_GPU_DESCRIPTOR_HANDLE handleGPU = heap_->GetGPUDescriptorHandleForHeapStart();
+	handleGPU.ptr += (kDescriptorSize_ * index);
+	return handleGPU;
+
+}
+
+uint32_t IDescriptorHeap::GetUnUsedIndex()
 {
 
 	for (uint32_t i = 0; i < limit_; i++) {
@@ -74,7 +75,7 @@ uint32_t DescriptorHeap::GetUnUsedIndex()
 	return 0;
 }
 
-void DescriptorHeap::SetIndexUnUsed(uint32_t index)
+void IDescriptorHeap::SetIndexUnUsed(uint32_t index)
 {
 
 	assert(index < limit_);

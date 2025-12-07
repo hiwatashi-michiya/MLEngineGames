@@ -3,6 +3,7 @@
 #include <d3d12.h>
 #include <wrl.h>
 #include "Texture/Texture.h"
+#include "InstancingResource.h"
 
 namespace MLEngine::Graphics {
 
@@ -15,7 +16,7 @@ namespace MLEngine::Graphics {
 		//静的初期化
 		static void StaticInitialize(ID3D12Device* device);
 		//生成
-		Material* Create();
+		Material* Create(uint32_t instanceCount = 1);
 
 		//マテリアルファイル読み込み
 		void LoadMaterialTemplateFile(const std::string& filename);
@@ -29,22 +30,19 @@ namespace MLEngine::Graphics {
 		//テクスチャセット
 		void SetTexture(MLEngine::Resource::Texture texture) { texture_ = texture; }
 
+		//定数バッファ取得関数
+		Microsoft::WRL::ComPtr<ID3D12Resource> GetConstBuffer() { return constBuff_; }
+
+		//マテリアルデータセット
+		void SetMaterialData(uint32_t index, const MLEngine::Resource::MaterialData& data);
+
 		//ImGui表示
 		void ImGuiUpdate();
 
-		//定数バッファ
-		Microsoft::WRL::ComPtr<ID3D12Resource> constBuff_;
-		//平行光源バッファ
-		Microsoft::WRL::ComPtr<ID3D12Resource> dLightBuff_;
-		//点光源バッファ
-		Microsoft::WRL::ComPtr<ID3D12Resource> pLightBuff_;
-
 		//定数バッファマップ
-		MLEngine::Resource::MaterialData* constMap_ = nullptr;
-		//平行光源バッファマップ
-		MLEngine::Resource::DirectionalLight* dLightMap_ = nullptr;
+		MLEngine::Resource::MaterialData* constMap = nullptr;
 		//ポイントライト
-		MLEngine::Resource::PointLight* pLightMap_ = nullptr;
+		MLEngine::Resource::PointLight* pLightMap = nullptr;
 
 		//テクスチャ
 		MLEngine::Resource::Texture texture_;
@@ -52,6 +50,13 @@ namespace MLEngine::Graphics {
 	private:
 
 		static ID3D12Device* device_;
+
+		//定数バッファ
+		Microsoft::WRL::ComPtr<ID3D12Resource> constBuff_;
+		//点光源バッファ
+		Microsoft::WRL::ComPtr<ID3D12Resource> pLightBuff_;
+		//インスタンシングリソース
+		MLEngine::Resource::InstancingResource instancingResource_;
 
 	};
 

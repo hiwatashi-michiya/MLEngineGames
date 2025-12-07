@@ -1,5 +1,5 @@
 #include "Skybox.h"
-#include "Core/DirectXSetter.h"
+#include "DXDevice.h"
 #include "PipelineManager.h"
 #include "ShaderManager.h"
 #include "RootSignatureManager.h"
@@ -31,7 +31,7 @@ void Skybox::Initialize() {
 
 	HRESULT hr;
 
-	device_ = DirectXSetter::GetInstance()->GetDevice();
+	device_ = DXDevice::GetInstance()->GetDevice();
 
 	//Shaderをコンパイルする
 	IDxcBlob* vs3dBlob = Shader::Manager::GetInstance()->CompileShader(L"./Resources/shaders/Skybox.VS.hlsl", Shader::Type::kVS, "VSSkybox");
@@ -315,7 +315,7 @@ void Skybox::Draw(Camera* camera) {
 
 	commandList_->SetGraphicsRootConstantBufferView(1, transformationBuff_->GetGPUVirtualAddress());
 
-	commandList_->SetGraphicsRootDescriptorTable(2, tex_.GetGPUHandle());
+	commandList_->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetTexturesFirst()->srvHandleGPU);
 
 	//頂点バッファビューの設定
 	commandList_->IASetVertexBuffers(0, 1, &vbView_);

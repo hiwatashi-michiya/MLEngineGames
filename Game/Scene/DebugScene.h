@@ -2,13 +2,15 @@
 #include "BaseScene.h"
 #include "RigidModel.h"
 #include "Camera.h"
-#include "Sprite.h"
+#include "DebugCamera.h"
+#include "Sprite2D.h"
+#include "Sprite3D.h"
 #include "Audio.h"
 #include "VirtualController.h"
 #include "Particle3D.h"
 #include <memory>
 #include "Collider.h"
-#include "Enemy/Enemy.h"
+#include "Transform.h"
 
 /// <summary>
 /// デバッグシーン、エンジン機能理解用
@@ -36,11 +38,17 @@ private:
 	//入力デバイス
 	MLEngine::Input::Manager* input_ = nullptr;
 
-	VirtualController* vController_ = nullptr;
+	//
+	MLEngine::Object::DebugCamera debugCamera_;
 	//オーディオ
 	MLEngine::Resource::Audio se1_;
 	//通常モデル
-	MLEngine::Resource::RigidModel model_;
+	MLEngine::Resource::Sprite3D sprite3D_;
+	MLEngine::Resource::RigidModel model2_;
+	MLEngine::Resource::RigidModel model3_;
+	//トランスフォーム
+	MLEngine::Object::Transform transform2_;
+	MLEngine::Object::Transform transform3_;
 	//Vector3宣言
 	MLEngine::Math::Vector3 position_;
 	//Matrix4x4宣言
@@ -48,7 +56,7 @@ private:
 	//パーティクル
 	std::unique_ptr<MLEngine::Resource::Particle3D> particle_;
 	//スプライト
-	std::unique_ptr<MLEngine::Resource::Sprite> sprite_;
+	std::unique_ptr<MLEngine::Resource::Sprite2D> sprite_;
 	//コライダーテスト
 	MLEngine::Object::Collision::SphereCollider sphere_;
 	MLEngine::Resource::LineSphere lineSphere_;
@@ -58,6 +66,7 @@ private:
 
 	bool showBox_ = true;
 	bool showSphere_ = true;
+	bool isDebugCamera_ = false;
 
 	std::unique_ptr<Enemy> enemy_;
 

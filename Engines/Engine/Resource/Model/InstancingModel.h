@@ -12,6 +12,7 @@
 #include <wrl.h>
 #include "Vector4.h"
 #include "RigidModel.h"
+#include "../Sprite/Sprite3D.h"
 #include "InstancingResource.h"
 #include "Texture/Texture.h"
 
@@ -30,6 +31,7 @@ namespace MLEngine::Resource {
 			MLEngine::Math::Matrix4x4 World;
 			MLEngine::Math::Matrix4x4 WorldInverseTranspose;
 			MLEngine::Math::Vector4 color;
+			uint32_t textureIndex; //画像番号
 		};
 		//モデル生成
 		static InstancingModel* Create(const std::string& filename);
@@ -41,16 +43,11 @@ namespace MLEngine::Resource {
 		void Initialize(const std::string& filename);
 		//実際の描画
 		void Render(ID3D12GraphicsCommandList* commandList);
-		//テクスチャセット
-		void SetTexture(MLEngine::Resource::Texture texture) { texture_ = texture; }
-		//テクスチャセット
-		void SetTexture(const std::string& name);
-
 		//ライト切り替え
-		void SetLight(bool flag) { material_->constMap_->enableLighting = flag; }
+		void SetLight(bool flag) { material_->constMap->enableLighting = flag; }
 
 		//色変更
-		void SetColor(const MLEngine::Math::Vector4& color) { material_->constMap_->color = color; }
+		void SetColor(const MLEngine::Math::Vector4& color) { material_->constMap->color = color; }
 
 		//ImGui表示
 		void ImGuiUpdate(const std::string& name);
@@ -59,31 +56,23 @@ namespace MLEngine::Resource {
 		void AddInstanceCount() { instanceCount_++; }
 		//描画データ追加
 		void Regist(MLEngine::Resource::RigidModel* model);
-		//カメラセット
-		void SetCamera(MLEngine::Object::Camera* camera);
+		//描画データ追加
+		void Regist(MLEngine::Resource::Sprite3D* sprite3D);
 		//メッシュ
-		MLEngine::Graphics::Mesh* mesh_;
+		MLEngine::Graphics::Mesh* mesh;
+
+	private:
 
 		//マテリアル
 		std::unique_ptr<MLEngine::Graphics::Material> material_;
 
-	private:
-
-		//カメラ座標バッファ
-		Microsoft::WRL::ComPtr<ID3D12Resource> cameraBuff_;
 		//画面上のワールド座標バッファ
 		Microsoft::WRL::ComPtr<ID3D12Resource> matBuff_;
-
 		//現在のインスタンスカウント
 		int32_t instanceCount_ = 0;
 
 		//TransformMatrix
 		InstancingForGPU* matTransformMap_ = nullptr;
-		//カメラ座標マップ
-		CameraForGPU* cameraMap_ = nullptr;
-
-		//テクスチャ
-		MLEngine::Resource::Texture texture_;
 
 		//インスタンシングリソース
 		MLEngine::Resource::InstancingResource instancingResource_;

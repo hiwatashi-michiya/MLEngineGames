@@ -2,7 +2,7 @@
 #include "Scene/BaseScene.h"
 #include "Model/RigidModel.h"
 #include "Object/Camera.h"
-#include "Sprite/Sprite.h"
+#include "Sprite/Sprite2D.h"
 #include "Audio/Audio.h"
 #include "Input/Input.h"
 #include "Particle/Particle3D.h"

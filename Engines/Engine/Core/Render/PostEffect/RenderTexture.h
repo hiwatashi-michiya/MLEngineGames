@@ -21,7 +21,7 @@ namespace MLEngine::Core::Render::PostEffect {
 		void Create(Microsoft::WRL::ComPtr<ID3D12Device> device, int32_t width, int32_t height,
 			DXGI_FORMAT format, const MLEngine::Math::Vector4& clearColor);
 		//描画
-		void Draw();
+		void Draw(D3D12_GPU_DESCRIPTOR_HANDLE handleGPU);
 		//描画
 		void Draw(ID3D12RootSignature* rootSignature, ID3D12PipelineState* pipelineState);
 		//レンダーテクスチャ取得
@@ -34,6 +34,9 @@ namespace MLEngine::Core::Render::PostEffect {
 		void SetGPUHandle(D3D12_GPU_DESCRIPTOR_HANDLE& handle) {
 			srvHandleGPU_ = handle;
 		}
+		//GPUハンドル取得
+		D3D12_GPU_DESCRIPTOR_HANDLE GetGPUHandle() const { return srvHandleGPU_; }
+
 
 	private:
 

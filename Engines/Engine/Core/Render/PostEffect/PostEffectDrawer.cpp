@@ -1,7 +1,7 @@
 #include "PostEffectDrawer.h"
 #include <cassert>
-#include "Core/DescriptorHandle.h"
 #include "ImGuiManager.h"
+#include "DXDevice.h"
 
 using namespace MLEngine::Core::Render::PostEffect;
 using namespace MLEngine::Object;
@@ -16,11 +16,7 @@ void PostEffectDrawer::Initialize() {
 
 	dxSetter_ = DirectXSetter::GetInstance();
 
-	device_ = dxSetter_->GetDevice();
-
-	//DescriptorSizeを取得しておく
-	uint32_t descriptorSizeSRV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	uint32_t descriptorSizeRTV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	device_ = DXDevice::GetInstance()->GetDevice();
 
 	for (int32_t i = 0; i < 2; i++) {
 
@@ -37,7 +33,7 @@ void PostEffectDrawer::Initialize() {
 		const Vector4 kRenderTargetClearValue{ 0.05f,0.1f,0.5f,1.0f}; //青
 
 		//ディスクリプタヒープのハンドルを取得
-		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = GetCPUDescriptorHandle(dxSetter_->GetRtvHeap()->Get(), descriptorSizeRTV, 2 + i);
+		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = dxSetter_->GetRtvHeap()->GetCPUDescriptorHandle(2 + i);
 		newRenderTex.Create(device_, Window::Manager::GetInstance()->GetClientWidth(), Window::Manager::GetInstance()->GetClientHeight(),
 			DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, kRenderTargetClearValue);
 		device_->CreateRenderTargetView(newRenderTex.Get(), &renderTargetViewDesc, rtvHandle);
@@ -50,10 +46,10 @@ void PostEffectDrawer::Initialize() {
 		renderTextureSrvDesc.Texture2D.MipLevels = 1;
 
 		D3D12_CPU_DESCRIPTOR_HANDLE srvHandleCPU =
-			GetCPUDescriptorHandle(dxSetter_->GetSrvHeap()->Get(), descriptorSizeSRV, handleIndex);
+			dxSetter_->GetSrvHeap()->GetCPUDescriptorHandle(handleIndex);
 
 		D3D12_GPU_DESCRIPTOR_HANDLE srvHandleGPU =
-			GetGPUDescriptorHandle(dxSetter_->GetSrvHeap()->Get(), descriptorSizeSRV, handleIndex);
+			dxSetter_->GetSrvHeap()->GetGPUDescriptorHandle(handleIndex);
 
 		newRenderTex.SetCPUHandle(srvHandleCPU);
 		newRenderTex.SetGPUHandle(srvHandleGPU);
@@ -84,6 +80,8 @@ void PostEffectDrawer::Initialize() {
 
 	postEffects_.push_back(std::make_shared<Dissolve>());
 
+	postEffects_.push_back(std::make_shared<Paper>());
+
 	for (int32_t i = 0; i < postEffects_.size(); i++) {
 
 		postEffects_[i]->Create();
@@ -92,31 +90,10 @@ void PostEffectDrawer::Initialize() {
 
 }
 
-void PostEffectDrawer::Draw(int32_t textureNum) {
-
-	if (textureNum < 0 or textureNum > 1) {
-		return;
-	}
-
-	ID3D12GraphicsCommandList* commandList = DirectXSetter::GetInstance()->GetCommandList();
-
-	//TransitionBarrierの設定
-	D3D12_RESOURCE_BARRIER barrier{};
-	//今回のバリアはTransition
-	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	//Noneにしておく
-	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	//バリアを張る対象のリソース。現在のバックバッファに対して行う
-	barrier.Transition.pResource = renderTextures_[textureNum].Get();
-	//遷移前(現在)のResourceState
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	//遷移後のResourceState
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-	//TransitionBarrierを張る
-	commandList->ResourceBarrier(1, &barrier);
+void PostEffectDrawer::Draw(int32_t drawNum) {
 
 	//最初の一回だけ全部描画する
-	if (!isUsedAllEffects_) {
+	/*if (not isUsedAllEffects_) {
 
 		for (int32_t i = 0; i < postEffects_.size(); i++) {
 			postEffects_[i]->Render();
@@ -125,30 +102,26 @@ void PostEffectDrawer::Draw(int32_t textureNum) {
 
 		isUsedAllEffects_ = true;
 
-	}
+	}*/
 	//指定したタイプのエフェクト描画
 	if (type_ < postEffects_.size()) {
 		postEffects_[type_]->Render();
 	}
 
-	renderTextures_[textureNum].Draw();
+	//書き込み先を設定
+	renderTextures_[drawNum].Draw(renderTextures_[drawNum].GetGPUHandle());
 
 	if (type_ < postEffects_.size()) {
 		postEffects_[type_]->PostRender();
 	}
 
-	//今回のバリアはTransition
-	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	//Noneにしておく
-	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	//バリアを張る対象のリソース。現在のバックバッファに対して行う
-	barrier.Transition.pResource = renderTextures_[textureNum].Get();
-	//遷移前(現在)のResourceState
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-	//遷移後のResourceState
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	//TransitionBarrierを張る
-	commandList->ResourceBarrier(1, &barrier);
+}
+
+void PostEffectDrawer::SetBarrier(int32_t index, D3D12_RESOURCE_STATES before, D3D12_RESOURCE_STATES after)
+{
+
+	Core::DirectXFunction::SetBarrier(D3D12_RESOURCE_BARRIER_TYPE_TRANSITION, D3D12_RESOURCE_BARRIER_FLAG_NONE,
+		before, after, renderTextures_[index].Get());
 
 }
 

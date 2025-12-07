@@ -14,19 +14,19 @@ namespace MLEngine::Resource {
 	/// <summary>
 	/// 画像の描画を行うクラス
 	/// </summary>
-	class Sprite
+	class Sprite2D
 	{
 	public:
 
-		Sprite(MLEngine::Resource::Texture texture, MLEngine::Math::Vector2 position, MLEngine::Math::Vector2 s, MLEngine::Math::Vector4 color);
-		~Sprite();
+		Sprite2D(MLEngine::Resource::Texture texture, MLEngine::Math::Vector2 position, MLEngine::Math::Vector2 s, MLEngine::Math::Vector4 color);
+		~Sprite2D();
 		//静的初期化
 		static void StaticInitialize(ID3D12Device* device);
 
 		/// <summary>
 		/// 頂点データ構造体
 		/// </summary>
-		struct VertexData {
+		struct SpriteVertexData {
 			MLEngine::Math::Vector4 position; //位置
 			MLEngine::Math::Vector2 texcoord; //uv座標
 		};
@@ -36,9 +36,10 @@ namespace MLEngine::Resource {
 		struct Material2D {
 			MLEngine::Math::Vector4 color;
 			MLEngine::Math::Matrix4x4 uvTransform;
+			uint32_t textureIndex;
 		};
 		//生成
-		static Sprite* Create(MLEngine::Resource::Texture texture, MLEngine::Math::Vector2 pos, MLEngine::Math::Vector4 col = { 1.0f,1.0f,1.0f,1.0f });
+		static Sprite2D* Create(MLEngine::Resource::Texture texture, MLEngine::Math::Vector2 pos, MLEngine::Math::Vector4 col = { 1.0f,1.0f,1.0f,1.0f });
 		//描画前処理
 		static void PreDraw(ID3D12GraphicsCommandList* commandList);
 		//描画後処理
@@ -118,7 +119,7 @@ namespace MLEngine::Resource {
 		//定数バッファ
 		Microsoft::WRL::ComPtr<ID3D12Resource> constBuff_;
 		//頂点バッファマップ
-		VertexData* vertMap_ = nullptr;
+		SpriteVertexData* vertMap_ = nullptr;
 		//インデックスバッファマップ
 		uint32_t* indexMap_ = nullptr;
 		//定数バッファマップ

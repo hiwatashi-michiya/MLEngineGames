@@ -17,6 +17,7 @@
 #include "Core/Render/Config/DescriptorRange.h"
 #include "Core/Render/RenderManager.h"
 #include "DirectXSetter.h"
+#include "DXDevice.h"
 
 #pragma comment(lib, "dxcompiler.lib")
 
@@ -37,30 +38,28 @@ InstancingModel* InstancingModel::Create(const std::string& filename) {
 
 void InstancingModel::Initialize(const std::string& filename) {
 
-	assert(DirectXSetter::GetInstance()->GetDevice());
+	assert(DXDevice::GetInstance()->GetDevice());
 
 	if (Render::Mesh::Manager::GetInstance()->IsExistMesh(filename)) {
 
-		mesh_ = Render::Mesh::Manager::GetInstance()->GetMesh(filename);
+		mesh = Render::Mesh::Manager::GetInstance()->GetMesh(filename);
 
 	}
 	else {
 
 		//メッシュを登録
 		Render::Mesh::Manager::GetInstance()->CreateMesh(filename);
-		mesh_ = Render::Mesh::Manager::GetInstance()->GetMesh(filename);
+		mesh = Render::Mesh::Manager::GetInstance()->GetMesh(filename);
 
 	}
 
 	material_ = std::make_unique<Graphics::Material>();
-	material_->Create();
-
-	texture_.Load(mesh_->GetTextureFilePath());
+	material_->Create(kMaxInstance_);
 
 	//transformMatrix
 	{
 
-		matBuff_ = CreateBufferResource(DirectXSetter::GetInstance()->GetDevice(), sizeof(InstancingForGPU) * kMaxInstance_);
+		matBuff_ = CreateBufferResource(DXDevice::GetInstance()->GetDevice(), sizeof(InstancingForGPU) * kMaxInstance_);
 
 		matBuff_->SetName(L"matrixBuff");
 
@@ -77,25 +76,10 @@ void InstancingModel::Initialize(const std::string& filename) {
 
 	}
 
-	//カメラ設定
-	{
-
-		cameraBuff_ = CreateBufferResource(DirectXSetter::GetInstance()->GetDevice(), sizeof(CameraForGPU));
-
-		cameraBuff_->SetName(L"cameraBuff");
-
-		cameraBuff_->Map(0, nullptr, reinterpret_cast<void**>(&cameraMap_));
-
-		cameraMap_->worldPosition = Vector3::Zero();
-
-		cameraBuff_->Unmap(0, nullptr);
-
-	}
-
 	//インスタンシングリソース設定
 	{
 
-		instancingResource_.Initialize(kMaxInstance_, matBuff_);
+		instancingResource_.Initialize(kMaxInstance_, matBuff_, sizeof(InstancingForGPU));
 
 	}
 
@@ -110,25 +94,17 @@ void InstancingModel::Render(ID3D12GraphicsCommandList* commandList)
 		return;
 	}
 
-	//カメラ設定
-	commandList->SetGraphicsRootConstantBufferView(4, cameraBuff_->GetGPUVirtualAddress());
-	commandList->SetGraphicsRootConstantBufferView(1, matBuff_->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootDescriptorTable(1, instancingResource_.GetGPUHandle());
 
-	commandList->SetGraphicsRootDescriptorTable(2, texture_.GetGPUHandle());
+	commandList->SetGraphicsRootDescriptorTable(2, DirectXSetter::GetInstance()->GetSrvHeap()->GetGPUHandleStart());
 	commandList->SetGraphicsRootDescriptorTable(6, instancingResource_.GetGPUHandle());
 
-	//描画
+	//コマンドセット
 	material_->SetCommandMaterial(commandList);
 
-	mesh_->SetCommandMesh(commandList, instanceCount_);
+	mesh->SetCommandMesh(commandList, instanceCount_);
 	//インスタンスカウントリセット
 	instanceCount_ = 0;
-
-}
-
-void InstancingModel::SetTexture(const std::string& name) {
-
-	texture_ .Load(name);
 
 }
 
@@ -165,14 +141,31 @@ void InstancingModel::Regist(RigidModel* model)
 	matTransformMap_[instanceCount_].World = model->localMatrix * model->worldMatrix;
 	matTransformMap_[instanceCount_].WorldInverseTranspose = Transpose(Inverse(model->localMatrix * model->worldMatrix));
 	matTransformMap_[instanceCount_].color = model->color;
+	matTransformMap_[instanceCount_].textureIndex = model->GetTextureIndex();
+
+	material_->SetMaterialData(instanceCount_, model->materialData);
 
 	AddInstanceCount();
 
 }
 
-void InstancingModel::SetCamera(Camera* camera)
+void InstancingModel::Regist(Sprite3D* sprite3D)
 {
 
-	cameraMap_->worldPosition = camera->GetWorldPosition();
+	//最大数を超えていたら追加しない
+	if (instanceCount_ >= kMaxInstance_) {
+		return;
+	}
+
+	matTransformMap_[instanceCount_].WVP = sprite3D->worldViewProjectionMatrix;
+	matTransformMap_[instanceCount_].World = sprite3D->localMatrix * sprite3D->transform.worldMatrix;
+	matTransformMap_[instanceCount_].WorldInverseTranspose = Transpose(Inverse(sprite3D->localMatrix * sprite3D->transform.worldMatrix));
+	matTransformMap_[instanceCount_].color = sprite3D->color;
+	matTransformMap_[instanceCount_].textureIndex = sprite3D->GetTextureIndex();
+
+	material_->SetMaterialData(instanceCount_, sprite3D->materialData);
+
+	AddInstanceCount();
 
 }
+
