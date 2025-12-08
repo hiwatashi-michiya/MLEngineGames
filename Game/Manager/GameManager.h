@@ -15,7 +15,10 @@ public:
     void Finalize();
 
     // フレーム更新
-    void Update();
+    void Update(bool isJustTurned, bool isJustMoved);
+
+    //debug
+    void Debug();
 
     // シーン更新
     void SceneUpdate();
@@ -37,6 +40,9 @@ public:
 
     void SetState(GameState newState) { nextState_ = newState; }
     GameState GetState() const { return state_; }
+
+    void SetIsClear(bool isClear) { isClear_ = isClear; }
+    void SetGameEnd(bool isGameEnd) { isGameEnd_ = isGameEnd; }
 
     // スコア管理
     void AddScore(int value);
@@ -60,6 +66,10 @@ private:
     GameManager& operator=(const GameManager&) = delete;
 
 private:
+
+    //入力デバイス
+    VirtualController* vController_ = nullptr;
+
     // ゲーム全体の状態
     GameState state_ = GameState::Title;
     GameState nextState_ = GameState::Title;
@@ -67,16 +77,28 @@ private:
     // チュートリアルの状態
     TutorialState tuState_ = TutorialState::LaneMove;
 
-    //入力デバイス
-    VirtualController* vController_ = nullptr;
-
     //チュートリアルクリアしたかどうか
     bool isTutorialClear_ = false;
 
+
+
+    //ゲームクリアしたかどうか
+    bool isClear_ = false;
+    bool isGameEnd_ = false;
+
+    //チュートリアルでのカウント
+    int moveCount_ = 0;
+    int turnCount_ = 0;
+    int moveCountMax_ = 0;
+    int turnCountMax_ = 0;
+
+    float waitTime_ = 3.0f;
+    float time_ = 0.0f;
+    //後で正式なものと交換
+    float deltaTime_ = 1.0f / 60.0f;
+
     // スコア
     int score_ = 0;
-
-    float deltaTime_ = 1.0f / 60.0f;
     
     // 制限時間管理
     float timeLimit_ = 60.0f;       // 秒

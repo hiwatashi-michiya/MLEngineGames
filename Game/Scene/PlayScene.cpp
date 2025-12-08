@@ -64,11 +64,11 @@ void PlayScene::Update(){
 	gameManager_->SetState(static_cast<GameManager::GameState>(gameState));
 #else
 	// Server Debug処理
-	gameManager_->Update();
+	gameManager_->Update(playerManager_->GetPlayer()->GetIsJustTurned(), playerManager_->GetPlayer()->GetIsJustMoved());
 
 #endif	
 	
-	if (gameManager_->GetState() == GameManager::GameState::Title){
+	if (gameManager_->GetState() == GameManager::GameState::Title or gameManager_->GetState() == GameManager::GameState::Result){
 		playerManager_->GetPlayer()->SetIsTitleScene(true);
 	}
 	else {
@@ -84,12 +84,22 @@ void PlayScene::Update(){
 		bulletManager_->Update();
 
 		lifeUI_->Update();
+
+
 	}
 	else {
 		bulletManager_->SetIsModelActive(false);
 		enemy_->SetIsActive(false);
 	}
 	
+	if (playerManager_->GetPlayer()->GetIsDead()){
+		gameManager_->SetGameEnd(true);
+	}
+	else if (enemy_->GetIsDead()){
+		gameManager_->SetGameEnd(true);
+		gameManager_->SetIsClear(true);
+	}
+
 
 	camera_.Update();
 
@@ -127,6 +137,8 @@ void PlayScene::Draw(){
 void PlayScene::DrawImgui() {
 #ifdef _DEBUG
 	config_->Debug();
+
+	gameManager_->Debug();
 
 	ImGui::Begin("シーン");
 

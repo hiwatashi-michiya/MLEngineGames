@@ -32,7 +32,7 @@ void Player::Initialize(){
 	life_ = lifeMax_ ;
 	pos_ = Vector3(640.0f, 650.0f, 0.0f);
 	color_ = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
-
+	isDead_ = false;
 	bulletDamege_ = 10;
 }
 
@@ -45,6 +45,8 @@ void Player::Update(const float deltaTime){
 
 	deltaTime;
 	SyncFromNetwork();
+
+	ResetEvents();
 
 	lifeMax_ = global->GetIntValue("PlayerState", "Life");
 	damegeCount_ = global->GetFloatValue("PlayerState", "comboTime");
@@ -71,7 +73,6 @@ void Player::Update(const float deltaTime){
 	plPacket.header.type = 1;
 	plPacket.header.size = sizeof(NetworkManager::PlayerStatePacket);
 	plPacket.state = plState_;
-
 	NetworkManager::GetInstance().Send(plPacket);
 
 	pos_.x = LaneSpecificCalculation();
@@ -84,6 +85,10 @@ void Player::Update(const float deltaTime){
 	}
 	else {
 		sprite_->SetTexture(frontTexture_);
+	}
+
+	if (life_ <= 0){
+		isDead_ = true;
 	}
 }
 
@@ -114,7 +119,6 @@ void Player::OnCollision(const int damege){
 	plPacket.header.type = 1;
 	plPacket.header.size = sizeof(NetworkManager::PlayerStatePacket);
 	plPacket.state = plState_;
-
 	NetworkManager::GetInstance().Send(plPacket);
 #else
 	// Server Debug処理
@@ -135,6 +139,7 @@ void Player::PlayerMove(){
 	if (vController_->LeftTriger()) {
 		if (nowLine_ > 0){
 			nowLine_--;
+			isJustMoved_ = true;
 		}
 		
 	}
@@ -142,23 +147,39 @@ void Player::PlayerMove(){
 	if (vController_->RightTriger()) {
 		if (nowLine_ < config_->maxLane_ - 1) {
 			nowLine_++;
+			isJustMoved_ = true;
 		}
 	}
 
+	int number = 0;
+
 	if (input_->GetKeyboard()->Trigger(DIK_1)){
-		nowLine_ = 0;
+		number = 0;
+		if (nowLine_ != number) {
+			nowLine_ = number;
+			isJustMoved_ = true;
+		}
 	}
 	else if (input_->GetKeyboard()->Trigger(DIK_2)) {
-		nowLine_ = 1;
+		number = 1;
+		if (nowLine_ != number) {
+			nowLine_ = number;
+			isJustMoved_ = true;
+		}
 	}
 	else if (input_->GetKeyboard()->Trigger(DIK_3)) {
-		nowLine_ = 2;
+		number = 2;
+		if (nowLine_ != number) {
+			nowLine_ = number;
+			isJustMoved_ = true;
+		}
 	}
 	
 
 	//タイトルシーンでなければ反転入力
 	if (vController_->Decide()) {
 		isForward_ = !isForward_;
+		isJustTurned_ = true;
 	}
 
 	
@@ -270,5 +291,10 @@ void Player::SyncFromNetwork(){
 
 		
 	}
+}
+
+void Player::ResetEvents(){
+	if (isJustTurned_) isJustTurned_ = false;
+	if (isJustMoved_) isJustMoved_ = false;
 }
 

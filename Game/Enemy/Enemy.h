@@ -31,6 +31,15 @@ public:
 
 	BulletManager* GetBulletManager() { return bulletManager_; }
 
+	bool GetIsDead() const {
+		if (hp_ <= 0){
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
 	// 弾マネージャー取得
 	void SetBulletManager(BulletManager* bulletManager) {
 		bulletManager_ = bulletManager;
