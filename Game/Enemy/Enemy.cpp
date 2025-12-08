@@ -1,5 +1,7 @@
 #include "Enemy.h"
 
+
+#include <corecrt_math_defines.h>
 #include <format>
 
 #include "Input/Input.h"
@@ -18,8 +20,31 @@ void Enemy::Initialize()
 	global_->AddItem("EnemyState", "MaxDownCount", maxDownCount_);
 	maxDownCount_ = global_->GetIntValue("EnemyState", "MaxDownCount");
 
+	transform_ = std::make_unique<MLEngine::Object::Transform>();
+	transform_->scale = scale_;
+	transform_->translate = translate_;
+
+	angryTexture_ = "./Resources/Texture/enemy1_angry.png";
+	attackTexture_ = "./Resources/Texture/enemy1_attack.png";
+
+	normalTexture_ = "./Resources/Texture/enemy1_normal.png";
+	frontPlane_.Initialize(normalTexture_, 5);
+	frontPlane_.transform.translate = { 0.0f, 1.0f, -0.001f };
+	frontPlane_.transform.SetParent(transform_.get());
+	frontPlane_.StartAnimation();
+
+	backTextrue_ = "./Resources/Texture/enemy1_back.png";
+	backPlane_.Initialize(backTextrue_, 1);
+	backPlane_.transform.rotateQuaternion = MLEngine::Math::ConvertFromEuler({ 0.0f, 180.0f * (float)(M_PI / 180.0f), 0.0f});
+	backPlane_.transform.translate = {0.0f, 1.0f, 0.001f};
+	backPlane_.transform.SetParent(transform_.get());
+
+
+
+#ifdef _DEBUG
 	model_.Initialize("./Resources/model/plane/plane.obj");
-	model_.worldMatrix = MLEngine::Math::MakeAffineMatrix(scale_, { 0.0f, 0.0f, 0.0f, 1.0f }, translate_);
+	model_.worldMatrix = MLEngine::Math::MakeAffineMatrix({0.1f, 0.1f, 1.0f}, {0.0f, 0.0f, 0.0f, 1.0f}, translate_);
+#endif
 
 	ChangeState(std::make_unique<EnemyNormalState>());
 	// 
@@ -36,6 +61,7 @@ void Enemy::Initialize()
 
 void Enemy::Update()
 {
+
 	if (!dynamic_cast<EnemyBerserkState*>(currentState_.get())) {
 		if(hp_ <= maxHp_ * 0.3f) {
 			ChangeState(std::make_unique<EnemyBerserkState>());
@@ -54,6 +80,7 @@ void Enemy::Update()
 
 	currentState_->Update(this);
 
+	// UI更新
 	enemyUI_->Update();
 
 #ifdef _DEBUG
@@ -106,6 +133,8 @@ void Enemy::Update()
 	global_->datas_["EnemyState"].items["Translate"].value = translate_;
 
 	model_.worldMatrix = MLEngine::Math::MakeAffineMatrix(scale_, {0.0f, 0.0f, 0.0f}, translate_);
+	transform_->scale = scale_;
+	transform_->translate = translate_;
 
 	// 体力
 	ImGui::SliderInt("体力", &hp_, 0, maxHp_);
@@ -132,7 +161,7 @@ void Enemy::Update()
 	std::unique_ptr<EnemyOnHitState> onHitState = std::make_unique<EnemyOnHitState>();
 	onHitState->Enter(this);
 
-	ImGui::DragFloat("時間", &onHitState->targetTime_, 0.01f);
+	ImGui::DragFloat("ダメージ演出時間", &onHitState->targetTime_, 0.01f);
 	global_->datas_["EnemyMotionState"].items["OnHit"].value = onHitState->targetTime_;
 	ImGui::DragFloat("加算角度", &onHitState->addDegrees_, 0.1f);
 	global_->datas_["EnemyMotionState"].items["AddDegrees"].value = onHitState->addDegrees_;
@@ -145,7 +174,7 @@ void Enemy::Update()
 	std::unique_ptr<EnemyAttackState> attackState = std::make_unique<EnemyAttackState>();
 	attackState->Enter(this);
 
-	ImGui::DragFloat("時間", &attackState->targetTime_, 0.01f);
+	ImGui::DragFloat("攻撃演出時間", &attackState->targetTime_, 0.01f);
 	global_->datas_["EnemyMotionState"].items["Attack"].value = attackState->targetTime_;
 	ImGui::SliderFloat2("揺れ幅", &attackState->shakeOffset_.x, 0.0f, 1.0f);
 	global_->datas_["EnemyMotionState"].items["ShakeOffset"].value = attackState->shakeOffset_;
@@ -172,10 +201,20 @@ void Enemy::Update()
 	}
 	ImGui::End();
 
+
+	model_.worldMatrix = MLEngine::Math::MakeAffineMatrix({ 0.1f, 0.1f, 1.0f }, {0.0f, 0.0f, 0.0f, 1.0f}, translate_);
+
 #endif // _DEBUG
 
+	// モーション更新
 	motionState_->Update(this);
 
+	// トランスフォーム更新
+	transform_->rotateQuaternion = MLEngine::Math::ConvertFromEuler(rotate_);
+	transform_->UpdateMatrix();
+
+	// アニメーション更新
+	frontPlane_.UpdateAnimation();
 }
 
 void Enemy::ChangeState(std::unique_ptr<EnemyState> newState)
@@ -209,4 +248,17 @@ void Enemy::OnCollision(int damege)
 	}
 
 	ChangeMotionState(std::make_unique<EnemyOnHitState>());
+}
+
+void Enemy::ChangeTexture(Mode mode)
+{
+	if (mode == Mode::kNormal) {
+		frontPlane_.SetTexture(normalTexture_);
+	}
+	else if (mode == Mode::kAngry) {
+		frontPlane_.SetTexture(angryTexture_);
+	}
+	else if (mode == Mode::kAttack) {
+		frontPlane_.SetTexture(attackTexture_);
+	}
 }

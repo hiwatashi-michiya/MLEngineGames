@@ -12,6 +12,7 @@ void EnemyNormalState::Enter(Enemy* enemy)
 	GlobalVariables* global = GlobalVariables::GetInstance();
 	bulletSpeed_ = global->GetFloatValue("EnemyState", "NormalBulletSpeed");
 	fireInterval = global->GetFloatValue("EnemyState", "NormalFireInterval");
+	enemy->ChangeTexture(Enemy::Mode::kNormal);
 }
 
 void EnemyNormalState::Update(Enemy* enemy)
@@ -26,6 +27,7 @@ void EnemyNormalState::Update(Enemy* enemy)
 		}
 		enemy->GetBulletManager()->SpawnBullet(laneNumber, bulletSpeed_);
 		enemy->ChangeMotionState(std::make_unique<EnemyAttackState>());
+		//enemy->ChangeTexture(Enemy::Mode::kAttack);
 		intervalTime_ = 0.0f;
 		prevLaneNumber = laneNumber;
 	}
@@ -76,6 +78,7 @@ void EnemyBerserkState::Enter(Enemy* enemy)
 	GlobalVariables* global = GlobalVariables::GetInstance();
 	bulletSpeed_ = global->GetFloatValue("EnemyState", "BerserkBulletSpeed");
 	fireInterval = global->GetFloatValue("EnemyState", "BerserkFireInterval");
+	enemy->ChangeTexture(Enemy::Mode::kAngry);
 }
 
 void EnemyBerserkState::Update(Enemy* enemy)

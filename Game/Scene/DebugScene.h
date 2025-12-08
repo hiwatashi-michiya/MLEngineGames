@@ -37,6 +37,7 @@ private:
 
 	//入力デバイス
 	MLEngine::Input::Manager* input_ = nullptr;
+	VirtualController* vController_ = nullptr;
 
 	//
 	MLEngine::Object::DebugCamera debugCamera_;
@@ -67,8 +68,6 @@ private:
 	bool showBox_ = true;
 	bool showSphere_ = true;
 	bool isDebugCamera_ = false;
-
-	std::unique_ptr<Enemy> enemy_;
 
 };
 

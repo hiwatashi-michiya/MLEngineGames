@@ -20,14 +20,14 @@ void EnemyUI::Initialize(Enemy* enemy)
 	//必須となる情報の読み込み
 	texture_.Load("./Resources/white.png");
 
-	frame_.reset(MLEngine::Resource::Sprite::Create(texture_, framePosition_, frameColor_));
-	frame_->color = { 0.0f,0.0f,0.0f,1.0f };
+	hpBar_.reset(MLEngine::Resource::Sprite2D::Create(texture_, barPosition_, barColor_));
+	//hpBar_->anchorPoint = { 0.0f,0.5f };
 
 	//必須となる情報の読み込み
-	texture_.Load("./Resources/white.png");
+	texture_.Load("./Resources/Texture/enemy_hpGage.png");
 
-	hpBar_.reset(MLEngine::Resource::Sprite::Create(texture_, barPosition_, barColor_));
-	//hpBar_->anchorPoint = { 0.0f,0.5f };
+	frame_.reset(MLEngine::Resource::Sprite2D::Create(texture_, framePosition_, frameColor_));
+	frame_->color = { 0.0f,0.0f,0.0f,1.0f };
 
 	
 }

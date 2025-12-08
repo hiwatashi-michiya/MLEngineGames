@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Engine/Resource/Sprite/Sprite.h>
+#include <Engine/Resource/Sprite/Sprite2D.h>
 
 #include ".vs/../Engine/Tool/GlobalVariables.h"
 
@@ -22,18 +22,18 @@ private:
 	MLEngine::Resource::Texture texture_;
 
 	// 体力ゲージ
-	std::unique_ptr<MLEngine::Resource::Sprite> hpBar_;
+	std::unique_ptr<MLEngine::Resource::Sprite2D> hpBar_;
 	// 体力ゲージ調整項目
 	MLEngine::Math::Vector2 barPosition_{};
 	MLEngine::Math::Vector2 barSize_{};
 	MLEngine::Math::Vector4 barColor_ = { 1.0f,0.0f,0.0f,1.0f };
 
 	// フレーム
-	std::unique_ptr<MLEngine::Resource::Sprite> frame_;
+	std::unique_ptr<MLEngine::Resource::Sprite2D> frame_;
 	// フレーム調整項目
 	MLEngine::Math::Vector2 framePosition_{};
 	MLEngine::Math::Vector2 frameSize_{};
-	MLEngine::Math::Vector4 frameColor_ = { 0.0f,0.0f,0.0f,1.0f };
+	MLEngine::Math::Vector4 frameColor_ = { 1.0f,1.0f,1.0f,1.0f };
 
 	bool changeFlag_ = false;
 

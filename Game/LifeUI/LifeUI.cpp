@@ -8,12 +8,12 @@ LifeUI::LifeUI(Player* player){
 	//必須となる情報の読み込み
 	texture_.Load("./Resources/white.png");
 
-	meter_.reset(MLEngine::Resource::Sprite::Create(texture_,plMeterPos_, plColor_));
+	meter_.reset(MLEngine::Resource::Sprite2D::Create(texture_,plMeterPos_, plColor_));
 
 	//必須となる情報の読み込み
 	texture_.Load("./Resources/frame.png");
 
-	frame_.reset(MLEngine::Resource::Sprite::Create(texture_, plFramePos_, plColor_));
+	frame_.reset(MLEngine::Resource::Sprite2D::Create(texture_, plFramePos_, plColor_));
 }
 
 void LifeUI::Initialize() {

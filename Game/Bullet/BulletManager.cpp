@@ -42,8 +42,9 @@ void BulletManager::Initialize()
 	global_->AddItem("BulletParameters", "BulletDamege", bulletDamege_);
 	bulletDamege_ = global_->GetIntValue("BulletParameters", "BulletDamege");
 
-	startModels_.clear();
+	/*startModels_.clear();
 	endModels_.clear();
+
 
 	for (int i = 0; i < 3; ++i) {
 		std::unique_ptr<MLEngine::Resource::RigidModel> startModel = std::make_unique<MLEngine::Resource::RigidModel>();
@@ -57,8 +58,29 @@ void BulletManager::Initialize()
 		endModel->worldMatrix = MLEngine::Math::MakeAffineMatrix(endScale_, { 0.0f, 0.0f, 0.0f, 1.0f }, endTranslate_);
 		endModel->color = { 0.0f,1.0f,0.0f,0.5f };
 		endModels_.push_back(std::move(endModel));
+	}*/
+
+#ifdef _DEBUG
+	startSprite3D_.clear();
+	endSprite3D_.clear();
+
+	for (int i = 0; i < 3; ++i) {
+		std::unique_ptr<MLEngine::Resource::Sprite3D> startSprite3D = std::make_unique<MLEngine::Resource::Sprite3D>();
+		startSprite3D->Initialize("./Resources/Texture/enemy1_hand_attack.png", 1);
+		startSprite3D->transform.scale = startScale_;
+		startSprite3D->transform.translate = startTranslate_;
+		startSprite3D->color = { 0.0f, 1.0f, 0.0f, 0.5f };
+		startSprite3D_.push_back(std::move(startSprite3D));
+
+		std::unique_ptr<MLEngine::Resource::Sprite3D> endSprite3D = std::make_unique<MLEngine::Resource::Sprite3D>();
+		endSprite3D->Initialize("./Resources/Texture/enemy1_hand_attack.png", 1);
+		endSprite3D->transform.scale = endScale_;
+		endSprite3D->transform.translate = endTranslate_;
+		endSprite3D->color = { 1.0f, 0.0f, 0.0f, 0.5f };
+		endSprite3D_.push_back(std::move(endSprite3D));
 	}
 
+#endif
 	
 
 }
@@ -103,8 +125,12 @@ void BulletManager::Update()
 		targetSprites_[i]->SetPosition({ launchPosition_.x + endDistance_ * (i - 1), endLine_ });
 		targetSprites_[i]->size = { maxSize_, maxSize_ };*/
 
-		startModels_[i]->worldMatrix = MLEngine::Math::MakeAffineMatrix(startScale_, { 0.0f, 0.0f, 0.0f, 1.0f }, { startTranslate_.x + startDistance_ * (i - 1), startTranslate_.y, startTranslate_.z });
-		endModels_[i]->worldMatrix = MLEngine::Math::MakeAffineMatrix(endScale_, { 0.0f, 0.0f, 0.0f, 1.0f }, { endTranslate_.x + endDistance_ * (i - 1), endTranslate_.y, endTranslate_.z });
+		/*startModels_[i]->worldMatrix = MLEngine::Math::MakeAffineMatrix(startScale_, { 0.0f, 0.0f, 0.0f, 1.0f }, { startTranslate_.x + startDistance_ * (i - 1), startTranslate_.y, startTranslate_.z });
+		endModels_[i]->worldMatrix = MLEngine::Math::MakeAffineMatrix(endScale_, { 0.0f, 0.0f, 0.0f, 1.0f }, { endTranslate_.x + endDistance_ * (i - 1), endTranslate_.y, endTranslate_.z });*/
+		startSprite3D_[i]->transform.scale = startScale_;
+		startSprite3D_[i]->transform.translate = { startTranslate_.x + startDistance_ * (i - 1), startTranslate_.y, startTranslate_.z };
+		endSprite3D_[i]->transform.scale = endScale_;
+		endSprite3D_[i]->transform.translate = { endTranslate_.x + endDistance_ * (i - 1), endTranslate_.y, endTranslate_.z };
 
 	}
 

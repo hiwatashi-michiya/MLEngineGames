@@ -205,7 +205,6 @@ void DebugScene::Update()
 
 }
 
-	enemy_->Update();
 }
 void DebugScene::Draw()
 {

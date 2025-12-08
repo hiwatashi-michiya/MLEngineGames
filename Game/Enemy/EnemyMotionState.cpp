@@ -64,16 +64,14 @@ void EnemyOnHitState::Update(Enemy* enemy)
 		addDegrees_ *= -1.0f;
 	}
 
-	MLEngine::Math::Vector3 scale = enemy->GetModel().worldMatrix.GetScale();
-	MLEngine::Math::Vector3 translate = enemy->GetModel().worldMatrix.GetTranslate();
-	enemy->GetModel().worldMatrix = MLEngine::Math::MakeAffineMatrix(scale, { DegToRad(degrees_), 0.0f, 0.0f }, translate);
+	enemy->SetRotate({ DegToRad(degrees_), 0.0f, 0.0f });
 
 }
 
 
 void EnemyOnHitState::Exit(Enemy* enemy)
 {
-	enemy->GetModel().worldMatrix = MLEngine::Math::MakeAffineMatrix(enemy->GetModel().worldMatrix.GetScale(), { 0.0f, 0.0f, 0.0f }, enemy->GetModel().worldMatrix.GetTranslate());
+	enemy->SetRotate({ 0.0f, 0.0f, 0.0f });
 }
 #pragma endregion
 
@@ -147,9 +145,6 @@ void EnemyknockDownState::Update(Enemy* enemy)
 		return;
 	}
 
-	MLEngine::Math::Vector3 scale = enemy->GetModel().worldMatrix.GetScale();
-	MLEngine::Math::Vector3 translate = enemy->GetModel().worldMatrix.GetTranslate();
-
 	if (elapsedTime_ < targetTime_ * rotateSection_) {
 		
 		rotate_.y = DegToRad(360.0f * (elapsedTime_ / (targetTime_ * rotateSection_)));
@@ -161,14 +156,12 @@ void EnemyknockDownState::Update(Enemy* enemy)
 		rotate_.x = DegToRad(lieDownAngle_ + (0.0f - lieDownAngle_) * ((elapsedTime_ - targetTime_ * getupSection_) / (targetTime_ - targetTime_ * getupSection_)));
 	}
 
-	enemy->GetModel().worldMatrix = MLEngine::Math::MakeAffineMatrix(scale, rotate_, translate);
+	enemy->SetRotate(rotate_);
 
 }
 
 void EnemyknockDownState::Exit(Enemy* enemy)
 {
-	MLEngine::Math::Vector3 scale = enemy->GetModel().worldMatrix.GetScale();
-	MLEngine::Math::Vector3 translate = enemy->GetModel().worldMatrix.GetTranslate();
-	enemy->GetModel().worldMatrix = MLEngine::Math::MakeAffineMatrix(scale, { 0.0f, 0.0f, 0.0f }, translate);
+	enemy->SetRotate(rotate_);
 }
 #pragma endregion

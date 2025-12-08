@@ -3,8 +3,9 @@
 #include "Object/GameObject.h"
 #include "Object/Transform.h"
 #include "Object/Camera.h"
-#include "Sprite/Sprite.h"
+#include "Sprite/Sprite2D.h"
 #include "RigidModel.h"
+#include "Sprite3D.h"
 
 class Bullet : public MLEngine::Object::GameObject
 {
@@ -50,6 +51,7 @@ public:
 private:
 	// モデル
 	MLEngine::Resource::RigidModel model_;
+	MLEngine::Resource::Sprite3D sprite3D_;
 	// スケール
 	MLEngine::Math::Vector3 scale_ = { 0.2f, 0.2f, 0.2f };
 	// 平行移動

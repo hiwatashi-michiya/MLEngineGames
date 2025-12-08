@@ -62,8 +62,10 @@ private:
 
 	// モデル
 	std::vector<std::unique_ptr<MLEngine::Resource::RigidModel>> startModels_;
+	std::vector<std::unique_ptr<MLEngine::Resource::Sprite3D>> startSprite3D_;
 
 	std::vector<std::unique_ptr<MLEngine::Resource::RigidModel>> endModels_;
+	std::vector<std::unique_ptr<MLEngine::Resource::Sprite3D>> endSprite3D_;
 	// スケール
 	MLEngine::Math::Vector3 startScale_ = { 0.2f, 0.2f, 1.0f };
 	MLEngine::Math::Vector3 endScale_ = { 0.04f, 0.04f, 1.0f };

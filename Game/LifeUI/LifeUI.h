@@ -25,14 +25,14 @@ private:
 
 	MLEngine::Resource::Texture texture_;
 
-	std::unique_ptr<MLEngine::Resource::Sprite> meter_;
+	std::unique_ptr<MLEngine::Resource::Sprite2D> meter_;
 
 	MLEngine::Math::Vector2 plMeterPos_{};
 
 	MLEngine::Math::Vector2 plMeterSize_{};
 
 
-	std::unique_ptr<MLEngine::Resource::Sprite> frame_;
+	std::unique_ptr<MLEngine::Resource::Sprite2D> frame_;
 
 	MLEngine::Math::Vector2 plFramePos_{};
 

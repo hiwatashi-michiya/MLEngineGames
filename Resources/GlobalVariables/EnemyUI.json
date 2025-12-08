@@ -2,15 +2,15 @@
     "EnemyUI": {
         "FramePosition": [
             640.0,
-            34.0
+            41.5
         ],
         "FrameSize": [
-            700.0,
-            50.0
+            692.0,
+            68.0
         ],
         "HPBarPosition": [
             640.0,
-            34.0
+            46.0
         ],
         "HPBarSize": [
             650.0,
