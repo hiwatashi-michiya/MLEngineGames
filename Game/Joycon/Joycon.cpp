@@ -1,6 +1,7 @@
 #include "Joycon.h"
 #include<ranges>
 #include<algorithm>
+std::array<uint8_t, 0x40>Joycon::buff;
 
 void Joycon::Init() {
 	hidManager_ = std::make_unique<hidManager>();
@@ -19,8 +20,6 @@ void Joycon::Init() {
 
 void Joycon::Update() {
 
-	// read input report
-	static std::array<uint8_t, 0x40> buff;
 	// 読み込むサイズを指定。
 	static constexpr size_t kSize = 49;
 	while (true) {
@@ -42,20 +41,20 @@ void Joycon::Update() {
 	}
 
 	// ボタンの押し込みがビットフラグで表現されている。
-	if (Buttan == false) {
-		if (buff[5] & 0x01) {
+	if (Buttanflag == false) {
+		if (buff[5] & Buttan::DOWN) {
 			OutputDebugStringA("Down");
 		}
-		if (buff[5] & 0x02) {
+		if (buff[5] & Buttan::UP) {
 			OutputDebugStringA("Up");
 		}
-		if (buff[5] & 0x04) {
+		if (buff[5] & Buttan::RIGHT) {
 			OutputDebugStringA("Right");
 		}
-		if (buff[5] & 0x08) {
+		if (buff[5] & Buttan::LEFT) {
 			OutputDebugStringA("Left");
 		}
-		Buttan = true;
+		Buttanflag = true;
 	}
 	static constexpr float kRotCalc = (4588.f / 65535) / 360;
 
@@ -84,8 +83,15 @@ void Joycon::Update() {
 	ImGui::End();
 
 	if (buff[5] == 0) {
-		Buttan = false;
+		Buttanflag = false;
 	}
+}
+bool Joycon::IsPush(Buttan key)
+{
+	if (buff[5] & key) {
+		return true;
+	}
+	return false;
 }
 bool Joycon::SendSubcommand(hid_device* device, std::byte subcommandId, const std::span<std::byte>& args)
 {

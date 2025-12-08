@@ -9,6 +9,12 @@
 #include "Externals/hidapi/include/hidapi.h"
 #include "Quaternion.h"
 using namespace MLEngine::Math;
+enum Buttan {
+	DOWN = 0x01,
+	UP = 0x02,
+	RIGHT = 0x04,
+	LEFT = 0x08,
+};
 struct GyroData {
 	int16_t x;
 	int16_t y;
@@ -20,6 +26,8 @@ public:
 
 	void Update();
 
+	bool IsPush(Buttan key);
+
 	bool SendSubcommand(hid_device* device, std::byte subcommandId, const std::span<std::byte>& args);
 
 	Quaternion GetQuaRotate() { return Qrotate_; };
@@ -28,8 +36,10 @@ public:
 private:
 	std::unique_ptr<hidManager> hidManager_;
 	hid_device* device_;
-	bool Buttan = false;
+	bool Buttanflag = false;
 	std::array<std::byte, 0x40> data_{};
+	// read input report
+	static std::array<uint8_t, 0x40> buff;
 
 	Quaternion Qrotate_;
 	std::array<uint16_t, 3> Gyro_Normalized;

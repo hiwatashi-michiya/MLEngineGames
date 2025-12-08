@@ -61,7 +61,7 @@ void DebugScene::Update()
 
 	Quaternion hoge;
 	modelRot_ *= ConvertFromEuler(joyconInput->GetVecRotate());
-	//modelRot_ *= hoge.MakeRotateAxisAngleQuaternion(Vector3::AxisY(), (joyconInput->GetVecRotate().y * -1.f));
+
 	test += joyconInput->GetVecRotate();
 	ImGui::Begin("Gyro");
 	ImGui::Text("DeX:%f", test.x);
@@ -69,7 +69,11 @@ void DebugScene::Update()
 	ImGui::Text("DeZ:%f", test.z);
 	ImGui::End();
 
-	//modelRot_ *= ;
+	if (joyconInput->IsPush(UP)) {
+		modelRot_ = modelRot_.IdentityQuaternion();
+		test = { 0.0f,0.0f,0.0f };
+	}
+
 	//ジョイコンの回転情報からアフィン行列を作成
 	result = MakeAffineMatrix(Vector3(1.0f,1.0f,1.0f), modelRot_,Vector3(0.0f,0.0f,0.0f));
 	//モデルに行列をセット
