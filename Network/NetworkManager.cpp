@@ -155,29 +155,32 @@ void NetworkManager::Finalize() {
 }
 
 void NetworkManager::RecvLoop() {
-    while (isRunning_){
-        SendPlayerState tmp;
-        // テンプレート受信関数
-        if (!Receive(tmp)) {
+    while (isRunning_) {
+        PacketHeader header;
+        if (!Receive(header)) continue;
 
-            isRunning_ = false;
-           
-        }
-        else {
+        switch (header.type) {
+
+        case 1: { // PlayerState
+            SendPlayerState tmp;
+            Receive(tmp);
             playerState_ = tmp;
-        }
-       /* uint8_t state = 0;
-        if (!Receive(state)) {
+        } break;
 
-            isRunning_ = false;
+        case 2: { // GameState
+            GameManager::GameState g;
+            Receive(g);
+            gameState_ = g;
+        } break;
 
+        default:
+            // 未知パケット → 破棄
+            break;
         }
-        else {
-            sceneState_ = state;
-        }*/
         std::this_thread::sleep_for(std::chrono::milliseconds(3));
-
     }
+
+    
   
 
 }
@@ -197,8 +200,8 @@ bool NetworkManager::GetLatestPlayerState(SendPlayerState& out) const{
     return true;
 }
 
-void NetworkManager::GetSceneState(uint8_t& out) const{
-    out = sceneState_;
+void NetworkManager::GetSceneState(GameManager::GameState& out) const{
+    out = gameState_;
 }
 
 // 明示的なテンプレートインスタンス化

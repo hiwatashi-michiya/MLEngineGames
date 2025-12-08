@@ -2,7 +2,6 @@
 #include<memory>
 #include <cstdint>
 #include <string>
-#include"Player/Player.h"
 #include"VirtualController.h"
 
 class GameManager
@@ -19,7 +18,7 @@ public:
     void Update();
 
     // シーン更新
-    void SceneUpdate(Player* player);
+    void SceneUpdate();
 
     // 状態管理
     enum class GameState : uint8_t {

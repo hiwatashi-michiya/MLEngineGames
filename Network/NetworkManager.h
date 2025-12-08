@@ -5,7 +5,7 @@
 #include <fstream>
 #include <iostream>
 #include <atomic>
-
+#include<../Game/Manager/GameManager.h>
 
 #pragma comment(lib, "wsock32.lib")
 #pragma comment(lib, "winmm.lib")
@@ -27,6 +27,19 @@ public:
         int nowLine;
     };
 #pragma pack(pop)
+
+#pragma pack(push, 1)	
+    struct PacketHeader {
+        uint8_t type;  // パケット種別
+        uint16_t size; // データサイズ
+    };
+#pragma pack(pop)
+
+
+    struct PlayerStatePacket {
+        PacketHeader header;
+        SendPlayerState state;
+    };
 
     // シングルトンインスタンス
     static NetworkManager& GetInstance() {
@@ -61,7 +74,7 @@ public:
 
     bool GetLatestPlayerState(SendPlayerState& out) const;
 
-    void GetSceneState(uint8_t& out)const;
+    void GetSceneState(GameManager::GameState& out)const;
 private:
     NetworkManager() = default;
     ~NetworkManager() = default;
@@ -94,7 +107,7 @@ private:
     std::atomic<bool> isRunning_;
 
     SendPlayerState playerState_{};
-    //後に変換するが送受信のためuintで定義
-    uint8_t sceneState_ = 0;
+    
+    GameManager::GameState gameState_{};
 };
 

@@ -11,7 +11,7 @@ void GameManager::Initialize() {
     score_ = 0;
     remainingTime_ = timeLimit_;
     state_ = GameState::Title;
-    nextState_ = GameState::Playing;
+    nextState_ = GameState::Title;
     tuState_ = TutorialState::LaneMove;
     isTutorialClear_ = false;
 }
@@ -68,7 +68,7 @@ void GameManager::Update() {
    
 }
 
-void GameManager::SceneUpdate(Player* player){
+void GameManager::SceneUpdate(){
     if (nextState_ != state_) {
         state_ = nextState_;
     }

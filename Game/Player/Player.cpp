@@ -67,7 +67,12 @@ void Player::Update(const float deltaTime){
 
 	PlayerInfoInsertion();
 	//managerを介してクライアントに送る
-	NetworkManager::GetInstance().Send(plState_);
+	NetworkManager::PlayerStatePacket plPacket{};
+	plPacket.header.type = 1;
+	plPacket.header.size = sizeof(NetworkManager::PlayerStatePacket);
+	plPacket.state = plState_;
+
+	NetworkManager::GetInstance().Send(plPacket);
 
 	pos_.x = LaneSpecificCalculation();
 
@@ -105,8 +110,12 @@ void Player::OnCollision(const int damege){
 #ifdef CLIENT_BUILD
 	// Client専用処理
 	plState_.isClientHited = true;
-	//managerを介してクライアントに送る
-	NetworkManager::GetInstance().Send(plState_);
+	NetworkManager::PlayerStatePacket plPacket{};
+	plPacket.header.type = 1;
+	plPacket.header.size = sizeof(NetworkManager::PlayerStatePacket);
+	plPacket.state = plState_;
+
+	NetworkManager::GetInstance().Send(plPacket);
 #else
 	// Server Debug処理
 	life_ -= damege;

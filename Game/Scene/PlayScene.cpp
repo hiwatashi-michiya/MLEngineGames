@@ -56,15 +56,18 @@ void PlayScene::Update(){
 	
 #ifdef CLIENT_BUILD
 	//// Client専用処理
-	//uint8_t recvData;
-	//NetworkManager::GetInstance().Receive(recvData);
-	//gameManager_->SetState(static_cast<GameManager::GameState>(recvData));
+
+	GameManager::GameState gameState{};
+
+	NetworkManager::GetInstance().GetSceneState(gameState);
+
+	gameManager_->SetState(static_cast<GameManager::GameState>(gameState));
 #else
 	// Server Debug処理
+	gameManager_->Update();
 
 #endif	
 	
-	gameManager_->Update();
 	if (gameManager_->GetState() == GameManager::GameState::Title){
 		playerManager_->GetPlayer()->SetIsTitleScene(true);
 	}
@@ -90,15 +93,20 @@ void PlayScene::Update(){
 
 	camera_.Update();
 
-	gameManager_->SceneUpdate(playerManager_->GetPlayer());
+	gameManager_->SceneUpdate();
 
 
 #ifdef CLIENT_BUILD
 	// Client専用処理
 #else
-	//// Server Debug処理
-	//uint8_t sendData = static_cast<uint8_t>(gameManager_->GetState());
-	//NetworkManager::GetInstance().Send(sendData);
+	// Server Debug処理
+	//managerを介してクライアントに送る
+	GameStatePacket gamePacket{};
+	gamePacket.header.type = 2;
+	gamePacket.header.size = sizeof(GameStatePacket);
+	gamePacket.gameState = gameManager_->GetState();
+
+	NetworkManager::GetInstance().Send(gamePacket);
 #endif	
 
 	
