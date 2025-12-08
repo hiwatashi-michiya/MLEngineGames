@@ -62,7 +62,7 @@ void DebugScene::Update()
 	Quaternion hoge;
 	modelRot_ *= ConvertFromEuler(joyconInput->GetVecRotate());
 
-	test += joyconInput->GetVecRotate();
+	test += joyconInput->GetVecRotate() * (180/std::numbers::pi);
 	ImGui::Begin("Gyro");
 	ImGui::Text("DeX:%f", test.x);
 	ImGui::Text("DeY:%f", test.y);
