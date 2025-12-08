@@ -2,6 +2,7 @@
 #include"Externals/imgui/imgui.h"
 #include "DebugScene.h"
 
+
 using namespace MLEngine::Resource;
 
 PlayScene::PlayScene(){
@@ -54,23 +55,78 @@ void PlayScene::Update(){
 
 	
 #ifdef CLIENT_BUILD
-	// Client専用処理
+	//// Client専用処理
+
+	GameManager::GameState gameState{};
+
+	NetworkManager::GetInstance().GetSceneState(gameState);
+
+	gameManager_->SetState(static_cast<GameManager::GameState>(gameState));
 #else
 	// Server Debug処理
-	gameManager_->Update();
+	gameManager_->Update(playerManager_->GetPlayer()->GetIsJustTurned(), playerManager_->GetPlayer()->GetIsJustMoved());
+
 #endif	
+	
+	if (gameManager_->GetState() == GameManager::GameState::Title or gameManager_->GetState() == GameManager::GameState::Result){
+		playerManager_->GetPlayer()->SetIsTitleScene(true);
+	}
+	else {
+		playerManager_->GetPlayer()->SetIsTitleScene(false);
+	}
 
 	playerManager_->Update(gameManager_->GetDeltaTime());
 
-	enemy_->Update();
+	if (gameManager_->GetState() == GameManager::GameState::Playing){
+		enemy_->SetIsActive(true);
+		enemy_->Update();
+		bulletManager_->SetIsModelActive(true);
+		bulletManager_->Update();
 
-	bulletManager_->Update();
+		lifeUI_->Update();
 
-	lifeUI_->Update();
+
+	}
+	else {
+		bulletManager_->SetIsModelActive(false);
+		enemy_->SetIsActive(false);
+	}
+	
+	if (playerManager_->GetPlayer()->GetIsDead()){
+		gameManager_->SetGameEnd(true);
+	}
+	else if (enemy_->GetIsDead()){
+		gameManager_->SetGameEnd(true);
+		gameManager_->SetIsClear(true);
+	}
+
 
 	camera_.Update();
 
+	gameManager_->SceneUpdate();
+
+
+#ifdef CLIENT_BUILD
+	// Client専用処理
+#else
+	// Server Debug処理
+	//managerを介してクライアントに送る
+	GameStatePacket gamePacket{};
+	gamePacket.header.type = 2;
+	gamePacket.header.size = sizeof(GameStatePacket);
+	gamePacket.gameState = gameManager_->GetState();
+
+	NetworkManager::GetInstance().Send(gamePacket);
+#endif	
+
 	
+#ifdef _DEBUG
+	if (input_->GetKeyboard()->Trigger(DIK_0)){
+		sceneManager_->ChangeScene("Play");
+	}
+
+#endif // _DEBUG
+
 }
 
 void PlayScene::Draw(){
@@ -82,9 +138,32 @@ void PlayScene::DrawImgui() {
 #ifdef _DEBUG
 	config_->Debug();
 
-	ImGui::Begin("お試しプレイ");
+	gameManager_->Debug();
 
-	ImGui::Text("テスト");
+	ImGui::Begin("シーン");
+
+	switch (gameManager_->GetState()) {
+	case GameManager::GameState::Title:
+		ImGui::Text("タイトル");
+
+		break;
+	case GameManager::GameState::Tutorial:
+		ImGui::Text("チュートリアル");
+		break;
+	case GameManager::GameState::Playing:
+		ImGui::Text("ゲームプレイ");
+
+
+		break;
+	case GameManager::GameState::Result:
+		ImGui::Text("リザルト");
+
+		break;
+	default:
+		break;
+	}
+
+	
 
 	ImGui::End();
 

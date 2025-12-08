@@ -31,6 +31,10 @@ public:
 		return isForward_;
 	}
 
+	bool GetIsDead() const {
+		return isDead_;
+	}
+
 
 	NetworkManager::SendPlayerState GetSendPlayerState() const {
 		return plState_;
@@ -44,9 +48,21 @@ public:
 		return life_;
 	}
 
+	bool GetIsJustMoved() const {
+		return isJustMoved_;
+	}
+
+	bool GetIsJustTurned() const {
+		return isJustTurned_;
+	}
+
 
 	void SetSendPlayerState(const NetworkManager::SendPlayerState plState){
 		plState_ = plState;
+	}
+
+	void SetIsTitleScene(bool isTitleScene) {
+		isTitleScene_ = isTitleScene;
 	}
 
 private:
@@ -65,6 +81,9 @@ private:
 	//通信相手のplayer情報を取得
 	void SyncFromNetwork();
 
+	//瞬間を記録する変数を初期化
+	void ResetEvents();
+
 private:
 	GameConfig* config_ = nullptr;
 
@@ -80,12 +99,19 @@ private:
 	MLEngine::Resource::Texture frontTexture_;
 	MLEngine::Resource::Texture backTexture_;
 
+		
+	bool isTitleScene_ = false;
 	//前を向いているか
 	bool isForward_ = true;
 	//体力が最大かどうか
 	bool isLifeMax_ = true;
+	
+	bool isDead_ = false;
 	//攻撃をくらったか
 	bool isDamaged_ = false;
+	//瞬間を記録する
+	bool isJustTurned_ = false;
+	bool isJustMoved_ = false;
 
 	float damageTime_ = 0.0f;
 
@@ -101,6 +127,9 @@ private:
 	int recoveryValue_ = 1;
 	//現在いるラインの番号
 	int nowLine_ = 2;
+
+
+	int bulletDamege_ = 10;
 
 };
 

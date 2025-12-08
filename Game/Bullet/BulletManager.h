@@ -23,7 +23,9 @@ class BulletManager {
 		void SetPlayer(Player* player) { player_ = player; }
 		void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
 
-
+		void SetIsModelActive(bool isActive) {
+			isModelActive_ = isActive;
+		}
 private:
 	// 弾のリスト
 	std::list<std::unique_ptr<Bullet>> bullets_;
@@ -74,4 +76,6 @@ private:
 	float endDistance_ = 0.28f;
 
 	int bulletDamege_ = 10;
+
+	bool isModelActive_ = true;
 };

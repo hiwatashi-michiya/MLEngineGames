@@ -17,6 +17,13 @@
 class PlayScene : public BaseScene
 {
 public:
+	struct GameStatePacket {
+		NetworkManager::PacketHeader header;
+		GameManager::GameState gameState;
+	};
+
+
+public:
 	PlayScene();
 	~PlayScene();
 
