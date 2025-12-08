@@ -15,7 +15,7 @@ VertexShaderOutput main(VertexShaderInput input, uint32_t instanceId : SV_Instan
     
     output.position = mul(input.position, gInstancing[instanceId].WVP);
     output.texcoord.xy = input.texcoord;
-    output.texcoord.z = instanceId;
+    output.intanceID = instanceId;
     output.normal = normalize(mul(input.normal, (float32_t3x3) gInstancing[instanceId].WorldInverseTranspose));
     output.worldPosition = mul(input.position, gInstancing[instanceId].World).xyz;
     output.color = gInstancing[instanceId].color;

@@ -43,6 +43,8 @@ public:
 
 	void ChangeTexture(Mode mode);
 
+
+
 	// ゲット関数
 	MLEngine::Object::Camera* GetCamera() { return camera_; }
 	BulletManager* GetBulletManager() { return bulletManager_; }
@@ -50,6 +52,14 @@ public:
 	MLEngine::Math::Vector3 GetRotate() { return rotate_; }
 	int GetHp() const { return hp_; }
 	int GetMaxHp() const { return maxHp_; }
+	bool GetIsDead() const {
+		if (hp_ <= 0) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 
 	// セット関数
 	// 弾マネージャー取得
@@ -62,7 +72,10 @@ public:
 	void SetRotate(MLEngine::Math::Vector3 rotate) {
 		rotate_ = rotate;
 	}
-
+	void SetIsActive(const bool isActive) {
+		frontPlane_.isActive = isActive;
+		backPlane_.isActive = isActive;
+	}
 
 
 private:

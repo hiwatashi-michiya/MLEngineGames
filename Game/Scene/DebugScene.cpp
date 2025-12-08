@@ -28,7 +28,7 @@ inline void DebugScene::Initialize()
 
 	tex_.Load("./Resources/white.png");
 
-	sprite3D_.Initialize("./Resources/texture/renban.png", 4);
+	sprite3D_.Initialize("./Resources/texture/player_back.png", 1);
 	model2_.Initialize("./Resources/model/block/glassBlock.obj");
 	model3_.Initialize("./Resources/model/block/glassBlock.obj");
 	model3_.SetTexture("./Resources/EngineResources/paperMask.png");
@@ -61,8 +61,6 @@ void DebugScene::Finalize()
 void DebugScene::Update()
 {
 
-
-	//Audio
 	{
 
 #ifdef _DEBUG
@@ -83,6 +81,7 @@ void DebugScene::Update()
 
 		if (ImGui::TreeNode("Sprite3D")) {
 			sprite3D_.Debug();
+			ImGui::DragInt("toon shading", &sprite3D_.materialData.enableToonshading, 0.1f, 0, 1);
 			ImGui::TreePop();
 		}
 
@@ -135,31 +134,31 @@ void DebugScene::Update()
 
 #endif // _DEBUG
 
-		if (input_->GetKeyboard()->Trigger(DIK_Q)) {
-			//SE再生
-			se1_.Play(0.5f, false);
-		}
+	}
 
-		if (input_->GetKeyboard()->Trigger(DIK_W)) {
-			//一時停止
-			se1_.Pause();
-		}
+	if (input_->GetKeyboard()->Trigger(DIK_Q)) {
+		//SE再生
+		se1_.Play(0.5f, false);
+	}
 
-		if (input_->GetKeyboard()->Trigger(DIK_E)) {
-			//再開
-			se1_.ReStart();
-		}
+	if (input_->GetKeyboard()->Trigger(DIK_W)) {
+		//一時停止
+		se1_.Pause();
+	}
 
-		if (input_->GetKeyboard()->Trigger(DIK_R)) {
-			//停止
-			se1_.Stop();
-		}
+	if (input_->GetKeyboard()->Trigger(DIK_E)) {
+		//再開
+		se1_.ReStart();
+	}
 
-		if (input_->GetKeyboard()->Trigger(DIK_1)) {
-			//ボリューム調整
-			se1_.SetVolume(0.1f);
-		}
+	if (input_->GetKeyboard()->Trigger(DIK_R)) {
+		//停止
+		se1_.Stop();
+	}
 
+	if (input_->GetKeyboard()->Trigger(DIK_1)) {
+		//ボリューム調整
+		se1_.SetVolume(0.1f);
 	}
 
 	if (input_->GetKeyboard()->Trigger(DIK_SPACE)) {
@@ -182,9 +181,11 @@ void DebugScene::Update()
 			particle_->particleData[i].color = { 1.0f, i / 32.0f, 1.0f, 1.0f };
 		}
 
-		if (vController_->Decide()) {
-			sceneManager_->ChangeScene(new PlayScene());
-		}
+	}
+
+	if (vController_->Decide()) {
+		sceneManager_->ChangeScene(new PlayScene());
+	}
 
 	if (isDebugCamera_) {
 		debugCamera_.Update();
@@ -205,7 +206,6 @@ void DebugScene::Update()
 
 }
 
-}
 void DebugScene::Draw()
 {
 }
