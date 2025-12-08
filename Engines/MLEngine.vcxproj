@@ -265,6 +265,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Core\DescriptorHeap\RTVHeap.cpp" />
     <ClCompile Include="Engine\Core\DescriptorHeap\SRVHeap.cpp" />
     <ClCompile Include="Engine\Core\DXDevice.cpp" />
+    <ClCompile Include="Engine\Core\FrameTracker.cpp" />
     <ClCompile Include="Engine\Lighting\DirectionalLight.cpp" />
     <ClCompile Include="Engine\Lighting\LightingManager.cpp" />
     <ClCompile Include="Engine\Lighting\PointLight.cpp" />
@@ -343,6 +344,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Core\DescriptorHeap\RTVHeap.h" />
     <ClInclude Include="Engine\Core\DescriptorHeap\SRVHeap.h" />
     <ClInclude Include="Engine\Core\DXDevice.h" />
+    <ClInclude Include="Engine\Core\FrameTracker.h" />
     <ClInclude Include="Engine\Core\Render\Config\PipelineConfig.h" />
     <ClInclude Include="Engine\Core\Render\ResourceView.h" />
     <ClInclude Include="Engine\Lighting\DirectionalLight.h" />

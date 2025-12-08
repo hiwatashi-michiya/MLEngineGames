@@ -100,7 +100,7 @@ namespace MLEngine::Resource {
 		//切り替えに必要な時間
 		float countTime_ = 0.0f;
 		//アニメーション速度
-		float animationSpeed_ = 1.0f / 60.0f;
+		float animationSpeed_ = 1.0f;
 
 		//アニメーション管理フラグ
 		bool isStartAnimation_ = false;

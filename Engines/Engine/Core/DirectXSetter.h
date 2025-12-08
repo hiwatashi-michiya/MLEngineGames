@@ -136,11 +136,6 @@ namespace MLEngine::Core {
 		uint32_t descriptorSizeRTV;
 		uint32_t descriptorSizeDSV;
 
-		//記録時間(FPS固定用)
-		std::chrono::steady_clock::time_point reference_;
-		//前回参照時間
-		std::chrono::steady_clock::time_point preReference_;
-
 	private:
 		//シングルトン化
 		DirectXSetter() = default;
@@ -164,12 +159,6 @@ namespace MLEngine::Core {
 
 		//フェンス生成
 		void CreateFence();
-
-		//FPS固定初期化
-		void InitializeFixFPS();
-
-		//FPS固定更新
-		void UpdateFixFPS();
 
 	};
 

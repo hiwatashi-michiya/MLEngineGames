@@ -1,5 +1,4 @@
 #include "MLEngine.h"
-#pragma comment(lib, "winmm.lib")
 
 #ifdef _DEBUG
 
@@ -19,9 +18,6 @@ void Engine::Initialize(const char* title, int width, int height) {
 
 	assert(SUCCEEDED(hr));
 
-	//システムタイマーの分解能を上げる
-	timeBeginPeriod(1);
-
 	//乱数生成
 	MLEngine::Math::SetRandom();
 
@@ -30,6 +26,9 @@ void Engine::Initialize(const char* title, int width, int height) {
 	windowManager_ = Core::Window::Manager::GetInstance();
 	windowManager_->CreateGameWindow(
 		titleString.c_str(), width, height);
+
+	//FPS計測クラス初期化
+	FrameTracker::GetInstance()->Initialize();
 
 	//デバイス初期化
 	device_ = DXDevice::GetInstance();
@@ -167,5 +166,6 @@ void Engine::BeginFrame() {
 void Engine::EndFrame() {
 
 	dxSetter_->Execute();
+	FrameTracker::GetInstance()->Update();
 
 }
