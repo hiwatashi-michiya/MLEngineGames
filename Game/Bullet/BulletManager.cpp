@@ -66,14 +66,14 @@ void BulletManager::Initialize()
 
 	for (int i = 0; i < 3; ++i) {
 		std::unique_ptr<MLEngine::Resource::Sprite3D> startSprite3D = std::make_unique<MLEngine::Resource::Sprite3D>();
-		startSprite3D->Initialize("./Resources/Texture/enemy1_hand_attack.png", 1);
+		startSprite3D->Initialize("./Resources/Texture/enemy_bullet.png", 6);
 		startSprite3D->transform.scale = startScale_;
 		startSprite3D->transform.translate = startTranslate_;
 		startSprite3D->color = { 0.0f, 1.0f, 0.0f, 0.5f };
 		startSprite3D_.push_back(std::move(startSprite3D));
 
 		std::unique_ptr<MLEngine::Resource::Sprite3D> endSprite3D = std::make_unique<MLEngine::Resource::Sprite3D>();
-		endSprite3D->Initialize("./Resources/Texture/enemy1_hand_attack.png", 1);
+		endSprite3D->Initialize("./Resources/Texture/enemy_bullet.png", 6);
 		endSprite3D->transform.scale = endScale_;
 		endSprite3D->transform.translate = endTranslate_;
 		endSprite3D->color = { 1.0f, 0.0f, 0.0f, 0.5f };

@@ -6,7 +6,8 @@ void Bullet::Initialize()
 {
 	/*model_.Initialize("./Resources/model/plane/plane.obj");
 	model_.worldMatrix = MLEngine::Math::MakeAffineMatrix(scale_, { 0.0f, 0.0f, 0.0f, 1.0f }, position_);*/
-	sprite3D_.Initialize("./Resources/Texture/enemy1_hand_attack.png", 1);
+	sprite3D_.Initialize("./Resources/Texture/enemy_bullet.png", 6);
+	sprite3D_.StartAnimation();
 
 
 	sprite3D_.transform.scale = scale_;
@@ -30,6 +31,8 @@ void Bullet::Update()
 	else {
 		elapsedTime_ += 1.0f / 60.0f;
 	}
+
+	sprite3D_.UpdateAnimation();
 }
 
 void Bullet::Draw(MLEngine::Object::Camera* camera)
