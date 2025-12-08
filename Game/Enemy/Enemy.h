@@ -46,6 +46,7 @@ public:
 	// ゲット関数
 	MLEngine::Object::Camera* GetCamera() { return camera_; }
 	BulletManager* GetBulletManager() { return bulletManager_; }
+	MLEngine::Resource::Sprite3D* GetFrontSprite() { return &frontPlane_; }
 	MLEngine::Math::Vector3 GetRotate() { return rotate_; }
 	int GetHp() const { return hp_; }
 	int GetMaxHp() const { return maxHp_; }

@@ -12,7 +12,9 @@ void EnemyNormalState::Enter(Enemy* enemy)
 	GlobalVariables* global = GlobalVariables::GetInstance();
 	bulletSpeed_ = global->GetFloatValue("EnemyState", "NormalBulletSpeed");
 	fireInterval = global->GetFloatValue("EnemyState", "NormalFireInterval");
-	enemy->ChangeTexture(Enemy::Mode::kNormal);
+	isAnimation_ = false;
+	normalAnimationTime_ = global->GetFloatValue("EnemyState", "NormalAnimation");
+	attackAnimationTime_ = global->GetFloatValue("EnemyState", "NormalAttackAnimation");
 }
 
 void EnemyNormalState::Update(Enemy* enemy)
@@ -27,18 +29,29 @@ void EnemyNormalState::Update(Enemy* enemy)
 		}
 		enemy->GetBulletManager()->SpawnBullet(laneNumber, bulletSpeed_);
 		enemy->ChangeMotionState(std::make_unique<EnemyAttackState>());
-		//enemy->ChangeTexture(Enemy::Mode::kAttack);
+		enemy->ChangeTexture(Enemy::Mode::kNormal);
+		enemy->GetFrontSprite()->SetAnimationTime(normalAnimationTime_);
 		intervalTime_ = 0.0f;
 		prevLaneNumber = laneNumber;
+
+		isAnimation_ = false;
 	}
 	else
 	{
 		intervalTime_ += 1.0f / 60.0f;
+
+		if (!isAnimation_ && intervalTime_ >= fireInterval - attackAnimationTime_) {
+			isAnimation_ = true;
+			enemy->ChangeTexture(Enemy::Mode::kAttack);
+			enemy->GetFrontSprite()->SetAnimationTime(attackAnimationTime_);
+		}
+
 	}
 }
 
 void EnemyNormalState::Exit(Enemy* enemy)
 {
+	enemy->ChangeTexture(Enemy::Mode::kNormal);
 }
 
 #pragma endregion
@@ -78,6 +91,8 @@ void EnemyBerserkState::Enter(Enemy* enemy)
 	GlobalVariables* global = GlobalVariables::GetInstance();
 	bulletSpeed_ = global->GetFloatValue("EnemyState", "BerserkBulletSpeed");
 	fireInterval = global->GetFloatValue("EnemyState", "BerserkFireInterval");
+	normalAnimationTime_ = global->GetFloatValue("EnemyState", "AngryAnimation");
+	attackAnimationTime_ = global->GetFloatValue("EnemyState", "AngryAttackAnimation");
 	enemy->ChangeTexture(Enemy::Mode::kAngry);
 }
 
@@ -93,12 +108,22 @@ void EnemyBerserkState::Update(Enemy* enemy)
 		}
 		enemy->GetBulletManager()->SpawnBullet(laneNumber, bulletSpeed_);
 		enemy->ChangeMotionState(std::make_unique<EnemyAttackState>());
+		enemy->ChangeTexture(Enemy::Mode::kAngry);
+		enemy->GetFrontSprite()->SetAnimationTime(normalAnimationTime_);
 		intervalTime_ = 0.0f;
 		prevLaneNumber = laneNumber;
+
+		isAnimation_ = false;
 	}
 	else
 	{
 		intervalTime_ += 1.0f / 60.0f;
+
+		if (!isAnimation_ && intervalTime_ >= fireInterval - attackAnimationTime_) {
+			isAnimation_ = true;
+			enemy->ChangeTexture(Enemy::Mode::kAttack);
+			enemy->GetFrontSprite()->SetAnimationTime(attackAnimationTime_);
+		}
 	}
 }
 

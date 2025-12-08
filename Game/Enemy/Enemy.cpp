@@ -16,18 +16,29 @@ void Enemy::Initialize()
 	translate_ = global_->GetVector3Value("EnemyState", "Translate");
 	maxHp_ = global_->GetIntValue("EnemyState", "MaxHp");
 	hp_ = global_->GetIntValue("EnemyState", "MaxHp");
-
-	global_->AddItem("EnemyState", "MaxDownCount", maxDownCount_);
 	maxDownCount_ = global_->GetIntValue("EnemyState", "MaxDownCount");
+
+	global_->AddItem("EnemyState", "NormalAnimation", 0.0f);
+	global_->AddItem("EnemyState", "AngryAnimation", 0.0f);
+	global_->AddItem("EnemyState", "NormalAttackAnimation", 0.0f);
+	global_->AddItem("EnemyState", "AngryAttackAnimation", 0.0f);
 
 	transform_ = std::make_unique<MLEngine::Object::Transform>();
 	transform_->scale = scale_;
 	transform_->translate = translate_;
 
+#ifdef CLIENT_BUILD
+	angryTexture_ = "./Resources/Texture/enemy2_angry.png";
+	attackTexture_ = "./Resources/Texture/enemy2_attack.png";
+
+	normalTexture_ = "./Resources/Texture/enemy2_normal.png";
+#else
 	angryTexture_ = "./Resources/Texture/enemy1_angry.png";
 	attackTexture_ = "./Resources/Texture/enemy1_attack.png";
 
 	normalTexture_ = "./Resources/Texture/enemy1_normal.png";
+#endif
+
 	frontPlane_.Initialize(normalTexture_, 5);
 	frontPlane_.transform.translate = { 0.0f, 1.0f, -0.001f };
 	frontPlane_.transform.SetParent(transform_.get());
@@ -103,9 +114,14 @@ void Enemy::Update()
 	if (dynamic_cast<EnemyNormalState*>(currentState_.get())) { // 通常状態
 		ImGui::DragFloat("弾速度", &dynamic_cast<EnemyNormalState*>(currentState_.get())->bulletSpeed_, 0.1f);
 		ImGui::DragFloat("発射間隔", &dynamic_cast<EnemyNormalState*>(currentState_.get())->fireInterval, 0.1f);
+		ImGui::DragFloat("通常アニメーション時間", &dynamic_cast<EnemyNormalState*>(currentState_.get())->normalAnimationTime_, 0.1f);
+		ImGui::DragFloat("攻撃アニメーション時間", &dynamic_cast<EnemyNormalState*>(currentState_.get())->attackAnimationTime_, 0.1f);
 		ImGui::Text("経過時間 : %f" ,dynamic_cast<EnemyNormalState*>(currentState_.get())->intervalTime_);
 		global_->datas_["EnemyState"].items["NormalBulletSpeed"].value = dynamic_cast<EnemyNormalState*>(currentState_.get())->bulletSpeed_;
 		global_->datas_["EnemyState"].items["NormalFireInterval"].value = dynamic_cast<EnemyNormalState*>(currentState_.get())->fireInterval;
+		global_->datas_["EnemyState"].items["NormalAnimation"].value = dynamic_cast<EnemyNormalState*>(currentState_.get())->normalAnimationTime_;
+		global_->datas_["EnemyState"].items["NormalAttackAnimation"].value = dynamic_cast<EnemyNormalState*>(currentState_.get())->attackAnimationTime_;
+
 		stateIndex = 0;
 	}
 	else if (dynamic_cast<EnemyDownState*>(currentState_.get())) { // ダウン状態
@@ -117,9 +133,13 @@ void Enemy::Update()
 	else if (dynamic_cast<EnemyBerserkState*>(currentState_.get())) { // 猛攻状態
 		ImGui::DragFloat("弾速度", &dynamic_cast<EnemyBerserkState*>(currentState_.get())->bulletSpeed_, 0.1f);
 		ImGui::DragFloat("発射間隔", &dynamic_cast<EnemyBerserkState*>(currentState_.get())->fireInterval, 0.1f);
+		ImGui::DragFloat("通常アニメーション時間", &dynamic_cast<EnemyBerserkState*>(currentState_.get())->normalAnimationTime_, 0.1f);
+		ImGui::DragFloat("攻撃アニメーション時間", &dynamic_cast<EnemyBerserkState*>(currentState_.get())->attackAnimationTime_, 0.1f);
 		ImGui::Text("経過時間 : %f", dynamic_cast<EnemyBerserkState*>(currentState_.get())->intervalTime_);
 		global_->datas_["EnemyState"].items["BerserkBulletSpeed"].value = dynamic_cast<EnemyBerserkState*>(currentState_.get())->bulletSpeed_;
 		global_->datas_["EnemyState"].items["BerserkFireInterval"].value = dynamic_cast<EnemyBerserkState*>(currentState_.get())->fireInterval;
+		global_->datas_["EnemyState"].items["NormalAnimation"].value = dynamic_cast<EnemyBerserkState*>(currentState_.get())->normalAnimationTime_;
+		global_->datas_["EnemyState"].items["AngryAttackAnimation"].value = dynamic_cast<EnemyBerserkState*>(currentState_.get())->attackAnimationTime_;
 		stateIndex = 2;
 	}
 

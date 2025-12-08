@@ -7,6 +7,8 @@ void Bullet::Initialize()
 	/*model_.Initialize("./Resources/model/plane/plane.obj");
 	model_.worldMatrix = MLEngine::Math::MakeAffineMatrix(scale_, { 0.0f, 0.0f, 0.0f, 1.0f }, position_);*/
 	sprite3D_.Initialize("./Resources/Texture/enemy1_hand_attack.png", 1);
+
+
 	sprite3D_.transform.scale = scale_;
 	sprite3D_.transform.translate = position_;
 }
