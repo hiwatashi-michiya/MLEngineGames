@@ -1,6 +1,7 @@
 #include <Windows.h>
 #include "Engine/MLEngine.h"
 #include "Game/Scene/DebugScene.h"
+#include "Game/Scene/PlayScene.h"
 #include "Game/Scene/SceneFactory.h"
 #include "Leak.h"
 
@@ -14,7 +15,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	MLEngine::Run<DebugScene, SceneFactory>("卒業制作-クライアント");
 #else
 	// Server処理
-	MLEngine::Run<DebugScene, SceneFactory>("卒業制作-メイン");
+	MLEngine::Run<PlayScene, SceneFactory>("卒業制作-メイン");
 #endif
 
 	return 0;
