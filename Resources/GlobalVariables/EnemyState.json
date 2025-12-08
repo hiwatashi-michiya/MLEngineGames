@@ -1,20 +1,24 @@
 {
     "EnemyState": {
-        "BerserkBulletSpeed": 1.5,
-        "BerserkFireInterval": 1.5,
+        "AngryAnimation": 0.0,
+        "AngryAttackAnimation": 0.0,
+        "BerserkBulletSpeed": 2.0,
+        "BerserkFireInterval": 2.0,
         "DownTime": 15.0,
         "MaxDownCount": 10,
-        "MaxHp": 20,
-        "NormalBulletSpeed": 2.0,
-        "NormalFireInterval": 3.0,
+        "MaxHp": 211,
+        "NormalAnimation": 1.0,
+        "NormalAttackAnimation": 1.0,
+        "NormalBulletSpeed": 3.0,
+        "NormalFireInterval": 6.0,
         "Scale": [
             2.0,
-            1.0,
+            2.299999952316284,
             1.0
         ],
         "Translate": [
             0.0,
-            1.0,
+            -0.6000000238418579,
             0.0
         ]
     }

@@ -29,6 +29,10 @@ public:
 	const float wide_ = 0.5f;
 	// 弾の移動速度	
 	float bulletSpeed_ = 2.0f;
+	// アニメーションする時間
+	float normalAnimationTime_;
+	float attackAnimationTime_;
+	bool isAnimation_;
 };
 
 class EnemyDownState : public EnemyState {
@@ -59,4 +63,8 @@ public:
 	const float wide_ = 0.75f;
 	// 弾の移動速度
 	float bulletSpeed_ = 1.5f;
+	// アニメーション時間
+	float normalAnimationTime_;
+	float attackAnimationTime_;
+	bool isAnimation_;
 };

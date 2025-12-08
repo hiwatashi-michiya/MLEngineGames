@@ -27,7 +27,7 @@ namespace MLEngine::Object {
 		//トランスフォーム情報の取得
 		Transform* GetTransform() { return transform_.get(); }
 		//位置セット
-		void SetPosition(const MLEngine::Math::Vector3& position) { transform_->translate_ = position; }
+		void SetPosition(const MLEngine::Math::Vector3& position) { transform_->translate = position; }
 
 	protected:
 		//トランスフォーム

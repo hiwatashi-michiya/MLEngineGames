@@ -10,7 +10,7 @@ DescriptorRange::~DescriptorRange()
 {
 }
 
-void DescriptorRange::SetDescriptorRange(uint32_t baseShaderRegister, uint32_t numDescriptors, D3D12_DESCRIPTOR_RANGE_TYPE rangeType, uint32_t offset, uint32_t descriptorRangeIndex)
+void DescriptorRange::SetDescriptorRange(uint32_t baseShaderRegister, uint32_t numDescriptors, D3D12_DESCRIPTOR_RANGE_TYPE rangeType, uint32_t offset, int space, uint32_t descriptorRangeIndex)
 {
 	//サイズより大きい値なら早期リターン
 	if (descriptorRangeIndex >= descriptorRanges_.size()) {
@@ -21,5 +21,6 @@ void DescriptorRange::SetDescriptorRange(uint32_t baseShaderRegister, uint32_t n
 	descriptorRanges_[descriptorRangeIndex].NumDescriptors = numDescriptors;
 	descriptorRanges_[descriptorRangeIndex].RangeType = rangeType;
 	descriptorRanges_[descriptorRangeIndex].OffsetInDescriptorsFromTableStart = offset;
+	descriptorRanges_[descriptorRangeIndex].RegisterSpace = space;
 
 }

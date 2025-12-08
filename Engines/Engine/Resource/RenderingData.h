@@ -24,18 +24,12 @@ namespace MLEngine::Resource {
 		MLEngine::Math::Vector4 color;
 
 		int32_t enableLighting;
+		int32_t enableNormalMap;
+		int32_t enableToonshading;
 		float shininess; //光沢度
-
-		float padding[2];
 
 		MLEngine::Math::Matrix4x4 uvTransform;
 
-	};
-	//平行光源
-	struct DirectionalLight {
-		MLEngine::Math::Vector4 color;
-		MLEngine::Math::Vector3 direction;
-		float intensity;
 	};
 	//点光源
 	struct PointLight {

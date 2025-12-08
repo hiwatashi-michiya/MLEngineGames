@@ -6,6 +6,9 @@
 #include "Bullet/BulletManager.h"
 #include "RigidModel.h"
 #include ".vs/../Engine/Tool/GlobalVariables.h"
+#include "Enemy/EnemyUI.h"
+#include "Enemy/EnemyMotionState.h"
+#include "Sprite3D.h"
 
 
 class Enemy
@@ -17,6 +20,12 @@ public:
 	"Berserk"
 	};
 
+	enum class Mode {
+		kNormal,
+		kAngry,
+		kAttack
+	};
+
 public:
 	Enemy() {};
 	~Enemy() {};
@@ -26,13 +35,25 @@ public:
 	// 状態変更
 	void ChangeState(std::unique_ptr<EnemyState> newState);
 
+	// モーション状態変更
+	void ChangeMotionState(std::unique_ptr<EnemyMotionState> newMotionState);
+
 	// 衝突処理
 	void OnCollision(int damege);
 
-	BulletManager* GetBulletManager() { return bulletManager_; }
+	void ChangeTexture(Mode mode);
 
+
+
+	// ゲット関数
+	MLEngine::Object::Camera* GetCamera() { return camera_; }
+	BulletManager* GetBulletManager() { return bulletManager_; }
+	MLEngine::Resource::Sprite3D* GetFrontSprite() { return &frontPlane_; }
+	MLEngine::Math::Vector3 GetRotate() { return rotate_; }
+	int GetHp() const { return hp_; }
+	int GetMaxHp() const { return maxHp_; }
 	bool GetIsDead() const {
-		if (hp_ <= 0){
+		if (hp_ <= 0) {
 			return true;
 		}
 		else {
@@ -40,23 +61,51 @@ public:
 		}
 	}
 
+	// セット関数
 	// 弾マネージャー取得
 	void SetBulletManager(BulletManager* bulletManager) {
 		bulletManager_ = bulletManager;
 	}
-
+	void SetCamera(MLEngine::Object::Camera* camera) {
+		camera_ = camera;
+	}
+	void SetRotate(MLEngine::Math::Vector3 rotate) {
+		rotate_ = rotate;
+	}
 	void SetIsActive(const bool isActive) {
-		model_.isActive = isActive;
+		frontPlane_.isActive = isActive;
+		backPlane_.isActive = isActive;
 	}
 
+
 private:
+
+	MLEngine::Object::Camera* camera_;
+
 	GlobalVariables* global_;
+
+	std::unique_ptr<EnemyUI> enemyUI_;
 
 	// 現在の状態
 	std::unique_ptr<EnemyState> currentState_;
 
-	// モデル
+	// 現在のモーション状態
+	std::unique_ptr<EnemyMotionState> motionState_;
+
+	// 原点モデル
 	MLEngine::Resource::RigidModel model_;
+
+	// 敵
+	MLEngine::Resource::Sprite3D frontPlane_;
+	MLEngine::Resource::Sprite3D backPlane_;
+
+	std::string normalTexture_;
+	std::string angryTexture_;
+	std::string attackTexture_;
+	std::string backTextrue_;
+
+	std::unique_ptr<MLEngine::Object::Transform> transform_;
+	MLEngine::Math::Vector3 rotate_ = { 0.0f, 0.0f, 0.0f };
 
 	// スケール・平行移動
 	MLEngine::Math::Vector3 scale_ = { 2.0f, 1.0f, 1.0f };

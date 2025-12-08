@@ -1,6 +1,6 @@
 #pragma once
 #include "Model/RigidModel.h"
-#include "Sprite/Sprite.h"
+#include "Sprite/Sprite2D.h"
 #include "Audio/Audio.h"
 #include"Config/GameConfig.h"
 #include "Input/Input.h"

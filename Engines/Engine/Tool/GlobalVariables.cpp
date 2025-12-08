@@ -55,6 +55,20 @@ void GlobalVariables::SetValue(
 
 }
 
+void GlobalVariables::SetValue(const std::string& groupName, const std::string& key, const MLEngine::Math::Vector2& value)
+{
+	// グループの参照を取得
+	Group& group = datas_[groupName];
+	// 新しい項目のデータを設定
+	Item newItem{};
+	newItem.value = value;
+	// 設定した項目をstd::mapに追加
+	if (!group.items.contains(key)) {
+		group.items[key] = newItem;
+	}
+
+}
+
 void GlobalVariables::SetValue(
 	const std::string& groupName,
 	const std::string& key, const Vector3& value) {
@@ -71,6 +85,19 @@ void GlobalVariables::SetValue(
 		group.items[key] = newItem;
 	}
 
+}
+
+void GlobalVariables::SetValue(const std::string& groupName, const std::string& key, const MLEngine::Math::Vector4& value)
+{
+	// グループの参照を取得
+	Group& group = datas_[groupName];
+	// 新しい項目のデータを設定
+	Item newItem{};
+	newItem.value = value;
+	// 設定した項目をstd::mapに追加
+	if (!group.items.contains(key)) {
+		group.items[key] = newItem;
+	}
 }
 
 void GlobalVariables::SetValue(
@@ -111,6 +138,14 @@ void GlobalVariables::AddItem(const std::string& groupName,
 
 }
 
+void GlobalVariables::AddItem(const std::string& groupName, const std::string& key, const MLEngine::Math::Vector2& value)
+{
+	Group& group = datas_[groupName];
+	if (group.items.find(key) == group.items.end()) {
+		SetValue(groupName, key, value);
+	}
+}
+
 void GlobalVariables::AddItem(const std::string& groupName,
 	const std::string& key, const Vector3& value) {
 
@@ -119,6 +154,14 @@ void GlobalVariables::AddItem(const std::string& groupName,
 		SetValue(groupName, key, value);
 	}
 
+}
+
+void GlobalVariables::AddItem(const std::string& groupName, const std::string& key, const MLEngine::Math::Vector4& value)
+{
+	Group& group = datas_[groupName];
+	if (group.items.find(key) == group.items.end()) {
+		SetValue(groupName, key, value);
+	}
 }
 
 void GlobalVariables::AddItem(const std::string& groupName,
@@ -159,6 +202,20 @@ float GlobalVariables::GetFloatValue(const std::string& groupName, const std::st
 
 }
 
+Vector2 GlobalVariables::GetVector2Value(const std::string& groupName, const std::string& key) const
+{
+	// 指定グループが存在している
+	assert(datas_.find(groupName) != datas_.end());
+	// グループの参照を取得
+	const Group& group = datas_.at(groupName);
+	// 指定グループに指定のキーが存在している
+	assert(group.items.find(key) != group.items.end());
+	// 指定グループから指定のキーの値を取得
+	const Item& item = group.items.at(key);
+	return std::get<Vector2>(item.value);
+}
+
+
 Vector3 GlobalVariables::GetVector3Value(const std::string& groupName, const std::string& key) const {
 
 	// 指定グループが存在している
@@ -171,6 +228,19 @@ Vector3 GlobalVariables::GetVector3Value(const std::string& groupName, const std
 	const Item& item = group.items.at(key);
 	return std::get<Vector3>(item.value);
 
+}
+
+MLEngine::Math::Vector4 GlobalVariables::GetVector4Value(const std::string& groupName, const std::string& key) const
+{
+	// 指定グループが存在している
+	assert(&datas_.at(groupName));
+	// グループの参照を取得
+	const Group& group = datas_.at(groupName);
+	// 指定グループに指定のキーが存在している
+	assert(&group.items.at(key));
+	// 指定グループから指定のキーの値を取得
+	const Item& item = group.items.at(key);
+	return std::get<Vector4>(item.value);
 }
 
 ObjectData GlobalVariables::GetObjectDataValue(const std::string& groupName, const std::string& key) const {
@@ -235,12 +305,22 @@ void GlobalVariables::Update() {
 
 			}
 
+			else if( std::holds_alternative<Vector2>(item.value)) {
+				Vector2* ptr = std::get_if<Vector2>(&item.value);
+				ImGui::DragFloat2(itemName.c_str(), reinterpret_cast<float*>(ptr));
+			}
+
 			//Vector3型の値を保持していれば
 			else if (std::holds_alternative<Vector3>(item.value)) {
 
 				Vector3* ptr = std::get_if<Vector3>(&item.value);
 				ImGui::DragFloat3(itemName.c_str(), reinterpret_cast<float*>(ptr));
 
+			}
+
+			else if( std::holds_alternative<Vector4>(item.value)) {
+				Vector4* ptr = std::get_if<Vector4>(&item.value);
+				ImGui::DragFloat4(itemName.c_str(), reinterpret_cast<float*>(ptr));
 			}
 
 			//ObjectData型の値を保持していれば
@@ -324,11 +404,25 @@ void GlobalVariables::SaveFile(const std::string& groupName) {
 			root[groupName][itemName] = std::get<float>(item.value);
 		}
 
+		//Vector2型を保持していれば
+		else if (std::holds_alternative<Vector2>(item.value)) {
+			// float型のjson配列登録
+			Vector2 value = std::get<Vector2>(item.value);
+			root[groupName][itemName] = nlohmann::json::array({ value.x, value.y});
+		}
+
 		//Vector3型を保持していれば
 		else if (std::holds_alternative<Vector3>(item.value)) {
 			//float型のjson配列登録
 			Vector3 value = std::get<Vector3>(item.value);
 			root[groupName][itemName] = nlohmann::json::array({value.x, value.y, value.z});
+		}
+
+		// Vector4型を保持していれば
+		else if( std::holds_alternative<Vector4>(item.value)) {
+			//float型のjson配列登録
+			Vector4 value = std::get<Vector4>(item.value);
+			root[groupName][itemName] = nlohmann::json::array({ value.x, value.y, value.z, value.w });
 		}
 
 		//ObjectData型を保持していれば
@@ -447,10 +541,24 @@ void GlobalVariables::LoadFile(const std::string& groupName) {
 			SetValue(groupName, itemName, static_cast<float>(value));
 		}
 
+		// 要素数2の配列であれば
+		else if( itItem->is_array() and itItem->size() == 2) {
+			//float型のjson配列登録
+			Vector2 value = { itItem->at(0), itItem->at(1) };
+			SetValue(groupName, itemName, value);
+		}
+
 		//要素数3の配列であれば
 		else if (itItem->is_array() and itItem->size() == 3) {
 			//float型のjson配列登録
 			Vector3 value = {itItem->at(0), itItem->at(1), itItem->at(2)};
+			SetValue(groupName, itemName, value);
+		}
+
+		// 要素数4の配列であれば
+		else if( itItem->is_array() and itItem->size() == 4) {
+			//float型のjson配列登録
+			Vector4 value = { itItem->at(0), itItem->at(1), itItem->at(2), itItem->at(3) };
 			SetValue(groupName, itemName, value);
 		}
 

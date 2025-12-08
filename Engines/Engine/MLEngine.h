@@ -1,5 +1,5 @@
 #pragma once
-#include "Sprite/Sprite.h"
+#include "Sprite/Sprite2D.h"
 #include "Model/RigidModel.h"
 #include "Particle/Particle3D.h"
 #include "AudioManager.h"
@@ -30,6 +30,7 @@
 #include"../Network/NetworkManager.h"
 #include <memory>
 #include "Resource/ResourceManager.h"
+#include "DXDevice.h"
 
 namespace MLEngine {
 
@@ -76,6 +77,7 @@ namespace MLEngine {
 
 	private:
 
+		MLEngine::Core::DXDevice* device_ = nullptr;
 		MLEngine::Core::Window::Manager* windowManager_ = nullptr;
 		MLEngine::Core::DirectXSetter* dxSetter_ = nullptr;
 		MLEngine::Core::Render::Manager* renderManager_ = nullptr;

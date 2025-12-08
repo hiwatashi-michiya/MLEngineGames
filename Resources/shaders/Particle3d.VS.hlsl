@@ -1,8 +1,9 @@
 #include "Particle3d.hlsli"
 
-struct ParticleForGPU {
-	float32_t4x4 WVP;
-	float32_t4x4 World;
+struct ParticleForGPU
+{
+    float32_t4x4 WVP;
+    float32_t4x4 World;
     float32_t4x4 WorldInverseTranspose;
     float32_t4 color;
 };
@@ -18,7 +19,8 @@ struct VertexShaderInput {
 VertexShaderOutput main(VertexShaderInput input, uint32_t instanceId : SV_InstanceID) {
 	VertexShaderOutput output;
     output.position = mul(input.position, gParticle[instanceId].WVP);
-	output.texcoord = input.texcoord;
+	output.texcoord.xy = input.texcoord.xy;
+    output.texcoord.z = instanceId;
     output.normal = normalize(mul(input.normal, (float32_t3x3) gParticle[instanceId].WorldInverseTranspose));
     output.worldPosition = mul(input.position, gParticle[instanceId].World).xyz;
     output.color = gParticle[instanceId].color;

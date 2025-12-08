@@ -8,9 +8,10 @@ Player::Player(){
 	backTexture_.Load("./Resources/Texture/player_back.png");
 	frontTexture_.Load("./Resources/Texture/player_front.png");
 
-	sprite_.reset(MLEngine::Resource::Sprite::Create(backTexture_, MLEngine::Math::Vector2(pos_.x, pos_.y), color_));
+	sprite_.reset(MLEngine::Resource::Sprite2D::Create(backTexture_, MLEngine::Math::Vector2(pos_.x, pos_.y), color_));
 	sprite_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	vController_ = &VirtualController::GetInstance();
+
 	input_ = MLEngine::Input::Manager::GetInstance();
 
 	config_ = GameConfig::GetInstance();

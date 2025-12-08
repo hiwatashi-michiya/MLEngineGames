@@ -57,13 +57,13 @@ void RenderTexture::Create(Microsoft::WRL::ComPtr<ID3D12Device> device, int32_t 
 
 }
 
-void RenderTexture::Draw() {
+void RenderTexture::Draw(D3D12_GPU_DESCRIPTOR_HANDLE handleGPU) {
 
 	ID3D12GraphicsCommandList* commandList = DirectXSetter::GetInstance()->GetCommandList();
 
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	commandList->SetGraphicsRootDescriptorTable(0, srvHandleGPU_);
+	commandList->SetGraphicsRootDescriptorTable(0, handleGPU);
 
 	commandList->DrawInstanced(3, 1, 0, 0);
 

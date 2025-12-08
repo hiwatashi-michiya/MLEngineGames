@@ -22,7 +22,7 @@ void Manager::Update() {
 	//モデルの描画
 	for (RigidModel* model : rigidModels_) {
 
-		//モデルがアクティブなら
+		//モデルを表示するなら
 		if (model->isActive) {
 			//ワールドビュープロジェクション更新
 			model->worldViewProjectionMatrix = model->localMatrix * model->worldMatrix * camera_->matViewProjection_;
@@ -32,8 +32,19 @@ void Manager::Update() {
 
 	}
 
+	for (Sprite3D* sprite3d : sprite3Ds_) {
+
+		if (sprite3d->isActive) {
+			//ワールドビュープロジェクション更新
+			sprite3d->worldViewProjectionMatrix = sprite3d->localMatrix * sprite3d->transform.worldMatrix * camera_->matViewProjection_;
+			//モデルのデータを追加
+			sprite3d->Regist();
+		}
+
+	}
+
 	//スプライト描画
-	for (Sprite* sprite : sprites_) {
+	for (Sprite2D* sprite : sprite2Ds_) {
 
 		if (sprite->isActive) {
 

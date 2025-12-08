@@ -18,8 +18,16 @@ namespace MLEngine::Core::Render::PostEffect {
 		static PostEffectDrawer* GetInstance();
 		//初期化
 		void Initialize();
-		//描画コマンド積む
-		void Draw(int32_t textureNum);
+		/// <summary>
+		/// 描画コマンド積む
+		/// </summary>
+		/// <param name="drawNum">書き込むレンダーテクスチャのインデックス</param>
+		void Draw(int32_t drawNum);
+		/// <summary>
+		/// 指定したレンダーテクスチャにバリアを貼る
+		/// </summary>
+		/// <param name="index">レンダーテクスチャの番号</param>
+		void SetBarrier(int32_t index, D3D12_RESOURCE_STATES before, D3D12_RESOURCE_STATES after);
 		//デバッグ
 		void Debug();
 		//エフェクトタイプセット

@@ -16,7 +16,7 @@ namespace MLEngine::Core::Render::Config {
 		void SetSize(uint32_t size) { descriptorRanges_.resize(size); }
 		//デスクリプタレンジセット
 		void SetDescriptorRange(uint32_t baseShaderRegister, uint32_t numDescriptors,
-			D3D12_DESCRIPTOR_RANGE_TYPE rangeType, uint32_t offset,
+			D3D12_DESCRIPTOR_RANGE_TYPE rangeType, uint32_t offset, int space, 
 			uint32_t descriptorRangeIndex);
 		//デスクリプタレンジの本体取得
 		const std::vector<D3D12_DESCRIPTOR_RANGE>& Get() const { return descriptorRanges_; }
