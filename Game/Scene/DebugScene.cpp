@@ -4,6 +4,7 @@
 #include"SceneManager.h"
 #include"PlayScene.h"
 #include "InstancingModel.h"
+#include "FrameTracker.h"
 
 using namespace MLEngine::Resource;
 using namespace MLEngine::Object::Collision;
@@ -67,6 +68,7 @@ void DebugScene::Update()
 
 		ImGui::Begin("テスト");
 
+		MLEngine::Core::FrameTracker::GetInstance()->Debug();
 		ImGui::Text("isPlayingSE: %d", se1_.IsPlaying());
 
 		if (ImGui::TreeNode("Box")) {
