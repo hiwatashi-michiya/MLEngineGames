@@ -48,6 +48,7 @@ private:
 	MLEngine::Resource::Audio se1_;
 	//通常モデル
 	MLEngine::Resource::Sprite3D sprite3D_;
+	MLEngine::Resource::RigidModel model_;
 	MLEngine::Resource::RigidModel model2_;
 	MLEngine::Resource::RigidModel model3_;
 	//トランスフォーム

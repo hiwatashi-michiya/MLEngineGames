@@ -238,7 +238,6 @@ void DebugScene::Update()
 	model2_.SetWorldMatrix(transform2_.worldMatrix);
 	model3_.SetWorldMatrix(transform3_.worldMatrix);
 
-}
 	lineBox_.Update();
 	lineSphere_.Update();
 }
