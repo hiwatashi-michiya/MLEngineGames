@@ -207,8 +207,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)Engines\Externals\assimp\lib\Debug;$(ProjectDir)Generated\Outputs\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>MLEngine.lib;DirectXTex.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)Engines\Externals\assimp\lib\Debug;$(ProjectDir)Generated\Outputs\Debug;$(ProjectDir)Engines\Externals\hidapi\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>MLEngine.lib;DirectXTex.lib;assimp-vc143-mtd.lib;hidapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ClientDebug|x64'">
@@ -226,8 +226,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)Engines\Externals\assimp\lib\Debug;$(ProjectDir)Generated\Outputs\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>MLEngine.lib;DirectXTex.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)Engines\Externals\assimp\lib\Debug;$(ProjectDir)Generated\Outputs\Debug;$(ProjectDir)Engines\Externals\hidapi\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>MLEngine.lib;DirectXTex.lib;assimp-vc143-mtd.lib;hidapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -246,8 +246,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)Engines\Externals\assimp\lib\Release;$(ProjectDir)Generated\Outputs\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>MLEngine.lib;DirectXTex.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)Engines\Externals\assimp\lib\Release;$(ProjectDir)Generated\Outputs\Release;$(ProjectDir)Engines\Externals\hidapi\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>MLEngine.lib;DirectXTex.lib;assimp-vc143-mt.lib;hidapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Clientrelease|x64'">
@@ -266,8 +266,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)Engines\Externals\assimp\lib\Release;$(ProjectDir)Generated\Outputs\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>MLEngine.lib;DirectXTex.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)Engines\Externals\assimp\lib\Release;$(ProjectDir)Generated\Outputs\Release;$(ProjectDir)Engines\Externals\hidapi\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>MLEngine.lib;DirectXTex.lib;assimp-vc143-mt.lib;hidapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
