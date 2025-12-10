@@ -1,6 +1,7 @@
 #include "Joycon.h"
 #include<ranges>
 #include<algorithm>
+
 std::array<uint8_t, 0x40>Joycon::buff;
 
 void Joycon::Init() {
@@ -8,7 +9,6 @@ void Joycon::Init() {
 	hidManager_->Init();
 
 	device_ = hidManager_->Get(JOYCON_L_PRODUCT_ID);
-
 
 	std::byte arg;
 	arg = std::byte(0x1);
