@@ -92,12 +92,6 @@ void SkinningModel::StaticInitialize(ID3D12Device* device) {
 	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
-	D3D12_DESCRIPTOR_RANGE descriptorRangeMask[1] = {};
-	descriptorRangeMask[0].BaseShaderRegister = 1;
-	descriptorRangeMask[0].NumDescriptors = 1;
-	descriptorRangeMask[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-	descriptorRangeMask[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-
 	D3D12_DESCRIPTOR_RANGE descriptorRangeForMatrixPalette[1] = {};
 	descriptorRangeForMatrixPalette[0].BaseShaderRegister = 0;
 	descriptorRangeForMatrixPalette[0].NumDescriptors = 1;
@@ -105,7 +99,7 @@ void SkinningModel::StaticInitialize(ID3D12Device* device) {
 	descriptorRangeForMatrixPalette[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
 	//ルートパラメータ作成
-	D3D12_ROOT_PARAMETER rootParameters[8]{};
+	D3D12_ROOT_PARAMETER rootParameters[7]{};
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 	rootParameters[0].Descriptor.ShaderRegister = 0;
@@ -139,12 +133,6 @@ void SkinningModel::StaticInitialize(ID3D12Device* device) {
 	rootParameters[6].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
 	rootParameters[6].DescriptorTable.pDescriptorRanges = descriptorRangeForMatrixPalette; //Tableの中身の配列を指定
 	rootParameters[6].DescriptorTable.NumDescriptorRanges = _countof(descriptorRangeForMatrixPalette); //Tableで利用する数
-
-	//MatrixPalette
-	rootParameters[7].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; //DescriptorTableを使う
-	rootParameters[7].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	rootParameters[7].DescriptorTable.pDescriptorRanges = descriptorRangeMask; //Tableの中身の配列を指定
-	rootParameters[7].DescriptorTable.NumDescriptorRanges = _countof(descriptorRangeMask); //Tableで利用する数
 
 	descriptionRootSignature.pParameters = rootParameters; //ルートパラメータ配列へのポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters); //ルートパラメータの長さ
@@ -309,7 +297,7 @@ void SkinningModel::Initialize(const std::string& filename, int32_t number) {
 
 	meshFilePath_ = filename;
 
-	texture_.Load(mesh_->textureFilePath_);
+	texture_.Load(mesh_->GetTextureFilePath());
 	maskTexture_.Load("./Resources/EngineResources/defaultMask.png");
 
 	//skeleton,skinCluster設定
@@ -319,11 +307,11 @@ void SkinningModel::Initialize(const std::string& filename, int32_t number) {
 
 		skeleton_ = std::make_unique<Skeleton>();
 
-		*skeleton_ = CreateSkeleton(mesh_->modelData_.rootNode);
+		*skeleton_ = CreateSkeleton(mesh_->GetModelData().rootNode);
 
 		skinCluster_ = std::make_unique<Skinning::SkinCluster>();
 
-		skinCluster_->Create(device_, *skeleton_, mesh_->modelData_);
+		skinCluster_->Create(device_, *skeleton_, mesh_->GetModelData());
 
 		currentFileName_ = stringMap_[number];
 
@@ -347,21 +335,6 @@ void SkinningModel::Initialize(const std::string& filename, int32_t number) {
 		matTransformMap_->World = MakeIdentity4x4();
 
 		matBuff_->Unmap(0, nullptr);
-
-	}
-
-	//カメラ設定
-	{
-
-		cameraBuff_ = CreateBufferResource(device_, sizeof(CameraForGPU));
-
-		cameraBuff_->SetName(L"cameraBuff");
-
-		cameraBuff_->Map(0, nullptr, reinterpret_cast<void**>(&cameraMap_));
-
-		cameraMap_->worldPosition = Vector3::Zero();
-
-		cameraBuff_->Unmap(0, nullptr);
 
 	}
 
@@ -488,8 +461,6 @@ void SkinningModel::Draw(Camera* camera) {
 	matTransformMap_->World = worldMatrix_;
 	matTransformMap_->WorldInverseTranspose = Transpose(Inverse(worldMatrix_));
 
-	cameraMap_->worldPosition = camera->GetWorldPosition();
-
 	Render::Manager::GetInstance()->AddSkinningModel(this);
 
 }
@@ -501,8 +472,6 @@ void SkinningModel::Draw(const Matrix4x4& localMatrix, Camera* camera) {
 	matTransformMap_->World = localMatrix * worldMatrix_;
 	matTransformMap_->WorldInverseTranspose = Transpose(Inverse(localMatrix * worldMatrix_));
 
-	cameraMap_->worldPosition = camera->GetWorldPosition();
-
 	Render::Manager::GetInstance()->AddSkinningModel(this);
 
 }
@@ -511,17 +480,13 @@ void SkinningModel::Render()
 {
 
 	D3D12_VERTEX_BUFFER_VIEW vbvs[2] = {
-		mesh_->vbView_,
+		mesh_->GetVBView(),
 		skinCluster_->influenceBufferView_
 	};
 
-	//カメラ設定
-	commandList_->SetGraphicsRootConstantBufferView(4, cameraBuff_->GetGPUVirtualAddress());
-
 	commandList_->SetGraphicsRootConstantBufferView(1, matBuff_->GetGPUVirtualAddress());
 
-	commandList_->SetGraphicsRootDescriptorTable(2, texture_.GetGPUHandle());
-	commandList_->SetGraphicsRootDescriptorTable(7, maskTexture_.GetGPUHandle());
+	commandList_->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetTexturesFirst()->srvHandleGPU);
 
 	commandList_->SetGraphicsRootDescriptorTable(6, skinCluster_->paletteSrvHandle_.second);
 
@@ -576,7 +541,7 @@ void SkinningModel::SetMesh(const std::string& objFileName) {
 
 	meshFilePath_ = objFileName;
 
-	texture_.Load(mesh_->textureFilePath_);
+	texture_.Load(mesh_->GetTextureFilePath());
 
 }
 

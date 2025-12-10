@@ -37,6 +37,20 @@ namespace MLEngine::Graphics {
 
 		//ImGui表示
 		void ImGuiUpdate();
+		//VBV取得
+		D3D12_VERTEX_BUFFER_VIEW GetVBView() const { return vbView_; }
+		//メッシュに登録されているテクスチャのファイルパス取得
+		std::string GetTextureFilePath() { return textureFilePath_; }
+		//モデルデータ取得
+		MLEngine::Resource::ModelData GetModelData() { return modelData_; }
+
+	private:
+
+		static ID3D12Device* device_;
+		//ノード読み込み
+		MLEngine::Resource::Node ReadNode(aiNode* node);
+
+	private:
 
 		//頂点バッファ
 		Microsoft::WRL::ComPtr<ID3D12Resource> vertBuff_;
@@ -57,15 +71,6 @@ namespace MLEngine::Graphics {
 
 		//モデルデータ
 		MLEngine::Resource::ModelData modelData_;
-
-	private:
-
-		static ID3D12Device* device_;
-		//ノード読み込み
-		MLEngine::Resource::Node ReadNode(aiNode* node);
-
-	private:
-
 		//メッシュデータ
 		MLEngine::Resource::MeshData meshData_;
 

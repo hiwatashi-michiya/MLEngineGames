@@ -25,18 +25,23 @@ void GlobalVariables::SetValue(
 	const std::string& groupName,
 	const std::string& key, int32_t value) {
 	
+	
 	//グループの参照を取得
 	Group& group = datas_[groupName];
 	//新しい項目のデータを設定
 	Item newItem{};
 	newItem.value = value;
 	//設定した項目をstd::mapに追加
-	group.items[key] = newItem;
+	if (!group.items.contains(key)) {
+		group.items[key] = newItem;
+	}
 }
 
 void GlobalVariables::SetValue(
 	const std::string& groupName,
 	const std::string& key, float value) {
+
+	
 
 	// グループの参照を取得
 	Group& group = datas_[groupName];
@@ -44,7 +49,23 @@ void GlobalVariables::SetValue(
 	Item newItem{};
 	newItem.value = value;
 	// 設定した項目をstd::mapに追加
-	group.items[key] = newItem;
+	if (!group.items.contains(key)) {
+		group.items[key] = newItem;
+	}
+
+}
+
+void GlobalVariables::SetValue(const std::string& groupName, const std::string& key, const MLEngine::Math::Vector2& value)
+{
+	// グループの参照を取得
+	Group& group = datas_[groupName];
+	// 新しい項目のデータを設定
+	Item newItem{};
+	newItem.value = value;
+	// 設定した項目をstd::mapに追加
+	if (!group.items.contains(key)) {
+		group.items[key] = newItem;
+	}
 
 }
 
@@ -52,27 +73,48 @@ void GlobalVariables::SetValue(
 	const std::string& groupName,
 	const std::string& key, const Vector3& value) {
 
+	
+
 	// グループの参照を取得
 	Group& group = datas_[groupName];
 	// 新しい項目のデータを設定
 	Item newItem{};
 	newItem.value = value;
 	// 設定した項目をstd::mapに追加
-	group.items[key] = newItem;
+	if (!group.items.contains(key)) {
+		group.items[key] = newItem;
+	}
 
+}
+
+void GlobalVariables::SetValue(const std::string& groupName, const std::string& key, const MLEngine::Math::Vector4& value)
+{
+	// グループの参照を取得
+	Group& group = datas_[groupName];
+	// 新しい項目のデータを設定
+	Item newItem{};
+	newItem.value = value;
+	// 設定した項目をstd::mapに追加
+	if (!group.items.contains(key)) {
+		group.items[key] = newItem;
+	}
 }
 
 void GlobalVariables::SetValue(
 	const std::string& groupName,
 	const std::string& key, const ObjectData& value) {
 
+	
+
 	// グループの参照を取得
 	Group& group = datas_[groupName];
 	// 新しい項目のデータを設定
 	Item newItem{};
 	newItem.value = value;
 	// 設定した項目をstd::mapに追加
-	group.items[key] = newItem;
+	if (!group.items.contains(key)) {
+		group.items[key] = newItem;
+	}
 
 }
 
@@ -96,6 +138,14 @@ void GlobalVariables::AddItem(const std::string& groupName,
 
 }
 
+void GlobalVariables::AddItem(const std::string& groupName, const std::string& key, const MLEngine::Math::Vector2& value)
+{
+	Group& group = datas_[groupName];
+	if (group.items.find(key) == group.items.end()) {
+		SetValue(groupName, key, value);
+	}
+}
+
 void GlobalVariables::AddItem(const std::string& groupName,
 	const std::string& key, const Vector3& value) {
 
@@ -104,6 +154,14 @@ void GlobalVariables::AddItem(const std::string& groupName,
 		SetValue(groupName, key, value);
 	}
 
+}
+
+void GlobalVariables::AddItem(const std::string& groupName, const std::string& key, const MLEngine::Math::Vector4& value)
+{
+	Group& group = datas_[groupName];
+	if (group.items.find(key) == group.items.end()) {
+		SetValue(groupName, key, value);
+	}
 }
 
 void GlobalVariables::AddItem(const std::string& groupName,
@@ -144,6 +202,20 @@ float GlobalVariables::GetFloatValue(const std::string& groupName, const std::st
 
 }
 
+Vector2 GlobalVariables::GetVector2Value(const std::string& groupName, const std::string& key) const
+{
+	// 指定グループが存在している
+	assert(datas_.find(groupName) != datas_.end());
+	// グループの参照を取得
+	const Group& group = datas_.at(groupName);
+	// 指定グループに指定のキーが存在している
+	assert(group.items.find(key) != group.items.end());
+	// 指定グループから指定のキーの値を取得
+	const Item& item = group.items.at(key);
+	return std::get<Vector2>(item.value);
+}
+
+
 Vector3 GlobalVariables::GetVector3Value(const std::string& groupName, const std::string& key) const {
 
 	// 指定グループが存在している
@@ -156,6 +228,19 @@ Vector3 GlobalVariables::GetVector3Value(const std::string& groupName, const std
 	const Item& item = group.items.at(key);
 	return std::get<Vector3>(item.value);
 
+}
+
+MLEngine::Math::Vector4 GlobalVariables::GetVector4Value(const std::string& groupName, const std::string& key) const
+{
+	// 指定グループが存在している
+	assert(&datas_.at(groupName));
+	// グループの参照を取得
+	const Group& group = datas_.at(groupName);
+	// 指定グループに指定のキーが存在している
+	assert(&group.items.at(key));
+	// 指定グループから指定のキーの値を取得
+	const Item& item = group.items.at(key);
+	return std::get<Vector4>(item.value);
 }
 
 ObjectData GlobalVariables::GetObjectDataValue(const std::string& groupName, const std::string& key) const {
@@ -208,7 +293,7 @@ void GlobalVariables::Update() {
 			if (std::holds_alternative<int32_t>(item.value)) {
 
 				int32_t* ptr = std::get_if<int32_t>(&item.value);
-				ImGui::SliderInt(itemName.c_str(), ptr, 0, 100);
+				ImGui::DragInt(itemName.c_str(), ptr);
 
 			}
 
@@ -216,16 +301,26 @@ void GlobalVariables::Update() {
 			else if (std::holds_alternative<float>(item.value)) {
 				
 				float* ptr = std::get_if<float>(&item.value);
-				ImGui::SliderFloat(itemName.c_str(), ptr, 0.0f, 100.0f);
+				ImGui::DragFloat(itemName.c_str(), ptr);
 
+			}
+
+			else if( std::holds_alternative<Vector2>(item.value)) {
+				Vector2* ptr = std::get_if<Vector2>(&item.value);
+				ImGui::DragFloat2(itemName.c_str(), reinterpret_cast<float*>(ptr));
 			}
 
 			//Vector3型の値を保持していれば
 			else if (std::holds_alternative<Vector3>(item.value)) {
 
 				Vector3* ptr = std::get_if<Vector3>(&item.value);
-				ImGui::SliderFloat3(itemName.c_str(), reinterpret_cast<float*>(ptr), -10.0f, 10.0f);
+				ImGui::DragFloat3(itemName.c_str(), reinterpret_cast<float*>(ptr));
 
+			}
+
+			else if( std::holds_alternative<Vector4>(item.value)) {
+				Vector4* ptr = std::get_if<Vector4>(&item.value);
+				ImGui::DragFloat4(itemName.c_str(), reinterpret_cast<float*>(ptr));
 			}
 
 			//ObjectData型の値を保持していれば
@@ -242,9 +337,9 @@ void GlobalVariables::Update() {
 				Vector3* rotPtr = &ptr->rotation;
 				Vector3* scaPtr = &ptr->scale;
 				ImGui::InputText(strName.c_str(), strPtr, 256);
-				ImGui::SliderFloat3(posName.c_str(), reinterpret_cast<float*>(posPtr), -10.0f, 10.0f);
-				ImGui::SliderFloat3(rotName.c_str(), reinterpret_cast<float*>(rotPtr), -10.0f, 10.0f);
-				ImGui::SliderFloat3(scaName.c_str(), reinterpret_cast<float*>(scaPtr), -10.0f, 10.0f);
+				ImGui::DragFloat3(posName.c_str(), reinterpret_cast<float*>(posPtr));
+				ImGui::DragFloat3(rotName.c_str(), reinterpret_cast<float*>(rotPtr));
+				ImGui::DragFloat3(scaName.c_str(), reinterpret_cast<float*>(scaPtr));
 
 				//入力した文字列を代入
 				ptr->objName = strPtr;
@@ -309,11 +404,25 @@ void GlobalVariables::SaveFile(const std::string& groupName) {
 			root[groupName][itemName] = std::get<float>(item.value);
 		}
 
+		//Vector2型を保持していれば
+		else if (std::holds_alternative<Vector2>(item.value)) {
+			// float型のjson配列登録
+			Vector2 value = std::get<Vector2>(item.value);
+			root[groupName][itemName] = nlohmann::json::array({ value.x, value.y});
+		}
+
 		//Vector3型を保持していれば
 		else if (std::holds_alternative<Vector3>(item.value)) {
 			//float型のjson配列登録
 			Vector3 value = std::get<Vector3>(item.value);
 			root[groupName][itemName] = nlohmann::json::array({value.x, value.y, value.z});
+		}
+
+		// Vector4型を保持していれば
+		else if( std::holds_alternative<Vector4>(item.value)) {
+			//float型のjson配列登録
+			Vector4 value = std::get<Vector4>(item.value);
+			root[groupName][itemName] = nlohmann::json::array({ value.x, value.y, value.z, value.w });
 		}
 
 		//ObjectData型を保持していれば
@@ -432,10 +541,24 @@ void GlobalVariables::LoadFile(const std::string& groupName) {
 			SetValue(groupName, itemName, static_cast<float>(value));
 		}
 
+		// 要素数2の配列であれば
+		else if( itItem->is_array() and itItem->size() == 2) {
+			//float型のjson配列登録
+			Vector2 value = { itItem->at(0), itItem->at(1) };
+			SetValue(groupName, itemName, value);
+		}
+
 		//要素数3の配列であれば
 		else if (itItem->is_array() and itItem->size() == 3) {
 			//float型のjson配列登録
 			Vector3 value = {itItem->at(0), itItem->at(1), itItem->at(2)};
+			SetValue(groupName, itemName, value);
+		}
+
+		// 要素数4の配列であれば
+		else if( itItem->is_array() and itItem->size() == 4) {
+			//float型のjson配列登録
+			Vector4 value = { itItem->at(0), itItem->at(1), itItem->at(2), itItem->at(3) };
 			SetValue(groupName, itemName, value);
 		}
 

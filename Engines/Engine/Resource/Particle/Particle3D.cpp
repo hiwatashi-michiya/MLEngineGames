@@ -15,10 +15,13 @@
 #include "Core/Render/Config/InputElement.h"
 #include "Core/Render/Config/InputLayout.h"
 #include "Core/Render/Config/DescriptorRange.h"
+#include "../ResourceManager.h"
+#include "TextureManager.h"
 
 #pragma comment(lib, "dxcompiler.lib")
 
 using namespace MLEngine;
+using namespace MLEngine::Core;
 using namespace MLEngine::Core::Render;
 using namespace MLEngine::Core::Render::Config;
 using namespace MLEngine::Math;
@@ -35,6 +38,14 @@ IDxcBlob* Particle3D::ps3dParticleBlob_ = nullptr;
 Particle3D::BlendMode Particle3D::currentBlendMode_ = Particle3D::BlendMode::kNormal;
 std::unordered_map<std::string, std::shared_ptr<Graphics::Mesh>> Particle3D::meshes_;
 const char* Particle3D::BlendTexts[Particle3D::BlendMode::kCountBlend] = { "Normal", "Add", "Subtract", "Multiply", "Screen" };
+
+MLEngine::Resource::Particle3D::~Particle3D()
+{
+
+	//リソースマネージャーに登録
+	Resource::Manager::GetInstance()->RemoveParticle3D(this);
+
+}
 
 void Particle3D::StaticInitialize(ID3D12Device* device) {
 
@@ -65,15 +76,19 @@ void Particle3D::StaticInitialize(ID3D12Device* device) {
 
 	DescriptorRange descriptorRange{};
 	descriptorRange.SetSize(1);
-	descriptorRange.SetDescriptorRange(0, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND, 0);
+	descriptorRange.SetDescriptorRange(0, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND, 0, 0);
 
 	DescriptorRange descriptorRangeForInstancing{};
 	descriptorRangeForInstancing.SetSize(1);
-	descriptorRangeForInstancing.SetDescriptorRange(0, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND, 0);
+	descriptorRangeForInstancing.SetDescriptorRange(0, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND, 0, 0);
+
+	DescriptorRange descriptorRangeForMaterial{};
+	descriptorRangeForMaterial.SetSize(1);
+	descriptorRangeForMaterial.SetDescriptorRange(1, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND, 0, 0);
 
 	RootParameter rootParameters{};
 	rootParameters.SetSize(4);
-	rootParameters.SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 0, 0);
+	rootParameters.SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, descriptorRangeForMaterial.Get(), 0);
 	rootParameters.SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_VERTEX, descriptorRangeForInstancing.Get(), 1);
 	rootParameters.SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, descriptorRange.Get(), 2);
 	rootParameters.SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 1, 3);
@@ -233,24 +248,21 @@ void Particle3D::Initialize(const std::string& filename, uint32_t instanceCount)
 	}
 
 	material_ = std::make_unique<Graphics::Material>();
-	material_->Create();
+	material_->Create(instanceCount);
 
-	texture_.Load(mesh_->textureFilePath_);
-	texturePath_ = mesh_->textureFilePath_;
+	texture_.Load(mesh_->GetTextureFilePath());
+	texturePath_ = mesh_->GetTextureFilePath();
 
 	maxInstanceCount_ = instanceCount;
 
 	//トランスフォーム情報をインスタンス数に合わせてリサイズする
-	transforms_.resize(maxInstanceCount_);
-	colors_.resize(maxInstanceCount_);
-	worldMatrices.resize(maxInstanceCount_);
-	velocities_.resize(maxInstanceCount_);
-	isActive_.resize(maxInstanceCount_);
-	lifeTimes_.resize(maxInstanceCount_);
+	particleData.resize(maxInstanceCount_);
+
+	worldMatrices_.resize(maxInstanceCount_);
 
 	for (uint32_t i = 0; i < maxInstanceCount_; i++) {
-		colors_[i] = { 1.0f,1.0f,1.0f,1.0f };
-		worldMatrices[i] = MakeIdentity4x4();
+		particleData[i].color = { 1.0f,1.0f,1.0f,1.0f };
+		worldMatrices_[i] = MakeIdentity4x4();
 	}
 
 	instanceCount_ = maxInstanceCount_;
@@ -276,9 +288,12 @@ void Particle3D::Initialize(const std::string& filename, uint32_t instanceCount)
 	//インスタンシングリソース設定
 	{
 
-		instancingResource_.Initialize(maxInstanceCount_, matBuff_);
+		instancingResource_.Initialize(maxInstanceCount_, matBuff_, sizeof(ParticleForGPU));
 
 	}
+
+	//リソースマネージャーに登録
+	Resource::Manager::GetInstance()->AddParticle3D(this);
 
 }
 
@@ -315,26 +330,26 @@ void Particle3D::Draw(Camera* camera) {
 
 	for (uint32_t i = 0; i < instanceCount_; i++) {
 
-		Vector3 scale = transforms_[i].scale_;
+		Vector3 scale = particleData[i].transform.scale;
 
 		//アクティブ状態でない場合、スケールを0にして表示しない
-		if (not isActive_[i]) {
+		if (not particleData[i].isActive) {
 			scale = Vector3::Zero();
 		}
 
 		if (isBillboard_) {
-			worldMatrices[i] = MakeScaleMatrix(scale) * matBillboard_ * MakeTranslateMatrix(transforms_[i].translate_);
+			worldMatrices_[i] = MakeScaleMatrix(scale) * matBillboard_ * MakeTranslateMatrix(particleData[i].transform.translate);
 		}
 		else {
-			worldMatrices[i] = MakeAffineMatrix(scale, transforms_[i].rotateQuaternion_, transforms_[i].translate_);
+			worldMatrices_[i] = MakeAffineMatrix(scale, particleData[i].transform.rotateQuaternion, particleData[i].transform.translate);
 		}
 
 		/*Matrix4x4 worldMatrix = worldTransform[i].matWorld_;*/
-		Matrix4x4 worldViewProjectionMatrix = worldMatrices[i] * camera->matViewProjection_;
+		Matrix4x4 worldViewProjectionMatrix = worldMatrices_[i] * camera->matViewProjection_;
 		matTransformMap_[i].WVP = worldViewProjectionMatrix;
-		matTransformMap_[i].World = worldMatrices[i];
-		matTransformMap_[i].WorldInverseTranspose = Transpose(Inverse(worldMatrices[i]));
-		matTransformMap_[i].color = colors_[i];
+		matTransformMap_[i].World = worldMatrices_[i];
+		matTransformMap_[i].WorldInverseTranspose = Transpose(Inverse(worldMatrices_[i]));
+		matTransformMap_[i].color = particleData[i].color;
 
 	}
 
@@ -390,7 +405,7 @@ bool Particle3D::IsAnyActive() {
 
 	for (uint32_t i = 0; i < instanceCount_; i++) {
 
-		if (isActive_[i]) {
+		if (particleData[i].isActive) {
 			return true;
 		}
 

@@ -1,18 +1,28 @@
 #pragma once
 #include "Scene/BaseScene.h"
-#include "Model/Model.h"
+#include "Model/RigidModel.h"
 #include "Object/Camera.h"
-#include "Sprite/Sprite.h"
+#include "Sprite/Sprite2D.h"
 #include "Audio/Audio.h"
 #include "Input/Input.h"
 #include "Particle/Particle3D.h"
-#include"../Manager/GameManager.h"
-#include"../Config/GameConfig.h"
-#include"../Manager/PlayerManager.h"
+#include"Manager/GameManager.h"
+#include"Config/GameConfig.h"
+#include"Manager/PlayerManager.h"
+#include"LifeUI/LifeUI.h"
 #include <memory>
+#include "Enemy/Enemy.h"
+#include "Bullet/BulletManager.h"
 
 class PlayScene : public BaseScene
 {
+public:
+	struct GameStatePacket {
+		NetworkManager::PacketHeader header;
+		GameManager::GameState gameState;
+	};
+
+
 public:
 	PlayScene();
 	~PlayScene();
@@ -34,13 +44,22 @@ private:
 	MLEngine::Input::Manager* input_ = nullptr;
 
 	//カメラ
-	MLEngine::Object::Camera camera_;
+	//MLEngine::Object::Camera camera_;
 
 	GameManager* gameManager_ = nullptr;
 	GameConfig* config_ = nullptr;
 	
+	GameManager::GameState state_ = GameManager::GameState::Title;
 
+	// プレイヤーマネージャー
 	std::unique_ptr<PlayerManager> playerManager_;
 
+	// 敵
+	std::unique_ptr<Enemy> enemy_;
+
+	// 弾マネージャー
+	std::unique_ptr<BulletManager> bulletManager_;
+
+	std::unique_ptr<LifeUI> lifeUI_;
 };
 

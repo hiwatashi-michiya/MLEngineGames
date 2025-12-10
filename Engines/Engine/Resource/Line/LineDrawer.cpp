@@ -10,6 +10,7 @@
 #include <numbers>
 #include "SceneManager.h"
 #include "WindowManager.h"
+#include "../ResourceManager.h"
 
 using namespace MLEngine::Resource;
 using namespace MLEngine::Core::Render;
@@ -21,11 +22,6 @@ ID3D12Device* Line::device_ = nullptr;
 ID3D12GraphicsCommandList* Line::commandList_ = nullptr;
 ID3D12RootSignature* Line::rootSignature_ = nullptr;
 ID3D12PipelineState* Line::pipelineState_ = nullptr;
-#ifdef _DEBUG
-bool Line::showCollisionLine_ = true;
-#else
-bool Line::showCollisionLine_ = false;
-#endif // _DEBUG
 
 
 
@@ -167,10 +163,10 @@ void Line::PostDraw() {
 Line::Line()
 {
 
-	start_ = Vector3::Zero();
-	end_ = Vector3::Identity();
+	start = Vector3::Zero();
+	end = Vector3::Identity();
 
-	color_ = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 
 
 	{
@@ -184,11 +180,11 @@ Line::Line()
 
 		vertexBuff_->Map(0, nullptr, reinterpret_cast<void**>(&vertexMap_));
 
-		vertexMap_[0].position = Vector4(start_.x, start_.y, start_.z, 1.0f);
-		vertexMap_[0].color = color_;
+		vertexMap_[0].position = Vector4(start.x, start.y, start.z, 1.0f);
+		vertexMap_[0].color = color;
 
-		vertexMap_[1].position = Vector4(end_.x, end_.y, end_.z, 1.0f);
-		vertexMap_[1].color = color_;
+		vertexMap_[1].position = Vector4(end.x, end.y, end.z, 1.0f);
+		vertexMap_[1].color = color;
 
 		vertexBuff_->Unmap(0, nullptr);
 
@@ -206,26 +202,27 @@ Line::Line()
 		wvpBuff_->Unmap(0, nullptr);
 
 	}
+
+	Resource::Manager::GetInstance()->AddLine(this);
+
 }
 
 Line::~Line()
 {
+	Resource::Manager::GetInstance()->RemoveLine(this);
 }
 
 void Line::Draw(Camera* camera, const Matrix4x4& matrix) {
 
-	vertexMap_[0].position = Vector4(start_.x, start_.y, start_.z, 1.0f);
-	vertexMap_[0].color = color_;
+	vertexMap_[0].position = Vector4(start.x, start.y, start.z, 1.0f);
+	vertexMap_[0].color = color;
 
-	vertexMap_[1].position = Vector4(end_.x, end_.y, end_.z, 1.0f);
-	vertexMap_[1].color = color_;
+	vertexMap_[1].position = Vector4(end.x, end.y, end.z, 1.0f);
+	vertexMap_[1].color = color;
 
 	*wvpMatrix_ = matrix * camera->matViewProjection_;
 
-	//当たり判定ラインじゃない場合か、当たり判定ライン表示がONの場合に描画
-	if (not isCollisionLine_ or showCollisionLine_) {
-		Render::Manager::GetInstance()->AddLine(this);
-	}
+	Render::Manager::GetInstance()->AddLine(this);
 
 }
 
@@ -251,13 +248,6 @@ LineBox::LineBox()
 
 LineBox::~LineBox()
 {
-}
-
-void LineBox::SetIsCollisionLine(bool flag)
-{
-	for (int32_t i = 0; i < kMaxLine_; i++) {
-		lines_[i]->SetIsCollisionLine(flag);
-	}
 }
 
 void LineBox::Update() {
@@ -299,30 +289,30 @@ void LineBox::Update() {
 			point[i] += obb_->center;
 		}
 
-		lines_[0]->start_ = point[0];
-		lines_[0]->end_ = point[1];
-		lines_[1]->start_ = point[0];
-		lines_[1]->end_ = point[2];
-		lines_[2]->start_ = point[2];
-		lines_[2]->end_ = point[3];
-		lines_[3]->start_ = point[1];
-		lines_[3]->end_ = point[3];
-		lines_[4]->start_ = point[0];
-		lines_[4]->end_ = point[4];
-		lines_[5]->start_ = point[1];
-		lines_[5]->end_ = point[5];
-		lines_[6]->start_ = point[2];
-		lines_[6]->end_ = point[6];
-		lines_[7]->start_ = point[3];
-		lines_[7]->end_ = point[7];
-		lines_[8]->start_ = point[4];
-		lines_[8]->end_ = point[5];
-		lines_[9]->start_ = point[4];
-		lines_[9]->end_ = point[6];
-		lines_[10]->start_ = point[6];
-		lines_[10]->end_ = point[7];
-		lines_[11]->start_ = point[5];
-		lines_[11]->end_ = point[7];
+		lines_[0]->start = point[0];
+		lines_[0]->end = point[1];
+		lines_[1]->start = point[0];
+		lines_[1]->end = point[2];
+		lines_[2]->start = point[2];
+		lines_[2]->end = point[3];
+		lines_[3]->start = point[1];
+		lines_[3]->end = point[3];
+		lines_[4]->start = point[0];
+		lines_[4]->end = point[4];
+		lines_[5]->start = point[1];
+		lines_[5]->end = point[5];
+		lines_[6]->start = point[2];
+		lines_[6]->end = point[6];
+		lines_[7]->start = point[3];
+		lines_[7]->end = point[7];
+		lines_[8]->start = point[4];
+		lines_[8]->end = point[5];
+		lines_[9]->start = point[4];
+		lines_[9]->end = point[6];
+		lines_[10]->start = point[6];
+		lines_[10]->end = point[7];
+		lines_[11]->start = point[5];
+		lines_[11]->end = point[7];
 
 	}
 
@@ -332,7 +322,7 @@ void LineBox::SetColor(Vector4 color)
 {
 
 	for (int32_t i = 0; i < kMaxLine_; i++) {
-		lines_[i]->color_ = color;
+		lines_[i]->color = color;
 	}
 
 }
@@ -353,6 +343,14 @@ void LineBox::Draw(Camera* camera, const Matrix4x4& matrix) {
 
 }
 
+void LineBox::SetIsActive(bool flag) {
+
+	for (int32_t i = 0; i < kMaxLine_; i++) {
+		lines_[i]->isActive = flag;
+	}
+
+}
+
 LineSphere::LineSphere()
 {
 
@@ -364,13 +362,6 @@ LineSphere::LineSphere()
 
 LineSphere::~LineSphere()
 {
-}
-
-void LineSphere::SetIsCollisionLine(bool flag)
-{
-	for (int32_t i = 0; i < kMaxLine_; i++) {
-		lines_[i]->SetIsCollisionLine(flag);
-	}
 }
 
 void LineSphere::Update() {
@@ -415,10 +406,10 @@ void LineSphere::Update() {
 				//c = CoordTransform(ndcVertex, viewportMatrix);
 
 				//ラインを設定
-				lines_[lonIndex * 2 + latIndex * kSubdivision_ * 2]->start_ = a;
-				lines_[lonIndex * 2 + latIndex * kSubdivision_ * 2]->end_ = b;
-				lines_[lonIndex * 2 + latIndex * kSubdivision_ * 2 + 1]->start_ = a;
-				lines_[lonIndex * 2 + latIndex * kSubdivision_ * 2 + 1]->end_ = c;
+				lines_[lonIndex * 2 + latIndex * kSubdivision_ * 2]->start = a;
+				lines_[lonIndex * 2 + latIndex * kSubdivision_ * 2]->end = b;
+				lines_[lonIndex * 2 + latIndex * kSubdivision_ * 2 + 1]->start = a;
+				lines_[lonIndex * 2 + latIndex * kSubdivision_ * 2 + 1]->end = c;
 
 			}
 		}
@@ -431,7 +422,7 @@ void LineSphere::SetColor(Vector4 color)
 {
 
 	for (int32_t i = 0; i < kMaxLine_; i++) {
-		lines_[i]->color_ = color;
+		lines_[i]->color = color;
 	}
 
 }
@@ -449,5 +440,13 @@ void LineSphere::Draw(Camera* camera, const Matrix4x4& matrix) {
 	}
 
 #endif // _DEBUG
+
+}
+
+void LineSphere::SetIsActive(bool flag) {
+
+	for (int32_t i = 0; i < kMaxLine_; i++) {
+		lines_[i]->isActive = flag;
+	}
 
 }

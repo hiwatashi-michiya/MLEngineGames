@@ -188,10 +188,10 @@ void MLEngine::Resource::UpdateSkeleton(Skeleton& skeleton) {
 			joint.skeletonSpaceMatrix = joint.localMatrix * skeleton.joints[*joint.parent].skeletonSpaceMatrix;
 
 			//終点は子の位置
-			joint.line->end_ = joint.skeletonSpaceMatrix.GetTranslate();
+			joint.line->end = joint.skeletonSpaceMatrix.GetTranslate();
 
 			//始点は親の位置
-			joint.line->start_ = skeleton.joints[*joint.parent].skeletonSpaceMatrix.GetTranslate();
+			joint.line->start = skeleton.joints[*joint.parent].skeletonSpaceMatrix.GetTranslate();
 
 		}
 		//親がいないのでlocalMatrixとskeletonSpaceMatrixは一致する
@@ -199,8 +199,8 @@ void MLEngine::Resource::UpdateSkeleton(Skeleton& skeleton) {
 			joint.skeletonSpaceMatrix = joint.localMatrix;
 
 			//始点、終点は子の位置
-			joint.line->start_ = joint.skeletonSpaceMatrix.GetTranslate();
-			joint.line->end_ = joint.skeletonSpaceMatrix.GetTranslate();
+			joint.line->start = joint.skeletonSpaceMatrix.GetTranslate();
+			joint.line->end = joint.skeletonSpaceMatrix.GetTranslate();
 
 		}
 

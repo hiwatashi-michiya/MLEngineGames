@@ -2,6 +2,7 @@
 #include<memory>
 #include <cstdint>
 #include <string>
+#include"VirtualController.h"
 
 class GameManager
 {
@@ -14,17 +15,34 @@ public:
     void Finalize();
 
     // フレーム更新
-    void Update();
+    void Update(bool isJustTurned, bool isJustMoved);
+
+    //debug
+    void Debug();
+
+    // シーン更新
+    void SceneUpdate();
 
     // 状態管理
-    enum class GameState {
-        Title,
-        Playing,
-        Result
+    enum class GameState : uint8_t {
+        Title,      //タイトル
+        Tutorial,   //チュートリアル
+        Playing,    //本編
+        Result      //リザルト
     };
 
-    void SetState(GameState newState) { state_ = newState; }
+    // 状態管理
+    enum class TutorialState : uint8_t {
+        LaneMove,      //レーン移動
+        FlontBack,   //振り向き
+        Wait      //待機
+    };
+
+    void SetState(GameState newState) { nextState_ = newState; }
     GameState GetState() const { return state_; }
+
+    void SetIsClear(bool isClear) { isClear_ = isClear; }
+    void SetGameEnd(bool isGameEnd) { isGameEnd_ = isGameEnd; }
 
     // スコア管理
     void AddScore(int value);
@@ -48,13 +66,39 @@ private:
     GameManager& operator=(const GameManager&) = delete;
 
 private:
+
+    //入力デバイス
+    VirtualController* vController_ = nullptr;
+
     // ゲーム全体の状態
     GameState state_ = GameState::Title;
+    GameState nextState_ = GameState::Title;
+
+    // チュートリアルの状態
+    TutorialState tuState_ = TutorialState::LaneMove;
+
+    //チュートリアルクリアしたかどうか
+    bool isTutorialClear_ = false;
+
+
+
+    //ゲームクリアしたかどうか
+    bool isClear_ = false;
+    bool isGameEnd_ = false;
+
+    //チュートリアルでのカウント
+    int moveCount_ = 0;
+    int turnCount_ = 0;
+    int moveCountMax_ = 0;
+    int turnCountMax_ = 0;
+
+    float waitTime_ = 3.0f;
+    float time_ = 0.0f;
+    //後で正式なものと交換
+    float deltaTime_ = 1.0f / 60.0f;
 
     // スコア
     int score_ = 0;
-
-    float deltaTime_ = 1.0f / 60.0f;
     
     // 制限時間管理
     float timeLimit_ = 60.0f;       // 秒
@@ -62,4 +106,6 @@ private:
 
     // 難易度などの設定
     int difficulty_ = 1;
+
+
 };

@@ -1,9 +1,9 @@
 #include "SceneManager.h"
 #include <cassert>
 #include "Core/DirectXSetter.h"
-#include "Model/Model.h"
+#include "Model/RigidModel.h"
 #include "Particle/Particle3D.h"
-#include "Sprite/Sprite.h"
+#include "Sprite/Sprite2D.h"
 #include "Core/Render/PostEffect/PostEffectDrawer.h"
 #include "Model/Skinning/SkinningModel.h"
 #include "Line/LineDrawer.h"
@@ -38,6 +38,7 @@ void Scene::Manager::Update() {
 
 		scene_->SetSceneManager(this);
 		scene_->SetCamera();
+		scene_->SetLight();
 		scene_->Initialize();
 
 	}
@@ -50,6 +51,7 @@ void Scene::Manager::Finalize()
 {
 
 	scene_->Finalize();
+	scene_.reset();
 
 }
 

@@ -73,10 +73,10 @@ namespace MLEngine::Resource {
 		void SetMesh(const std::string& objFileName);
 
 		//ライト切り替え
-		void SetLight(bool flag) { material_->constMap_->enableLighting = flag; }
+		void SetLight(bool flag) { material_->constMap->enableLighting = flag; }
 
 		//色変更
-		void SetColor(const MLEngine::Math::Vector4& color) { material_->constMap_->color = color; }
+		void SetColor(const MLEngine::Math::Vector4& color) { material_->constMap->color = color; }
 
 		//ImGui表示
 		void ImGuiUpdate(const std::string& name);
@@ -150,8 +150,6 @@ namespace MLEngine::Resource {
 
 	private:
 
-		//カメラ座標バッファ
-		Microsoft::WRL::ComPtr<ID3D12Resource> cameraBuff_;
 		//画面上のワールド座標バッファ
 		Microsoft::WRL::ComPtr<ID3D12Resource> matBuff_;
 
@@ -190,8 +188,6 @@ namespace MLEngine::Resource {
 
 		//TransformMatrix
 		MLEngine::Math::TransformationMatrix* matTransformMap_ = nullptr;
-		//カメラ座標マップ
-		CameraForGPU* cameraMap_ = nullptr;
 
 		//テクスチャ
 		MLEngine::Resource::Texture texture_;
