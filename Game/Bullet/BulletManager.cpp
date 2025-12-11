@@ -120,6 +120,8 @@ void BulletManager::Update()
 		return false;
 	});
 
+#ifdef _DEBUG
+
 	// 始点・終点モデルの更新
 	for (int i = 0; i < 3; ++i) {
 		/*startSprites_[i]->SetPosition({ launchPosition_.x + startDistance_ * (i - 1), launchPosition_.y });
@@ -135,8 +137,6 @@ void BulletManager::Update()
 		endSprite3D_[i]->transform.translate = { endTranslate_.x + endDistance_ * (i - 1), endTranslate_.y, endTranslate_.z };
 
 	}
-
-#ifdef _DEBUG
 
 	ImGui::Begin("弾パラメーター");
 

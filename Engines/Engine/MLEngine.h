@@ -31,6 +31,7 @@
 #include <memory>
 #include "Resource/ResourceManager.h"
 #include "DXDevice.h"
+#include "FrameTracker.h"
 
 namespace MLEngine {
 

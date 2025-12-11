@@ -9,6 +9,7 @@
 #include "ModelManager.h"
 #include "../Model/InstancingModel.h"
 #include "../ResourceManager.h"
+#include "FrameTracker.h"
 
 #pragma comment(lib, "dxcompiler.lib")
 
@@ -16,6 +17,7 @@ using namespace MLEngine::Resource;
 using namespace MLEngine::Core::Render;
 using namespace MLEngine::Math;
 using namespace MLEngine::Object;
+using namespace MLEngine::Core;
 
 Sprite3D::~Sprite3D()
 {
@@ -66,7 +68,7 @@ void Sprite3D::UpdateAnimation() {
 	if (isStartAnimation_) {
 
 		//時間を加算
-		countTime_ += animationSpeed_;
+		countTime_ += animationSpeed_ * FrameTracker::GetInstance()->GetDeltaTimeF();
 		//切り替え時間に到達したら
 		if (countTime_ >= animationTime_ / float(divide_)) {
 
