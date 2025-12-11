@@ -36,6 +36,11 @@ public:
 	void Draw() override;
 
 private:
+	//外部化クラスに登録
+	void GlobalSetValue();
+	//外部化クラスから取得
+	void GlobalGetValue();
+
 	void DrawImgui();
 
 private:
@@ -72,20 +77,27 @@ private:
 	MLEngine::Resource::Texture titleTexture_;
 	MLEngine::Resource::Texture tutorialMoveTexture_;
 	MLEngine::Resource::Texture tutorialTurnTexture_;
+	MLEngine::Resource::Texture gameClearTexture_;
+	MLEngine::Resource::Texture gameOverTexture_;
+
 
 	std::unique_ptr<MLEngine::Resource::Sprite2D> titleSprite_;
 	std::unique_ptr<MLEngine::Resource::Sprite2D> tutorialSprite_;
+	std::unique_ptr<MLEngine::Resource::Sprite2D> resultSprite_;
+
 
 	MLEngine::Math::Vector2 titlePos_;
+	MLEngine::Math::Vector2 titleScale_;
+
+	MLEngine::Math::Vector2 tutorialScale_;
 	MLEngine::Math::Vector2 tutorialPos_;
 
-	MLEngine::Math::Vector2 titleScale_;
-	MLEngine::Math::Vector2 tutorialScale_;
-
+	MLEngine::Math::Vector2 resultPos_;
+	MLEngine::Math::Vector2 resultScale_;
 
 	MLEngine::Math::Vector4 titleColor_;
 	MLEngine::Math::Vector4 tutorialColor_;
-
+	MLEngine::Math::Vector4 resultColor_;
 
 	std::unique_ptr<MLEngine::Object::Transform> planeTransform_;
 
