@@ -42,6 +42,25 @@ inline void PlayScene::Initialize(){
 
 	lifeUI_ = std::make_unique<LifeUI>(playerManager_->GetPlayer());
 	lifeUI_->Initialize();
+
+	groundTexture_ = "./Resources/Texture/ingame_stage.png";
+	laneTexture_ = "./Resources/Texture/ingame_stageLine.png";
+
+	planeTransform_ = std::make_unique<MLEngine::Object::Transform>();
+
+	groundPlane_.Initialize(groundTexture_, 1);
+	groundPlane_.transform.translate = { 0.0f, 0.0f, 0.0f };
+	groundPlane_.transform.scale = { 30.0f,10.0f,1.0f };
+	groundPlane_.transform.SetParent(planeTransform_.get());
+
+	lanePlane_.Initialize(laneTexture_, 1);
+	lanePlane_.transform.translate = { 0.0f, 0.0f, -0.01f };
+	lanePlane_.transform.scale = { 1.0f, 10.0f, 1.0f };
+	lanePlane_.transform.SetParent(planeTransform_.get());
+
+	rotate_.x = 1.48f;
+	scale_ = { 3.0f,30.0f,1.0f };
+
 }
 
 void PlayScene::Finalize(){
@@ -100,7 +119,12 @@ void PlayScene::Update(){
 		gameManager_->SetGameEnd(true);
 		gameManager_->SetIsClear(true);
 	}
+	// トランスフォーム更新
 
+	planeTransform_->translate = translate_;
+	planeTransform_->scale = scale_;
+	planeTransform_->rotateQuaternion = MLEngine::Math::ConvertFromEuler(rotate_);
+	planeTransform_->UpdateMatrix();
 
 	camera_.Update();
 
@@ -140,6 +164,16 @@ void PlayScene::DrawImgui() {
 	config_->Debug();
 
 	gameManager_->Debug();
+
+	planeTransform_->Debug();
+
+	ImGui::Begin("床のテクスチャ");
+
+	ImGui::DragFloat3("座標", &translate_.x, 0.01f);
+	ImGui::DragFloat3("回転", &rotate_.x, 0.01f);
+	ImGui::DragFloat3("大きさ", &scale_.x, 0.01f);
+
+	ImGui::End();
 
 	ImGui::Begin("シーン");
 
