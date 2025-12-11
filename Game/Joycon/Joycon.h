@@ -4,7 +4,7 @@
 #include <bit>
 #include <numbers>
 #include "imgui.h"
-
+#include "Engine/Core/FrameTracker.h"
 #include "../hidapi/hidManager.h"
 #include "Externals/hidapi/include/hidapi.h"
 #include "Quaternion.h"
@@ -30,6 +30,8 @@ public:
 
 	bool SendSubcommand(hid_device* device, std::byte subcommandId, const std::span<std::byte>& args);
 
+	bool CheakRadius(int count,float radius);
+
 	Quaternion GetQuaRotate() { return Qrotate_; };
 	Vector3 GetVecRotate() { return Vrotate_; };
 
@@ -44,4 +46,6 @@ private:
 	Quaternion Qrotate_;
 	std::array<uint16_t, 3> Gyro_Normalized;
 	Vector3 Vrotate_;
+	Vector3 test;
+	float second;
 };

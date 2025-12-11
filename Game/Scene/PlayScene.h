@@ -61,5 +61,6 @@ private:
 	std::unique_ptr<BulletManager> bulletManager_;
 
 	std::unique_ptr<LifeUI> lifeUI_;
+
 };
 

@@ -107,4 +107,26 @@ bool Joycon::SendSubcommand(hid_device* device, std::byte subcommandId, const st
 	return hid_write(device, std::bit_cast<const uint8_t*>(buffer.data()), buffer.size()) >= 0;
 }
 
+bool Joycon::CheakRadius(int count, float radius)
+{
+	second += MLEngine::Core::FrameTracker::GetInstance()->GetDeltaTimeF();
+
+	if (second >= count) {
+		second = 0.0f;
+	}
+
+	if (std::abs(test.x) >= radius) {
+		return true;
+	}
+	test += GetVecRotate() * (180 / std::numbers::pi);
+#ifdef _DEBUG
+	ImGui::Begin("Gyro");
+	ImGui::Text("DeX:%f", test.x);
+	ImGui::Text("DeY:%f", test.y);
+	ImGui::Text("DeZ:%f", test.z);
+	ImGui::End();
+#endif
+	return false;
+}
+
 

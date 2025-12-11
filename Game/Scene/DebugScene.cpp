@@ -211,12 +211,7 @@ void DebugScene::Update()
 	//トランスフォーム
 	Matrix4x4 result;
 	modelRot_ *= ConvertFromEuler(joyconInput->GetVecRotate());
-	test += joyconInput->GetVecRotate() * (180 / std::numbers::pi);
-	ImGui::Begin("Gyro");
-	ImGui::Text("DeX:%f", test.x);
-	ImGui::Text("DeY:%f", test.y);
-	ImGui::Text("DeZ:%f", test.z);
-	ImGui::End();
+	joyconInput->CheakRadius(1,1);
 
 	if (joyconInput->IsPush(UP)) {
 		modelRot_ = modelRot_.IdentityQuaternion();
