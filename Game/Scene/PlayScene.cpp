@@ -2,6 +2,7 @@
 #include"Externals/imgui/imgui.h"
 #include "DebugScene.h"
 
+using namespace MLEngine::Math;
 
 using namespace MLEngine::Resource;
 
@@ -58,6 +59,24 @@ inline void PlayScene::Initialize(){
 	lanePlane_.transform.scale = { 1.0f, 10.0f, 1.0f };
 	lanePlane_.transform.SetParent(planeTransform_.get());
 
+	//必須となる情報の読み込み
+	titleTexture_.Load("./Resources/Texture/title_logo.png");
+	tutorialMoveTexture_.Load("./Resources/Texture/tutorial_ui_move.png");
+	tutorialTurnTexture_.Load("./Resources/Texture/tutorial_ui_turn.png");
+
+	titleSprite_.reset(MLEngine::Resource::Sprite2D::Create(titleTexture_, titlePos_, titleColor_));
+	titleSprite_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+
+	tutorialSprite_.reset(MLEngine::Resource::Sprite2D::Create(tutorialMoveTexture_, tutorialPos_, tutorialColor_));
+	tutorialSprite_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	tutorialSprite_->isActive = false;
+
+	titlePos_ = { 640.0f,120.0f };
+	tutorialPos_ = { 1015.0f,200.0f };
+
+	titleScale_ = { 510.0f,505.0f };
+	tutorialScale_ = { 550.0f,385.0f };
+
 	rotate_.x = 1.48f;
 	scale_ = { 3.0f,30.0f,1.0f };
 
@@ -82,9 +101,36 @@ void PlayScene::Update(){
 	NetworkManager::GetInstance().GetSceneState(gameState);
 
 	gameManager_->SetState(static_cast<GameManager::GameState>(gameState));
+
+	titleSprite_->isActive = false;
+	tutorialSprite_->isActive = false;
 #else
 	// Server Debug処理
 	gameManager_->Update(playerManager_->GetPlayer()->GetIsJustTurned(), playerManager_->GetPlayer()->GetIsJustMoved());
+
+	if (gameManager_->GetState() == GameManager::GameState::Title){
+		titleSprite_->isActive = true;
+	}
+	else {
+		titleSprite_->isActive = false;
+	}
+
+	if (gameManager_->GetState() == GameManager::GameState::Tutorial) {
+		tutorialSprite_->isActive = true;
+	}
+	else {
+		tutorialSprite_->isActive = false;
+	}
+
+	if (gameManager_->GetTutorialState() == GameManager::TutorialState::LaneMove) {
+		tutorialSprite_->SetTexture(tutorialMoveTexture_);
+	}
+	else if(gameManager_->GetTutorialState() == GameManager::TutorialState::FlontBack) {
+		tutorialSprite_->SetTexture(tutorialTurnTexture_);
+	}
+	else {
+		tutorialSprite_->isActive = false;
+	}
 
 #endif	
 	
@@ -125,6 +171,13 @@ void PlayScene::Update(){
 	planeTransform_->scale = scale_;
 	planeTransform_->rotateQuaternion = MLEngine::Math::ConvertFromEuler(rotate_);
 	planeTransform_->UpdateMatrix();
+
+	titleSprite_->position = titlePos_;
+	titleSprite_->size = titleScale_;
+
+	tutorialSprite_->position = tutorialPos_;
+	tutorialSprite_->size = tutorialScale_;
+
 
 	camera_.Update();
 
@@ -167,13 +220,23 @@ void PlayScene::DrawImgui() {
 
 	planeTransform_->Debug();
 
-	ImGui::Begin("床のテクスチャ");
+	ImGui::Begin("テクスチャ");
+	ImGui::Text("床");
+	ImGui::DragFloat3("床の座標", &translate_.x, 0.01f);
+	ImGui::DragFloat3("床の回転", &rotate_.x, 0.01f);
+	ImGui::DragFloat3("床の大きさ", &scale_.x, 0.01f);
 
-	ImGui::DragFloat3("座標", &translate_.x, 0.01f);
-	ImGui::DragFloat3("回転", &rotate_.x, 0.01f);
-	ImGui::DragFloat3("大きさ", &scale_.x, 0.01f);
+	ImGui::Text("タイトル");
+	ImGui::DragFloat2("タイトル座標", &titlePos_.x, 1.0f);
+	ImGui::DragFloat2("タイトル大きさ", &titleScale_.x, 1.0f);
+
+	ImGui::Text("チュートリアル");
+	ImGui::DragFloat2("チュートリアル座標", &tutorialPos_.x, 1.0f);
+	ImGui::DragFloat2("チュートリアル大きさ", &tutorialScale_.x, 1.0f);
 
 	ImGui::End();
+
+	
 
 	ImGui::Begin("シーン");
 

@@ -41,6 +41,9 @@ public:
     void SetState(GameState newState) { nextState_ = newState; }
     GameState GetState() const { return state_; }
 
+    TutorialState GetTutorialState() const { return tuState_; }
+
+
     void SetIsClear(bool isClear) { isClear_ = isClear; }
     void SetGameEnd(bool isGameEnd) { isGameEnd_ = isGameEnd; }
 
