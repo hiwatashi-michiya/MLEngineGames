@@ -61,5 +61,23 @@ private:
 	std::unique_ptr<BulletManager> bulletManager_;
 
 	std::unique_ptr<LifeUI> lifeUI_;
+
+
+	MLEngine::Math::Vector3 rotate_ = { 0.0f, 0.0f, 0.0f };
+
+	// スケール・平行移動
+	MLEngine::Math::Vector3 scale_ = { 2.0f, 1.0f, 1.0f };
+	MLEngine::Math::Vector3 translate_ = { 0.0f, 0.0f,0.0f };
+
+
+	std::unique_ptr<MLEngine::Object::Transform> planeTransform_;
+
+	//床のテクスチャ
+	MLEngine::Resource::Sprite3D groundPlane_;
+	MLEngine::Resource::Sprite3D lanePlane_;
+
+	std::string groundTexture_;
+	std::string laneTexture_;
+
 };
 
