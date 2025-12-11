@@ -17,7 +17,33 @@ PlayScene::~PlayScene(){
 
 }
 
+void PlayScene::GlobalSetValue(){
+	GlobalVariables* global = GlobalVariables::GetInstance();
+
+	global->SetValue("TextureState", "TitlePos", titlePos_);
+	global->SetValue("TextureState", "TitleScale", titleScale_);
+	global->SetValue("TextureState", "TutorialPos", tutorialPos_);
+	global->SetValue("TextureState", "TutorialScale", tutorialScale_);
+	global->SetValue("TextureState", "ResultPos", resultPos_);
+	global->SetValue("TextureState", "ResultScale", resultScale_);
+}
+
+void PlayScene::GlobalGetValue(){
+	GlobalVariables* global = GlobalVariables::GetInstance();
+
+	titlePos_ = global->GetVector2Value("TextureState", "TitlePos");
+	titleScale_ = global->GetVector2Value("TextureState", "TitleScale");
+	tutorialPos_ = global->GetVector2Value("TextureState", "TutorialPos");
+	tutorialScale_ = global->GetVector2Value("TextureState", "TutorialScale");
+	resultPos_ = global->GetVector2Value("TextureState", "ResultPos");
+	resultScale_ = global->GetVector2Value("TextureState", "ResultScale");
+
+}
+
 inline void PlayScene::Initialize(){
+	
+	GlobalSetValue();
+
 	gameManager_->Initialize();
 	//お試しプッシュ
 
@@ -63,6 +89,8 @@ inline void PlayScene::Initialize(){
 	titleTexture_.Load("./Resources/Texture/title_logo.png");
 	tutorialMoveTexture_.Load("./Resources/Texture/tutorial_ui_move.png");
 	tutorialTurnTexture_.Load("./Resources/Texture/tutorial_ui_turn.png");
+	gameClearTexture_.Load("./Resources/Texture/gameClear.png");
+	gameOverTexture_.Load("./Resources/Texture/gameOver.png");
 
 	titleSprite_.reset(MLEngine::Resource::Sprite2D::Create(titleTexture_, titlePos_, titleColor_));
 	titleSprite_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -71,11 +99,20 @@ inline void PlayScene::Initialize(){
 	tutorialSprite_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	tutorialSprite_->isActive = false;
 
-	titlePos_ = { 640.0f,120.0f };
-	tutorialPos_ = { 1015.0f,200.0f };
+	resultSprite_.reset(MLEngine::Resource::Sprite2D::Create(gameOverTexture_, resultPos_, resultColor_));
+	resultSprite_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	resultSprite_->isActive = false;
 
+
+	titlePos_ = { 640.0f,120.0f };
 	titleScale_ = { 510.0f,505.0f };
+
+	tutorialPos_ = { 1015.0f,200.0f };
 	tutorialScale_ = { 550.0f,385.0f };
+
+	resultPos_ = { 640.0f,120.0f };
+	resultScale_ = { 512.0f,128.0f };
+
 
 	rotate_.x = 1.48f;
 	scale_ = { 3.0f,30.0f,1.0f };
@@ -92,7 +129,7 @@ void PlayScene::Update(){
 
 	config_->Update();
 
-	
+	GlobalGetValue();
 #ifdef CLIENT_BUILD
 	//// Client専用処理
 
@@ -104,8 +141,9 @@ void PlayScene::Update(){
 
 	titleSprite_->isActive = false;
 	tutorialSprite_->isActive = false;
+	resultSprite_->isActive = false;
 #else
-	// Server Debug処理
+	// Server 処理
 	gameManager_->Update(playerManager_->GetPlayer()->GetIsJustTurned(), playerManager_->GetPlayer()->GetIsJustMoved());
 
 	if (gameManager_->GetState() == GameManager::GameState::Title){
@@ -132,6 +170,19 @@ void PlayScene::Update(){
 		tutorialSprite_->isActive = false;
 	}
 
+	if (gameManager_->GetState() == GameManager::GameState::Result) {
+		resultSprite_->isActive = true;
+		if (gameManager_->GetIsClear()){
+			resultSprite_->SetTexture(gameClearTexture_);
+		}
+		else {
+			resultSprite_->SetTexture(gameOverTexture_);
+		}
+
+	}
+	else {
+		resultSprite_->isActive = false;
+	}
 #endif	
 	
 	if (gameManager_->GetState() == GameManager::GameState::Title or gameManager_->GetState() == GameManager::GameState::Result){
@@ -178,6 +229,8 @@ void PlayScene::Update(){
 	tutorialSprite_->position = tutorialPos_;
 	tutorialSprite_->size = tutorialScale_;
 
+	resultSprite_->position = resultPos_;
+	resultSprite_->size = resultScale_;
 
 	camera_.Update();
 
@@ -210,6 +263,8 @@ void PlayScene::Update(){
 void PlayScene::Draw(){
 	playerManager_->Draw();
 }
+
+
 
 
 void PlayScene::DrawImgui() {

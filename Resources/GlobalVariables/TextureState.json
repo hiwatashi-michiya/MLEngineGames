@@ -1,0 +1,28 @@
+{
+    "TextureState": {
+        "ResultPos": [
+            640.0,
+            125.0
+        ],
+        "ResultScale": [
+            512.0,
+            128.0
+        ],
+        "TitlePos": [
+            640.0,
+            120.0
+        ],
+        "TitleScale": [
+            510.0,
+            505.0
+        ],
+        "TutorialPos": [
+            1015.0,
+            200.0
+        ],
+        "TutorialScale": [
+            550.0,
+            385.0
+        ]
+    }
+}
