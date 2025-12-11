@@ -211,7 +211,6 @@ void DebugScene::Update()
 	//トランスフォーム
 	Matrix4x4 result;
 	modelRot_ *= ConvertFromEuler(joyconInput->GetVecRotate());
-	joyconInput->CheakRadius(1,1);
 
 	if (joyconInput->IsPush(UP)) {
 		modelRot_ = modelRot_.IdentityQuaternion();

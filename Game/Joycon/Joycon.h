@@ -30,7 +30,7 @@ public:
 
 	bool SendSubcommand(hid_device* device, std::byte subcommandId, const std::span<std::byte>& args);
 
-	bool CheakRadius(int count,float radius);
+	bool CheakRadius(float radius);
 
 	Quaternion GetQuaRotate() { return Qrotate_; };
 	Vector3 GetVecRotate() { return Vrotate_; };

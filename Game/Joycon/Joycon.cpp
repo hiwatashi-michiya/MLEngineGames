@@ -34,7 +34,7 @@ void Joycon::Update() {
 		else {
 			// 時間
 			int32_t timeDiff = (int32_t(static_cast<int32_t>(0b1'0000'0000 + tmp[1])) - buff[1]) & 0b1111'1111;
-			ImGui::Text("TimeDiff: %s", std::to_string(timeDiff).c_str());
+			//ImGui::Text("TimeDiff: %s", std::to_string(timeDiff).c_str());
 
 			buff = tmp;
 		}
@@ -75,12 +75,6 @@ void Joycon::Update() {
 
 	Vrotate_.y *= -1;
 	Vrotate_.x *= -1;
-	ImGui::Begin("Gyro");
-	ImGui::Text(("GyroX:" + std::to_string(Vrotate_.x)).c_str());
-	ImGui::Text("GyroY:%f", Vrotate_.y);
-	ImGui::Text("GyroZ:%f", Vrotate_.z);
-
-	ImGui::End();
 
 	if (buff[5] == 0) {
 		Buttanflag = false;
@@ -107,23 +101,21 @@ bool Joycon::SendSubcommand(hid_device* device, std::byte subcommandId, const st
 	return hid_write(device, std::bit_cast<const uint8_t*>(buffer.data()), buffer.size()) >= 0;
 }
 
-bool Joycon::CheakRadius(int count, float radius)
+bool Joycon::CheakRadius(float radius)
 {
 	second += MLEngine::Core::FrameTracker::GetInstance()->GetDeltaTimeF();
 
-	if (second >= count) {
-		second = 0.0f;
-	}
-
 	if (std::abs(test.x) >= radius) {
+
+		test = { 0.0f };
 		return true;
 	}
 	test += GetVecRotate() * (180 / std::numbers::pi);
 #ifdef _DEBUG
 	ImGui::Begin("Gyro");
-	ImGui::Text("DeX:%f", test.x);
-	ImGui::Text("DeY:%f", test.y);
-	ImGui::Text("DeZ:%f", test.z);
+	ImGui::Text("GyroX:%f", test.x);
+	ImGui::Text("GyroY:%f", test.y);
+	ImGui::Text("GyroZ:%f", test.z);
 	ImGui::End();
 #endif
 	return false;

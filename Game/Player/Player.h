@@ -4,6 +4,8 @@
 #include<../Network/NetworkManager.h>
 #include<Engine/Tool/GlobalVariables.h>
 
+#include "../Joycon/Joycon.h"
+
 //プレイヤーが操作する自機
 class Player : public BaseCharacter{
 public:
@@ -131,6 +133,8 @@ private:
 
 	int bulletDamege_ = 10;
 
+	//ジャングル
+	std::unique_ptr<Joycon> joyconInput;
 };
 
 

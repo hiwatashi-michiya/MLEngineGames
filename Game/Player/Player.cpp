@@ -16,6 +16,7 @@ Player::Player(){
 
 	config_ = GameConfig::GetInstance();
 
+
 }
 
 Player::~Player(){
@@ -35,6 +36,11 @@ void Player::Initialize(){
 	color_ = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
 	isDead_ = false;
 	bulletDamege_ = 10;
+
+#pragma region
+	joyconInput = std::make_unique<Joycon>();
+	joyconInput->Init();
+#pragma endregion ジョイコン
 }
 
 void Player::Finalize(){
@@ -56,8 +62,11 @@ void Player::Update(const float deltaTime){
 
 #endif // _DEBUG
 
+#pragma region
+	joyconInput->Update();
 	
-	
+#pragma endregion Joycon
+
 #ifdef CLIENT_BUILD
 	// Client専用処理
 #else
@@ -91,6 +100,7 @@ void Player::Update(const float deltaTime){
 	if (life_ <= 0){
 		isDead_ = true;
 	}
+
 }
 
 void Player::Draw(){
@@ -178,7 +188,7 @@ void Player::PlayerMove(){
 	
 
 	//タイトルシーンでなければ反転入力
-	if (vController_->Decide()) {
+	if (vController_->Decide() || joyconInput->CheakRadius(75.0f)) {
 		isForward_ = !isForward_;
 		isJustTurned_ = true;
 	}
