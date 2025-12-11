@@ -69,6 +69,23 @@ private:
 	MLEngine::Math::Vector3 scale_ = { 2.0f, 1.0f, 1.0f };
 	MLEngine::Math::Vector3 translate_ = { 0.0f, 0.0f,0.0f };
 
+	MLEngine::Resource::Texture titleTexture_;
+	MLEngine::Resource::Texture tutorialMoveTexture_;
+	MLEngine::Resource::Texture tutorialTurnTexture_;
+
+	std::unique_ptr<MLEngine::Resource::Sprite2D> titleSprite_;
+	std::unique_ptr<MLEngine::Resource::Sprite2D> tutorialSprite_;
+
+	MLEngine::Math::Vector2 titlePos_;
+	MLEngine::Math::Vector2 tutorialPos_;
+
+	MLEngine::Math::Vector2 titleScale_;
+	MLEngine::Math::Vector2 tutorialScale_;
+
+
+	MLEngine::Math::Vector4 titleColor_;
+	MLEngine::Math::Vector4 tutorialColor_;
+
 
 	std::unique_ptr<MLEngine::Object::Transform> planeTransform_;
 
