@@ -163,10 +163,6 @@ void DebugScene::Update()
 		se1_.SetVolume(0.1f);
 	}
 
-	if (input_->GetKeyboard()->Trigger(DIK_SPACE)) {
-		sceneManager_->ChangeScene(new PlayScene());
-	}
-
 	//Particle3D
 	{
 

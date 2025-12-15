@@ -506,6 +506,9 @@
     <ClInclude Include="Engine\Core\FrameTracker.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\FullScreen.hlsli">
@@ -614,5 +617,15 @@
       <Filter>shader</Filter>
     </FxCompile>
     <FxCompile Include="Resources\shaders\Paper.PS.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="MLEngine.rc">
+      <Filter>リソース ファイル</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon.ico">
+      <Filter>リソース ファイル</Filter>
+    </Image>
   </ItemGroup>
 </Project>

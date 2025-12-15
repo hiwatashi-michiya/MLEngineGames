@@ -1,4 +1,5 @@
 #include "WindowManager.h"
+#include "resource.h"
 
 #ifdef _DEBUG
 
@@ -57,6 +58,8 @@ void Manager::CreateGameWindow(const wchar_t* windowName, int32_t clientWidth, i
 
 	//カーソル
 	wc_.hCursor = LoadCursor(nullptr, IDC_ARROW);
+	//アイコン
+	wc_.hIcon = LoadIcon(wc_.hInstance, MAKEINTRESOURCE(IDI_ICON1));
 
 	//ウィンドウクラスを登録する
 	RegisterClass(&wc_);

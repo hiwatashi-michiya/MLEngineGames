@@ -76,7 +76,7 @@ void Engine::Initialize(const char* title, int width, int height) {
 	//Engineクラスでインスタンス生成をしておく
 	collisionManager_->Initialize();
 	Render::Particle::Manager::GetInstance()->Initialize();
-	Render::Manager::GetInstance()->Clear();
+	Render::Manager::GetInstance()->Initialize();
 
 	resourceManager_ = Resource::Manager::GetInstance();
 	resourceManager_->Initialize();

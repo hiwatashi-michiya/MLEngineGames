@@ -7,6 +7,7 @@
 #include <vector>
 #include "Lighting/DirectionalLight.h"
 #include "Camera.h"
+#include "PostEffect/PostEffectDrawer.h"
 
 namespace MLEngine::Core::Render {
 
@@ -18,6 +19,8 @@ namespace MLEngine::Core::Render {
 	public:
 
 		static Manager* GetInstance();
+		//初期化
+		void Initialize();
 		//全てを一旦クリアする
 		void Clear();
 		//描画
@@ -46,6 +49,8 @@ namespace MLEngine::Core::Render {
 		MLEngine::Lighting::DirectionalLight* dLight_;
 		//カメラポインタ
 		MLEngine::Object::Camera* camera_;
+		//ポストエフェクト描画クラスのポインタ
+		MLEngine::Core::Render::PostEffect::PostEffectDrawer* postEffect_;
 
 	private:
 		//シングルトン化
