@@ -2,6 +2,7 @@
 #include"Externals/imgui/imgui.h"
 #include "DebugScene.h"
 
+using namespace MLEngine::Math;
 
 using namespace MLEngine::Resource;
 
@@ -16,7 +17,33 @@ PlayScene::~PlayScene(){
 
 }
 
+void PlayScene::GlobalSetValue(){
+	GlobalVariables* global = GlobalVariables::GetInstance();
+
+	global->SetValue("TextureState", "TitlePos", titlePos_);
+	global->SetValue("TextureState", "TitleScale", titleScale_);
+	global->SetValue("TextureState", "TutorialPos", tutorialPos_);
+	global->SetValue("TextureState", "TutorialScale", tutorialScale_);
+	global->SetValue("TextureState", "ResultPos", resultPos_);
+	global->SetValue("TextureState", "ResultScale", resultScale_);
+}
+
+void PlayScene::GlobalGetValue(){
+	GlobalVariables* global = GlobalVariables::GetInstance();
+
+	titlePos_ = global->GetVector2Value("TextureState", "TitlePos");
+	titleScale_ = global->GetVector2Value("TextureState", "TitleScale");
+	tutorialPos_ = global->GetVector2Value("TextureState", "TutorialPos");
+	tutorialScale_ = global->GetVector2Value("TextureState", "TutorialScale");
+	resultPos_ = global->GetVector2Value("TextureState", "ResultPos");
+	resultScale_ = global->GetVector2Value("TextureState", "ResultScale");
+
+}
+
 inline void PlayScene::Initialize(){
+	
+	GlobalSetValue();
+
 	gameManager_->Initialize();
 	//お試しプッシュ
 
@@ -42,6 +69,54 @@ inline void PlayScene::Initialize(){
 
 	lifeUI_ = std::make_unique<LifeUI>(playerManager_->GetPlayer());
 	lifeUI_->Initialize();
+
+	groundTexture_ = "./Resources/Texture/ingame_stage.png";
+	laneTexture_ = "./Resources/Texture/ingame_stageLine.png";
+
+	planeTransform_ = std::make_unique<MLEngine::Object::Transform>();
+
+	groundPlane_.Initialize(groundTexture_, 1);
+	groundPlane_.transform.translate = { 0.0f, 0.0f, 0.0f };
+	groundPlane_.transform.scale = { 30.0f,10.0f,1.0f };
+	groundPlane_.transform.SetParent(planeTransform_.get());
+
+	lanePlane_.Initialize(laneTexture_, 1);
+	lanePlane_.transform.translate = { 0.0f, 0.0f, -0.01f };
+	lanePlane_.transform.scale = { 1.0f, 10.0f, 1.0f };
+	lanePlane_.transform.SetParent(planeTransform_.get());
+
+	//必須となる情報の読み込み
+	titleTexture_.Load("./Resources/Texture/title_logo.png");
+	tutorialMoveTexture_.Load("./Resources/Texture/tutorial_ui_move.png");
+	tutorialTurnTexture_.Load("./Resources/Texture/tutorial_ui_turn.png");
+	gameClearTexture_.Load("./Resources/Texture/gameClear.png");
+	gameOverTexture_.Load("./Resources/Texture/gameOver.png");
+
+	titleSprite_.reset(MLEngine::Resource::Sprite2D::Create(titleTexture_, titlePos_, titleColor_));
+	titleSprite_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+
+	tutorialSprite_.reset(MLEngine::Resource::Sprite2D::Create(tutorialMoveTexture_, tutorialPos_, tutorialColor_));
+	tutorialSprite_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	tutorialSprite_->isActive = false;
+
+	resultSprite_.reset(MLEngine::Resource::Sprite2D::Create(gameOverTexture_, resultPos_, resultColor_));
+	resultSprite_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	resultSprite_->isActive = false;
+
+
+	titlePos_ = { 640.0f,120.0f };
+	titleScale_ = { 510.0f,505.0f };
+
+	tutorialPos_ = { 1015.0f,200.0f };
+	tutorialScale_ = { 550.0f,385.0f };
+
+	resultPos_ = { 640.0f,120.0f };
+	resultScale_ = { 512.0f,128.0f };
+
+
+	rotate_.x = 1.48f;
+	scale_ = { 3.0f,30.0f,1.0f };
+
 }
 
 void PlayScene::Finalize(){
@@ -54,7 +129,7 @@ void PlayScene::Update(){
 
 	config_->Update();
 
-	
+	GlobalGetValue();
 #ifdef CLIENT_BUILD
 	//// Client専用処理
 
@@ -63,10 +138,51 @@ void PlayScene::Update(){
 	NetworkManager::GetInstance().GetSceneState(gameState);
 
 	gameManager_->SetState(static_cast<GameManager::GameState>(gameState));
+
+	titleSprite_->isActive = false;
+	tutorialSprite_->isActive = false;
+	resultSprite_->isActive = false;
 #else
-	// Server Debug処理
+	// Server 処理
 	gameManager_->Update(playerManager_->GetPlayer()->GetIsJustTurned(), playerManager_->GetPlayer()->GetIsJustMoved());
 
+	if (gameManager_->GetState() == GameManager::GameState::Title){
+		titleSprite_->isActive = true;
+	}
+	else {
+		titleSprite_->isActive = false;
+	}
+
+	if (gameManager_->GetState() == GameManager::GameState::Tutorial) {
+		tutorialSprite_->isActive = true;
+	}
+	else {
+		tutorialSprite_->isActive = false;
+	}
+
+	if (gameManager_->GetTutorialState() == GameManager::TutorialState::LaneMove) {
+		tutorialSprite_->SetTexture(tutorialMoveTexture_);
+	}
+	else if(gameManager_->GetTutorialState() == GameManager::TutorialState::FlontBack) {
+		tutorialSprite_->SetTexture(tutorialTurnTexture_);
+	}
+	else {
+		tutorialSprite_->isActive = false;
+	}
+
+	if (gameManager_->GetState() == GameManager::GameState::Result) {
+		resultSprite_->isActive = true;
+		if (gameManager_->GetIsClear()){
+			resultSprite_->SetTexture(gameClearTexture_);
+		}
+		else {
+			resultSprite_->SetTexture(gameOverTexture_);
+		}
+
+	}
+	else {
+		resultSprite_->isActive = false;
+	}
 #endif	
 	
 	if (gameManager_->GetState() == GameManager::GameState::Title or gameManager_->GetState() == GameManager::GameState::Result){
@@ -100,7 +216,21 @@ void PlayScene::Update(){
 		gameManager_->SetGameEnd(true);
 		gameManager_->SetIsClear(true);
 	}
+	// トランスフォーム更新
 
+	planeTransform_->translate = translate_;
+	planeTransform_->scale = scale_;
+	planeTransform_->rotateQuaternion = MLEngine::Math::ConvertFromEuler(rotate_);
+	planeTransform_->UpdateMatrix();
+
+	titleSprite_->position = titlePos_;
+	titleSprite_->size = titleScale_;
+
+	tutorialSprite_->position = tutorialPos_;
+	tutorialSprite_->size = tutorialScale_;
+
+	resultSprite_->position = resultPos_;
+	resultSprite_->size = resultScale_;
 
 	camera_.Update();
 
@@ -135,11 +265,33 @@ void PlayScene::Draw(){
 }
 
 
+
+
 void PlayScene::DrawImgui() {
 #ifdef _DEBUG
 	config_->Debug();
 
 	gameManager_->Debug();
+
+	planeTransform_->Debug();
+
+	ImGui::Begin("テクスチャ");
+	ImGui::Text("床");
+	ImGui::DragFloat3("床の座標", &translate_.x, 0.01f);
+	ImGui::DragFloat3("床の回転", &rotate_.x, 0.01f);
+	ImGui::DragFloat3("床の大きさ", &scale_.x, 0.01f);
+
+	ImGui::Text("タイトル");
+	ImGui::DragFloat2("タイトル座標", &titlePos_.x, 1.0f);
+	ImGui::DragFloat2("タイトル大きさ", &titleScale_.x, 1.0f);
+
+	ImGui::Text("チュートリアル");
+	ImGui::DragFloat2("チュートリアル座標", &tutorialPos_.x, 1.0f);
+	ImGui::DragFloat2("チュートリアル大きさ", &tutorialScale_.x, 1.0f);
+
+	ImGui::End();
+
+	
 
 	ImGui::Begin("シーン");
 
