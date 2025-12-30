@@ -37,7 +37,17 @@ void ArduinoSerialReader::Init() {
 	timeouts.ReadTotalTimeoutMultiplier = 10;
 
 	SetCommTimeouts(hSerial, &timeouts);
+
+	dcb.fDtrControl = DTR_CONTROL_ENABLE;
+	dcb.fRtsControl = RTS_CONTROL_ENABLE;
+
+	SetCommState(hSerial, &dcb);
 #pragma endregion 通信設定
+
+
+}
+
+void ArduinoSerialReader::Update() {
 
 #pragma region
 	char buf[64];
@@ -46,30 +56,31 @@ void ArduinoSerialReader::Init() {
 
 	while (true) {
 		ReadFile(hSerial, buf, sizeof(buf), &bytesRead, nullptr);
-
-
-		break;
+		if (bytesRead == 0) {
+			continue;
+		}
 		for (DWORD i = 0; i < bytesRead; i++) {
 			if (buf[i] == '\n') {
-				value = static_cast<uint16_t>(std::stoi(line));
+				//lineが空いていないなら処理をする
+				if (!line.empty()) {
+					value = static_cast<uint16_t>(std::stoi(line));
+				}
 				line.clear();
-				break;
+				ImGui::Begin("Arduino");
+				ImGui::Text("Received:%d", value);
+				ImGui::End();
+				//returnから絶対変更するように(別スレッドが理想)
+				return;
 			}
-			else {
+			//\r以外を読む
+			else if (buf[i] != '\r') {
 				line += buf[i];
 			}
-
 		}
 	}
 #pragma endregion 受信
 }
 
-void ArduinoSerialReader::Update() {
-
-}
-
 void ArduinoSerialReader::Draw() {
-	ImGui::Begin("Arduino");
-	ImGui::Text("Received:%d", value);
-	ImGui::End();
+
 }
