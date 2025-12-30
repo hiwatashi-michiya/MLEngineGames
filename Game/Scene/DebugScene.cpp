@@ -59,6 +59,10 @@ inline void DebugScene::Initialize()
 	joyconInput = std::make_unique<Joycon>();
 	joyconInput->Init();
 #pragma endregion ジョイコン
+#pragma region
+	arduinoSerialReader = std::make_unique<ArduinoSerialReader>();
+	arduinoSerialReader->Init();
+#pragma endregion アルディーノ
 
 	dLight_.cbData->direction = MLEngine::Math::Normalize(dLight_.cbData->direction);
 
@@ -71,7 +75,7 @@ void DebugScene::Finalize()
 void DebugScene::Update()
 {
 	joyconInput->Update();
-
+	arduinoSerialReader->Update();
 	{
 
 #ifdef _DEBUG
@@ -253,7 +257,7 @@ void DebugScene::Update()
 
 void DebugScene::Draw()
 {
-
+	arduinoSerialReader->Draw();
 	//model_.GetInstancingModel().Draw(&camera_);
 
 	//particle_->Draw(&camera_);

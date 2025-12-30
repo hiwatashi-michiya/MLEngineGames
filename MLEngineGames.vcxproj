@@ -271,6 +271,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Game\ArduinoSerialReader\ArduinoSerialReader.cpp" />
     <ClCompile Include="Game\Character\BaseCharacter.cpp" />
     <ClCompile Include="Game\Config\GameConfig.cpp" />
     <ClCompile Include="Game\Enemy\EnemyMotionState.cpp" />
@@ -292,6 +293,7 @@
     <ClCompile Include="Network\NetworkManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game\ArduinoSerialReader\ArduinoSerialReader.h" />
     <ClInclude Include="Game\Character\BaseCharacter.h" />
     <ClInclude Include="Game\Config\GameConfig.h" />
     <ClInclude Include="Game\Enemy\EnemyMotionState.h" />

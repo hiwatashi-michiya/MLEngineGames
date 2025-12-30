@@ -17,7 +17,7 @@ void hidManager::Init() {
         hid_device* dev = hid_open(device->vendor_id, device->product_id, device->serial_number);
         // 今開いているデバイスのプロダクト名の取得。
 
-        std::string name ="\nproduct_id: " + WStringToString(device->product_string);
+        std::string name ="\nproduct_id: " + WStringToString(device->product_string) + "\n";
 
         OutputDebugStringA(name.c_str());
         // 次のデバイスへ。　　

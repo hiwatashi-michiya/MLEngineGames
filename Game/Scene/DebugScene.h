@@ -14,6 +14,7 @@
 #include "Transform.h"
 
 #include "../Joycon/Joycon.h"
+#include "../ArduinoSerialReader/ArduinoSerialReader.h"
 
 /// <summary>
 /// デバッグシーン、エンジン機能理解用
@@ -74,6 +75,7 @@ private:
 	bool isDebugCamera_ = false;
 
 	std::unique_ptr<Joycon> joyconInput;
+	std::unique_ptr<ArduinoSerialReader> arduinoSerialReader;
 	Vector3 test;
 	Quaternion modelRot_;
 };
