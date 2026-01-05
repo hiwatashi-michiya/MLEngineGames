@@ -136,12 +136,19 @@ void PlayScene::Update(){
 	GameManager::GameState gameState{};
 
 	NetworkManager::GetInstance().GetSceneState(gameState);
-
+	//タイトルに戻ったときに初期化できるように
+	if (gameManager_->GetState() == GameManager::GameState::Result and gameState == GameManager::GameState::Title){
+		MLEngine::Scene::Manager::GetInstance()->ChangeScene("Play");
+	}
+	
 	gameManager_->SetState(static_cast<GameManager::GameState>(gameState));
 
 	titleSprite_->isActive = false;
 	tutorialSprite_->isActive = false;
 	resultSprite_->isActive = false;
+
+
+
 #else
 	// Server 処理
 	gameManager_->Update(playerManager_->GetPlayer()->GetIsJustTurned(), playerManager_->GetPlayer()->GetIsJustMoved());
