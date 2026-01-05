@@ -113,9 +113,9 @@ inline void PlayScene::Initialize(){
 	resultPos_ = { 640.0f,120.0f };
 	resultScale_ = { 512.0f,128.0f };
 
-
+	translate_.y = -4.0f;
 	rotate_.x = 1.48f;
-	scale_ = { 3.0f,30.0f,1.0f };
+	scale_ = { 10.0f,30.0f,1.0f };
 
 }
 

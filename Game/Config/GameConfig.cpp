@@ -14,6 +14,6 @@ void GameConfig::Update() {
 void GameConfig::Debug() {
 	ImGui::Begin("ゲームの設定");
 	ImGui::DragInt("レーンの最大値", &maxLane_, 2, 1, 15);
-	ImGui::DragInt("プレイヤー側のレーンの幅", &laneDistancePlayer_, 1, 50, 1000);
+	ImGui::DragFloat("プレイヤー側のレーンの幅", &laneDistancePlayer_, 0.1f, 1.0f, 100.0f);
 	ImGui::End();
 }

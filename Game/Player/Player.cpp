@@ -5,11 +5,12 @@ using namespace MLEngine::Math;
 
 Player::Player(){
 	//必須となる情報の読み込み
-	backTexture_.Load("./Resources/Texture/player_back.png");
-	frontTexture_.Load("./Resources/Texture/player_front.png");
+	backTextureName_ = ("./Resources/Texture/player_back.png");
+	frontTextureName_ = ("./Resources/Texture/player_front.png");
 
-	sprite_.reset(MLEngine::Resource::Sprite2D::Create(backTexture_, MLEngine::Math::Vector2(pos_.x, pos_.y), color_));
-	sprite_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	sprite3D_.Initialize("./Resources/texture/player_back.png", 1);
+	sprite3D_.color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	sprite3D_.isActive = true;
 	vController_ = &VirtualController::GetInstance();
 
 	input_ = MLEngine::Input::Manager::GetInstance();
@@ -31,7 +32,7 @@ void Player::Initialize(){
 	time_ = 0.0f;
 	recoverySpeed_ = 1.0f;
 	life_ = lifeMax_ ;
-	pos_ = Vector3(640.0f, 650.0f, 0.0f);
+	pos_ = Vector3(640.0f, -3.0f, -2.0f);
 	color_ = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
 	isDead_ = false;
 	bulletDamege_ = 10;
@@ -78,19 +79,23 @@ void Player::Update(const float deltaTime){
 
 	pos_.x = LaneSpecificCalculation();
 
-	sprite_->position = Vector2(pos_.x, pos_.y);
-	sprite_->size = Vector2(128.0f, 128.0f);
+	sprite3D_.transform.translate = pos_;
+	sprite3D_.transform.scale = Vector3(1.0f, 1.0f, 0.1f);
 
 	if (isForward_){
-		sprite_->SetTexture(backTexture_);
+		sprite3D_.SetTexture(backTextureName_);
 	}
 	else {
-		sprite_->SetTexture(frontTexture_);
+		sprite3D_.SetTexture(frontTextureName_);
 	}
+
+	sprite3D_.UpdateAnimation();
 
 	if (life_ <= 0){
 		isDead_ = true;
 	}
+
+
 }
 
 void Player::Draw(){
@@ -100,7 +105,7 @@ void Player::Draw(){
 void Player::DebugDraw(){
 #ifdef _DEBUG
 	ImGui::Begin("プレイヤー");
-	ImGui::DragFloat2("座標", &pos_.x, 1.0f);
+	ImGui::DragFloat3("座標", &pos_.x, 1.0f);
 	ImGui::Text("今のレーン	%d", plState_.nowLine);
 	ImGui::Text("今の体力	%d", plState_.life);
 	ImGui::Text("傷コンボ	%d", plState_.isDamagedFlug);
