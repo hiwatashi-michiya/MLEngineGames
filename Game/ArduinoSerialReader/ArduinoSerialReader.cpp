@@ -44,43 +44,64 @@ void ArduinoSerialReader::Init() {
 	SetCommState(hSerial, &dcb);
 #pragma endregion 通信設定
 
-
+	serialThread = std::thread(&ArduinoSerialReader::SerialReceiveThread, this);
 }
 
 void ArduinoSerialReader::Update() {
+	if (g_running == false) {
+		g_running = true;
+	}
+	value = g_latestValue.load();
+}
+
+void ArduinoSerialReader::Draw() {
+	ImGui::Begin("Arduino");
+	ImGui::Text("Received:%d", value);
+	ImGui::End();
+}
+
+void ArduinoSerialReader::SerialReceiveThread() {
 
 #pragma region
 	char buf[64];
 	DWORD bytesRead;
 	std::string line;
-
-	while (true) {
-		ReadFile(hSerial, buf, sizeof(buf), &bytesRead, nullptr);
+	OutputDebugStringA("SerialReceiveThread\n");
+	while (g_running) {
+		OutputDebugStringA("intowhile\n");
+		if (ReadFile(hSerial, buf, sizeof(buf), &bytesRead, nullptr) == false) {
+			OutputDebugStringA("ReadFile failed\n");
+		}
 		if (bytesRead == 0) {
-			continue;
+			OutputDebugStringA("timeOut\n");
+			continue;//タイムアウト
 		}
 		for (DWORD i = 0; i < bytesRead; i++) {
 			if (buf[i] == '\n') {
 				//lineが空いていないなら処理をする
 				if (!line.empty()) {
 					value = static_cast<uint16_t>(std::stoi(line));
+					g_latestValue.store(value);
+					g_running = false;
+					OutputDebugStringA("data input\n");
 				}
 				line.clear();
-				ImGui::Begin("Arduino");
-				ImGui::Text("Received:%d", value);
-				ImGui::End();
+
 				//returnから絶対変更するように(別スレッドが理想)
-				return;
+				//return;
 			}
 			//\r以外を読む
 			else if (buf[i] != '\r') {
 				line += buf[i];
+				OutputDebugStringA("lead\n");
 			}
 		}
 	}
 #pragma endregion 受信
 }
 
-void ArduinoSerialReader::Draw() {
-
+void ArduinoSerialReader::End() {
+	g_running = false;
+	CloseHandle(hSerial);
+	serialThread.join();
 }
