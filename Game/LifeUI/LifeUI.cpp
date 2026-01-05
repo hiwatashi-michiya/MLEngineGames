@@ -3,6 +3,11 @@
 
 
 LifeUI::LifeUI(Player* player){
+	GlobalVariables* global = GlobalVariables::GetInstance();
+
+	global->SetValue("UIState", "PLLifeColor", plColor_);
+
+
 	player_ = player;
 
 	//必須となる情報の読み込み
@@ -13,6 +18,7 @@ LifeUI::LifeUI(Player* player){
 	texture_.Load("./Resources/frame.png");
 
 	frame_.reset(MLEngine::Resource::Sprite2D::Create(texture_, plFramePos_, plColor_));
+
 
 }
 
@@ -32,9 +38,13 @@ void LifeUI::Initialize() {
 void LifeUI::Update() {
 	SizeCulc();
 
+	GlobalVariables* global = GlobalVariables::GetInstance();
+	plColor_ = global->GetVector4Value("UIState", "PLLifeColor");
+
 #ifdef _DEBUG
 	DebugDraw();
 #endif // _DEBUG
+	meter_->color = plColor_;
 	meter_->position = plMeterPos_;	
 	meter_->size = plMeterSize_;
 
