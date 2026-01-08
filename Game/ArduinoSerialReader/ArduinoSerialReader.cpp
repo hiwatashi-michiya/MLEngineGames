@@ -5,7 +5,7 @@ void ArduinoSerialReader::Init() {
 #pragma region
 	hSerial = CreateFile(
 		L"\\\\.\\COM4",          // COM番号を合わせる
-		GENERIC_READ,
+		GENERIC_READ | GENERIC_WRITE,
 		0,
 		nullptr,
 		OPEN_EXISTING,
@@ -48,9 +48,6 @@ void ArduinoSerialReader::Init() {
 }
 
 void ArduinoSerialReader::Update() {
-	if (g_running == false) {
-		g_running = true;
-	}
 	value = g_latestValue.load();
 }
 
@@ -66,9 +63,7 @@ void ArduinoSerialReader::SerialReceiveThread() {
 	char buf[64];
 	DWORD bytesRead;
 	std::string line;
-	OutputDebugStringA("SerialReceiveThread\n");
 	while (g_running) {
-		OutputDebugStringA("intowhile\n");
 		if (ReadFile(hSerial, buf, sizeof(buf), &bytesRead, nullptr) == false) {
 			OutputDebugStringA("ReadFile failed\n");
 		}
@@ -82,8 +77,6 @@ void ArduinoSerialReader::SerialReceiveThread() {
 				if (!line.empty()) {
 					value = static_cast<uint16_t>(std::stoi(line));
 					g_latestValue.store(value);
-					g_running = false;
-					OutputDebugStringA("data input\n");
 				}
 				line.clear();
 
@@ -93,7 +86,6 @@ void ArduinoSerialReader::SerialReceiveThread() {
 			//\r以外を読む
 			else if (buf[i] != '\r') {
 				line += buf[i];
-				OutputDebugStringA("lead\n");
 			}
 		}
 	}
