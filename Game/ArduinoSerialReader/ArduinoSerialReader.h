@@ -14,11 +14,16 @@ public:
 	}
 	void Init();
 	void Update();
+#ifdef _DEBUG
 	void Draw();
+#endif
+
+
+
+private:
 	void SerialReceiveThread();
 	void End();
 
-private:
 	HANDLE hSerial;
 	uint16_t value;
 

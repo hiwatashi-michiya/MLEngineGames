@@ -257,7 +257,9 @@ void DebugScene::Update()
 
 void DebugScene::Draw()
 {
+#ifdef _DEBUG
 	arduinoSerialReader->Draw();
+#endif
 	//model_.GetInstancingModel().Draw(&camera_);
 
 	//particle_->Draw(&camera_);

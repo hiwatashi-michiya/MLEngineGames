@@ -50,19 +50,20 @@ void ArduinoSerialReader::Init() {
 void ArduinoSerialReader::Update() {
 	value = g_latestValue.load();
 }
-
+#ifdef _DEBUG
 void ArduinoSerialReader::Draw() {
 	ImGui::Begin("Arduino");
 	ImGui::Text("Received:%d", value);
 	ImGui::End();
 }
-
+#endif
 void ArduinoSerialReader::SerialReceiveThread() {
 
 #pragma region
 	char buf[64];
 	DWORD bytesRead;
 	std::string line;
+
 	while (g_running) {
 		if (ReadFile(hSerial, buf, sizeof(buf), &bytesRead, nullptr) == false) {
 			OutputDebugStringA("ReadFile failed\n");
