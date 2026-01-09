@@ -207,9 +207,12 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)Engines\Externals\assimp\lib\Debug;$(ProjectDir)Generated\Outputs\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>MLEngine.lib;DirectXTex.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)Engines\Externals\assimp\lib\Debug;$(ProjectDir)Generated\Outputs\Debug;$(ProjectDir)Engines\Externals\hidapi\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>MLEngine.lib;DirectXTex.lib;assimp-vc143-mtd.lib;hidapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>copy "$(ProjectDir)Engines\Externals\hidapi\x64\hidapi.dll" "$(TargetDir)hidapi.dll"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ClientDebug|x64'">
     <ClCompile>
@@ -226,9 +229,12 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)Engines\Externals\assimp\lib\Debug;$(ProjectDir)Generated\Outputs\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>MLEngine.lib;DirectXTex.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)Engines\Externals\assimp\lib\Debug;$(ProjectDir)Generated\Outputs\Debug;$(ProjectDir)Engines\Externals\hidapi\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>MLEngine.lib;DirectXTex.lib;assimp-vc143-mtd.lib;hidapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>copy "$(ProjectDir)Engines\Externals\hidapi\x64\hidapi.dll" "$(TargetDir)hidapi.dll"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -246,9 +252,12 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)Engines\Externals\assimp\lib\Release;$(ProjectDir)Generated\Outputs\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>MLEngine.lib;DirectXTex.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)Engines\Externals\assimp\lib\Release;$(ProjectDir)Generated\Outputs\Release;$(ProjectDir)Engines\Externals\hidapi\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>MLEngine.lib;DirectXTex.lib;assimp-vc143-mt.lib;hidapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>copy "$(ProjectDir)Engines\Externals\hidapi\x64\hidapi.dll" "$(TargetDir)hidapi.dll"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Clientrelease|x64'">
     <ClCompile>
@@ -266,15 +275,21 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)Engines\Externals\assimp\lib\Release;$(ProjectDir)Generated\Outputs\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>MLEngine.lib;DirectXTex.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)Engines\Externals\assimp\lib\Release;$(ProjectDir)Generated\Outputs\Release;$(ProjectDir)Engines\Externals\hidapi\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>MLEngine.lib;DirectXTex.lib;assimp-vc143-mt.lib;hidapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>copy "$(ProjectDir)Engines\Externals\hidapi\x64\hidapi.dll" "$(TargetDir)hidapi.dll"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Game\DeviceIO\UltrasonicSensor\UltrasonicSensor.cpp" />
     <ClCompile Include="Game\Character\BaseCharacter.cpp" />
     <ClCompile Include="Game\Config\GameConfig.cpp" />
     <ClCompile Include="Game\Enemy\EnemyMotionState.cpp" />
     <ClCompile Include="Game\Enemy\EnemyUI.cpp" />
+    <ClCompile Include="Game\hidapi\hidManager.cpp" />
+    <ClCompile Include="Game\Joycon\Joycon.cpp" />
     <ClCompile Include="Game\LifeUI\LifeUI.cpp" />
     <ClCompile Include="Game\Manager\GameManager.cpp" />
     <ClCompile Include="Game\Manager\PlayerManager.cpp" />
@@ -290,10 +305,14 @@
     <ClCompile Include="Network\NetworkManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game\DeviceIO\serial\include\serial\serial.h" />
+    <ClInclude Include="Game\DeviceIO\UltrasonicSensor\UltrasonicSensor.h" />
     <ClInclude Include="Game\Character\BaseCharacter.h" />
     <ClInclude Include="Game\Config\GameConfig.h" />
     <ClInclude Include="Game\Enemy\EnemyMotionState.h" />
     <ClInclude Include="Game\Enemy\EnemyUI.h" />
+    <ClInclude Include="Game\hidapi\hidManager.h" />
+    <ClInclude Include="Game\Joycon\Joycon.h" />
     <ClInclude Include="Game\LifeUI\LifeUI.h" />
     <ClInclude Include="Game\Manager\GameManager.h" />
     <ClInclude Include="Game\Manager\PlayerManager.h" />
