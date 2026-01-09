@@ -40,6 +40,6 @@ private:
 
 
 
-	MLEngine::Math::Vector4 plColor_ = { 0.0f,1.0f,0.0f,1.0f };
+	MLEngine::Math::Vector4 plColor_ = { 1.0f,1.0f,1.0f,1.0f };
 };
 

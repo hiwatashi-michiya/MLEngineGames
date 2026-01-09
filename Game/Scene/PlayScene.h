@@ -22,6 +22,11 @@ public:
 		GameManager::GameState gameState;
 	};
 
+	struct EnemyFlugPacket {
+		NetworkManager::PacketHeader header;
+		bool isEnemyDead;
+	};
+
 
 public:
 	PlayScene();
@@ -107,6 +112,8 @@ private:
 
 	std::string groundTexture_;
 	std::string laneTexture_;
+
+	bool isClientEnemyDead_ = false;
 
 };
 

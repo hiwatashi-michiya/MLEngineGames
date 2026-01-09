@@ -191,6 +191,8 @@ void PlayScene::Update(){
 	else {
 		resultSprite_->isActive = false;
 	}
+
+	NetworkManager::GetInstance().GetEnemyDeadFlug(isClientEnemyDead_);
 #endif	
 	
 	if (gameManager_->GetState() == GameManager::GameState::Title or gameManager_->GetState() == GameManager::GameState::Result){
@@ -220,7 +222,7 @@ void PlayScene::Update(){
 	if (playerManager_->GetPlayer()->GetIsDead()){
 		gameManager_->SetGameEnd(true);
 	}
-	else if (enemy_->GetIsDead()){
+	else if (enemy_->GetIsDead() and isClientEnemyDead_){
 		gameManager_->SetGameEnd(true);
 		gameManager_->SetIsClear(true);
 	}
@@ -247,6 +249,13 @@ void PlayScene::Update(){
 
 #ifdef CLIENT_BUILD
 	// Client専用処理
+	EnemyFlugPacket enemyPacket{};
+	enemyPacket.header.type = 3;
+	enemyPacket.header.size = sizeof(EnemyFlugPacket);
+	enemyPacket.isEnemyDead = enemy_->GetIsDead();
+
+	NetworkManager::GetInstance().Send(enemyPacket);
+
 #else
 	// Server Debug処理
 	//managerを介してクライアントに送る
