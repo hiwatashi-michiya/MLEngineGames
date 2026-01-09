@@ -9,7 +9,10 @@ void Joycon::Init() {
 	hidManager_->Init();
 
 	device_ = hidManager_->Get(JOYCON_L_PRODUCT_ID);
-
+	if (device_ == nullptr) {
+		OutputDebugStringA("Joycon is not Conected");
+		return;
+	}
 	std::byte arg;
 	arg = std::byte(0x1);
 	Joycon::SendSubcommand(device_, std::byte(0x40), { &arg,1 });
@@ -22,7 +25,8 @@ void Joycon::Update() {
 
 	// 読み込むサイズを指定。
 	static constexpr size_t kSize = 49;
-	while (true) {
+	//TODO:ジョイコンがあれば処理をする
+	while (device_) {
 		std::array<uint8_t, 0x40> tmp;
 		// buff に input report が入る。
 		int ret = hid_read_timeout(device_, tmp.data(), kSize, 1);
@@ -103,6 +107,10 @@ bool Joycon::SendSubcommand(hid_device* device, std::byte subcommandId, const st
 
 bool Joycon::CheakRadius(float radius)
 {
+	//TODO:ジョイコンがなければ抜ける
+	if (device_ == nullptr) {
+		return false;
+	}
 	second += MLEngine::Core::FrameTracker::GetInstance()->GetDeltaTimeF();
 
 	if (std::abs(test.x) >= radius) {
