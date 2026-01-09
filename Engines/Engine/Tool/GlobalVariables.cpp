@@ -301,26 +301,26 @@ void GlobalVariables::Update() {
 			else if (std::holds_alternative<float>(item.value)) {
 				
 				float* ptr = std::get_if<float>(&item.value);
-				ImGui::DragFloat(itemName.c_str(), ptr);
+				ImGui::DragFloat(itemName.c_str(), ptr, 0.01f);
 
 			}
 
 			else if( std::holds_alternative<Vector2>(item.value)) {
 				Vector2* ptr = std::get_if<Vector2>(&item.value);
-				ImGui::DragFloat2(itemName.c_str(), reinterpret_cast<float*>(ptr));
+				ImGui::DragFloat2(itemName.c_str(), reinterpret_cast<float*>(ptr), 0.01f);
 			}
 
 			//Vector3型の値を保持していれば
 			else if (std::holds_alternative<Vector3>(item.value)) {
 
 				Vector3* ptr = std::get_if<Vector3>(&item.value);
-				ImGui::DragFloat3(itemName.c_str(), reinterpret_cast<float*>(ptr));
+				ImGui::DragFloat3(itemName.c_str(), reinterpret_cast<float*>(ptr), 0.01f);
 
 			}
 
 			else if( std::holds_alternative<Vector4>(item.value)) {
 				Vector4* ptr = std::get_if<Vector4>(&item.value);
-				ImGui::DragFloat4(itemName.c_str(), reinterpret_cast<float*>(ptr));
+				ImGui::DragFloat4(itemName.c_str(), reinterpret_cast<float*>(ptr), 0.01f);
 			}
 
 			//ObjectData型の値を保持していれば

@@ -3,6 +3,7 @@
 #include"VirtualController.h"
 #include<../Network/NetworkManager.h>
 #include<Engine/Tool/GlobalVariables.h>
+#include <Sprite3D.h>
 
 //プレイヤーが操作する自機
 class Player : public BaseCharacter{
@@ -94,10 +95,10 @@ private:
 
 	MLEngine::Input::Manager* input_ = nullptr;
 
-	std::unique_ptr<MLEngine::Resource::Sprite2D> sprite_;
+	MLEngine::Resource::Sprite3D sprite3D_;
 
-	MLEngine::Resource::Texture frontTexture_;
-	MLEngine::Resource::Texture backTexture_;
+	std::string frontTextureName_;
+	std::string backTextureName_;
 
 		
 	bool isTitleScene_ = false;

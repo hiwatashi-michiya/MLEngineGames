@@ -113,9 +113,9 @@ inline void PlayScene::Initialize(){
 	resultPos_ = { 640.0f,120.0f };
 	resultScale_ = { 512.0f,128.0f };
 
-
+	translate_.y = -4.0f;
 	rotate_.x = 1.48f;
-	scale_ = { 3.0f,30.0f,1.0f };
+	scale_ = { 10.0f,30.0f,1.0f };
 
 }
 
@@ -136,12 +136,19 @@ void PlayScene::Update(){
 	GameManager::GameState gameState{};
 
 	NetworkManager::GetInstance().GetSceneState(gameState);
-
+	//タイトルに戻ったときに初期化できるように
+	if (gameManager_->GetState() == GameManager::GameState::Result and gameState == GameManager::GameState::Title){
+		MLEngine::Scene::Manager::GetInstance()->ChangeScene("Play");
+	}
+	
 	gameManager_->SetState(static_cast<GameManager::GameState>(gameState));
 
 	titleSprite_->isActive = false;
 	tutorialSprite_->isActive = false;
 	resultSprite_->isActive = false;
+
+
+
 #else
 	// Server 処理
 	gameManager_->Update(playerManager_->GetPlayer()->GetIsJustTurned(), playerManager_->GetPlayer()->GetIsJustMoved());
