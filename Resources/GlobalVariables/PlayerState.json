@@ -1,6 +1,6 @@
 {
     "PlayerState": {
-        "Life": 100,
-        "comboTime": 5.0
+        "Life": 80,
+        "comboTime": 6.0
     }
 }
