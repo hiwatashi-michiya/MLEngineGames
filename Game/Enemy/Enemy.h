@@ -76,6 +76,7 @@ public:
 		frontPlane_.isActive = isActive;
 		backPlane_.isActive = isActive;
 		enemyUI_->SetIsActive(isActive);
+		bulletManager_->SetIsModelActive(isActive);
 	}
 
 

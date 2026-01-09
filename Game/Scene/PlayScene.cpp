@@ -273,7 +273,7 @@ void PlayScene::Update(){
 
 	
 #ifdef _DEBUG
-	if (input_->GetKeyboard()->Trigger(DIK_0)){
+	if (input_->GetKeyboard()->Push(DIK_LCONTROL) and input_->GetKeyboard()->Trigger(DIK_0)){
 		sceneManager_->ChangeScene("Play");
 	}
 
