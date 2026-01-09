@@ -1,6 +1,6 @@
-#include"ArduinoSerialReader.h"
+#include"UltrasonicSensor.h"
 
-void ArduinoSerialReader::Init() {
+void UltrasonicSensor::Init() {
 
 #pragma region
 	hSerial = CreateFile(
@@ -44,20 +44,20 @@ void ArduinoSerialReader::Init() {
 	SetCommState(hSerial, &dcb);
 #pragma endregion 通信設定
 
-	serialThread = std::thread(&ArduinoSerialReader::SerialReceiveThread, this);
+	serialThread = std::thread(&UltrasonicSensor::SerialReceiveThread, this);
 }
 
-void ArduinoSerialReader::Update() {
+void UltrasonicSensor::Update() {
 	value = g_latestValue.load();
 }
 #ifdef _DEBUG
-void ArduinoSerialReader::Draw() {
+void UltrasonicSensor::Draw() {
 	ImGui::Begin("Arduino");
 	ImGui::Text("Received:%d", value);
 	ImGui::End();
 }
 #endif
-void ArduinoSerialReader::SerialReceiveThread() {
+void UltrasonicSensor::SerialReceiveThread() {
 
 #pragma region
 	char buf[64];
@@ -93,7 +93,7 @@ void ArduinoSerialReader::SerialReceiveThread() {
 #pragma endregion 受信
 }
 
-void ArduinoSerialReader::End() {
+void UltrasonicSensor::End() {
 	g_running = false;
 	CloseHandle(hSerial);
 	serialThread.join();

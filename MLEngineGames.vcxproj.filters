@@ -20,7 +20,7 @@
     <ClCompile Include="Network\NetworkManager.cpp" />
     <ClCompile Include="Game\Joycon\Joycon.cpp" />
     <ClCompile Include="Game\hidapi\hidManager.cpp" />
-    <ClCompile Include="Game\ArduinoSerialReader\ArduinoSerialReader.cpp" />
+    <ClCompile Include="Game\DeviceIO\UltrasonicSensor\UltrasonicSensor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Character\BaseCharacter.h" />
@@ -41,7 +41,8 @@
     <ClInclude Include="Network\NetworkManager.h" />
     <ClInclude Include="Game\Joycon\Joycon.h" />
     <ClInclude Include="Game\hidapi\hidManager.h" />
-    <ClInclude Include="Game\ArduinoSerialReader\ArduinoSerialReader.h" />
+    <ClInclude Include="Game\DeviceIO\UltrasonicSensor\UltrasonicSensor.h" />
+    <ClInclude Include="Game\DeviceIO\serial\include\serial\serial.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

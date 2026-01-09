@@ -6,10 +6,11 @@
 #include <atomic>
 #include <thread>
 #include "imgui.h"
+//#include <serial/serial.h>
 
-class ArduinoSerialReader {
+class UltrasonicSensor {
 public:
-	~ArduinoSerialReader() {
+	~UltrasonicSensor() {
 		End();
 	}
 	void Init();
