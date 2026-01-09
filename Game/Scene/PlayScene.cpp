@@ -118,6 +118,11 @@ inline void PlayScene::Initialize(){
 	rotate_.x = 1.48f;
 	scale_ = { 10.0f,30.0f,1.0f };
 
+	skydome_.Initialize("./Resources/model/skydome/skydome.obj");
+	skydomeTransform_.scale = { 1000.0f,1000.0f,1000.0f };
+	skydomeTransform_.UpdateMatrix();
+	skydome_.SetWorldMatrix(skydomeTransform_.worldMatrix);
+
 }
 
 void PlayScene::Finalize(){
@@ -232,6 +237,9 @@ void PlayScene::Update(){
 	planeTransform_->scale = scale_;
 	planeTransform_->rotateQuaternion = MLEngine::Math::ConvertFromEuler(rotate_);
 	planeTransform_->UpdateMatrix();
+
+	skydomeTransform_.UpdateMatrix();
+	skydome_.SetWorldMatrix(skydomeTransform_.worldMatrix);
 
 	titleSprite_->position = titlePos_;
 	titleSprite_->size = titleScale_;

@@ -110,6 +110,11 @@ private:
 	MLEngine::Resource::Sprite3D groundPlane_;
 	MLEngine::Resource::Sprite3D lanePlane_;
 
+	//天球
+	MLEngine::Resource::RigidModel skydome_;
+
+	MLEngine::Object::Transform skydomeTransform_;
+
 	std::string groundTexture_;
 	std::string laneTexture_;
 
