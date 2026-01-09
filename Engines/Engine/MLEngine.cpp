@@ -76,11 +76,18 @@ void Engine::Initialize(const char* title, int width, int height) {
 	//Engineクラスでインスタンス生成をしておく
 	collisionManager_->Initialize();
 	Render::Particle::Manager::GetInstance()->Initialize();
-	Render::Manager::GetInstance()->Clear();
+	Render::Manager::GetInstance()->Initialize();
 
 	resourceManager_ = Resource::Manager::GetInstance();
 	resourceManager_->Initialize();
 	sceneManager_ = Scene::Manager::GetInstance();
+
+#ifdef _DEBUG
+
+#else
+	windowManager_->SetFullScreenMode();
+#endif 
+
 
 }
 
@@ -98,7 +105,6 @@ void Engine::Run(BaseScene* startScene, BaseSceneFactory* sceneFactory) {
 
 #ifdef _DEBUG
 		GlobalVariables::GetInstance()->Update();
-
 #endif //DEBUG
 		//ゲームシーン更新
 		sceneManager_->Update();

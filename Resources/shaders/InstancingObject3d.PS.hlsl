@@ -146,7 +146,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
             if (gMaterial[instanceID].enableToonshading != 0)
             {
                 
-                totalDirectionalLight = (0.5f + step(0.4f, NdotL) * 0.3f + step(0.7f, NdotL) * 0.2f) * totalDirectionalLight;
+                totalDirectionalLight = (0.2f + step(0.4f, NdotL) * 0.3f + step(0.7f, NdotL) * 0.5f) * totalDirectionalLight;
                 
             }
             
@@ -184,7 +184,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
             if (gMaterial[instanceID].enableToonshading != 0)
             {
                 
-                totalPointLight = (0.5f + step(0.4f, NdotL) * 0.3f + step(0.7f, NdotL) * 0.2f) * totalPointLight;
+                totalPointLight = (0.2f + step(0.4f, NdotL) * 0.3f + step(0.7f, NdotL) * 0.5f) * totalPointLight;
                 
             }
             

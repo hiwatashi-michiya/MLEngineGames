@@ -306,6 +306,7 @@
     <ClInclude Include="Game\Scene\PlayScene.h" />
     <ClInclude Include="Game\Scene\SceneFactory.h" />
     <ClInclude Include="Network\NetworkManager.h" />
+    <ClInclude Include="Resources\icon\resource.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -315,6 +316,12 @@
     <ProjectReference Include="Engines\MLEngine.vcxproj">
       <Project>{2c8ee2ef-1570-4844-a2a0-de9b479d2dc7}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="MLEngineGames.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\icon\icon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
