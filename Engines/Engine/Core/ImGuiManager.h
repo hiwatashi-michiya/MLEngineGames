@@ -27,6 +27,8 @@ namespace MLEngine::Core {
 		void BeginFrame();
 		//描画コマンド積む
 		void Render();
+		//ディスプレイサイズ更新
+		void SetDisplay();
 
 	private:
 		//シングルトン化

@@ -82,6 +82,13 @@ void Engine::Initialize(const char* title, int width, int height) {
 	resourceManager_->Initialize();
 	sceneManager_ = Scene::Manager::GetInstance();
 
+#ifdef _DEBUG
+
+#else
+	windowManager_->SetFullScreenMode();
+#endif 
+
+
 }
 
 void Engine::Run(BaseScene* startScene, BaseSceneFactory* sceneFactory) {
@@ -98,7 +105,6 @@ void Engine::Run(BaseScene* startScene, BaseSceneFactory* sceneFactory) {
 
 #ifdef _DEBUG
 		GlobalVariables::GetInstance()->Update();
-
 #endif //DEBUG
 		//ゲームシーン更新
 		sceneManager_->Update();
