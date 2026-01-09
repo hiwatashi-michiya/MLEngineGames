@@ -12,6 +12,7 @@ public:
 	void Initialize(Enemy* enemy);
 	void Update();
 
+	void SetIsActive(bool flug) { hpBar_->isActive = flug; frame_->isActive = flug; }
 private:
 	GlobalVariables* global_ = nullptr;
 

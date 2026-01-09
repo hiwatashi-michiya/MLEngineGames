@@ -75,6 +75,7 @@ public:
 	void SetIsActive(const bool isActive) {
 		frontPlane_.isActive = isActive;
 		backPlane_.isActive = isActive;
+		enemyUI_->SetIsActive(isActive);
 	}
 
 
