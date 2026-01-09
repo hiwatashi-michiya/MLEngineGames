@@ -69,6 +69,9 @@ void Manager::CreateGameWindow(const wchar_t* windowName, int32_t clientWidth, i
 	clientWidth_ = clientWidth;
 	clientHeight_ = clientHeight;
 
+	//ウィンドウスタイル保存
+	windowStyle_ = WS_OVERLAPPEDWINDOW & ~(WS_MAXIMIZEBOX | WS_THICKFRAME);
+
 	//ウィンドウサイズを表す構造体にクライアント領域を入れる
 	RECT wrc = { 0,0, clientWidth_, clientHeight_ };
 

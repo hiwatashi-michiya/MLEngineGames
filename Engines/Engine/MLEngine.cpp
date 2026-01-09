@@ -83,7 +83,7 @@ void Engine::Initialize(const char* title, int width, int height) {
 	sceneManager_ = Scene::Manager::GetInstance();
 
 #ifdef _DEBUG
-
+	
 #else
 	windowManager_->SetFullScreenMode();
 #endif 
@@ -117,6 +117,19 @@ void Engine::Run(BaseScene* startScene, BaseSceneFactory* sceneFactory) {
 		if (Input::Manager::GetInstance()->GetKeyboard()->Trigger(DIK_ESCAPE) or ProcessMessage() != 0) {
 			sceneManager_->Finalize();
 			break;
+		}
+
+		//altキー押しながらEnterでフルスクリーン切り替え
+		if (Input::Manager::GetInstance()->GetKeyboard()->Push(DIK_LALT) and
+			Input::Manager::GetInstance()->GetKeyboard()->Trigger(DIK_RETURN)) {
+
+			if (windowManager_->IsFullScreen()) {
+				windowManager_->SetWindowMode();
+			}
+			else {
+				windowManager_->SetFullScreenMode();
+			}
+
 		}
 
 		//ゲームシーン描画
