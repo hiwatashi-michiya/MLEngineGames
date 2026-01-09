@@ -10,7 +10,7 @@ void Joycon::Init() {
 
 	device_ = hidManager_->Get(JOYCON_L_PRODUCT_ID);
 	if (device_ == nullptr) {
-		OutputDebugStringA("Joycon is not Conected");
+		OutputDebugStringA("Joycon is not Conected\n");
 		return;
 	}
 	std::byte arg;
