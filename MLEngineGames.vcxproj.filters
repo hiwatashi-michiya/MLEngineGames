@@ -21,6 +21,10 @@
     <ClCompile Include="Game\Joycon\Joycon.cpp" />
     <ClCompile Include="Game\hidapi\hidManager.cpp" />
     <ClCompile Include="Game\DeviceIO\UltrasonicSensor\UltrasonicSensor.cpp" />
+    <ClCompile Include="Game\DeviceIO\DistanceSensor\DistanceSensor.cpp" />
+    <ClCompile Include="Game\DeviceIO\DistanceSensor\packet_io.cpp" />
+    <ClCompile Include="C:\Users\k024g\Downloads\zonetof_260109\viewer\src\vendor_serial.cpp" />
+    <ClCompile Include="Game\DeviceIO\DistanceSensor\vendor_serial.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -76,57 +80,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Game\Scene\DebugScene.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Character\BaseCharacter.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Player\Player.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Config\GameConfig.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Manager\PlayerManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Manager\GameManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Scene\PlayScene.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Scene\SceneFactory.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Network\NetworkManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\LifeUI\LifeUI.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Enemy\Enemy.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Bullet\Bullet.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Bullet\BulletManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Enemy\EnemyState.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Enemy\EnemyUI.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Enemy\EnemyMotionState.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Resources\icon\resource.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Character\BaseCharacter.h" />
     <ClInclude Include="Game\Config\GameConfig.h" />
     <ClInclude Include="Game\Enemy\EnemyMotionState.h" />
@@ -146,20 +99,33 @@
     <ClInclude Include="Game\Joycon\Joycon.h" />
     <ClInclude Include="Game\hidapi\hidManager.h" />
     <ClInclude Include="Game\DeviceIO\UltrasonicSensor\UltrasonicSensor.h" />
-    <ClInclude Include="Game\DeviceIO\serial\include\serial\serial.h" />
+    <ClInclude Include="Game\Character\BaseCharacter.h" />
+    <ClInclude Include="Game\Config\GameConfig.h" />
+    <ClInclude Include="Game\Enemy\EnemyMotionState.h" />
+    <ClInclude Include="Game\Enemy\EnemyUI.h" />
+    <ClInclude Include="Game\LifeUI\LifeUI.h" />
+    <ClInclude Include="Game\Manager\GameManager.h" />
+    <ClInclude Include="Game\Manager\PlayerManager.h" />
+    <ClInclude Include="Game\Player\Player.h" />
+    <ClInclude Include="Game\Bullet\Bullet.h" />
+    <ClInclude Include="Game\Bullet\BulletManager.h" />
+    <ClInclude Include="Game\Enemy\Enemy.h" />
+    <ClInclude Include="Game\Enemy\EnemyState.h" />
+    <ClInclude Include="Game\Scene\DebugScene.h" />
+    <ClInclude Include="Game\Scene\PlayScene.h" />
+    <ClInclude Include="Game\Scene\SceneFactory.h" />
+    <ClInclude Include="Network\NetworkManager.h" />
+    <ClInclude Include="Resources\icon\resource.h" />
+    <ClInclude Include="Game\DeviceIO\DistanceSensor\packet_io.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
     <None Include="Resources\shaders\Material3d.hlsli" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="MLEngineGames.rc">
-      <Filter>リソース ファイル</Filter>
-    </ResourceCompile>
+    <ResourceCompile Include="MLEngineGames.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Resources\icon\icon.ico">
-      <Filter>リソース ファイル</Filter>
-    </Image>
+    <Image Include="Resources\icon\icon.ico" />
   </ItemGroup>
 </Project>

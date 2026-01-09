@@ -199,7 +199,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)Engines\Engine\Math;$(ProjectDir)Engines\Engine;$(ProjectDir)Engines\Engine\Scene;$(ProjectDir)Engines\Engine\Resource;$(ProjectDir)Engines;$(ProjectDir)Engines\Engine\Core;$(ProjectDir)Engines\Engine\Core\Render;$(ProjectDir)Engines\Externals\assimp\include;$(ProjectDir)Engines\Engine\Input;$(ProjectDir)Game;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories>$(ProjectDir)Engines\Engine\Math;$(ProjectDir)Engines\Engine;$(ProjectDir)Engines\Engine\Scene;$(ProjectDir)Engines\Engine\Resource;$(ProjectDir)Engines;$(ProjectDir)Engines\Engine\Core;$(ProjectDir)Engines\Engine\Core\Render;$(ProjectDir)Engines\Externals\assimp\include;$(ProjectDir)Engines\Engine\Input;$(ProjectDir)Engines\Externals\imgui;$(ProjectDir)Engines\Engine\Resource\Audio;$(ProjectDir)Engines\Engine\Resource\Sprite;$(ProjectDir)Engines\Engine\Resource\Particle;$(ProjectDir)Engines\Engine\Resource\Model;$(ProjectDir)Engines\Engine\Object\Collision;$(ProjectDir)Engines\Engine\Object;$(ProjectDir)Game;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Engines\Engine\Math;$(ProjectDir)Engines\Engine;$(ProjectDir)Engines\Engine\Scene;$(ProjectDir)Engines\Engine\Resource;$(ProjectDir)Engines;$(ProjectDir)Engines\Engine\Core;$(ProjectDir)Engines\Engine\Core\Render;$(ProjectDir)Engines\Externals\assimp\include;$(ProjectDir)Engines\Engine\Input;$(ProjectDir)Engines\Externals\imgui;$(ProjectDir)Engines\Engine\Resource\Audio;$(ProjectDir)Engines\Engine\Resource\Sprite;$(ProjectDir)Engines\Engine\Resource\Particle;$(ProjectDir)Engines\Engine\Resource\Model;$(ProjectDir)Engines\Engine\Object\Collision;$(ProjectDir)Engines\Engine\Object;$(ProjectDir)Game;$(ProjectDir)Game\DeviceIO\DistanceSensor;$(ProjectDir)vendor\serial\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -221,7 +221,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;CLIENT_BUILD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)Engines\Engine\Math;$(ProjectDir)Engines\Engine;$(ProjectDir)Engines\Engine\Scene;$(ProjectDir)Engines\Engine\Resource;$(ProjectDir)Engines;$(ProjectDir)Engines\Engine\Core;$(ProjectDir)Engines\Engine\Core\Render;$(ProjectDir)Engines\Externals\assimp\include;$(ProjectDir)Engines\Engine\Input;$(ProjectDir)Game;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories>$(ProjectDir)Engines\Engine\Math;$(ProjectDir)Engines\Engine;$(ProjectDir)Engines\Engine\Scene;$(ProjectDir)Engines\Engine\Resource;$(ProjectDir)Engines;$(ProjectDir)Engines\Engine\Core;$(ProjectDir)Engines\Engine\Core\Render;$(ProjectDir)Engines\Externals\assimp\include;$(ProjectDir)Engines\Engine\Input;$(ProjectDir)Engines\Externals\imgui;$(ProjectDir)Engines\Engine\Resource\Audio;$(ProjectDir)Engines\Engine\Resource\Sprite;$(ProjectDir)Engines\Engine\Resource\Particle;$(ProjectDir)Engines\Engine\Resource\Model;$(ProjectDir)Engines\Engine\Object\Collision;$(ProjectDir)Engines\Engine\Object;$(ProjectDir)Game;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Engines\Engine\Math;$(ProjectDir)Engines\Engine;$(ProjectDir)Engines\Engine\Scene;$(ProjectDir)Engines\Engine\Resource;$(ProjectDir)Engines;$(ProjectDir)Engines\Engine\Core;$(ProjectDir)Engines\Engine\Core\Render;$(ProjectDir)Engines\Externals\assimp\include;$(ProjectDir)Engines\Engine\Input;$(ProjectDir)Engines\Externals\imgui;$(ProjectDir)Engines\Engine\Resource\Audio;$(ProjectDir)Engines\Engine\Resource\Sprite;$(ProjectDir)Engines\Engine\Resource\Particle;$(ProjectDir)Engines\Engine\Resource\Model;$(ProjectDir)Engines\Engine\Object\Collision;$(ProjectDir)Engines\Engine\Object;$(ProjectDir)Game;$(ProjectDir)Game\DeviceIO\DistanceSensor;$(ProjectDir)vendor\serial\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -244,7 +244,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)Engines\Engine\Math;$(ProjectDir)Engines\Engine;$(ProjectDir)Engines\Engine\Scene;$(ProjectDir)Engines\Engine\Resource;$(ProjectDir)Engines;$(ProjectDir)Engines\Engine\Core;$(ProjectDir)Engines\Engine\Core\Render;$(ProjectDir)Engines\Externals\assimp\include;$(ProjectDir)Engines\Engine\Input;$(ProjectDir)Engines\Externals\imgui;$(ProjectDir)Engines\Engine\Resource\Audio;$(ProjectDir)Engines\Engine\Resource\Sprite;$(ProjectDir)Engines\Engine\Resource\Particle;$(ProjectDir)Engines\Engine\Resource\Model;$(ProjectDir)Engines\Engine\Object\Collision;$(ProjectDir)Engines\Engine\Object;$(ProjectDir)Game;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Engines\Engine\Math;$(ProjectDir)Engines\Engine;$(ProjectDir)Engines\Engine\Scene;$(ProjectDir)Engines\Engine\Resource;$(ProjectDir)Engines;$(ProjectDir)Engines\Engine\Core;$(ProjectDir)Engines\Engine\Core\Render;$(ProjectDir)Engines\Externals\assimp\include;$(ProjectDir)Engines\Engine\Input;$(ProjectDir)Engines\Externals\imgui;$(ProjectDir)Engines\Engine\Resource\Audio;$(ProjectDir)Engines\Engine\Resource\Sprite;$(ProjectDir)Engines\Engine\Resource\Particle;$(ProjectDir)Engines\Engine\Resource\Model;$(ProjectDir)Engines\Engine\Object\Collision;$(ProjectDir)Engines\Engine\Object;$(ProjectDir)Game;$(ProjectDir)Game\DeviceIO\DistanceSensor;$(ProjectDir)vendor\serial\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -267,7 +267,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;CLIENT_BUILD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)Engines\Engine\Math;$(ProjectDir)Engines\Engine;$(ProjectDir)Engines\Engine\Scene;$(ProjectDir)Engines\Engine\Resource;$(ProjectDir)Engines;$(ProjectDir)Engines\Engine\Core;$(ProjectDir)Engines\Engine\Core\Render;$(ProjectDir)Engines\Externals\assimp\include;$(ProjectDir)Engines\Engine\Input;$(ProjectDir)Engines\Externals\imgui;$(ProjectDir)Engines\Engine\Resource\Audio;$(ProjectDir)Engines\Engine\Resource\Sprite;$(ProjectDir)Engines\Engine\Resource\Particle;$(ProjectDir)Engines\Engine\Resource\Model;$(ProjectDir)Engines\Engine\Object\Collision;$(ProjectDir)Engines\Engine\Object;$(ProjectDir)Game;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Engines\Engine\Math;$(ProjectDir)Engines\Engine;$(ProjectDir)Engines\Engine\Scene;$(ProjectDir)Engines\Engine\Resource;$(ProjectDir)Engines;$(ProjectDir)Engines\Engine\Core;$(ProjectDir)Engines\Engine\Core\Render;$(ProjectDir)Engines\Externals\assimp\include;$(ProjectDir)Engines\Engine\Input;$(ProjectDir)Engines\Externals\imgui;$(ProjectDir)Engines\Engine\Resource\Audio;$(ProjectDir)Engines\Engine\Resource\Sprite;$(ProjectDir)Engines\Engine\Resource\Particle;$(ProjectDir)Engines\Engine\Resource\Model;$(ProjectDir)Engines\Engine\Object\Collision;$(ProjectDir)Engines\Engine\Object;$(ProjectDir)Game;$(ProjectDir)Game\DeviceIO\DistanceSensor;$(ProjectDir)vendor\serial\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -283,6 +283,10 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="C:\Users\k024g\Downloads\zonetof_260109\viewer\src\vendor_serial.cpp" />
+    <ClCompile Include="Game\DeviceIO\DistanceSensor\DistanceSensor.cpp" />
+    <ClCompile Include="Game\DeviceIO\DistanceSensor\packet_io.cpp" />
+    <ClCompile Include="Game\DeviceIO\DistanceSensor\vendor_serial.cpp" />
     <ClCompile Include="Game\DeviceIO\UltrasonicSensor\UltrasonicSensor.cpp" />
     <ClCompile Include="Game\Character\BaseCharacter.cpp" />
     <ClCompile Include="Game\Config\GameConfig.cpp" />
@@ -305,7 +309,7 @@
     <ClCompile Include="Network\NetworkManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Game\DeviceIO\serial\include\serial\serial.h" />
+    <ClInclude Include="Game\DeviceIO\DistanceSensor\packet_io.h" />
     <ClInclude Include="Game\DeviceIO\UltrasonicSensor\UltrasonicSensor.h" />
     <ClInclude Include="Game\Character\BaseCharacter.h" />
     <ClInclude Include="Game\Config\GameConfig.h" />
