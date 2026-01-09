@@ -169,7 +169,7 @@ void BulletManager::SpawnBullet(int laneNumber, float time)
 void BulletManager::SpawnReflectBullet(int laneNumber, float time)
 {
 	std::unique_ptr<Bullet> newBullet = std::make_unique<Bullet>();
-	newBullet->Initialize("./Resources/Texture/enemy_bullet.png");
+	newBullet->Initialize("./Resources/Texture/enemy_backBullet.png");
 	newBullet->SetPosition(
 		{ endTranslate_.x + endDistance_ * (laneNumber - 1), endTranslate_.y, endTranslate_.z },
 		{ startTranslate_.x + startDistance_ * (laneNumber - 1), startTranslate_.y, startTranslate_.z }
