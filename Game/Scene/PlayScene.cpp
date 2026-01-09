@@ -127,18 +127,23 @@ inline void PlayScene::Initialize(){
 	skydomeTransform_.UpdateMatrix();
 	skydome_.SetWorldMatrix(skydomeTransform_.worldMatrix);
 
-	stoneLeft_.Initialize("./Resources/model/stageStone/stage_stone.obj");
-	stoneLeft_.materialData.enableLighting = true;
-	stoneRight_.Initialize("./Resources/model/stageStone/stage_stone.obj");
-	stoneRight_.materialData.enableLighting = true;
-	stoneLeftTF_.translate = { -8.0f,-4.0f,0.0f };
-	stoneLeftTF_.scale = { 1.0f,2.0f,20.0f };
-	stoneLeftTF_.rotate = { -0.09f,0.0f,0.0f };
-	stoneLeftTF_.rotateQuaternion = ConvertFromEuler(stoneLeftTF_.rotate);
-	stoneRightTF_.translate = { 8.0f,-4.0f,0.0f };
-	stoneRightTF_.scale = { 1.0f,2.0f,20.0f };
-	stoneRightTF_.rotate = { -0.09f,0.0f,0.0f };
-	stoneRightTF_.rotateQuaternion = ConvertFromEuler(stoneRightTF_.rotate);
+	for (int32_t i = 0; i < kMaxStone_; i++) {
+
+		stoneLeft_[i].Initialize("./Resources/model/stageStone/stage_stone.obj");
+		stoneLeft_[i].materialData.enableLighting = true;
+		stoneRight_[i].Initialize("./Resources/model/stageStone/stage_stone.obj");
+		stoneRight_[i].materialData.enableLighting = true;
+
+		stoneLeftTF_[i].translate = { -8.0f,-4.0f + 6.5f * i,0.0f + 70.0f * i };
+		stoneLeftTF_[i].scale = { 1.0f,3.0f,3.0f };
+		stoneLeftTF_[i].rotate = { -0.09f,0.0f,0.0f };
+		stoneLeftTF_[i].rotateQuaternion = ConvertFromEuler(stoneLeftTF_[i].rotate);
+		stoneRightTF_[i].translate = { 8.0f,-4.0f + 6.5f * i,0.0f + 70.0f * i };
+		stoneRightTF_[i].scale = { 1.0f,3.0f,3.0f };
+		stoneRightTF_[i].rotate = { -0.09f,0.0f,0.0f };
+		stoneRightTF_[i].rotateQuaternion = ConvertFromEuler(stoneRightTF_[i].rotate);
+
+	}
 
 }
 
@@ -258,10 +263,14 @@ void PlayScene::Update(){
 	skydomeTransform_.UpdateMatrix();
 	skydome_.SetWorldMatrix(skydomeTransform_.worldMatrix);
 
-	stoneLeftTF_.UpdateMatrix();
-	stoneRightTF_.UpdateMatrix();
-	stoneLeft_.SetWorldMatrix(stoneLeftTF_.worldMatrix);
-	stoneRight_.SetWorldMatrix(stoneRightTF_.worldMatrix);
+	for (int32_t i = 0; i < kMaxStone_; i++) {
+
+		stoneLeftTF_[i].UpdateMatrix();
+		stoneRightTF_[i].UpdateMatrix();
+		stoneLeft_[i].SetWorldMatrix(stoneLeftTF_[i].worldMatrix);
+		stoneRight_[i].SetWorldMatrix(stoneRightTF_[i].worldMatrix);
+
+	}
 
 	titleSprite_->position = titlePos_;
 	titleSprite_->size = titleScale_;
@@ -340,14 +349,22 @@ void PlayScene::DrawImgui() {
 
 	ImGui::Begin("縁石");
 
-	if (ImGui::TreeNode("左")) {
-		stoneLeftTF_.Debug();
-		ImGui::TreePop();
-	}
+	for (int32_t i = 0; i < kMaxStone_; i++) {
 
-	if (ImGui::TreeNode("右")) {
-		stoneRightTF_.Debug();
-		ImGui::TreePop();
+		std::string leftStr = "左" + std::to_string(i);
+		std::string rightStr = "右" + std::to_string(i);
+
+		if (ImGui::TreeNode(leftStr.c_str())) {
+
+			stoneLeftTF_[i].Debug();
+			ImGui::TreePop();
+		}
+
+		if (ImGui::TreeNode(rightStr.c_str())) {
+			stoneRightTF_[i].Debug();
+			ImGui::TreePop();
+		}
+
 	}
 
 	ImGui::End();

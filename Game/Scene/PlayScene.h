@@ -114,11 +114,13 @@ private:
 	MLEngine::Resource::RigidModel skydome_;
 	MLEngine::Object::Transform skydomeTransform_;
 
+	static const int32_t kMaxStone_ = 3;
+
 	//縁石
-	MLEngine::Resource::RigidModel stoneLeft_;
-	MLEngine::Resource::RigidModel stoneRight_;
-	MLEngine::Object::Transform stoneLeftTF_;
-	MLEngine::Object::Transform stoneRightTF_;
+	std::array<MLEngine::Resource::RigidModel, kMaxStone_> stoneLeft_;
+	std::array<MLEngine::Resource::RigidModel, kMaxStone_> stoneRight_;
+	std::array<MLEngine::Object::Transform, kMaxStone_> stoneLeftTF_;
+	std::array<MLEngine::Object::Transform, kMaxStone_> stoneRightTF_;
 
 	std::string groundTexture_;
 	std::string laneTexture_;
