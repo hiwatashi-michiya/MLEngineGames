@@ -7,19 +7,21 @@
 #include "RigidModel.h"
 #include "Sprite3D.h"
 
-class Bullet : public MLEngine::Object::GameObject
+class Bullet
 {
 public:
 	Bullet() {};
 	~Bullet() {};
-	void Initialize() override;
-	void Update() override;
-	void Draw(MLEngine::Object::Camera* camera) override;
+	void Initialize(std::string texturehandle) ;
+	void Update();
 	// 死亡判定
 	bool IsDead() const { return !isActive_; }
-
+	// 反射判定取得
+	bool IsReflect() const { return isReflect_; }
 	// 現在のライン取得
 	int GetNowLine() const { return nowLine_; }
+
+	
 
 	// 位置セット
 	void SetPosition(const MLEngine::Math::Vector3& startPosition, const MLEngine::Math::Vector3& targetPosition) {
@@ -48,6 +50,9 @@ public:
 	// 現在のラインセット
 	void SetNowLine(int line) { nowLine_ = line; }
 
+	// 反射判定セット
+	void SetIsReflect(bool isReflect) { isReflect_ = isReflect; }
+
 private:
 	// モデル
 	MLEngine::Resource::RigidModel model_;
@@ -67,6 +72,9 @@ private:
 
 	//アクティブ状態かどうか
 	bool isActive_ = true;
+
+	// 反射しているかどうか
+	bool isReflect_ = false;
 
 	//現在いるラインの番号
 	int nowLine_;

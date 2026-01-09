@@ -9,6 +9,7 @@
 #include "Enemy/EnemyUI.h"
 #include "Enemy/EnemyMotionState.h"
 #include "Sprite3D.h"
+#include "Enemy/EnemyHand.h"
 
 
 class Enemy
@@ -31,6 +32,7 @@ public:
 	~Enemy() {};
 	void Initialize();
 	void Update();
+	void DebugUI();
 
 	// 状態変更
 	void ChangeState(std::unique_ptr<EnemyState> newState);
@@ -43,11 +45,14 @@ public:
 
 	void ChangeTexture(Mode mode);
 
+	void ParantTransform();
 
 
 	// ゲット関数
 	MLEngine::Object::Camera* GetCamera() { return camera_; }
 	BulletManager* GetBulletManager() { return bulletManager_; }
+	EnemyHand* GetLeftHand() { return leftHand_.get(); }
+	EnemyHand* GetRightHand() { return rightHand_.get(); }
 	MLEngine::Resource::Sprite3D* GetFrontSprite() { return &frontPlane_; }
 	MLEngine::Math::Vector3 GetRotate() { return rotate_; }
 	int GetHp() const { return hp_; }
@@ -95,7 +100,7 @@ private:
 	// 原点モデル
 	MLEngine::Resource::RigidModel model_;
 
-	// 敵
+	// 敵3Dスプライト
 	MLEngine::Resource::Sprite3D frontPlane_;
 	MLEngine::Resource::Sprite3D backPlane_;
 
@@ -104,7 +109,11 @@ private:
 	std::string attackTexture_;
 	std::string backTextrue_;
 
+	// 3Dスプライトのトランスフォーム
 	std::unique_ptr<MLEngine::Object::Transform> transform_;
+
+	// 3Dスプライトの親トランスフォーム
+	std::unique_ptr<MLEngine::Object::Transform> offsetTransform_;
 	MLEngine::Math::Vector3 rotate_ = { 0.0f, 0.0f, 0.0f };
 
 	// スケール・平行移動
@@ -113,6 +122,10 @@ private:
 
 	// 弾マネージャー
 	BulletManager* bulletManager_;
+
+
+	std::unique_ptr<EnemyHand> leftHand_;
+	std::unique_ptr<EnemyHand> rightHand_;
 
 	// 体力
 	int maxHp_ = 500;

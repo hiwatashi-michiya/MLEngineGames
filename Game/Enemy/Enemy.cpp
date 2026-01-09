@@ -18,14 +18,14 @@ void Enemy::Initialize()
 	hp_ = global_->GetIntValue("EnemyState", "MaxHp");
 	maxDownCount_ = global_->GetIntValue("EnemyState", "MaxDownCount");
 
-	global_->AddItem("EnemyState", "NormalAnimation", 0.0f);
-	global_->AddItem("EnemyState", "AngryAnimation", 0.0f);
-	global_->AddItem("EnemyState", "NormalAttackAnimation", 0.0f);
-	global_->AddItem("EnemyState", "AngryAttackAnimation", 0.0f);
+	offsetTransform_ = std::make_unique<MLEngine::Object::Transform>();
+	offsetTransform_->scale = scale_;
+	offsetTransform_->translate = translate_;
 
 	transform_ = std::make_unique<MLEngine::Object::Transform>();
-	transform_->scale = scale_;
-	transform_->translate = translate_;
+	transform_->SetParent(offsetTransform_.get());
+	transform_->translate = { 0.0f, 0.0f, 0.0f };
+
 
 #ifdef CLIENT_BUILD
 	angryTexture_ = "./Resources/Texture/enemy2_angry.png";
@@ -39,16 +39,18 @@ void Enemy::Initialize()
 	normalTexture_ = "./Resources/Texture/enemy1_normal.png";
 #endif
 
+	// 前面スプライト初期化
 	frontPlane_.Initialize(normalTexture_, 5);
 	frontPlane_.transform.translate = { 0.0f, 1.0f, -0.001f };
-	frontPlane_.transform.SetParent(transform_.get());
+	frontPlane_.transform.SetParent(offsetTransform_.get());
 	frontPlane_.StartAnimation();
 
+	// 背面スプライト初期化
 	backTextrue_ = "./Resources/Texture/enemy1_back.png";
 	backPlane_.Initialize(backTextrue_, 1);
 	backPlane_.transform.rotateQuaternion = MLEngine::Math::ConvertFromEuler({ 0.0f, 180.0f * (float)(M_PI / 180.0f), 0.0f});
 	backPlane_.transform.translate = {0.0f, 1.0f, 0.001f};
-	backPlane_.transform.SetParent(transform_.get());
+	backPlane_.transform.SetParent(offsetTransform_.get());
 
 
 
@@ -56,6 +58,11 @@ void Enemy::Initialize()
 	model_.Initialize("./Resources/model/plane/plane.obj");
 	model_.worldMatrix = MLEngine::Math::MakeAffineMatrix({0.1f, 0.1f, 1.0f}, {0.0f, 0.0f, 0.0f, 1.0f}, translate_);
 #endif
+
+	leftHand_ = std::make_unique<EnemyHand>();
+	leftHand_->Initialize(transform_.get(), true);
+	rightHand_ = std::make_unique<EnemyHand>();
+	rightHand_->Initialize(transform_.get(), false);
 
 	ChangeState(std::make_unique<EnemyNormalState>());
 	// 
@@ -68,17 +75,29 @@ void Enemy::Initialize()
 	enemyUI_ = std::make_unique<EnemyUI>();
 	enemyUI_->Initialize(this);
 
+	
+
+
 }
 
 void Enemy::Update()
 {
+	DebugUI();
 
+	leftHand_->DebugUI("左手", "Left");
+	rightHand_->DebugUI("右手", "Right");
+
+	if (hp_ <= 0) {
+		return;
+	}
+
+	// 状態遷移判定
 	if (!dynamic_cast<EnemyBerserkState*>(currentState_.get())) {
 		if(hp_ <= maxHp_ * 0.3f) {
 			ChangeState(std::make_unique<EnemyBerserkState>());
 		}
 	}
-
+	// ダウン状態へ移行判定
 	if (!dynamic_cast<EnemyDownState*>(currentState_.get())) {
 		if(downCount_ >= maxDownCount_) {
 			ChangeState(std::make_unique<EnemyDownState>());
@@ -94,6 +113,26 @@ void Enemy::Update()
 	// UI更新
 	enemyUI_->Update();
 
+	leftHand_->Update();
+	rightHand_->Update();
+
+
+
+	// モーション更新
+	motionState_->Update(this);
+
+	// トランスフォーム更新
+	offsetTransform_->rotateQuaternion = MLEngine::Math::ConvertFromEuler(rotate_);
+	offsetTransform_->UpdateMatrix();
+
+	transform_->UpdateMatrix();
+
+	// アニメーション更新
+	frontPlane_.UpdateAnimation();
+}
+
+void Enemy::DebugUI()
+{
 #ifdef _DEBUG
 
 	ImGui::Begin("敵パラメーター");
@@ -116,7 +155,7 @@ void Enemy::Update()
 		ImGui::DragFloat("発射間隔", &dynamic_cast<EnemyNormalState*>(currentState_.get())->fireInterval, 0.1f);
 		ImGui::DragFloat("通常アニメーション時間", &dynamic_cast<EnemyNormalState*>(currentState_.get())->normalAnimationTime_, 0.1f);
 		ImGui::DragFloat("攻撃アニメーション時間", &dynamic_cast<EnemyNormalState*>(currentState_.get())->attackAnimationTime_, 0.1f);
-		ImGui::Text("経過時間 : %f" ,dynamic_cast<EnemyNormalState*>(currentState_.get())->intervalTime_);
+		ImGui::Text("経過時間 : %f", dynamic_cast<EnemyNormalState*>(currentState_.get())->intervalTime_);
 		global_->datas_["EnemyState"].items["NormalBulletSpeed"].value = dynamic_cast<EnemyNormalState*>(currentState_.get())->bulletSpeed_;
 		global_->datas_["EnemyState"].items["NormalFireInterval"].value = dynamic_cast<EnemyNormalState*>(currentState_.get())->fireInterval;
 		global_->datas_["EnemyState"].items["NormalAnimation"].value = dynamic_cast<EnemyNormalState*>(currentState_.get())->normalAnimationTime_;
@@ -152,9 +191,9 @@ void Enemy::Update()
 	ImGui::DragFloat3("平行移動", &translate_.x, 0.1f);
 	global_->datas_["EnemyState"].items["Translate"].value = translate_;
 
-	model_.worldMatrix = MLEngine::Math::MakeAffineMatrix(scale_, {0.0f, 0.0f, 0.0f}, translate_);
-	transform_->scale = scale_;
-	transform_->translate = translate_;
+	model_.worldMatrix = MLEngine::Math::MakeAffineMatrix(scale_, { 0.0f, 0.0f, 0.0f }, translate_);
+	offsetTransform_->scale = scale_;
+	offsetTransform_->translate = translate_;
 
 	// 体力
 	ImGui::SliderInt("体力", &hp_, 0, maxHp_);
@@ -163,7 +202,7 @@ void Enemy::Update()
 	if (maxHp_ < hp_) {
 		hp_ = maxHp_;
 	}
-	
+
 	ImGui::SliderInt("ダウン回数上限", &maxDownCount_, 1, 100);
 	global_->datas_["EnemyState"].items["MaxDownCount"].value = maxDownCount_;
 
@@ -176,7 +215,7 @@ void Enemy::Update()
 	ImGui::End();
 
 	ImGui::Begin("敵アニメーション");
-	
+
 	ImGui::Text("ダメージモーション");
 	std::unique_ptr<EnemyOnHitState> onHitState = std::make_unique<EnemyOnHitState>();
 	onHitState->Enter(this);
@@ -222,19 +261,9 @@ void Enemy::Update()
 	ImGui::End();
 
 
-	model_.worldMatrix = MLEngine::Math::MakeAffineMatrix({ 0.1f, 0.1f, 1.0f }, {0.0f, 0.0f, 0.0f, 1.0f}, translate_);
+	model_.worldMatrix = MLEngine::Math::MakeAffineMatrix({ 0.1f, 0.1f, 1.0f }, { 0.0f, 0.0f, 0.0f, 1.0f }, translate_);
 
 #endif // _DEBUG
-
-	// モーション更新
-	motionState_->Update(this);
-
-	// トランスフォーム更新
-	transform_->rotateQuaternion = MLEngine::Math::ConvertFromEuler(rotate_);
-	transform_->UpdateMatrix();
-
-	// アニメーション更新
-	frontPlane_.UpdateAnimation();
 }
 
 void Enemy::ChangeState(std::unique_ptr<EnemyState> newState)
@@ -281,4 +310,10 @@ void Enemy::ChangeTexture(Mode mode)
 	else if (mode == Mode::kAttack) {
 		frontPlane_.SetTexture(attackTexture_);
 	}
+}
+
+void Enemy::ParantTransform()
+{
+	leftHand_->SetParentTransform(transform_.get());
+	rightHand_->SetParentTransform(transform_.get());
 }
