@@ -40,7 +40,7 @@ void Sprite3D::Initialize(const std::string& textureName, uint32_t divide) {
 	materialData.color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	materialData.enableLighting = false;
 	materialData.enableNormalMap = true;
-	materialData.enableToonshading = true;
+	materialData.enableToonshading = false;
 	materialData.shininess = 50.0f;
 	materialData.uvTransform = MakeIdentity4x4();
 
@@ -100,7 +100,7 @@ void Sprite3D::Regist()
 	//元のスケールの値に戻す
 	transform.scale = tmpScale;
 
-	materialData.uvTransform = MakeScaleMatrix(Vector3(uvScale_.x, uvScale_.y, 1.0f)) *
+	materialData.uvTransform = MakeScaleMatrix(Vector3(uvScale_.x * uvLoopScale_.x, uvScale_.y * uvLoopScale_.y, 1.0f)) *
 		MakeTranslateMatrix(Vector3(uvTranslate_.x, uvTranslate_.y, 0.0f));
 
 	if (instancingModel_) {
@@ -128,6 +128,7 @@ void Sprite3D::Debug() {
 	transform.Debug();
 	ImGui::DragFloat("animation time", &animationTime_, 0.05f);
 	ImGui::Checkbox("start animation", &isStartAnimation_);
+	ImGui::DragFloat2("UV LoopScale", &uvLoopScale_.x, 0.05f);
 
 #endif // _DEBUG
 

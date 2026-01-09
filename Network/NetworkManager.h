@@ -75,6 +75,8 @@ public:
     bool GetLatestPlayerState(SendPlayerState& out) const;
 
     void GetSceneState(GameManager::GameState& out)const;
+
+    void GetEnemyDeadFlug(bool& out)const;
 private:
     NetworkManager() = default;
     ~NetworkManager() = default;
@@ -109,5 +111,7 @@ private:
     SendPlayerState playerState_{};
     
     GameManager::GameState gameState_{};
+
+    bool isEnemyDead_ = false;
 };
 

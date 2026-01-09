@@ -173,6 +173,10 @@ void NetworkManager::RecvLoop() {
             gameState_ = g;
         } break;
 
+        case 3: { // EnemyAliveFlug
+            Receive(isEnemyDead_);
+        } break;
+
         default:
             // 未知パケット → 破棄
             break;
@@ -204,10 +208,11 @@ void NetworkManager::GetSceneState(GameManager::GameState& out) const{
     out = gameState_;
 }
 
+void NetworkManager::GetEnemyDeadFlug(bool& out) const{
+    out = isEnemyDead_;
+}
+
 // 明示的なテンプレートインスタンス化
 template void NetworkManager::Send(const struct SendPlayerState& data);
 template bool NetworkManager::Receive(struct SendPlayerState& outData);
 
-//// 明示的なテンプレートインスタンス化
-//template void NetworkManager::Send(const struct uint8_t& data);
-//template bool NetworkManager::Receive(struct uint8_t& outData);

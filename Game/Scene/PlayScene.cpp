@@ -83,6 +83,7 @@ inline void PlayScene::Initialize(){
 	lanePlane_.Initialize(laneTexture_, 1);
 	lanePlane_.transform.translate = { 0.0f, 0.0f, -0.01f };
 	lanePlane_.transform.scale = { 1.0f, 10.0f, 1.0f };
+	lanePlane_.uvLoopScale_.y = 10.0f;
 	lanePlane_.transform.SetParent(planeTransform_.get());
 
 	//必須となる情報の読み込み
@@ -113,9 +114,9 @@ inline void PlayScene::Initialize(){
 	resultPos_ = { 640.0f,120.0f };
 	resultScale_ = { 512.0f,128.0f };
 
-
+	translate_.y = -4.0f;
 	rotate_.x = 1.48f;
-	scale_ = { 3.0f,30.0f,1.0f };
+	scale_ = { 10.0f,30.0f,1.0f };
 
 }
 
@@ -136,12 +137,19 @@ void PlayScene::Update(){
 	GameManager::GameState gameState{};
 
 	NetworkManager::GetInstance().GetSceneState(gameState);
-
+	//タイトルに戻ったときに初期化できるように
+	if (gameManager_->GetState() == GameManager::GameState::Result and gameState == GameManager::GameState::Title){
+		MLEngine::Scene::Manager::GetInstance()->ChangeScene("Play");
+	}
+	
 	gameManager_->SetState(static_cast<GameManager::GameState>(gameState));
 
 	titleSprite_->isActive = false;
 	tutorialSprite_->isActive = false;
 	resultSprite_->isActive = false;
+
+
+
 #else
 	// Server 処理
 	gameManager_->Update(playerManager_->GetPlayer()->GetIsJustTurned(), playerManager_->GetPlayer()->GetIsJustMoved());
@@ -183,6 +191,8 @@ void PlayScene::Update(){
 	else {
 		resultSprite_->isActive = false;
 	}
+
+	NetworkManager::GetInstance().GetEnemyDeadFlug(isClientEnemyDead_);
 #endif	
 	
 	if (gameManager_->GetState() == GameManager::GameState::Title or gameManager_->GetState() == GameManager::GameState::Result){
@@ -212,7 +222,7 @@ void PlayScene::Update(){
 	if (playerManager_->GetPlayer()->GetIsDead()){
 		gameManager_->SetGameEnd(true);
 	}
-	else if (enemy_->GetIsDead()){
+	else if (enemy_->GetIsDead() and isClientEnemyDead_){
 		gameManager_->SetGameEnd(true);
 		gameManager_->SetIsClear(true);
 	}
@@ -239,6 +249,13 @@ void PlayScene::Update(){
 
 #ifdef CLIENT_BUILD
 	// Client専用処理
+	EnemyFlugPacket enemyPacket{};
+	enemyPacket.header.type = 3;
+	enemyPacket.header.size = sizeof(EnemyFlugPacket);
+	enemyPacket.isEnemyDead = enemy_->GetIsDead();
+
+	NetworkManager::GetInstance().Send(enemyPacket);
+
 #else
 	// Server Debug処理
 	//managerを介してクライアントに送る
