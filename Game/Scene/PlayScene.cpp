@@ -42,6 +42,10 @@ void PlayScene::GlobalGetValue(){
 
 inline void PlayScene::Initialize(){
 	
+	dLight_.cbData->normalDirection = { 0.0f,-1.0f,0.0f };
+	dLight_.cbData->normalDirection = Normalize(dLight_.cbData->normalDirection);
+	dLight_.cbData->intensity = 1.0f;
+
 	GlobalSetValue();
 
 	gameManager_->Initialize();
@@ -122,6 +126,19 @@ inline void PlayScene::Initialize(){
 	skydomeTransform_.scale = { 1000.0f,1000.0f,1000.0f };
 	skydomeTransform_.UpdateMatrix();
 	skydome_.SetWorldMatrix(skydomeTransform_.worldMatrix);
+
+	stoneLeft_.Initialize("./Resources/model/stageStone/stage_stone.obj");
+	stoneLeft_.materialData.enableLighting = true;
+	stoneRight_.Initialize("./Resources/model/stageStone/stage_stone.obj");
+	stoneRight_.materialData.enableLighting = true;
+	stoneLeftTF_.translate = { -8.0f,-4.0f,0.0f };
+	stoneLeftTF_.scale = { 1.0f,2.0f,20.0f };
+	stoneLeftTF_.rotate = { -0.09f,0.0f,0.0f };
+	stoneLeftTF_.rotateQuaternion = ConvertFromEuler(stoneLeftTF_.rotate);
+	stoneRightTF_.translate = { 8.0f,-4.0f,0.0f };
+	stoneRightTF_.scale = { 1.0f,2.0f,20.0f };
+	stoneRightTF_.rotate = { -0.09f,0.0f,0.0f };
+	stoneRightTF_.rotateQuaternion = ConvertFromEuler(stoneRightTF_.rotate);
 
 }
 
@@ -241,6 +258,11 @@ void PlayScene::Update(){
 	skydomeTransform_.UpdateMatrix();
 	skydome_.SetWorldMatrix(skydomeTransform_.worldMatrix);
 
+	stoneLeftTF_.UpdateMatrix();
+	stoneRightTF_.UpdateMatrix();
+	stoneLeft_.SetWorldMatrix(stoneLeftTF_.worldMatrix);
+	stoneRight_.SetWorldMatrix(stoneRightTF_.worldMatrix);
+
 	titleSprite_->position = titlePos_;
 	titleSprite_->size = titleScale_;
 
@@ -277,7 +299,7 @@ void PlayScene::Update(){
 
 	
 #ifdef _DEBUG
-	if (input_->GetKeyboard()->Trigger(DIK_0)){
+	if (input_->GetKeyboard()->Push(DIK_LCONTROL) and input_->GetKeyboard()->Trigger(DIK_0)){
 		sceneManager_->ChangeScene("Play");
 	}
 
@@ -316,7 +338,23 @@ void PlayScene::DrawImgui() {
 
 	ImGui::End();
 
-	
+	ImGui::Begin("縁石");
+
+	if (ImGui::TreeNode("左")) {
+		stoneLeftTF_.Debug();
+		ImGui::TreePop();
+	}
+
+	if (ImGui::TreeNode("右")) {
+		stoneRightTF_.Debug();
+		ImGui::TreePop();
+	}
+
+	ImGui::End();
+
+	ImGui::Begin("平行光源");
+	dLight_.Debug();
+	ImGui::End();
 
 	ImGui::Begin("シーン");
 

@@ -112,8 +112,13 @@ private:
 
 	//天球
 	MLEngine::Resource::RigidModel skydome_;
-
 	MLEngine::Object::Transform skydomeTransform_;
+
+	//縁石
+	MLEngine::Resource::RigidModel stoneLeft_;
+	MLEngine::Resource::RigidModel stoneRight_;
+	MLEngine::Object::Transform stoneLeftTF_;
+	MLEngine::Object::Transform stoneRightTF_;
 
 	std::string groundTexture_;
 	std::string laneTexture_;

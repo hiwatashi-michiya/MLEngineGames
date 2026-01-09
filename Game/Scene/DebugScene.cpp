@@ -30,7 +30,8 @@ inline void DebugScene::Initialize()
 	tex_.Load("./Resources/white.png");
 
 	sprite3D_.Initialize("./Resources/texture/player_back.png", 1);
-	model2_.Initialize("./Resources/model/block/glassBlock.obj");
+	model2_.Initialize("./Resources/model/stageStone/stage_stone.obj");
+	model2_.materialData.enableLighting = true;
 	model3_.Initialize("./Resources/model/block/glassBlock.obj");
 	model3_.SetTexture("./Resources/EngineResources/paperMask.png");
 	particle_.reset(Particle3D::Create("./Resources/model/plane/plane.obj", 32));
@@ -51,7 +52,7 @@ inline void DebugScene::Initialize()
 	sphere_.SetCollisionAttribute(0x00000001);
 	lineSphere_.SetSphere(&sphere_.collider_);
 
-	dLight_.cbData->direction = MLEngine::Math::Normalize(dLight_.cbData->direction);
+	dLight_.cbData->normalDirection = MLEngine::Math::Normalize(dLight_.cbData->normalDirection);
 
 }
 
@@ -65,6 +66,10 @@ void DebugScene::Update()
 	{
 
 #ifdef _DEBUG
+
+		ImGui::Begin("平行光源");
+		dLight_.Debug();
+		ImGui::End();
 
 		ImGui::Begin("テスト");
 
@@ -179,10 +184,6 @@ void DebugScene::Update()
 			particle_->particleData[i].color = { 1.0f, i / 32.0f, 1.0f, 1.0f };
 		}
 
-	}
-
-	if (vController_->Decide()) {
-		sceneManager_->ChangeScene(new PlayScene());
 	}
 
 	if (isDebugCamera_) {
