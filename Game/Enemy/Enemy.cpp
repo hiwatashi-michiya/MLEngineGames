@@ -312,8 +312,3 @@ void Enemy::ChangeTexture(Mode mode)
 	}
 }
 
-void Enemy::ParantTransform()
-{
-	leftHand_->SetParentTransform(transform_.get());
-	rightHand_->SetParentTransform(transform_.get());
-}

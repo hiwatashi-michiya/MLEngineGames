@@ -15,6 +15,8 @@ void EnemyNormalState::Enter(Enemy* enemy)
 	isAnimation_ = false;
 	normalAnimationTime_ = global->GetFloatValue("EnemyState", "NormalAnimation");
 	attackAnimationTime_ = global->GetFloatValue("EnemyState", "NormalAttackAnimation");
+	enemy->GetLeftHand()->SetHandState(EnemyHand::HandState::kNormal);
+	enemy->GetRightHand()->SetHandState(EnemyHand::HandState::kNormal);
 }
 
 void EnemyNormalState::Update(Enemy* enemy)
@@ -44,7 +46,10 @@ void EnemyNormalState::Update(Enemy* enemy)
 			isAnimation_ = true;
 			enemy->ChangeTexture(Enemy::Mode::kAttack);
 			enemy->GetFrontSprite()->SetAnimationTime(attackAnimationTime_);
+			enemy->GetLeftHand()->SetHandState(EnemyHand::HandState::kAttack);
+			enemy->GetRightHand()->SetHandState(EnemyHand::HandState::kAttack);
 		}
+
 
 	}
 }
@@ -94,6 +99,8 @@ void EnemyBerserkState::Enter(Enemy* enemy)
 	normalAnimationTime_ = global->GetFloatValue("EnemyState", "AngryAnimation");
 	attackAnimationTime_ = global->GetFloatValue("EnemyState", "AngryAttackAnimation");
 	enemy->ChangeTexture(Enemy::Mode::kAngry);
+	enemy->GetLeftHand()->SetHandState(EnemyHand::HandState::kAngry);
+	enemy->GetRightHand()->SetHandState(EnemyHand::HandState::kAngry);
 }
 
 void EnemyBerserkState::Update(Enemy* enemy)
@@ -123,6 +130,8 @@ void EnemyBerserkState::Update(Enemy* enemy)
 			isAnimation_ = true;
 			enemy->ChangeTexture(Enemy::Mode::kAttack);
 			enemy->GetFrontSprite()->SetAnimationTime(attackAnimationTime_);
+			enemy->GetLeftHand()->SetHandState(EnemyHand::HandState::kAttack);
+			enemy->GetRightHand()->SetHandState(EnemyHand::HandState::kAttack);
 		}
 	}
 }

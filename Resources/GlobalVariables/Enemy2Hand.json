@@ -1,0 +1,59 @@
+{
+    "Enemy2Hand": {
+        "Amplitude": 0.5,
+        "AngrySwingAngle": 60.0,
+        "ArmAngleAxis": [
+            0.0,
+            0.0,
+            3.1415927410125732
+        ],
+        "AttackLeftJointPoint": [
+            -1.5,
+            2.0,
+            0.0
+        ],
+        "AttackOmen": 1.0,
+        "AttackRightJointPoint": [
+            1.5,
+            2.0,
+            0.0
+        ],
+        "LeftHandPosition": [
+            0.30000001192092896,
+            -0.0,
+            0.0
+        ],
+        "LeftHandScale": [
+            0.5,
+            0.5,
+            1.0
+        ],
+        "LeftJointPoint": [
+            -1.0,
+            1.0,
+            0.20000000298023224
+        ],
+        "MoveAfter": 0.25,
+        "NormalSwingAngle": 30.0,
+        "RightHandPosition": [
+            -0.30000001192092896,
+            0.0,
+            0.0
+        ],
+        "RightHandScale": [
+            0.5,
+            0.5,
+            1.0
+        ],
+        "RightJointPoint": [
+            1.0,
+            1.0,
+            0.20000000298023224
+        ],
+        "SwingDown": -1.0,
+        "SwingDownTargetTime": 0.5,
+        "SwingSpeed": 1.0,
+        "SwingUp": 0.5,
+        "SwingUpTargetTime": 0.5
+    }
+}
