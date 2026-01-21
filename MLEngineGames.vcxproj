@@ -283,7 +283,6 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="C:\Users\k024g\Downloads\zonetof_260109\viewer\src\vendor_serial.cpp" />
     <ClCompile Include="Game\DeviceIO\DistanceSensor\DistanceSensor.cpp" />
     <ClCompile Include="Game\DeviceIO\DistanceSensor\packet_io.cpp" />
     <ClCompile Include="Game\DeviceIO\DistanceSensor\vendor_serial.cpp" />
@@ -309,6 +308,7 @@
     <ClCompile Include="Network\NetworkManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game\DeviceIO\DistanceSensor\DistanceSensor.h" />
     <ClInclude Include="Game\DeviceIO\DistanceSensor\packet_io.h" />
     <ClInclude Include="Game\DeviceIO\UltrasonicSensor\UltrasonicSensor.h" />
     <ClInclude Include="Game\Character\BaseCharacter.h" />

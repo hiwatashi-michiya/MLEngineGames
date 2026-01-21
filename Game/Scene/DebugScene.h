@@ -15,6 +15,7 @@
 
 #include "../Joycon/Joycon.h"
 #include "../DeviceIO/UltrasonicSensor/UltrasonicSensor.h"
+#include "../DeviceIO/DistanceSensor/DistanceSensor.h"
 
 /// <summary>
 /// デバッグシーン、エンジン機能理解用
@@ -75,7 +76,7 @@ private:
 	bool isDebugCamera_ = false;
 
 	std::unique_ptr<Joycon> joyconInput;
-	std::unique_ptr<UltrasonicSensor> ultrasonicSensor_;
+	std::unique_ptr<DistanceSensor> distanceSensor_;
 	Vector3 test;
 	Quaternion modelRot_;
 };

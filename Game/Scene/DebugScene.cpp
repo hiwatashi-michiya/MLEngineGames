@@ -60,8 +60,8 @@ inline void DebugScene::Initialize()
 	joyconInput->Init();
 #pragma endregion ジョイコン
 #pragma region
-	ultrasonicSensor_ = std::make_unique<UltrasonicSensor>();
-	ultrasonicSensor_->Init();
+	distanceSensor_ = std::make_unique<DistanceSensor>();
+	distanceSensor_->init();
 #pragma endregion アルディーノ
 
 	dLight_.cbData->direction = MLEngine::Math::Normalize(dLight_.cbData->direction);
@@ -75,7 +75,7 @@ void DebugScene::Finalize()
 void DebugScene::Update()
 {
 	joyconInput->Update();
-	ultrasonicSensor_->Update();
+	distanceSensor_->update();
 	{
 
 #ifdef _DEBUG
@@ -254,7 +254,7 @@ void DebugScene::Update()
 void DebugScene::Draw()
 {
 #ifdef _DEBUG
-	ultrasonicSensor_->Draw();
+	distanceSensor_->Draw();
 #endif
 	//model_.GetInstancingModel().Draw(&camera_);
 

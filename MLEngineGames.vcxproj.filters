@@ -23,7 +23,6 @@
     <ClCompile Include="Game\DeviceIO\UltrasonicSensor\UltrasonicSensor.cpp" />
     <ClCompile Include="Game\DeviceIO\DistanceSensor\DistanceSensor.cpp" />
     <ClCompile Include="Game\DeviceIO\DistanceSensor\packet_io.cpp" />
-    <ClCompile Include="C:\Users\k024g\Downloads\zonetof_260109\viewer\src\vendor_serial.cpp" />
     <ClCompile Include="Game\DeviceIO\DistanceSensor\vendor_serial.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -117,6 +116,7 @@
     <ClInclude Include="Network\NetworkManager.h" />
     <ClInclude Include="Resources\icon\resource.h" />
     <ClInclude Include="Game\DeviceIO\DistanceSensor\packet_io.h" />
+    <ClInclude Include="Game\DeviceIO\DistanceSensor\DistanceSensor.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
