@@ -92,7 +92,6 @@ void DistanceSensor::End() {
 position DistanceSensor::CheckPosition()
 {
     ImGui::Begin("Distance Sensor2");
-    //ImGui::Text(status[0].at(0).c_str());
     ImGui::Text("%d", status[0][0]);
     ImGui::End();
 	return pMID;
