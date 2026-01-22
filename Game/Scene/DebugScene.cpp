@@ -61,7 +61,7 @@ inline void DebugScene::Initialize()
 #pragma endregion ジョイコン
 #pragma region
 	distanceSensor_ = std::make_unique<DistanceSensor>();
-	distanceSensor_->init();
+	distanceSensor_->Init();
 #pragma endregion アルディーノ
 
 	dLight_.cbData->direction = MLEngine::Math::Normalize(dLight_.cbData->direction);
@@ -75,7 +75,7 @@ void DebugScene::Finalize()
 void DebugScene::Update()
 {
 	joyconInput->Update();
-	distanceSensor_->update();
+	distanceSensor_->Update();
 	{
 
 #ifdef _DEBUG

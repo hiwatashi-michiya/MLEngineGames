@@ -8,23 +8,13 @@
 
 std::atomic<bool> is_running(true);
 
-#pragma pack(push, 1)
-struct Packet {
-    static constexpr int WIDTH = 8;
-    static constexpr int HEIGHT = 8;
-
-    uint8_t status[HEIGHT][WIDTH];
-    int16_t distance_mm[HEIGHT][WIDTH];
-};
-#pragma pack(pop)
-
 void handle_signal(int signal) {
     if (signal == SIGINT) {
         is_running = false;
     }
 }
 
-void DistanceSensor::init() {
+void DistanceSensor::Init() {
     const auto ports = PacketIO::find_ports(PacketIO::DeviceType::PICO);
     if (ports.empty()) {
         std::cerr << "Port not found." << std::endl;
@@ -47,7 +37,7 @@ void DistanceSensor::init() {
     serialThread = std::thread(&DistanceSensor::Thread, this);
 }
 
-void DistanceSensor::update()
+void DistanceSensor::Update()
 {
 
    
@@ -58,6 +48,7 @@ void DistanceSensor::Draw()
 	ImGui::Begin("Distance Sensor");
 	ImGui::Text(output.c_str());
 	ImGui::End();
+    CheckPosition();
 }
 
 void DistanceSensor::Thread() {
@@ -74,9 +65,12 @@ void DistanceSensor::Thread() {
                     if (packet.status[y][x] == 5 || packet.status[y][x] == 6 ||
                         packet.status[y][x] == 9 || packet.status[y][x] == 10) {
                         offset += snprintf(line + offset, sizeof(line) - offset, "%4d", packet.distance_mm[y][x]);
+						//status[y].at(x) = packet.distance_mm[y][x];
+                        status[y][x] = packet.distance_mm[y][x];
                     }
                     else {
                         offset += snprintf(line + offset, sizeof(line) - offset, "    ");
+                        status[y][x] = 0;
                     }
                     offset += snprintf(line + offset, sizeof(line) - offset, "%s", x < Packet::WIDTH - 1 ? ", " : "");
                 }
@@ -85,7 +79,7 @@ void DistanceSensor::Thread() {
             }
             std::cout << output << "--------------------" << std::endl;
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
 
 }
@@ -93,4 +87,13 @@ void DistanceSensor::Thread() {
 void DistanceSensor::End() {
     is_running = false;
     serialThread.join();
+}
+
+position DistanceSensor::CheckPosition()
+{
+    ImGui::Begin("Distance Sensor2");
+    //ImGui::Text(status[0].at(0).c_str());
+    ImGui::Text("%d", status[0][0]);
+    ImGui::End();
+	return pMID;
 }
