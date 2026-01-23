@@ -45,7 +45,6 @@ inline void PlayScene::Initialize(){
 	GlobalSetValue();
 
 	gameManager_->Initialize();
-	//お試しプッシュ
 
 	camera_.Initialize();
 	camera_.position_ = { 0.0f,0.0f,-10.0f };
@@ -95,9 +94,13 @@ inline void PlayScene::Initialize(){
 	titleSprite_.reset(MLEngine::Resource::Sprite2D::Create(titleTexture_, titlePos_, titleColor_));
 	titleSprite_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 
+	tutorialTransform_ = std::make_unique<MLEngine::Object::Transform>();
+
 	tutorialSprite_.Initialize(tutorialMoveTexture_, 1);
 	tutorialSprite_.color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	tutorialSprite_.isActive = false;
+	tutorialSprite_.transform.translate.y = 1.0f;
+	tutorialSprite_.transform.SetParent(tutorialTransform_.get());
 
 	resultSprite_.reset(MLEngine::Resource::Sprite2D::Create(gameOverTexture_, resultPos_, resultColor_));
 	resultSprite_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -237,10 +240,10 @@ void PlayScene::Update(){
 	
 
 	
-	tutorialSprite_.transform.translate = tutorialPos_;
-	tutorialSprite_.transform.rotateQuaternion = MLEngine::Math::ConvertFromEuler(tutorialRotate_);
-	tutorialSprite_.transform.scale = tutorialScale_;
-	tutorialSprite_.transform.UpdateMatrix();
+	tutorialTransform_->translate = tutorialPos_;
+	tutorialTransform_->rotateQuaternion = MLEngine::Math::ConvertFromEuler(tutorialRotate_);
+	tutorialTransform_->scale = tutorialScale_;
+	tutorialTransform_->UpdateMatrix();
 	tutorialSprite_.UpdateAnimation();
 
 	resultSprite_->position = resultPos_;
@@ -310,6 +313,10 @@ void PlayScene::DrawImgui() {
 	ImGui::DragFloat3("チュートリアル座標", &tutorialPos_.x, 0.1f);
 	ImGui::DragFloat3("チュートリアル回転", &tutorialRotate_.x, 0.01f);
 	ImGui::DragFloat3("チュートリアル大きさ", &tutorialScale_.x, 0.1f);
+
+	ImGui::DragFloat3("チュートリアル2座標", &tutorialSprite_.transform.translate.x, 0.1f);
+	ImGui::DragFloat3("チュートリアル2回転", &tutorialSprite_.transform.rotate.x, 0.01f);
+	ImGui::DragFloat3("チュートリアル2大きさ", &tutorialSprite_.transform.scale.x, 0.1f);
 	
 	ImGui::End();
 

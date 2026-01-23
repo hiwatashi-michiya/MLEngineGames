@@ -69,6 +69,8 @@ private:
     GameManager(const GameManager&) = delete;
     GameManager& operator=(const GameManager&) = delete;
 
+
+
 private:
 
     //入力デバイス

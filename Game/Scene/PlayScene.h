@@ -86,6 +86,7 @@ private:
 	std::string tutorialMoveTexture_;
 	std::string tutorialTurnTexture_;
 
+	std::unique_ptr<MLEngine::Object::Transform> tutorialTransform_;
 	MLEngine::Resource::Sprite3D tutorialSprite_;
 	std::unique_ptr<MLEngine::Resource::Sprite2D> titleSprite_;
 	std::unique_ptr<MLEngine::Resource::Sprite2D> resultSprite_;
