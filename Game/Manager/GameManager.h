@@ -37,6 +37,7 @@ public:
         FlontBack,   //振り向き
         Wait      //待機
     };
+    
 
     void SetState(GameState newState) { nextState_ = newState; }
     GameState GetState() const { return state_; }
@@ -49,8 +50,10 @@ public:
     void SetGameEnd(bool isGameEnd) { isGameEnd_ = isGameEnd; }
 
     // スコア管理
-    void AddScore(int value);
+    void AddScore(bool isCombo);
     int GetScore() const { return score_; }
+
+    int GetCombo() const { return scratchCombo_; }
 
     // 残り時間（制限時間）管理
     void SetTimeLimit(float t) { timeLimit_ = t; }
@@ -61,6 +64,10 @@ public:
     // 設定関連
     void SetDifficulty(int d) { difficulty_ = d; }
     int GetDifficulty() const { return difficulty_; }
+
+    //リセット関数
+    void ResetScore() { score_ = 0; }
+    void ResetCombo() { scratchCombo_ = 0; }
 
 private:
     // コンストラクタ
@@ -102,9 +109,15 @@ private:
     float time_ = 0.0f;
     //後で正式なものと交換
     float deltaTime_ = 1.0f / 60.0f;
+    //基礎点数
+    int scoreBase_ = 1;
+    //コンボによる倍率
+    int scoreMagnification_ = 2;
 
     // スコア
     int score_ = 0;
+    //傷コンボ
+    int scratchCombo_ = 0;
     
     // 制限時間管理
     float timeLimit_ = 60.0f;       // 秒

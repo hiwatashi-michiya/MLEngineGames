@@ -53,6 +53,10 @@ public:
 		return isJustMoved_;
 	}
 
+	bool GetIsDamaged() const {
+		return isDamaged_;
+	}
+
 	bool GetIsJustTurned() const {
 		return isJustTurned_;
 	}
@@ -64,6 +68,17 @@ public:
 
 	void SetIsTitleScene(bool isTitleScene) {
 		isTitleScene_ = isTitleScene;
+	}
+	//回復雲のレーンにいるか
+	void ChackInRecoveryArea(int RecoveryArea) {
+		if (nowLine_ == RecoveryArea){
+			isRecoveryArea_ = true;
+		}
+		else {
+			isRecoveryArea_ = false;
+		}
+
+		
 	}
 
 private:
@@ -113,6 +128,8 @@ private:
 	//瞬間を記録する
 	bool isJustTurned_ = false;
 	bool isJustMoved_ = false;
+
+	bool isRecoveryArea_ = false;
 
 	float damageTime_ = 0.0f;
 

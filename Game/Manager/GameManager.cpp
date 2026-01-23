@@ -51,8 +51,8 @@ void GameManager::Update(bool isJustTurned, bool isJustMoved) {
         if (vController_->Decide()) {
             nextState_ = GameState::Tutorial;
         };
-
-
+        ResetScore();
+        ResetCombo();
         break;
     case GameManager::GameState::Tutorial:
 
@@ -127,6 +127,13 @@ void GameManager::Debug() {
     ImGui::Text("経過時間：%.1f", time_);
 
     ImGui::End();
+
+    ImGui::Begin("スコア回り");
+
+    ImGui::Text("スコア：%d", score_);
+    ImGui::Text("傷コンボ：%d", scratchCombo_);
+
+    ImGui::End();
 #endif // _DEBUG
 
 }
@@ -137,6 +144,18 @@ void GameManager::SceneUpdate(){
     }
 }
 
-void GameManager::AddScore(int value) {
-    score_ += value;
+/// <summary>
+/// 条件によって変動するスコアを加算する関数
+/// </summary>
+/// <param name="isCombo"></param>
+void GameManager::AddScore(bool isCombo){
+    if (isCombo){
+        score_ += scoreBase_ * scoreMagnification_;        
+    }
+    else {
+        score_ += scoreBase_;
+    }
+
+    scratchCombo_++;
 }
+

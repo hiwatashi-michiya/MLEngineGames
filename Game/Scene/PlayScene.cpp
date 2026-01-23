@@ -194,6 +194,10 @@ void PlayScene::Update(){
 		resultSprite_->isActive = false;
 	}
 
+	if (!playerManager_->GetPlayer()->GetIsDamaged()){
+		GameManager::GetInstance()->ResetCombo();
+	}
+
 	NetworkManager::GetInstance().GetEnemyDeadFlug(isClientEnemyDead_);
 #endif	
 	

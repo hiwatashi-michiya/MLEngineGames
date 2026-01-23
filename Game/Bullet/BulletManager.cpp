@@ -109,6 +109,7 @@ void BulletManager::Update()
 
 
 			if (player_->GetIsForward()) { // プレイヤーが前を向いている場合のみダメージを受ける
+				GameManager::GetInstance()->AddScore(player_->GetIsDamaged());
 				player_->OnCollision(bulletDamege_);
 			}
 			else { // 敵がダメージを受ける
