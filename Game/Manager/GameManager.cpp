@@ -4,6 +4,7 @@
 #include<Engine/Tool/GlobalVariables.h>
 #include"Externals/imgui/imgui.h"
 
+using namespace MLEngine::Resource;
 
 GameManager* GameManager::GetInstance() {
     static GameManager instance;
@@ -18,6 +19,10 @@ void GameManager::Initialize() {
     global->SetValue("Tutorial", "MoveCount", moveCountMax_);
     global->SetValue("Tutorial", "WaitTime", waitTime_);
 
+    titleBGM_.Load("BGM/BGM_title.mp3");
+    tutorialBGM_.Load("BGM/BGM_tutorial.mp3");
+    ingameBGM_.Load("BGM/BGM_ingame.mp3");
+    resultBGM_.Load("BGM/BGM_result.mp3");
 
     score_ = 0;
     remainingTime_ = timeLimit_;
@@ -47,6 +52,14 @@ void GameManager::Update(bool isJustTurned, bool isJustMoved) {
     /*ゴミなのでちゃんとstatePatternにします・・・*/
     switch (state_){
     case GameManager::GameState::Title:
+
+        if (not titleBGM_.IsPlaying()) {
+            titleBGM_.Play(Audio::BGMVolume, true);
+            tutorialBGM_.Stop();
+            ingameBGM_.Stop();
+            resultBGM_.Stop();
+        }
+
         //決定ボタンでチュートリアルに移行
         if (vController_->Decide()) {
             nextState_ = GameState::Tutorial;
@@ -55,6 +68,13 @@ void GameManager::Update(bool isJustTurned, bool isJustMoved) {
 
         break;
     case GameManager::GameState::Tutorial:
+
+        if (not tutorialBGM_.IsPlaying()) {
+            tutorialBGM_.Play(Audio::BGMVolume, true);
+            titleBGM_.Stop();
+            ingameBGM_.Stop();
+            resultBGM_.Stop();
+        }
 
         switch (tuState_){
         case GameManager::TutorialState::LaneMove:
@@ -96,6 +116,14 @@ void GameManager::Update(bool isJustTurned, bool isJustMoved) {
 
         break;
     case GameManager::GameState::Playing:
+
+        if (not ingameBGM_.IsPlaying()) {
+            ingameBGM_.Play(Audio::BGMVolume, true);
+            tutorialBGM_.Stop();
+            titleBGM_.Stop();
+            resultBGM_.Stop();
+        }
+
         //ゲームが終わったらリザルトに
         if (isGameEnd_){
             nextState_ = GameState::Result;
@@ -103,6 +131,14 @@ void GameManager::Update(bool isJustTurned, bool isJustMoved) {
 
         break;
     case GameManager::GameState::Result:
+
+        if (not resultBGM_.IsPlaying()) {
+            resultBGM_.Play(Audio::BGMVolume, true);
+            tutorialBGM_.Stop();
+            ingameBGM_.Stop();
+            titleBGM_.Stop();
+        }
+
         //決定ボタンでシーンを初期化
         if (vController_->Decide()) {
             MLEngine::Scene::Manager::GetInstance()->ChangeScene("Play");

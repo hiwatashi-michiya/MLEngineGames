@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <string>
 #include"VirtualController.h"
+#include "Audio/Audio.h"
 
 class GameManager
 {
@@ -111,5 +112,11 @@ private:
     // 難易度などの設定
     int difficulty_ = 1;
 
+    //BGM
+    MLEngine::Resource::Audio titleBGM_;
+    MLEngine::Resource::Audio tutorialBGM_;
+    MLEngine::Resource::Audio ingameBGM_;
+    MLEngine::Resource::Audio resultBGM_;
+    //SE
 
 };

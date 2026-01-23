@@ -41,7 +41,10 @@ namespace MLEngine::Core::Render::PostEffect {
 		//適用させるポストエフェクトのリストを取得
 		std::vector<PostEffectType> GetApplyEffectList() const { return applyEffectList_; }
 		//適用させるエフェクトリストをリセット
-		void ResetApplyEffectList() { applyEffectList_.clear(); }
+		void ResetApplyEffectList() { 
+			applyEffectList_.clear();
+			type_ = PostEffectType::kNone;
+		}
 
 	private:
 

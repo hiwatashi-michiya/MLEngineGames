@@ -87,6 +87,8 @@ void Manager::Render()
 
 	}
 
+	postEffect_->SetType(PostEffect::PostEffectType::kNone);
+
 	//ここまでがポストエフェクトの対象
 	MLEngine::Core::DirectXSetter::GetInstance()->PreDraw();
 	postEffect_->SetBarrier(1, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
