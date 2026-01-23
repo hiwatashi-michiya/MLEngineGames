@@ -179,7 +179,7 @@ void EnemyHand::Update()
 		if (isLeft_) {
 			angle_ += swingSpeed_;
 			if (angle_ > angrySwingAngle_ + 180.0f || angle_ < 180.0f) {
-				angle_ = std::clamp(angle_, 180.0f, angrySwingAngle_);
+				angle_ = std::clamp(angle_, 180.0f, angrySwingAngle_ + 180.0f);
 				swingSpeed_ *= -1.0f;
 			}
 
@@ -366,6 +366,7 @@ void EnemyHand::SetHandState(HandState state)
 	if(state != HandState::kAttack){
 		frontPlane_.Initialize(frontTexture_, 1);
 		backPlane_.Initialize(backTexture_, 1);
+		transform_->translate = startPosition_;
 
 		if (isLeft_) {
 			transform_->translate = global_->GetVector3Value(enemytype_ + "Hand", "LeftHandPosition");
