@@ -6,7 +6,8 @@
 #include"Externals/imgui/imgui.h"
 #include "Enemy/Enemy.h"
 
-void BulletManager::Initialize()
+
+void BulletManager::Initialize(Player* player, Enemy* enemy)
 {
 	global_ = GlobalVariables::GetInstance();
 
@@ -23,6 +24,12 @@ void BulletManager::Initialize()
 	endDistance_ = global_->GetFloatValue("BulletParameters", "EndDistance");
 	bulletDamege_ = global_->GetIntValue("BulletParameters", "BulletDamege");
 	reflectSpeed_ = global_->GetFloatValue("BulletParameters", "ReflectSpeed");
+
+	player_ = player;
+	enemy_ = enemy;
+
+	bulletCaveat_ = std::make_unique<BulletCaveat>();
+	bulletCaveat_->Initialize(player_);
 
 
 
@@ -91,17 +98,13 @@ void BulletManager::Update()
 		return false;
 	});
 
+	bulletCaveat_->Update();
+	bulletCaveat_->DebugUI();
+
 #ifdef _DEBUG
 
 	// 始点・終点モデルの更新
 	for (int i = 0; i < 3; ++i) {
-		/*startSprites_[i]->SetPosition({ launchPosition_.x + startDistance_ * (i - 1), launchPosition_.y });
-		startSprites_[i]->size = { minSize_, minSize_ };
-		targetSprites_[i]->SetPosition({ launchPosition_.x + endDistance_ * (i - 1), endLine_ });
-		targetSprites_[i]->size = { maxSize_, maxSize_ };*/
-
-		/*startModels_[i]->worldMatrix = MLEngine::Math::MakeAffineMatrix(startScale_, { 0.0f, 0.0f, 0.0f, 1.0f }, { startTranslate_.x + startDistance_ * (i - 1), startTranslate_.y, startTranslate_.z });
-		endModels_[i]->worldMatrix = MLEngine::Math::MakeAffineMatrix(endScale_, { 0.0f, 0.0f, 0.0f, 1.0f }, { endTranslate_.x + endDistance_ * (i - 1), endTranslate_.y, endTranslate_.z });*/
 		startSprite3D_[i]->transform.scale = startScale_;
 		startSprite3D_[i]->transform.translate = { startTranslate_.x + startDistance_ * (i - 1), startTranslate_.y, startTranslate_.z };
 		endSprite3D_[i]->transform.scale = endScale_;

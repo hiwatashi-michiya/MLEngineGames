@@ -7,20 +7,24 @@
 #include "Bullet.h"
 #include ".vs/../Engine/Tool/GlobalVariables.h"
 #include "Player/Player.h"
+#include "BulletCaveat.h"
 
 class Enemy;
+//class BulletCaveat;
 
 class BulletManager {
 	public:
 		BulletManager() {};
 		~BulletManager() {};
-		void Initialize();
+		void Initialize(Player* player, Enemy* enemy);
 		void Update();
 
 		// 弾を生成する
 		void SpawnBullet(int laneNumber, float time);
 
 		void SpawnReflectBullet(int laneNumber, float time);
+
+		BulletCaveat* GetBulletCaveat() { return bulletCaveat_.get(); }
 
 		void SetPlayer(Player* player) { player_ = player; }
 		void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
@@ -39,6 +43,8 @@ private:
 
 	// 敵情報
 	Enemy* enemy_ = nullptr;
+
+	std::unique_ptr<BulletCaveat> bulletCaveat_;
 
 	// モデル
 	std::vector<std::unique_ptr<MLEngine::Resource::RigidModel>> startModels_;

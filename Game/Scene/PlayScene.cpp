@@ -53,15 +53,19 @@ inline void PlayScene::Initialize(){
 	playerManager_ = std::make_unique<PlayerManager>();
 	playerManager_->Initialize();
 
+	EnemyAttackTurnController::GetInstance().Initialize();
+
 	enemy_ = std::make_unique<Enemy>();
 	enemy_->Initialize();
 	enemy_->SetCamera(&camera_);
 
 	bulletManager_ = std::make_unique<BulletManager>();
-	bulletManager_->Initialize();
+	bulletManager_->Initialize(playerManager_->GetPlayer(), enemy_.get());
 
 	bulletManager_->SetPlayer(playerManager_->GetPlayer());
 	bulletManager_->SetEnemy(enemy_.get());
+
+	EnemyAttackTurnController::GetInstance().SetBulletCaveat(bulletManager_->GetBulletCaveat());
 
 	enemy_->SetBulletManager(bulletManager_.get());
 
@@ -194,8 +198,11 @@ void PlayScene::Update(){
 
 	playerManager_->Update(gameManager_->GetDeltaTime());
 
+	
+
 	if (gameManager_->GetState() == GameManager::GameState::Playing){
 		enemy_->SetIsActive(true);
+		EnemyAttackTurnController::GetInstance().Update();
 		enemy_->Update();
 		bulletManager_->SetIsModelActive(true);
 		bulletManager_->Update();
@@ -232,7 +239,7 @@ void PlayScene::Update(){
 	resultSprite_->position = resultPos_;
 	resultSprite_->size = resultScale_;
 
-	camera_.Update();
+	camera_.Update();	
 
 	gameManager_->SceneUpdate();
 
