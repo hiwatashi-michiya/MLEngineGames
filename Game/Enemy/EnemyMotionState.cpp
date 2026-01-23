@@ -17,8 +17,8 @@ float DegToRad(float degrees) {
 
 void EnemyIdleState::Enter(Enemy* enemy)
 {
-	enemy->GetLeftHand()->SetHandState(EnemyHand::HandState::kNormal);
-	enemy->GetRightHand()->SetHandState(EnemyHand::HandState::kNormal);
+	enemy->GetLeftHand()->SetHandState(enemy->GetLeftHand()->GetPreviousHandState());
+	enemy->GetRightHand()->SetHandState(enemy->GetRightHand()->GetPreviousHandState());
 }
 
 void EnemyIdleState::Update(Enemy* enemy)

@@ -20,29 +20,6 @@ void EnemyHand::Initialize(MLEngine::Object::Transform* parentTransform, bool is
 
 	global_ = GlobalVariables::GetInstance();
 
-	global_->CreateGroup("Enemy1Hand");
-	global_->CreateGroup("Enemy2Hand");
-
-	global_->AddItem(enemytype_ + "Hand", "NormalSwingAngle", 0.0f);
-	global_->AddItem(enemytype_ + "Hand", "AngrySwingAngle", 0.0f);
-	global_->AddItem(enemytype_ + "Hand", "SwingSpeed", 1.0f);
-	global_->AddItem(enemytype_ + "Hand", "ArmAngleAxis", MLEngine::Math::Vector3{ 0.0f, 0.0f, (float)M_PI });
-	global_->AddItem(enemytype_ + "Hand", "AttackLeftJointPoint", MLEngine::Math::Vector3{ -1.5f, 2.0f, 0.0f });
-	global_->AddItem(enemytype_ + "Hand", "LeftHandPosition", MLEngine::Math::Vector3{ -1.5f, 0.0f, 0.0f });
-	global_->AddItem(enemytype_ + "Hand", "LeftHandScale", MLEngine::Math::Vector3{ 1.0f, 1.0f, 1.0f });
-	global_->AddItem(enemytype_ + "Hand", "AttackRightJointPoint", MLEngine::Math::Vector3{ 1.5f, 2.0f, 0.0f });
-	global_->AddItem(enemytype_ + "Hand", "RightHandPosition", MLEngine::Math::Vector3{ 1.5f, 0.0f, 0.0f });
-	global_->AddItem(enemytype_ + "Hand", "RightHandScale", MLEngine::Math::Vector3{ 1.0f, 1.0f, 1.0f });
-
-	
-	global_->AddItem(enemytype_ + "Hand", "Amplitude", 0.5f);
-	global_->AddItem(enemytype_ + "Hand", "SwingUpTargetTime", 0.5f);
-	global_->AddItem(enemytype_ + "Hand", "SwingDownTargetTime", 0.5f);
-	global_->AddItem(enemytype_ + "Hand", "AttackOmen", 1.0f);
-	global_->AddItem(enemytype_ + "Hand", "SwingUp", 0.5f);
-	global_->AddItem(enemytype_ + "Hand", "SwingDown", -1.0f);
-	global_->AddItem(enemytype_ + "Hand", "MoveAfter", 0.25f);
-
 	// 腕振り用のパラメーター取得
 	normalSwingAngle_ = global_->GetFloatValue(enemytype_ + "Hand", "NormalSwingAngle");
 	angrySwingAngle_ = global_->GetFloatValue(enemytype_ + "Hand", "AngrySwingAngle");
@@ -60,7 +37,9 @@ void EnemyHand::Initialize(MLEngine::Object::Transform* parentTransform, bool is
 	transform_ = std::make_unique<MLEngine::Object::Transform>();
 	transform_->SetParent(jointTransform_.get());
 
-
+	normalAttackTime_ = global_->GetFloatValue("EnemyState", "NormalAttackAnimation");
+	angryAttackTime_ = global_->GetFloatValue("EnemyState", "AngryAttackAnimation");
+	totalTime_ = global_->GetFloatValue("EnemyMotionState", "Attack");
 
 #ifdef CLIENT_BUILD
 
@@ -177,7 +156,7 @@ void EnemyHand::Update()
 		break;
 	case EnemyHand::HandState::kAngry:
 		if (isLeft_) {
-			angle_ += swingSpeed_;
+			angle_ += swingSpeed_ * 3.0f;
 			if (angle_ > angrySwingAngle_ + 180.0f || angle_ < 180.0f) {
 				angle_ = std::clamp(angle_, 180.0f, angrySwingAngle_ + 180.0f);
 				swingSpeed_ *= -1.0f;
@@ -185,7 +164,7 @@ void EnemyHand::Update()
 
 		}
 		else {
-			angle_ -= swingSpeed_;
+			angle_ -= swingSpeed_ * 3.0f;
 			if (angle_ < -angrySwingAngle_ + 180.0f || angle_ >  180.0f) {
 				angle_ = std::clamp(angle_, -angrySwingAngle_, 180.0f);
 				swingSpeed_ *= -1.0f;
@@ -196,25 +175,33 @@ void EnemyHand::Update()
 	case EnemyHand::HandState::kAttack:
 		angle_ = 180.0f;
 
-		if (swingUpTime_.elapsedTime_ < swingUpTime_.targetTime_) {
-			swingUpTime_.elapsedTime_ += 1.0f / 60.0f;
-			float t = swingUpTime_.elapsedTime_ / swingUpTime_.targetTime_;
-			transform_->translate.y = -swingUp_ * t;
-
-		}
-		else if (swingDownTime_.elapsedTime_ < swingDownTime_.targetTime_) {
-			swingDownTime_.elapsedTime_ += 1.0f / 60.0f;
-			float t = swingDownTime_.elapsedTime_ / swingDownTime_.targetTime_;
-			transform_->translate.y = -swingUp_ + (-swingDown_ * t);
-		}
-		else if (afterTime_.elapsedTime_ < afterTime_.targetTime_) {
-			afterTime_.elapsedTime_ += 1.0f / 60.0f;
+		if (prevHandState_ == HandState::kAngry) {
+			totalTime_ = angryAttackTime_ + attackMotionTime_;
 		}
 		else {
-			handState_ = HandState::kNone;
-			transform_->translate = startPosition_;
+			totalTime_ = normalAttackTime_ + attackMotionTime_;
 		}
 
+		if (swingUpTime_.elapsedTime_ < swingUpTime_.targetTime_) {
+			swingUpTime_.elapsedTime_ += 1.0f / 60.0f;
+			float t = swingUpTime_.elapsedTime_ / (swingUpTime_.targetTime_ * totalTime_);
+			transform_->translate.y = swingUp_ * t;
+
+		}
+		else if (swingDownTime_.elapsedTime_ < swingDownTime_.targetTime_ * totalTime_) {
+			swingDownTime_.elapsedTime_ += 1.0f / 60.0f;
+			float t = swingDownTime_.elapsedTime_ / (swingDownTime_.targetTime_ * totalTime_);
+			transform_->translate.y = swingUp_ + (swingDown_ * t);
+		}
+		else if (afterTime_.elapsedTime_ < afterTime_.targetTime_ * totalTime_) {
+			afterTime_.elapsedTime_ += 1.0f / 60.0f;
+			float t = afterTime_.elapsedTime_ / (afterTime_.targetTime_ * totalTime_);
+			transform_->translate.y = transform_->translate.y * (1.0f - t) + (startPosition_.y);
+		}
+		else {
+			handState_ = prevHandState_;
+			transform_->translate = startPosition_;
+		}
 
 		break;
 	}
@@ -254,7 +241,7 @@ void EnemyHand::Update()
 		break;
 	case EnemyHand::HandState::kAngry:
 		if (isLeft_) {
-			angle_ += swingSpeed_;
+			angle_ += swingSpeed_ * 3.0f;
 			if (angle_ > angrySwingAngle_ || angle_ < 0.0f) {
 				angle_ = std::clamp(angle_, 0.0f, angrySwingAngle_);
 				swingSpeed_ *= -1.0f;
@@ -262,7 +249,7 @@ void EnemyHand::Update()
 
 		}
 		else {
-			angle_ -= swingSpeed_;
+			angle_ -= swingSpeed_ * 3.0f;
 			if (angle_ < -angrySwingAngle_ || angle_ > 0.0f) {
 				angle_ = std::clamp(angle_, -angrySwingAngle_, 0.0f);
 				swingSpeed_ *= -1.0f;
@@ -273,22 +260,31 @@ void EnemyHand::Update()
 	case EnemyHand::HandState::kAttack:
 		angle_ = 0.0f;
 
+		if (prevHandState_ == HandState::kAngry) {
+			totalTime_ = angryAttackTime_ + attackMotionTime_;
+		}
+		else {
+			totalTime_ = normalAttackTime_ + attackMotionTime_;
+		}
+
 		if(swingUpTime_.elapsedTime_ < swingUpTime_.targetTime_){
 			swingUpTime_.elapsedTime_ += 1.0f / 60.0f;
-			float t = swingUpTime_.elapsedTime_ / swingUpTime_.targetTime_;
+			float t = swingUpTime_.elapsedTime_ / (swingUpTime_.targetTime_ * totalTime_);
 			transform_->translate.y = swingUp_ * t;
 			
 		}
-		else if(swingDownTime_.elapsedTime_ < swingDownTime_.targetTime_){
+		else if(swingDownTime_.elapsedTime_ < swingDownTime_.targetTime_ * totalTime_){
 			swingDownTime_.elapsedTime_ += 1.0f / 60.0f;
-			float t = swingDownTime_.elapsedTime_ / swingDownTime_.targetTime_;
+			float t = swingDownTime_.elapsedTime_ / (swingDownTime_.targetTime_ * totalTime_);
 			transform_->translate.y = swingUp_ + (swingDown_ * t);
 		}
-		else if(afterTime_.elapsedTime_ < afterTime_.targetTime_){
+		else if(afterTime_.elapsedTime_ < afterTime_.targetTime_ * totalTime_){
 			afterTime_.elapsedTime_ += 1.0f / 60.0f;
+			float t = afterTime_.elapsedTime_ / (afterTime_.targetTime_ * totalTime_);
+			transform_->translate.y = transform_->translate.y * (1.0f - t) + (startPosition_.y);
 		}
 		else{
-			handState_ = HandState::kNone;
+			handState_ = prevHandState_;
 			transform_->translate = startPosition_;
 		}
 
@@ -334,16 +330,23 @@ void EnemyHand::DebugUI(std::string uiname, std::string dir)
 	global_->datas_[enemytype_ + "Hand"].items["SwingSpeed"].value = swingSpeed_;
 
 	ImGui::Separator();
-
-	ImGui::DragFloat("振り上げ時間", &swingUpTime_.targetTime_, 0.01f);
+	ImGui::Text("攻撃モーションの全体時間 : %f",totalTime_);
+	char label[128];
+	float ratio = swingUpTime_.targetTime_ * totalTime_;
+	std::snprintf(label, sizeof(label), "振り上げ時間(割合)[現在の秒数 : %f]", ratio);
+	ImGui::DragFloat(label, &swingUpTime_.targetTime_, 0.01f);
 	global_->datas_[enemytype_ + "Hand"].items["SwingUpTargetTime"].value = swingUpTime_.targetTime_;
 	ImGui::DragFloat("振り上げ量", &swingUp_, 0.01f);
 	global_->datas_[enemytype_ + "Hand"].items["SwingUp"].value = swingUp_;
-	ImGui::DragFloat("振り下げ時間", &swingDownTime_.targetTime_, 0.01f);
+	ratio = swingDownTime_.targetTime_ * totalTime_;
+	std::snprintf(label, sizeof(label), "振り下げ時間(割合)[現在の秒数 : %f]", ratio);
+	ImGui::DragFloat(label, &swingDownTime_.targetTime_, 0.01f);
 	global_->datas_[enemytype_ + "Hand"].items["SwingDownTargetTime"].value = swingDownTime_.targetTime_;
 	ImGui::DragFloat("振り下げ量", &swingDown_, 0.01f);
 	global_->datas_[enemytype_ + "Hand"].items["SwingDown"].value = swingDown_;
-	ImGui::DragFloat("振り後移動時間", &afterTime_.targetTime_, 0.01f);
+	ratio = afterTime_.targetTime_ * totalTime_;
+	std::snprintf(label, sizeof(label), "振り後移動時間(割合)[現在の秒数 : %f]", ratio);
+	ImGui::DragFloat(label, &afterTime_.targetTime_, 0.01f);
 	global_->datas_[enemytype_ + "Hand"].items["MoveAfter"].value = afterTime_.targetTime_;
 	ImGui::DragFloat("振幅", &amplitude_, 0.01f);
 	global_->datas_[enemytype_ + "Hand"].items["Amplitude"].value = amplitude_;
@@ -362,6 +365,7 @@ void EnemyHand::DebugUI(std::string uiname, std::string dir)
 
 void EnemyHand::SetHandState(HandState state)
 {
+	prevHandState_ = handState_;
 	handState_ = state;
 	if(state != HandState::kAttack){
 		frontPlane_.Initialize(frontTexture_, 1);

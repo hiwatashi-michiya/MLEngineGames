@@ -88,6 +88,7 @@ void Enemy::Update()
 	rightHand_->DebugUI("右手", "Right");
 
 	if (hp_ <= 0) {
+		EnemyAttackTurnController::GetInstance().OnMyEnemyAttackFinished(-1);
 		return;
 	}
 
@@ -177,7 +178,7 @@ void Enemy::DebugUI()
 		ImGui::Text("経過時間 : %f", dynamic_cast<EnemyBerserkState*>(currentState_.get())->intervalTime_);
 		global_->datas_["EnemyState"].items["BerserkBulletSpeed"].value = dynamic_cast<EnemyBerserkState*>(currentState_.get())->bulletSpeed_;
 		global_->datas_["EnemyState"].items["BerserkFireInterval"].value = dynamic_cast<EnemyBerserkState*>(currentState_.get())->fireInterval;
-		global_->datas_["EnemyState"].items["NormalAnimation"].value = dynamic_cast<EnemyBerserkState*>(currentState_.get())->normalAnimationTime_;
+		global_->datas_["EnemyState"].items["AngryAnimation"].value = dynamic_cast<EnemyBerserkState*>(currentState_.get())->normalAnimationTime_;
 		global_->datas_["EnemyState"].items["AngryAttackAnimation"].value = dynamic_cast<EnemyBerserkState*>(currentState_.get())->attackAnimationTime_;
 		stateIndex = 2;
 	}

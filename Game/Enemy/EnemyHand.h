@@ -26,7 +26,10 @@ public:
 	void Update();
 	void DebugUI(std::string uiname, std::string dir);
 
+	HandState GetPreviousHandState() { return prevHandState_; }
+
 	void SetHandState(HandState state);
+
 
 private:
 
@@ -50,6 +53,7 @@ private:
 
 	// 手の状態
 	HandState handState_ = HandState::kNormal;
+	HandState prevHandState_ = HandState::kNormal;
 
 	MLEngine::Math::Vector3 armAngleAxis_ = { 0.0f, 0.0f, 0.0f };
 
@@ -73,5 +77,10 @@ private:
 	float amplitude_ = 0.0f;
 	float swingUp_ = 0.0f;
 	float swingDown_ = 0.0f;
+
+	float normalAttackTime_ = 1.0f;
+	float angryAttackTime_ = 0.5f;
+	float attackMotionTime_ = 0.5f;
+	float totalTime_;
 
 };

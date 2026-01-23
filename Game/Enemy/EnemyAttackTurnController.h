@@ -24,6 +24,8 @@ public:
     // 攻撃が確定した瞬間に呼ぶ
     void OnMyEnemyAttackFinished(int lane);
 
+	void SetEnemyHP(int hp) { enemyHP_ = hp; }
+
     void SetBulletCaveat(BulletCaveat* bulletCaveat) { bulletCaveat_ = bulletCaveat; }
 
 private:
@@ -39,7 +41,7 @@ private:
     std::atomic<bool> isMyTurn_{ false };
     bool needSend_ = false;
 	int laneNumber_ = -1;
-    
+    int enemyHP_ = 0;
     BulletCaveat* bulletCaveat_;
 
 };
