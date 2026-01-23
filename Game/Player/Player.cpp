@@ -95,6 +95,10 @@ void Player::Update(const float deltaTime){
 		isDead_ = true;
 	}
 
+	//最大値が0でない場合
+	if (lifeMax_ != 0.0f) {
+		lifeRatio_ = float(life_) / float(lifeMax_);
+	}
 
 }
 

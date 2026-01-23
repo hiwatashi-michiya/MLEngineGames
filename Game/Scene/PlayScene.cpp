@@ -1,16 +1,20 @@
 #include "PlayScene.h"
 #include"Externals/imgui/imgui.h"
 #include "DebugScene.h"
+#include "FrameTracker.h"
 
 using namespace MLEngine::Math;
 
 using namespace MLEngine::Resource;
+using namespace MLEngine::Core::Render::PostEffect;
+using namespace MLEngine::Core;
 
 PlayScene::PlayScene(){
 	input_ = MLEngine::Input::Manager::GetInstance();
 	gameManager_ = GameManager::GetInstance();
 	config_ = GameConfig::GetInstance();
 	config_->Initialize();
+	postEffect_ = PostEffectDrawer::GetInstance();
 }
 
 PlayScene::~PlayScene(){
@@ -178,6 +182,43 @@ void PlayScene::Update(){
 
 
 #else
+
+	//体力が一定以下になったら
+	if (playerManager_->GetPlayer()->GetLifeRatio() <= vignetteConfig_.startRatio) {
+
+		//ビネットをかける
+		postEffect_->AddApplyEffect(PostEffectType::kVignette);
+
+		float a = (vignetteConfig_.startRatio - playerManager_->GetPlayer()->GetLifeRatio());
+
+		float b = (1.0f / (vignetteConfig_.startRatio - vignetteConfig_.endRatio));
+
+		float t = a * b;
+
+		float powerRange = Lerp(vignetteConfig_.minPowerRange, vignetteConfig_.maxPowerRange, t);
+
+		float power = Lerp(vignetteConfig_.minPower, vignetteConfig_.maxPower, t);
+
+		float scalingTime = Lerp(vignetteConfig_.scalingMaxTime, vignetteConfig_.scalingMinTime, t);
+
+		vignetteConfig_.currentTime += FrameTracker::GetInstance()->GetDeltaTimeF();
+
+		if (vignetteConfig_.currentTime >= scalingTime) {
+			vignetteConfig_.currentTime = 0.0f;
+		}
+
+		float resultPower = Lerp(power - powerRange, power + powerRange, 1.0f - std::clamp((vignetteConfig_.currentTime / scalingTime), 0.0f, 1.0f));
+
+		//ビネットのパラメータを設定
+		if (auto* vignette = dynamic_cast<Vignette*>(postEffect_->GetPostEffects()[PostEffectType::kVignette].get())) {
+
+			vignette->parameter_->color = vignetteConfig_.color;
+			vignette->parameter_->power = resultPower;
+
+		}
+
+	}
+
 	// Server 処理
 	gameManager_->Update(playerManager_->GetPlayer()->GetIsJustTurned(), playerManager_->GetPlayer()->GetIsJustMoved());
 
@@ -325,6 +366,9 @@ void PlayScene::Draw(){
 
 void PlayScene::DrawImgui() {
 #ifdef _DEBUG
+
+	postEffect_->Debug();
+
 	config_->Debug();
 
 	gameManager_->Debug();

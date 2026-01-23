@@ -49,6 +49,10 @@ public:
 		return life_;
 	}
 
+	float GetLifeRatio() const {
+		return lifeRatio_;
+	}
+
 	bool GetIsJustMoved() const {
 		return isJustMoved_;
 	}
@@ -131,6 +135,8 @@ private:
 
 
 	int bulletDamege_ = 10;
+	//体力の残り割合
+	float lifeRatio_ = 1.0f;
 
 };
 

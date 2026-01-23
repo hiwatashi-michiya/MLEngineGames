@@ -13,6 +13,8 @@
 #include <memory>
 #include "Enemy/Enemy.h"
 #include "Bullet/BulletManager.h"
+#include "Render/PostEffect/PostEffectDrawer.h"
+#include "MLMath.h"
 
 class PlayScene : public BaseScene
 {
@@ -50,8 +52,39 @@ private:
 
 private:
 
+	//ビネット演出の設定
+	struct VignetteConfig {
+		//色
+		MLEngine::Math::Vector3 color = { 0.75f, 0.2f, 0.0f };
+		//パワーの値の範囲最小
+		float minPowerRange = 0.05f;
+		//パワーの値の範囲最大
+		float maxPowerRange = 0.1f;
+		//パワーの値最小値
+		float minPower = 0.2f;
+		//パワーの値最大値
+		float maxPower = 0.45f;
+		//ビネットの拡縮時間最小
+		float scalingMinTime = 0.5f;
+		//ビネットの拡縮時間最長
+		float scalingMaxTime = 1.5f;
+		//現在の経過時間
+		float currentTime = 0.0f;
+		//ビネットがかかり始めるプレイヤーの体力比率
+		float startRatio = 0.4f;
+		//ビネットの強さが最大になるプレイヤーの体力比率
+		float endRatio = 0.2f;
+
+	};
+
 	//入力デバイス
 	MLEngine::Input::Manager* input_ = nullptr;
+
+	//ポストエフェクトの描画管理
+	MLEngine::Core::Render::PostEffect::PostEffectDrawer* postEffect_ = nullptr;
+
+	//ビネット演出設定
+	VignetteConfig vignetteConfig_;
 
 	//カメラ
 	//MLEngine::Object::Camera camera_;
