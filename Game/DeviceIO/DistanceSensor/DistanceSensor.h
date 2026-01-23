@@ -15,7 +15,7 @@ struct Packet {
 #pragma pack(pop)
 
 struct PosData{
-    uint8_t data = 0;
+    int data = 0;
     int count = 0;
 };
 
