@@ -5,6 +5,8 @@
 #include<Engine/Tool/GlobalVariables.h>
 #include <Sprite3D.h>
 
+#include "../Joycon/Joycon.h"
+
 //プレイヤーが操作する自機
 class Player : public BaseCharacter{
 public:
@@ -138,6 +140,8 @@ private:
 	//体力の残り割合
 	float lifeRatio_ = 1.0f;
 
+	//ジャングル
+	std::unique_ptr<Joycon> joyconInput;
 };
 
 
