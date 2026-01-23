@@ -94,11 +94,6 @@ position DistanceSensor::CheckPosition()
 	// x軸はセンサーから見た位置になっている
 	//xが0~1は左を表す
 	PosData minLeft, minMid, minRight;
-	minLeft.data = std::numeric_limits<int>::max();
-	//xが2~5は真ん中を表す
-	minMid.data = std::numeric_limits<int>::max();
-	//xが6~7は右を表す
-	minRight.data = std::numeric_limits<int>::max();
 
 
 	for (int y = 0; y < HEIGHT; y++) {
@@ -108,15 +103,15 @@ position DistanceSensor::CheckPosition()
 				continue; 
 			}
 			if (x < 1) {
-				minLeft.data += std::min<int>(minLeft.data, status[y][x]);
+				minLeft.data += status[y][x];
 				minLeft.count++;
 			}
 			else if (x < 7) {
-				minMid.data += std::min<int>(minMid.data, status[y][x]);
+				minMid.data += status[y][x];
 				minMid.count++;
 			}
 			else if (x < 8) {
-				minRight.data += std::min<int>(minRight.data, status[y][x]);
+				minRight.data +=  status[y][x];
 				minRight.count++;
 			}
 		}
