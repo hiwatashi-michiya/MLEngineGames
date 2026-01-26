@@ -22,6 +22,9 @@ void PlayScene::GlobalSetValue(){
 
 	global->SetValue("TextureState", "TitlePos", titlePos_);
 	global->SetValue("TextureState", "TitleScale", titleScale_);
+	global->SetValue("TextureState", "ScoreBordPos", scoreBordPos_);
+	global->SetValue("TextureState", "ScoreBordScale", scoreBordScale_);
+
 	global->SetValue("TextureState", "TutorialPos3D", tutorialPos_);
 	global->SetValue("TextureState", "TutorialScale3D", tutorialScale_);
 	global->SetValue("TextureState", "ResultPos", resultPos_);
@@ -33,6 +36,9 @@ void PlayScene::GlobalGetValue(){
 
 	titlePos_ = global->GetVector2Value("TextureState", "TitlePos");
 	titleScale_ = global->GetVector2Value("TextureState", "TitleScale");
+	scoreBordPos_ = global->GetVector2Value("TextureState", "ScoreBordPos");
+	scoreBordScale_ = global->GetVector2Value("TextureState", "ScoreBordScale");
+
 	tutorialPos_ = global->GetVector3Value("TextureState", "TutorialPos3D");
 	tutorialScale_ = global->GetVector3Value("TextureState", "TutorialScale3D");
 	resultPos_ = global->GetVector2Value("TextureState", "ResultPos");
@@ -90,6 +96,7 @@ inline void PlayScene::Initialize(){
 
 	//必須となる情報の読み込み
 	titleTexture_.Load("./Resources/Texture/title_logo.png");
+	scoreBordTexture_.Load("./Resources/Texture/ingame_UI_scoreBack.png");
 	tutorialMoveTexture_ = ("./Resources/Texture/tutorial_ui_move.png");
 	tutorialTurnTexture_ = ("./Resources/Texture/tutorial_ui_turn.png");
 	gameClearTexture_.Load("./Resources/Texture/gameClear.png");
@@ -97,6 +104,10 @@ inline void PlayScene::Initialize(){
 
 	titleSprite_.reset(MLEngine::Resource::Sprite2D::Create(titleTexture_, titlePos_, titleColor_));
 	titleSprite_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+
+	scoreBordSprite_.reset(MLEngine::Resource::Sprite2D::Create(scoreBordTexture_, scoreBordPos_, scoreBordColor_));
+	scoreBordSprite_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+
 
 	tutorialTransform_ = std::make_unique<MLEngine::Object::Transform>();
 
@@ -249,6 +260,8 @@ void PlayScene::Update(){
 	titleSprite_->position = titlePos_;
 	titleSprite_->size = titleScale_;
 	
+	scoreBordSprite_->position = scoreBordPos_;
+	scoreBordSprite_->size = scoreBordScale_;
 
 	
 	tutorialTransform_->translate = tutorialPos_;

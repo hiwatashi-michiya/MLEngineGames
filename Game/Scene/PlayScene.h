@@ -81,6 +81,7 @@ private:
 	MLEngine::Math::Vector3 translate_ = { 0.0f, 0.0f,0.0f };
 
 	MLEngine::Resource::Texture titleTexture_;
+	MLEngine::Resource::Texture scoreBordTexture_;
 	MLEngine::Resource::Texture gameClearTexture_;
 	MLEngine::Resource::Texture gameOverTexture_;
 
@@ -90,6 +91,7 @@ private:
 	std::unique_ptr<MLEngine::Object::Transform> tutorialTransform_;
 	MLEngine::Resource::Sprite3D tutorialSprite_;
 	std::unique_ptr<MLEngine::Resource::Sprite2D> titleSprite_;
+	std::unique_ptr<MLEngine::Resource::Sprite2D> scoreBordSprite_;
 	std::unique_ptr<MLEngine::Resource::Sprite2D> resultSprite_;
 
 
@@ -101,10 +103,15 @@ private:
 	MLEngine::Math::Vector3 tutorialRotate_;
 	MLEngine::Math::Vector3 tutorialScale_;
 
+	MLEngine::Math::Vector2 scoreBordPos_;
+	MLEngine::Math::Vector2 scoreBordScale_;
+
+
 	MLEngine::Math::Vector2 resultPos_;
 	MLEngine::Math::Vector2 resultScale_;
 
 	MLEngine::Math::Vector4 titleColor_;
+	MLEngine::Math::Vector4 scoreBordColor_;
 	MLEngine::Math::Vector4 tutorialColor_;
 	MLEngine::Math::Vector4 resultColor_;
 

@@ -23,7 +23,7 @@ LifeUI::LifeUI(Player* player){
 }
 
 void LifeUI::Initialize() {
-	plMeterPos_ = { 60.0f,520.0f };
+	plMeterPos_ = { 60.0f,568.0f };
 	plMeterSize_ = { 45.0f,223.0f };
 
 	meter_->anchorPoint = { 0.5f,1.0f };
