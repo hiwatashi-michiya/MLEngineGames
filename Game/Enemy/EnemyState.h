@@ -1,6 +1,7 @@
 #pragma once
 
 #include ".vs/../Engine/Tool/GlobalVariables.h"	
+#include "Enemy/EnemyAttackTurnController.h"
 
 class Enemy;
 

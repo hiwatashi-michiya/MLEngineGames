@@ -15,10 +15,17 @@ void EnemyNormalState::Enter(Enemy* enemy)
 	isAnimation_ = false;
 	normalAnimationTime_ = global->GetFloatValue("EnemyState", "NormalAnimation");
 	attackAnimationTime_ = global->GetFloatValue("EnemyState", "NormalAttackAnimation");
+	enemy->GetLeftHand()->SetHandState(EnemyHand::HandState::kNormal);
+	enemy->GetRightHand()->SetHandState(EnemyHand::HandState::kNormal);
 }
 
 void EnemyNormalState::Update(Enemy* enemy)
 {
+	if (!EnemyAttackTurnController::GetInstance().CanMyEnemyAttack()) {
+		return;
+	}
+
+
 	if (intervalTime_ >= fireInterval)
 	{
 		int laneNumber = MLEngine::Math::RandomInt(0, 2);
@@ -27,6 +34,9 @@ void EnemyNormalState::Update(Enemy* enemy)
 		{
 			laneNumber = MLEngine::Math::RandomInt(0, 2);
 		}
+
+		EnemyAttackTurnController::GetInstance().OnMyEnemyAttackFinished(laneNumber);
+
 		enemy->GetBulletManager()->SpawnBullet(laneNumber, bulletSpeed_);
 		enemy->ChangeMotionState(std::make_unique<EnemyAttackState>());
 		enemy->ChangeTexture(Enemy::Mode::kNormal);
@@ -44,7 +54,10 @@ void EnemyNormalState::Update(Enemy* enemy)
 			isAnimation_ = true;
 			enemy->ChangeTexture(Enemy::Mode::kAttack);
 			enemy->GetFrontSprite()->SetAnimationTime(attackAnimationTime_);
+			enemy->GetLeftHand()->SetHandState(EnemyHand::HandState::kAttack);
+			enemy->GetRightHand()->SetHandState(EnemyHand::HandState::kAttack);
 		}
+
 
 	}
 }
@@ -68,6 +81,8 @@ void EnemyDownState::Enter(Enemy* enemy)
 
 void EnemyDownState::Update(Enemy* enemy)
 {
+	EnemyAttackTurnController::GetInstance().OnMyEnemyAttackFinished(-1);
+
 	elapsedTime_ += 1.0f / 60.0f;
 	if (elapsedTime_ >= downTime)
 	{
@@ -94,10 +109,17 @@ void EnemyBerserkState::Enter(Enemy* enemy)
 	normalAnimationTime_ = global->GetFloatValue("EnemyState", "AngryAnimation");
 	attackAnimationTime_ = global->GetFloatValue("EnemyState", "AngryAttackAnimation");
 	enemy->ChangeTexture(Enemy::Mode::kAngry);
+	enemy->GetLeftHand()->SetHandState(EnemyHand::HandState::kAngry);
+	enemy->GetRightHand()->SetHandState(EnemyHand::HandState::kAngry);
 }
 
 void EnemyBerserkState::Update(Enemy* enemy)
 {
+	if (!EnemyAttackTurnController::GetInstance().CanMyEnemyAttack()) {
+		return;
+	}
+
+
 	if (intervalTime_ >= fireInterval)
 	{
 		int laneNumber = MLEngine::Math::RandomInt(0, 2);
@@ -106,6 +128,9 @@ void EnemyBerserkState::Update(Enemy* enemy)
 		{
 			laneNumber = MLEngine::Math::RandomInt(0, 2);
 		}
+
+		EnemyAttackTurnController::GetInstance().OnMyEnemyAttackFinished(laneNumber);
+
 		enemy->GetBulletManager()->SpawnBullet(laneNumber, bulletSpeed_);
 		enemy->ChangeMotionState(std::make_unique<EnemyAttackState>());
 		enemy->ChangeTexture(Enemy::Mode::kAngry);
@@ -123,6 +148,8 @@ void EnemyBerserkState::Update(Enemy* enemy)
 			isAnimation_ = true;
 			enemy->ChangeTexture(Enemy::Mode::kAttack);
 			enemy->GetFrontSprite()->SetAnimationTime(attackAnimationTime_);
+			enemy->GetLeftHand()->SetHandState(EnemyHand::HandState::kAttack);
+			enemy->GetRightHand()->SetHandState(EnemyHand::HandState::kAttack);
 		}
 	}
 }

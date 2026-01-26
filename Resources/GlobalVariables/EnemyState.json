@@ -1,7 +1,7 @@
 {
     "EnemyState": {
-        "AngryAnimation": 0.0,
-        "AngryAttackAnimation": 0.0,
+        "AngryAnimation": 0.25,
+        "AngryAttackAnimation": 0.5,
         "BerserkBulletSpeed": 2.0,
         "BerserkFireInterval": 2.0,
         "DownTime": 15.0,

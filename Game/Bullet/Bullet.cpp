@@ -2,11 +2,9 @@
 
 #include "Resource/Texture/Texture.h"
 
-void Bullet::Initialize()
+void Bullet::Initialize(std::string texturehandle)
 {
-	/*model_.Initialize("./Resources/model/plane/plane.obj");
-	model_.worldMatrix = MLEngine::Math::MakeAffineMatrix(scale_, { 0.0f, 0.0f, 0.0f, 1.0f }, position_);*/
-	sprite3D_.Initialize("./Resources/Texture/enemy_bullet.png", 6);
+	sprite3D_.Initialize(texturehandle, 6);
 	sprite3D_.StartAnimation();
 
 
@@ -35,7 +33,3 @@ void Bullet::Update()
 	sprite3D_.UpdateAnimation();
 }
 
-void Bullet::Draw(MLEngine::Object::Camera* camera)
-{
-	
-}

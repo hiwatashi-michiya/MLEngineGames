@@ -13,6 +13,7 @@
 #include <memory>
 #include "Enemy/Enemy.h"
 #include "Bullet/BulletManager.h"
+#include "Enemy/EnemyAttackTurnController.h"
 
 class PlayScene : public BaseScene
 {

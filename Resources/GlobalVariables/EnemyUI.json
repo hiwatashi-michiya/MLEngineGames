@@ -1,5 +1,17 @@
 {
     "EnemyUI": {
+        "Enemy1HPBarColor": [
+            1.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "Enemy2HPBarColor": [
+            1.0,
+            0.0,
+            0.6320000290870667,
+            1.0
+        ],
         "FramePosition": [
             640.0,
             41.5
@@ -7,6 +19,12 @@
         "FrameSize": [
             692.0,
             68.0
+        ],
+        "HPBarColor": [
+            1.0,
+            0.0,
+            0.0,
+            1.0
         ],
         "HPBarPosition": [
             640.0,
