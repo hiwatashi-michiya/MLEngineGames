@@ -6,6 +6,7 @@
 #include <Sprite3D.h>
 
 #include "../Joycon/Joycon.h"
+#include "../DeviceIO/DistanceSensor/DistanceSensor.h"
 
 //プレイヤーが操作する自機
 class Player : public BaseCharacter{
@@ -134,8 +135,10 @@ private:
 
 	int bulletDamege_ = 10;
 
-	//ジャングル
+	//joycon
 	std::unique_ptr<Joycon> joyconInput;
+	//距離センサー
+	std::unique_ptr<DistanceSensor> DistanceSensor_;
 };
 
 

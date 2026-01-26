@@ -92,7 +92,6 @@ position DistanceSensor::CheckPosition()
 {
 	//intの最大値を代入
 	// x軸はセンサーから見た位置になっている
-	//xが0~1は左を表す
 	PosData minLeft, minMid, minRight;
 
 
@@ -100,19 +99,21 @@ position DistanceSensor::CheckPosition()
 		for (int x = 0; x < WIDTH; x++) {
 			//情報が取れていない場合はスキップする
 			if (status[y][x] == -1) { 
-				continue; 
+				continue;
 			}
+			// プレイヤーから見た左右にしている
 			if (x < 1) {
-				minLeft.data += status[y][x];
-				minLeft.count++;
+				minRight.data +=  status[y][x];
+				minRight.count++;
 			}
 			else if (x < 7) {
 				minMid.data += status[y][x];
 				minMid.count++;
 			}
 			else if (x < 8) {
-				minRight.data +=  status[y][x];
-				minRight.count++;
+				minLeft.data += status[y][x];
+				minLeft.count++;
+
 			}
 		}
 	}

@@ -19,7 +19,7 @@ struct PosData{
     int count = 0;
 };
 
-enum position { pLEFT, pRIGHT, pMID,None };
+enum position { pLEFT, pMID, pRIGHT, None };
 class DistanceSensor {
 public:
     ~DistanceSensor() {
@@ -28,12 +28,12 @@ public:
     void Init();
     void Update();
     void Draw();
-
+    position CheckPosition();
 private:
 
     void Thread();
     void End();
-    position CheckPosition();
+
 
 
     std::unique_ptr<PacketIO>packet_io;

@@ -43,6 +43,11 @@ void Player::Initialize(){
 	joyconInput = std::make_unique<Joycon>();
 	joyconInput->Init();
 #pragma endregion ジョイコン
+
+#pragma region
+	DistanceSensor_ = std::make_unique<DistanceSensor>();
+	DistanceSensor_->Init();
+#pragma endregion 距離センサー
 }
 
 void Player::Finalize(){
@@ -163,6 +168,20 @@ void Player::PlayerMove(){
 			nowLine_++;
 			isJustMoved_ = true;
 		}
+	}
+
+	int movenum = DistanceSensor_->CheckPosition();
+
+	if (movenum == position::pLEFT) {
+		nowLine_ = movenum;
+		isJustMoved_ = true;
+	}
+	else if (movenum == position::pRIGHT) {
+		nowLine_ = movenum;
+		isJustMoved_ = true;
+	}else if(movenum == position::pMID){
+		nowLine_ = movenum;
+		isJustMoved_ = true;
 	}
 
 	int number = 0;
