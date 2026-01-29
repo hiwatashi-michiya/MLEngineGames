@@ -210,11 +210,20 @@ void Player::PlayerMove(){
 	
 
 	//タイトルシーンでなければ反転入力
-	if (vController_->Decide() || joyconInput->CheakRadius(75.0f)) {
+	if (vController_->Decide()) {
 		isForward_ = !isForward_;
 		isJustTurned_ = true;
 	}
 
+	direction dir = joyconInput->CheakRadius();
+	if (dir == direction::front) {
+		isForward_ = true;
+		isJustTurned_ = true;
+	}
+	else if (dir == direction::back) {
+		isForward_ = false;
+		isJustMoved_ = true;
+	}
 	
 
 }

@@ -19,6 +19,7 @@ void DistanceSensor::Init() {
 	if (ports.empty()) {
 		std::cerr << "Port not found." << std::endl;
 		packet_io = nullptr;
+		return;
 	}
 
 	std::cout << "Found " << ports.size() << " ports:" << std::endl;

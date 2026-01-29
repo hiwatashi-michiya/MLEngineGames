@@ -105,20 +105,12 @@ bool Joycon::SendSubcommand(hid_device* device, std::byte subcommandId, const st
 	return hid_write(device, std::bit_cast<const uint8_t*>(buffer.data()), buffer.size()) >= 0;
 }
 
-bool Joycon::CheakRadius(float radius)
+direction Joycon::CheakRadius()
 {
 	//TODO:ジョイコンがなければ抜ける
 	if (device_ == nullptr) {
-		return false;
+		return no;
 	}
-	second += MLEngine::Core::FrameTracker::GetInstance()->GetDeltaTimeF();
-
-	if (std::abs(test.x) >= radius) {
-
-		test = { 0.0f };
-		return true;
-	}
-	test += GetVecRotate() * (180 / std::numbers::pi);
 #ifdef _DEBUG
 	ImGui::Begin("Gyro");
 	ImGui::Text("GyroX:%f", test.x);
@@ -126,7 +118,16 @@ bool Joycon::CheakRadius(float radius)
 	ImGui::Text("GyroZ:%f", test.z);
 	ImGui::End();
 #endif
-	return false;
+	if (std::abs(test.x) <= 180) {
+		return front;
+	}if (180 <= std::abs(test.x)) {
+		return back;
+	}
+	test += GetVecRotate() * (180 / std::numbers::pi);
+	if (test.x == (std::max)(test.x, 360.0f)) {
+		test.x = 0;
+	}
+
 }
 
 
