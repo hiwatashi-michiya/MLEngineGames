@@ -75,3 +75,12 @@ void Manager::Update() {
 	}
 
 }
+
+void MLEngine::Resource::Manager::SortSprite2D()
+{
+
+	sprite2Ds_.sort([](const Sprite2D* a, const Sprite2D* b) {
+		return a->GetDrawID() < b->GetDrawID();
+		});
+
+}

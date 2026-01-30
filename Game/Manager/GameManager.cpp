@@ -3,8 +3,11 @@
 #include"Engine/Scene/SceneManager.h"
 #include<Engine/Tool/GlobalVariables.h>
 #include"Externals/imgui/imgui.h"
+#include "Core/FrameTracker.h"
+#include "Utility/Easing.h"
 
 using namespace MLEngine::Resource;
+using namespace MLEngine::Utility;
 
 GameManager* GameManager::GetInstance() {
     static GameManager instance;
@@ -27,8 +30,10 @@ void GameManager::Initialize() {
     titleStartSE_.Load("SE/title_start.mp3");
     tutorialClearSE_.Load("SE/tutorial_clear.mp3");
 
+    sceneChangeTex_.Load("./Resources/Texture/sceneChange_player.png");
     sceneChangeSprite_.reset(MLEngine::Resource::Sprite2D::Create(sceneChangeTex_, {960.0f,540.0f}, {1.0f,1.0f,1.0f,1.0f}));
     sceneChangeSprite_->isActive = false;
+    sceneChangeSprite_->SetDrawID(1);
 
     score_ = 0;
     remainingTime_ = timeLimit_;
@@ -37,6 +42,7 @@ void GameManager::Initialize() {
     tuState_ = TutorialState::LaneMove;
     isTutorialClear_ = false;
     isGameEnd_ = false;
+    isSceneChange_ = false;
     isClear_ = false;
 
     moveCount_ = 0;
@@ -49,6 +55,10 @@ void GameManager::Finalize() {
 }
 
 void GameManager::Update(bool isJustTurned, bool isJustMoved) {
+    
+    //シーン切り替え中は更新しない
+    
+
     GlobalVariables* global = GlobalVariables::GetInstance();
 
     turnCountMax_ = global->GetIntValue("Tutorial", "TurnCount");
@@ -186,12 +196,47 @@ void GameManager::Debug() {
 
 void GameManager::SceneUpdate(){
 
-    //TODO:シーン切り替え演出の実装
-
-    //次のシーンが更新されていたら、切り替える
+    //次のシーンが更新されていたら、切り替えをはじめる
     if (nextState_ != state_) {
-        state_ = nextState_;
+        isSceneChange_ = true;
     }
+
+    if (not isSceneChange_) {
+        return;
+    }
+
+    if (sceneChangeCounter_ <= sceneChangeTime_) {
+
+        sceneChangeSprite_->isActive = true;
+        sceneChangeCounter_ += 1.0f * MLEngine::Core::FrameTracker::GetInstance()->GetDeltaTimeF();
+
+        Vector2 minSize = { 0.0f,0.0f };
+        Vector2 maxSize = sceneChangeSprite_->GetDefaultSize();
+        maxSize = { maxSize.x * maxSpriteScale_.x, maxSize.y * maxSpriteScale_.y };
+
+        //半分より超えたら縮小
+        if (sceneChangeCounter_ >= sceneChangeTime_ * 0.5f) {
+            sceneChangeSprite_->size = Lerp(maxSize, minSize, (sceneChangeCounter_ - sceneChangeTime_ * 0.5f) / (sceneChangeTime_ * 0.5f));
+
+            //次のシーンに切り替え
+            if (nextState_ != state_) {
+                state_ = nextState_;
+            }
+
+        }
+        //半分以下なら拡大
+        else {
+            sceneChangeSprite_->size = Lerp(minSize, maxSize, sceneChangeCounter_ / (sceneChangeTime_ * 0.5f));
+        }
+
+    }
+
+    if (sceneChangeCounter_ >= sceneChangeTime_) {
+        sceneChangeCounter_ = 0.0f;
+        isSceneChange_ = false;
+        sceneChangeSprite_->isActive = false;
+    }
+
 }
 
 /// <summary>

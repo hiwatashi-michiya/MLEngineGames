@@ -176,6 +176,7 @@ Sprite2D::Sprite2D(Texture texture, Vector2 pos, Vector2 s, Vector4 col) {
 	texture_ = texture;
 	position = pos;
 	size = s;
+	defaultSize_ = s;
 	anchorPoint = Vector2(0.5f, 0.5f);
 	viewRect = { 1.0f,1.0f };
 	color = col;
@@ -391,5 +392,13 @@ void Sprite2D::ImGuiUpdate(const std::string name) {
 	ImGui::End();
 
 #endif // _DEBUG
+
+}
+
+void Sprite2D::SetDrawID(int32_t id)
+{
+
+	drawID_ = id;
+	Resource::Manager::GetInstance()->SortSprite2D();
 
 }

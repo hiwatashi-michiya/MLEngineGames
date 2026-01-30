@@ -128,6 +128,13 @@ private:
     // 難易度などの設定
     int difficulty_ = 1;
 
+    //シーン切り替え秒数
+    float sceneChangeTime_ = 1.0f;
+    //シーン切り替えカウント
+    float sceneChangeCounter_ = 0.0f;
+    //画像の最大スケール
+    MLEngine::Math::Vector2 maxSpriteScale_ = { 10.0f,10.0f };
+
     //BGM
     MLEngine::Resource::Audio titleBGM_;
     MLEngine::Resource::Audio tutorialBGM_;

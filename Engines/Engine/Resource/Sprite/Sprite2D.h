@@ -79,13 +79,23 @@ namespace MLEngine::Resource {
 		//実際の描画
 		void Render();
 		//テクスチャセット
-		void SetTexture(MLEngine::Resource::Texture tex) { texture_ = tex; }
+		void SetTexture(MLEngine::Resource::Texture tex) { 
+			texture_ = tex;
+			defaultSize_ = { static_cast<float>(texture_.GetResource()->GetDesc().Width),
+				static_cast<float>(texture_.GetResource()->GetDesc().Height) };
+		}
 		//ポジションセット
 		void SetPosition(MLEngine::Math::Vector2 pos) { position = pos; }
 		//ポジション取得
-		MLEngine::Math::Vector2 GetPosition() { return position; }
+		MLEngine::Math::Vector2 GetPosition() const { return position; }
 		//デバッグ更新
 		void ImGuiUpdate(const std::string name);
+		//画像の元のサイズを取得
+		MLEngine::Math::Vector2 GetDefaultSize() const { return defaultSize_; }
+		//IDをセット
+		void SetDrawID(int32_t id);
+		//IDをゲット
+		int32_t GetDrawID() const { return drawID_; }
 
 	private:
 		//初期化
@@ -132,9 +142,13 @@ namespace MLEngine::Resource {
 		//インデックスバッファビュー
 		D3D12_INDEX_BUFFER_VIEW ibView_{};
 
+		//読み込んだ画像の元のサイズ
+		MLEngine::Math::Vector2 defaultSize_{};
 
 		//テクスチャ
 		MLEngine::Resource::Texture texture_;
+		//描画時の順序
+		int32_t drawID_ = 0;
 
 	};
 
