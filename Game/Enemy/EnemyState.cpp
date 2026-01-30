@@ -113,6 +113,7 @@ void EnemyBerserkState::Enter(Enemy* enemy)
 	intervalTime_ = 0.0f;
 	prevLaneNumber = -1;
 	GlobalVariables* global = GlobalVariables::GetInstance();
+	totalTime_ = global->GetFloatValue("EnemyState", "AngryTotalTime");
 	bulletSpeed_ = global->GetFloatValue("EnemyState", "BerserkBulletSpeed");
 	fireInterval = global->GetFloatValue("EnemyState", "BerserkFireInterval");
 	normalAnimationTime_ = global->GetFloatValue("EnemyState", "AngryAnimation");
@@ -196,6 +197,7 @@ void EnemyGreatAttackState::Enter(Enemy* enemy)
 {
 	intervalTime_ = 0.0f;
 	currentAttackCount_ = 0;
+	attackCount_ = GlobalVariables::GetInstance()->GetIntValue("EnemyState", "GreatAttackCount");
 	normalAnimationTime_ = GlobalVariables::GetInstance()->GetFloatValue("EnemyState", "NormalAnimation");
 	attackAnimationTime_ = GlobalVariables::GetInstance()->GetFloatValue("EnemyState", "AngryAttackAnimation");
 	laneNumber_[0] = MLEngine::Math::RandomInt(0, 2);

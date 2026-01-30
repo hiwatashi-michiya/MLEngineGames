@@ -15,10 +15,11 @@
 class Enemy
 {
 public:
-	const char* states[3] = {
+	const char* states[4] = {
 	"Normal",
 	"Down",
-	"Berserk"
+	"Berserk",
+	"GreatAttack"
 	};
 
 	enum class Mode {
