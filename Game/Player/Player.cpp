@@ -171,7 +171,7 @@ void Player::PlayerMove(){
 	}
 
 	int movenum = DistanceSensor_->CheckPosition();
-
+//#ifndef CLIENT_BUILD
 	if (movenum == position::pLEFT) {
 		nowLine_ = movenum;
 		isJustMoved_ = true;
@@ -183,7 +183,7 @@ void Player::PlayerMove(){
 		nowLine_ = movenum;
 		isJustMoved_ = true;
 	}
-
+//#endif
 	int number = 0;
 
 	if (input_->GetKeyboard()->Trigger(DIK_1)){
@@ -216,15 +216,24 @@ void Player::PlayerMove(){
 	}
 
 	direction dir = joyconInput->CheakRadius();
+//#ifndef CLIENT_BUILD
 	if (dir == direction::front) {
 		isForward_ = true;
 		isJustTurned_ = true;
 	}
 	else if (dir == direction::back) {
 		isForward_ = false;
-		isJustMoved_ = true;
+		isJustTurned_ = true;
 	}
-	
+//#endif
+#ifdef _DEBUG
+	else if (dir == direction::no) {
+
+		ImGui::Begin("Joycon");
+		ImGui::Text("NOconectJoycon");
+		ImGui::End();
+	}
+#endif	
 
 }
 

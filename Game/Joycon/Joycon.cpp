@@ -75,11 +75,26 @@ void Joycon::Update() {
 		const float gyro_cal_coeff = (float)(936.0f / static_cast<float>(cal_gyro_coeff - std::bit_cast<int16_t>(offset)));
 		return (gyro - std::bit_cast<int16_t>(offset)) * (gyro_cal_coeff); });
 
-	std::transform(Gyro_Normalized.begin(), Gyro_Normalized.end(), &Vrotate_.x, [](int16_t v)->float {return v * kRotCalc; });
+	Vector3 temp;
+	std::transform(Gyro_Normalized.begin(), Gyro_Normalized.end(), &temp.x, [](int16_t v)->float {return v * kRotCalc; });
 
+	if (-0.0002f < temp.x && temp.x < 0.0002f) {
+		temp.x = 0.0f;
+	}
+	if (-0.0004f < temp.y && temp.y < 0.0004f) {
+		temp.y = 0.0f;
+	}
+	if (-0.0006f < temp.z && temp.z < 0.0006f) {
+		temp.z = 0.0f;
+	}
+#ifdef _DEBUG
+	ImGui::Begin("Gyro Frame");
+	ImGui::Text("GyroX:%f", temp.z);
+	ImGui::End();
+#endif
+	Vrotate_ = temp;
 	Vrotate_.y *= -1;
 	Vrotate_.x *= -1;
-
 	if (buff[5] == 0) {
 		Buttanflag = false;
 	}
@@ -117,15 +132,19 @@ direction Joycon::CheakRadius()
 	ImGui::Text("GyroY:%f", test.y);
 	ImGui::Text("GyroZ:%f", test.z);
 	ImGui::End();
-#endif
+#endif	
+	test += GetVecRotate() * (180 / std::numbers::pi);
 	if (std::abs(test.x) <= 180) {
 		return front;
 	}if (180 <= std::abs(test.x)) {
 		return back;
 	}
-	test += GetVecRotate() * (180 / std::numbers::pi);
+
 	if (test.x == (std::max)(test.x, 360.0f)) {
-		test.x = 0;
+		test.x = 0.0f;
+	}
+	else if (test.x == (std::min)(test.x, 0.0f)) {
+		test.x = 360.0f;
 	}
 
 }

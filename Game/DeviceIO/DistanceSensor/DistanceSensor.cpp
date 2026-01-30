@@ -135,25 +135,33 @@ position DistanceSensor::CheckPosition()
 		) {
 		return position::None;
 	}
+#ifdef _DEBUG
 	ImGui::Begin("LookFromSencor");
 	ImGui::SetWindowFontScale(3.0f);
+#endif
 	// 最小値が一番小さい位置を返す
 	// 左
 	if (minLeft.data <= minMid.data && minLeft.data <= minRight.data) {
+#ifdef _DEBUG
 		ImGui::Text("LEFT");
 		ImGui::End();
+#endif
 		return position::pLEFT;
 	}
 	// 中央
 	else if (minMid.data <= minLeft.data && minMid.data <= minRight.data) {
+#ifdef _DEBUG
 		ImGui::Text("MID");
 		ImGui::End();
+#endif
 		return position::pMID;
 	}
 	// 右
 	else if (minRight.data <= minLeft.data && minRight.data <= minMid.data) {
+#ifdef _DEBUG
 		ImGui::Text("RIGHT");
 		ImGui::End();
+#endif
 		return position::pRIGHT;
 	}
 	ImGui::End();
