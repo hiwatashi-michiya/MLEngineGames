@@ -88,7 +88,7 @@ void Enemy::Update()
 	rightHand_->DebugUI("右手", "Right");
 
 	if (hp_ <= 0) {
-		EnemyAttackTurnController::GetInstance().OnMyEnemyAttackFinished(-1);
+		EnemyAttackTurnController::GetInstance().OnMyEnemyAttackFinished(-1, -1);
 		return;
 	}
 
