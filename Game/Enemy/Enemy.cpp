@@ -87,17 +87,20 @@ void Enemy::Update()
 	leftHand_->DebugUI("左手", "Left");
 	rightHand_->DebugUI("右手", "Right");
 
+	// モーション更新
+	motionState_->Update(this);
+
 	if (hp_ <= 0) {
-		EnemyAttackTurnController::GetInstance().OnMyEnemyAttackFinished(-1, -1);
+		EnemyAttackTurnController::GetInstance().OnMyEnemyAttackFinished(-1, -1, false);
 		return;
 	}
 
 	// 状態遷移判定
-	if (!dynamic_cast<EnemyBerserkState*>(currentState_.get())) {
+	/*if (!dynamic_cast<EnemyBerserkState*>(currentState_.get())) {
 		if(hp_ <= maxHp_ * 0.3f) {
 			ChangeState(std::make_unique<EnemyBerserkState>());
 		}
-	}
+	}*/
 	// ダウン状態へ移行判定
 	if (!dynamic_cast<EnemyDownState*>(currentState_.get())) {
 		if(downCount_ >= maxDownCount_) {
@@ -111,16 +114,22 @@ void Enemy::Update()
 
 	currentState_->Update(this);
 
+	if (grateAttackTime_ > maxGrateAttackTime_) {
+		ChangeState(std::make_unique<EnemyGreatAttackState>());
+		grateAttackTime_ = 0.0f;
+	}
+
+	if (angryTime_ > maxAngryTime_) {
+		ChangeState(std::make_unique<EnemyBerserkState>());
+		angryTime_ = 0.0f;
+	}
+
 	// UI更新
 	enemyUI_->Update();
 
 	leftHand_->Update();
 	rightHand_->Update();
 
-
-
-	// モーション更新
-	motionState_->Update(this);
 
 	// トランスフォーム更新
 	offsetTransform_->rotateQuaternion = MLEngine::Math::ConvertFromEuler(rotate_);

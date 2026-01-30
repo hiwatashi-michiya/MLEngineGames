@@ -20,7 +20,7 @@ void EnemyAttackTurnController::Update()
 	SendIfNeeded();
 }
 
-void EnemyAttackTurnController::OnMyEnemyAttackFinished(int lane0, int lane1)
+void EnemyAttackTurnController::OnMyEnemyAttackFinished(int lane0, int lane1, bool isAngry)
 {
 	if (!isMyTurn_) return;
 
@@ -28,6 +28,7 @@ void EnemyAttackTurnController::OnMyEnemyAttackFinished(int lane0, int lane1)
 	needSend_ = true;
 	laneNumber_[0] = lane0;
 	laneNumber_[1] = lane1;
+	isAngry_ = isAngry;
 }
 
 void EnemyAttackTurnController::ReceiveFromNetwork()
@@ -45,6 +46,10 @@ void EnemyAttackTurnController::ReceiveFromNetwork()
 		isMyTurn_ = true;
 	}
 
+	if (turn.isAngry) {
+		OnMyEnemyAttackFinished(-1, -1, false);
+	}
+
 	// 撃ったレーンを送る
 	bulletCaveat_->Warn(turn.lane0);
 	bulletCaveat_->Warn(turn.lane1);
@@ -58,6 +63,7 @@ void EnemyAttackTurnController::SendIfNeeded()
 	packet.enemyId = isServer_ ? 0 : 1; // 自分が終えた
 	packet.lane0 = laneNumber_[0];
 	packet.lane1 = laneNumber_[1];
+	packet.isAngry = isAngry_;
 
 	NetworkManager::PacketHeader header{};
 	header.type = 3;

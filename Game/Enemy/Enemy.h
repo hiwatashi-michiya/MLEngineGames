@@ -47,6 +47,14 @@ public:
 
 	void ParantTransform();
 
+	void AddGrateAttackTime(float time) {
+		grateAttackTime_ += time;
+	}
+
+	void AddAngryTime(float time) {
+		angryTime_ += time;
+	}
+
 
 	// ゲット関数
 	MLEngine::Object::Camera* GetCamera() { return camera_; }
@@ -133,6 +141,11 @@ private:
 
 	int maxDownCount_ = 10;
 	int downCount_ = 0;
+
+	float grateAttackTime_ = 0.0f;
+	float maxGrateAttackTime_ = 20.0f;
+	float angryTime_ = 0.0f;
+	float maxAngryTime_ = 6.0f;
 
 	// ImGui用状態選択インデックス
 	int stateIndex = 0;

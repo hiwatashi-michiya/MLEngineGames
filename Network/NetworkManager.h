@@ -48,6 +48,7 @@ public:
 		uint8_t enemyId;
         int lane0;
         int lane1;
+        bool isAngry;
     };
 
 
