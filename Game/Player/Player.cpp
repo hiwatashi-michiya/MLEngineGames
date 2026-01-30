@@ -208,7 +208,6 @@ void Player::PlayerMove(){
 		}
 	}
 	
-
 	//タイトルシーンでなければ反転入力
 	if (vController_->Decide()) {
 		isForward_ = !isForward_;
@@ -216,7 +215,7 @@ void Player::PlayerMove(){
 	}
 
 	direction dir = joyconInput->CheakRadius();
-#ifndef CLIENT_BUILD
+//#ifndef CLIENT_BUILD
 	if (dir == direction::front) {
 		isForward_ = true;
 		isJustTurned_ = true;
@@ -225,7 +224,7 @@ void Player::PlayerMove(){
 		isForward_ = false;
 		isJustTurned_ = true;
 	}
-#endif
+//#endif
 #ifdef _DEBUG
 	else if (dir == direction::no) {
 		ImGui::Begin("Joycon");

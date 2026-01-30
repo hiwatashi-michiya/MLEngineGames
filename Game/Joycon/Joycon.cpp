@@ -68,7 +68,7 @@ void Joycon::Update() {
 
 	//デッドゾーンの設定
 
-	std::array<uint16_t, 3> cal_gyro_offset{ 0x000E, 0xFFDF, 0xFFD0 };
+	static constexpr std::array<uint16_t, 3> cal_gyro_offset{ 0x000E, 0xFFDF, 0xFFD0 };
 	static constexpr uint16_t cal_gyro_coeff = 13371;
 
 	std::transform(Gyro.begin(), Gyro.end(), cal_gyro_offset.begin(), Gyro_Normalized.begin(), [](int16_t gyro, uint16_t offset) {
