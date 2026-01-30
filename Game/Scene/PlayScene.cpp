@@ -183,7 +183,7 @@ void PlayScene::Update(){
 	gameManager_->SetState(static_cast<GameManager::GameState>(gameState));
 
 	titleSprite_->isActive = false;
-	tutorialSprite_->isActive = false;
+	tutorialSprite_.isActive = false;
 	resultSprite_->isActive = false;
 
 
