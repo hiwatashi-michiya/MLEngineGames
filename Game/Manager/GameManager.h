@@ -118,5 +118,8 @@ private:
     MLEngine::Resource::Audio ingameBGM_;
     MLEngine::Resource::Audio resultBGM_;
     //SE
+    MLEngine::Resource::Audio titleStartSE_;
+    MLEngine::Resource::Audio tutorialClearSE_;
+
 
 };

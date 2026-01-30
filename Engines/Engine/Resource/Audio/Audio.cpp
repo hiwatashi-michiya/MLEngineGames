@@ -4,7 +4,7 @@
 using namespace MLEngine::Resource;
 using namespace MLEngine::Core;
 
-float Audio::BGMVolume = 0.5f;
+float Audio::BGMVolume = 0.2f;
 float Audio::SEVolume = 0.5f;
 
 void Audio::Load(const std::string& filename) {

@@ -4,6 +4,7 @@
 #include<../Network/NetworkManager.h>
 #include<Engine/Tool/GlobalVariables.h>
 #include <Sprite3D.h>
+#include "Audio/Audio.h"
 
 #include "../Joycon/Joycon.h"
 
@@ -142,6 +143,14 @@ private:
 
 	//ジャングル
 	std::unique_ptr<Joycon> joyconInput;
+
+	//SE
+	MLEngine::Resource::Audio playerMoveSE_;
+	MLEngine::Resource::Audio playerTurnSE_;
+	MLEngine::Resource::Audio playerBounceSE_;
+	MLEngine::Resource::Audio playerDamageSE_;
+
+
 };
 
 

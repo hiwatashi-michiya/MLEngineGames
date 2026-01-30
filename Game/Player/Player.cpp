@@ -2,6 +2,7 @@
 #include"Externals/imgui/imgui.h"
 
 using namespace MLEngine::Math;
+using namespace MLEngine::Resource;
 
 Player::Player(){
 	//必須となる情報の読み込み
@@ -18,6 +19,10 @@ Player::Player(){
 
 	config_ = GameConfig::GetInstance();
 
+	playerMoveSE_.Load("SE/player_move.mp3");
+	playerTurnSE_.Load("SE/player_turn.mp3");
+	playerBounceSE_.Load("SE/player_bounce.mp3");
+	playerDamageSE_.Load("SE/player_damage.mp3");
 
 }
 
@@ -148,6 +153,8 @@ void Player::OnCollision(const int damege){
 
 	
 	isDamaged_ = true;
+	playerDamageSE_.Play(Audio::SEVolume);
+
 }
 
 void Player::PlayerMove(){
@@ -160,6 +167,7 @@ void Player::PlayerMove(){
 		if (nowLine_ > 0){
 			nowLine_--;
 			isJustMoved_ = true;
+			playerMoveSE_.Play(Audio::SEVolume);
 		}
 		
 	}
@@ -168,6 +176,7 @@ void Player::PlayerMove(){
 		if (nowLine_ < config_->maxLane_ - 1) {
 			nowLine_++;
 			isJustMoved_ = true;
+			playerMoveSE_.Play(Audio::SEVolume);
 		}
 	}
 
@@ -178,6 +187,7 @@ void Player::PlayerMove(){
 		if (nowLine_ != number) {
 			nowLine_ = number;
 			isJustMoved_ = true;
+			playerMoveSE_.Play(Audio::SEVolume);
 		}
 	}
 	else if (input_->GetKeyboard()->Trigger(DIK_2)) {
@@ -185,6 +195,7 @@ void Player::PlayerMove(){
 		if (nowLine_ != number) {
 			nowLine_ = number;
 			isJustMoved_ = true;
+			playerMoveSE_.Play(Audio::SEVolume);
 		}
 	}
 	else if (input_->GetKeyboard()->Trigger(DIK_3)) {
@@ -192,6 +203,7 @@ void Player::PlayerMove(){
 		if (nowLine_ != number) {
 			nowLine_ = number;
 			isJustMoved_ = true;
+			playerMoveSE_.Play(Audio::SEVolume);
 		}
 	}
 	
@@ -200,6 +212,7 @@ void Player::PlayerMove(){
 	if (vController_->Decide() || joyconInput->CheakRadius(75.0f)) {
 		isForward_ = !isForward_;
 		isJustTurned_ = true;
+		playerTurnSE_.Play(Audio::SEVolume);
 	}
 
 	

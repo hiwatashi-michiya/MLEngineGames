@@ -9,6 +9,7 @@
 #include "Enemy/EnemyUI.h"
 #include "Enemy/EnemyMotionState.h"
 #include "Sprite3D.h"
+#include "Audio/Audio.h"
 
 
 class Enemy
@@ -124,6 +125,10 @@ private:
 	// ImGui用状態選択インデックス
 	int stateIndex = 0;
 
-	
+	//SE
+	MLEngine::Resource::Audio enemyDamageSE_;
+	MLEngine::Resource::Audio enemyAngrySE_;
+	MLEngine::Resource::Audio enemyDownSE_;
+
 };
 

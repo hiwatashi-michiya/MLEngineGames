@@ -7,6 +7,8 @@
 #include "Input/Input.h"
 #include"Externals/imgui/imgui.h"
 
+using namespace MLEngine::Resource;
+
 void Enemy::Initialize()
 {
 	global_ = GlobalVariables::GetInstance();
@@ -68,6 +70,10 @@ void Enemy::Initialize()
 	enemyUI_ = std::make_unique<EnemyUI>();
 	enemyUI_->Initialize(this);
 
+	enemyDamageSE_.Load("SE/enemy_damage.mp3");
+	enemyAngrySE_.Load("SE/enemy_angry.mp3");
+	enemyDownSE_.Load("SE/enemy_down.mp3");
+
 }
 
 void Enemy::Update()
@@ -76,6 +82,7 @@ void Enemy::Update()
 	if (!dynamic_cast<EnemyBerserkState*>(currentState_.get())) {
 		if(hp_ <= maxHp_ * 0.3f) {
 			ChangeState(std::make_unique<EnemyBerserkState>());
+			enemyAngrySE_.Play(Audio::SEVolume);
 		}
 	}
 
@@ -84,6 +91,7 @@ void Enemy::Update()
 			ChangeState(std::make_unique<EnemyDownState>());
 			ChangeMotionState(std::make_unique<EnemyknockDownState>());
 			downCount_ = 0;
+			enemyDownSE_.Play(Audio::SEVolume);
 		}
 	}
 
@@ -266,6 +274,8 @@ void Enemy::OnCollision(int damege)
 	if (hp_ < 0) {
 		hp_ = 0;
 	}
+
+	enemyDamageSE_.Play(Audio::SEVolume);
 
 	ChangeMotionState(std::make_unique<EnemyOnHitState>());
 }

@@ -24,6 +24,9 @@ void GameManager::Initialize() {
     ingameBGM_.Load("BGM/BGM_ingame.mp3");
     resultBGM_.Load("BGM/BGM_result.mp3");
 
+    titleStartSE_.Load("SE/title_start.mp3");
+    tutorialClearSE_.Load("SE/tutorial_clear.mp3");
+
     score_ = 0;
     remainingTime_ = timeLimit_;
     state_ = GameState::Title;
@@ -62,6 +65,7 @@ void GameManager::Update(bool isJustTurned, bool isJustMoved) {
 
         //決定ボタンでチュートリアルに移行
         if (vController_->Decide()) {
+            titleStartSE_.Play(Audio::SEVolume);
             nextState_ = GameState::Tutorial;
         };
 
@@ -83,6 +87,7 @@ void GameManager::Update(bool isJustTurned, bool isJustMoved) {
             }
 
             if (moveCount_ >= moveCountMax_){
+                tutorialClearSE_.Play(Audio::SEVolume);
                 tuState_ = TutorialState::FlontBack;
             }
 
@@ -93,6 +98,7 @@ void GameManager::Update(bool isJustTurned, bool isJustMoved) {
             }
 
             if (turnCount_ >= turnCountMax_) {
+                tutorialClearSE_.Play(Audio::SEVolume);
                 tuState_ = TutorialState::Wait;
             }
             break;
