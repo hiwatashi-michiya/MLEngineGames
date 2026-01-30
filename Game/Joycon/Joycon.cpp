@@ -18,7 +18,7 @@ void Joycon::Init() {
 	Joycon::SendSubcommand(device_, std::byte(0x40), { &arg,1 });
 	arg = std::byte(0x30);
 	Joycon::SendSubcommand(device_, std::byte(0x03), { &arg,1 });
-
+	test.x = 90.0f;
 }
 
 void Joycon::Update() {
@@ -92,9 +92,9 @@ void Joycon::Update() {
 	ImGui::Text("GyroX:%f", temp.z);
 	ImGui::End();
 #endif
+	temp.y *= -1;
+	temp.x *= -1;
 	Vrotate_ = temp;
-	Vrotate_.y *= -1;
-	Vrotate_.x *= -1;
 	if (buff[5] == 0) {
 		Buttanflag = false;
 	}
@@ -126,26 +126,28 @@ direction Joycon::CheakRadius()
 	if (device_ == nullptr) {
 		return no;
 	}
-#ifdef _DEBUG
+
+	test += GetVecRotate() * (180 / std::numbers::pi);
+	#ifdef _DEBUG
 	ImGui::Begin("Gyro");
 	ImGui::Text("GyroX:%f", test.x);
 	ImGui::Text("GyroY:%f", test.y);
 	ImGui::Text("GyroZ:%f", test.z);
 	ImGui::End();
 #endif	
-	test += GetVecRotate() * (180 / std::numbers::pi);
+	if (360.0f < test.x) {
+		test.x = 0.0f;
+	}
+	else if (test.x < 0.0f) {
+		test.x = 360.0f;
+	}
+
 	if (std::abs(test.x) <= 180) {
 		return front;
-	}if (180 <= std::abs(test.x)) {
+	}else if (180 <= std::abs(test.x)) {
 		return back;
 	}
 
-	if (test.x == (std::max)(test.x, 360.0f)) {
-		test.x = 0.0f;
-	}
-	else if (test.x == (std::min)(test.x, 0.0f)) {
-		test.x = 360.0f;
-	}
 
 }
 
