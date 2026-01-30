@@ -13,6 +13,7 @@
 #include <memory>
 #include "Enemy/Enemy.h"
 #include "Bullet/BulletManager.h"
+#include "Enemy/EnemyAttackTurnController.h"
 #include "Render/PostEffect/PostEffectDrawer.h"
 #include "MLMath.h"
 
@@ -113,22 +114,25 @@ private:
 	MLEngine::Math::Vector3 translate_ = { 0.0f, 0.0f,0.0f };
 
 	MLEngine::Resource::Texture titleTexture_;
-	MLEngine::Resource::Texture tutorialMoveTexture_;
-	MLEngine::Resource::Texture tutorialTurnTexture_;
 	MLEngine::Resource::Texture gameClearTexture_;
 	MLEngine::Resource::Texture gameOverTexture_;
 
+	std::string tutorialMoveTexture_;
+	std::string tutorialTurnTexture_;
 
+	std::unique_ptr<MLEngine::Object::Transform> tutorialTransform_;
+	MLEngine::Resource::Sprite3D tutorialSprite_;
 	std::unique_ptr<MLEngine::Resource::Sprite2D> titleSprite_;
-	std::unique_ptr<MLEngine::Resource::Sprite2D> tutorialSprite_;
 	std::unique_ptr<MLEngine::Resource::Sprite2D> resultSprite_;
 
 
 	MLEngine::Math::Vector2 titlePos_;
 	MLEngine::Math::Vector2 titleScale_;
 
-	MLEngine::Math::Vector2 tutorialScale_;
-	MLEngine::Math::Vector2 tutorialPos_;
+	MLEngine::Math::Vector2 tutorialAnchor_;
+	MLEngine::Math::Vector3 tutorialPos_;
+	MLEngine::Math::Vector3 tutorialRotate_;
+	MLEngine::Math::Vector3 tutorialScale_;
 
 	MLEngine::Math::Vector2 resultPos_;
 	MLEngine::Math::Vector2 resultScale_;

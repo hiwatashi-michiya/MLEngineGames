@@ -283,9 +283,12 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Game\Bullet\BulletCaveat.cpp" />
     <ClCompile Include="Game\DeviceIO\UltrasonicSensor\UltrasonicSensor.cpp" />
     <ClCompile Include="Game\Character\BaseCharacter.cpp" />
     <ClCompile Include="Game\Config\GameConfig.cpp" />
+    <ClCompile Include="Game\Enemy\EnemyAttackTurnController.cpp" />
+    <ClCompile Include="Game\Enemy\EnemyHand.cpp" />
     <ClCompile Include="Game\Enemy\EnemyMotionState.cpp" />
     <ClCompile Include="Game\Enemy\EnemyUI.cpp" />
     <ClCompile Include="Game\hidapi\hidManager.cpp" />
@@ -305,10 +308,13 @@
     <ClCompile Include="Network\NetworkManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game\Bullet\BulletCaveat.h" />
     <ClInclude Include="Game\DeviceIO\serial\include\serial\serial.h" />
     <ClInclude Include="Game\DeviceIO\UltrasonicSensor\UltrasonicSensor.h" />
     <ClInclude Include="Game\Character\BaseCharacter.h" />
     <ClInclude Include="Game\Config\GameConfig.h" />
+    <ClInclude Include="Game\Enemy\EnemyAttackTurnController.h" />
+    <ClInclude Include="Game\Enemy\EnemyHand.h" />
     <ClInclude Include="Game\Enemy\EnemyMotionState.h" />
     <ClInclude Include="Game\Enemy\EnemyUI.h" />
     <ClInclude Include="Game\hidapi\hidManager.h" />

@@ -26,8 +26,8 @@ void PlayScene::GlobalSetValue(){
 
 	global->SetValue("TextureState", "TitlePos", titlePos_);
 	global->SetValue("TextureState", "TitleScale", titleScale_);
-	global->SetValue("TextureState", "TutorialPos", tutorialPos_);
-	global->SetValue("TextureState", "TutorialScale", tutorialScale_);
+	global->SetValue("TextureState", "TutorialPos3D", tutorialPos_);
+	global->SetValue("TextureState", "TutorialScale3D", tutorialScale_);
 	global->SetValue("TextureState", "ResultPos", resultPos_);
 	global->SetValue("TextureState", "ResultScale", resultScale_);
 }
@@ -37,8 +37,8 @@ void PlayScene::GlobalGetValue(){
 
 	titlePos_ = global->GetVector2Value("TextureState", "TitlePos");
 	titleScale_ = global->GetVector2Value("TextureState", "TitleScale");
-	tutorialPos_ = global->GetVector2Value("TextureState", "TutorialPos");
-	tutorialScale_ = global->GetVector2Value("TextureState", "TutorialScale");
+	tutorialPos_ = global->GetVector3Value("TextureState", "TutorialPos3D");
+	tutorialScale_ = global->GetVector3Value("TextureState", "TutorialScale3D");
 	resultPos_ = global->GetVector2Value("TextureState", "ResultPos");
 	resultScale_ = global->GetVector2Value("TextureState", "ResultScale");
 
@@ -53,7 +53,6 @@ inline void PlayScene::Initialize(){
 	GlobalSetValue();
 
 	gameManager_->Initialize();
-	//お試しプッシュ
 
 	camera_.Initialize();
 	camera_.position_ = { 0.0f,0.0f,-10.0f };
@@ -61,15 +60,19 @@ inline void PlayScene::Initialize(){
 	playerManager_ = std::make_unique<PlayerManager>();
 	playerManager_->Initialize();
 
+	EnemyAttackTurnController::GetInstance().Initialize();
+
 	enemy_ = std::make_unique<Enemy>();
 	enemy_->Initialize();
 	enemy_->SetCamera(&camera_);
 
 	bulletManager_ = std::make_unique<BulletManager>();
-	bulletManager_->Initialize();
+	bulletManager_->Initialize(playerManager_->GetPlayer(), enemy_.get());
 
 	bulletManager_->SetPlayer(playerManager_->GetPlayer());
 	bulletManager_->SetEnemy(enemy_.get());
+
+	EnemyAttackTurnController::GetInstance().SetBulletCaveat(bulletManager_->GetBulletCaveat());
 
 	enemy_->SetBulletManager(bulletManager_.get());
 
@@ -96,17 +99,21 @@ inline void PlayScene::Initialize(){
 
 	//必須となる情報の読み込み
 	titleTexture_.Load("./Resources/Texture/title_logo.png");
-	tutorialMoveTexture_.Load("./Resources/Texture/tutorial_ui_move.png");
-	tutorialTurnTexture_.Load("./Resources/Texture/tutorial_ui_turn.png");
+	tutorialMoveTexture_ = ("./Resources/Texture/tutorial_ui_move.png");
+	tutorialTurnTexture_ = ("./Resources/Texture/tutorial_ui_turn.png");
 	gameClearTexture_.Load("./Resources/Texture/gameClear.png");
 	gameOverTexture_.Load("./Resources/Texture/gameOver.png");
 
 	titleSprite_.reset(MLEngine::Resource::Sprite2D::Create(titleTexture_, titlePos_, titleColor_));
 	titleSprite_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 
-	tutorialSprite_.reset(MLEngine::Resource::Sprite2D::Create(tutorialMoveTexture_, tutorialPos_, tutorialColor_));
-	tutorialSprite_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	tutorialSprite_->isActive = false;
+	tutorialTransform_ = std::make_unique<MLEngine::Object::Transform>();
+
+	tutorialSprite_.Initialize(tutorialMoveTexture_, 1);
+	tutorialSprite_.color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	tutorialSprite_.isActive = false;
+	tutorialSprite_.transform.translate.y = 1.0f;
+	tutorialSprite_.transform.SetParent(tutorialTransform_.get());
 
 	resultSprite_.reset(MLEngine::Resource::Sprite2D::Create(gameOverTexture_, resultPos_, resultColor_));
 	resultSprite_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -230,20 +237,20 @@ void PlayScene::Update(){
 	}
 
 	if (gameManager_->GetState() == GameManager::GameState::Tutorial) {
-		tutorialSprite_->isActive = true;
+		tutorialSprite_.isActive = true;
 	}
 	else {
-		tutorialSprite_->isActive = false;
+		tutorialSprite_.isActive = false;
 	}
 
 	if (gameManager_->GetTutorialState() == GameManager::TutorialState::LaneMove) {
-		tutorialSprite_->SetTexture(tutorialMoveTexture_);
+		tutorialSprite_.SetTexture(tutorialMoveTexture_);
 	}
 	else if(gameManager_->GetTutorialState() == GameManager::TutorialState::FlontBack) {
-		tutorialSprite_->SetTexture(tutorialTurnTexture_);
+		tutorialSprite_.SetTexture(tutorialTurnTexture_);
 	}
 	else {
-		tutorialSprite_->isActive = false;
+		tutorialSprite_.isActive = false;
 	}
 
 	if (gameManager_->GetState() == GameManager::GameState::Result) {
@@ -260,6 +267,10 @@ void PlayScene::Update(){
 		resultSprite_->isActive = false;
 	}
 
+	if (!playerManager_->GetPlayer()->GetIsDamaged()){
+		GameManager::GetInstance()->ResetCombo();
+	}
+
 	NetworkManager::GetInstance().GetEnemyDeadFlug(isClientEnemyDead_);
 #endif	
 	
@@ -272,8 +283,11 @@ void PlayScene::Update(){
 
 	playerManager_->Update(gameManager_->GetDeltaTime());
 
+	
+
 	if (gameManager_->GetState() == GameManager::GameState::Playing){
 		enemy_->SetIsActive(true);
+		EnemyAttackTurnController::GetInstance().Update();
 		enemy_->Update();
 		bulletManager_->SetIsModelActive(true);
 		bulletManager_->Update();
@@ -315,9 +329,14 @@ void PlayScene::Update(){
 
 	titleSprite_->position = titlePos_;
 	titleSprite_->size = titleScale_;
+	
 
-	tutorialSprite_->position = tutorialPos_;
-	tutorialSprite_->size = tutorialScale_;
+	
+	tutorialTransform_->translate = tutorialPos_;
+	tutorialTransform_->rotateQuaternion = MLEngine::Math::ConvertFromEuler(tutorialRotate_);
+	tutorialTransform_->scale = tutorialScale_;
+	tutorialTransform_->UpdateMatrix();
+	tutorialSprite_.UpdateAnimation();
 
 	resultSprite_->position = resultPos_;
 	resultSprite_->size = resultScale_;
@@ -330,7 +349,7 @@ void PlayScene::Update(){
 #ifdef CLIENT_BUILD
 	// Client専用処理
 	EnemyFlugPacket enemyPacket{};
-	enemyPacket.header.type = 3;
+	enemyPacket.header.type = 4;
 	enemyPacket.header.size = sizeof(EnemyFlugPacket);
 	enemyPacket.isEnemyDead = enemy_->GetIsDead();
 
@@ -386,9 +405,14 @@ void PlayScene::DrawImgui() {
 	ImGui::DragFloat2("タイトル大きさ", &titleScale_.x, 1.0f);
 
 	ImGui::Text("チュートリアル");
-	ImGui::DragFloat2("チュートリアル座標", &tutorialPos_.x, 1.0f);
-	ImGui::DragFloat2("チュートリアル大きさ", &tutorialScale_.x, 1.0f);
+	ImGui::DragFloat3("チュートリアル座標", &tutorialPos_.x, 0.1f);
+	ImGui::DragFloat3("チュートリアル回転", &tutorialRotate_.x, 0.01f);
+	ImGui::DragFloat3("チュートリアル大きさ", &tutorialScale_.x, 0.1f);
 
+	ImGui::DragFloat3("チュートリアル2座標", &tutorialSprite_.transform.translate.x, 0.1f);
+	ImGui::DragFloat3("チュートリアル2回転", &tutorialSprite_.transform.rotate.x, 0.01f);
+	ImGui::DragFloat3("チュートリアル2大きさ", &tutorialSprite_.transform.scale.x, 0.1f);
+	
 	ImGui::End();
 
 	ImGui::Begin("縁石");

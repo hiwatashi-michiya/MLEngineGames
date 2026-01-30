@@ -12,6 +12,7 @@ public:
 	void Initialize(Enemy* enemy);
 	void Update();
 
+	void SetIsActive(bool flug) { hpBar_->isActive = flug; frame_->isActive = flug; }
 private:
 	GlobalVariables* global_ = nullptr;
 
@@ -23,6 +24,7 @@ private:
 
 	// 体力ゲージ
 	std::unique_ptr<MLEngine::Resource::Sprite2D> hpBar_;
+
 	// 体力ゲージ調整項目
 	MLEngine::Math::Vector2 barPosition_{};
 	MLEngine::Math::Vector2 barSize_{};

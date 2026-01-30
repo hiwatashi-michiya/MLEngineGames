@@ -6,61 +6,32 @@
 #include"Externals/imgui/imgui.h"
 #include "Enemy/Enemy.h"
 
-void BulletManager::Initialize()
+
+void BulletManager::Initialize(Player* player, Enemy* enemy)
 {
 	global_ = GlobalVariables::GetInstance();
 
 	bullets_.clear();
 
-	/*MLEngine::Resource::Texture texture;
-	texture.Load("./Resources/EngineResources/blockMask.png");*/
+	global_->AddItem("BulletParameters", "ReflectSpeed", 0.5f);
 
-	/*for (int i = 0; i < 3; ++i) {
-		std::unique_ptr<MLEngine::Resource::Sprite> startSprite;
-		startSprite.reset(MLEngine::Resource::Sprite::Create(texture, { 0.0f, 0.0f }, { 1.0f,1.0f,1.0f,0.5f }));
-		startSprite->anchorPoint = { 0.5f,0.5f };
-		startSprites_.push_back(std::move(startSprite));
-
-		std::unique_ptr<MLEngine::Resource::Sprite> targetSprite;
-		targetSprite.reset(MLEngine::Resource::Sprite::Create(texture, {0.0f, 0.0f}, { 1.0f,1.0f,1.0f,0.5f }));
-		targetSprite->anchorPoint = { 0.5f,0.5f };
-		targetSprites_.push_back(std::move(targetSprite));
-	}*/
-
-	global_->AddItem("BulletParameters", "StartScale", startScale_);
+	
 	startScale_ = global_->GetVector3Value("BulletParameters", "StartScale");
-	global_->AddItem("BulletParameters", "EndScale", endScale_);
 	endScale_ = global_->GetVector3Value("BulletParameters", "EndScale");
-	global_->AddItem("BulletParameters", "StartTranslate", startTranslate_);
 	startTranslate_ = global_->GetVector3Value("BulletParameters", "StartTranslate");
-	global_->AddItem("BulletParameters", "EndTranslate", endTranslate_);
 	endTranslate_ = global_->GetVector3Value("BulletParameters", "EndTranslate");
-	global_->AddItem("BulletParameters", "StartDistance", startDistance_);
 	startDistance_ = global_->GetFloatValue("BulletParameters", "StartDistance");
-	global_->AddItem("BulletParameters", "EndDistance", endDistance_);
 	endDistance_ = global_->GetFloatValue("BulletParameters", "EndDistance");
-	global_->AddItem("BulletParameters", "BulletDamege", bulletDamege_);
 	bulletDamege_ = global_->GetIntValue("BulletParameters", "BulletDamege");
+	reflectSpeed_ = global_->GetFloatValue("BulletParameters", "ReflectSpeed");
 
-	/*startModels_.clear();
-	endModels_.clear();
+	player_ = player;
+	enemy_ = enemy;
+
+	bulletCaveat_ = std::make_unique<BulletCaveat>();
+	bulletCaveat_->Initialize(player_);
 
 
-	for (int i = 0; i < 3; ++i) {
-		std::unique_ptr<MLEngine::Resource::RigidModel> startModel = std::make_unique<MLEngine::Resource::RigidModel>();
-		startModel->Initialize("./Resources/model/plane/plane.obj");
-		startModel->worldMatrix = MLEngine::Math::MakeAffineMatrix(startScale_, { 0.0f, 0.0f, 0.0f, 1.0f }, startTranslate_);
-		startModel->color = { 1.0f,0.0f,0.0f,0.5f };
-		startModel->isActive = false;
-		startModels_.push_back(std::move(startModel));
-
-		std::unique_ptr<MLEngine::Resource::RigidModel> endModel = std::make_unique<MLEngine::Resource::RigidModel>();
-		endModel->Initialize("./Resources/model/plane/plane.obj");
-		endModel->worldMatrix = MLEngine::Math::MakeAffineMatrix(endScale_, { 0.0f, 0.0f, 0.0f, 1.0f }, endTranslate_);
-		endModel->color = { 0.0f,1.0f,0.0f,0.5f };
-		endModel->isActive = false;
-		endModels_.push_back(std::move(endModel));
-	}*/
 
 #ifdef _DEBUG
 	startSprite3D_.clear();
@@ -102,6 +73,12 @@ void BulletManager::Update()
 	bullets_.remove_if([this](const std::unique_ptr<Bullet>& bullet) {
 		if (bullet->IsDead()) {
 
+
+			if(bullet->IsReflect()){
+				// 反射していたら敵にダメージを与える
+				enemy_->OnCollision(bulletDamege_);
+				return true;
+			}
 			
 			if (player_->GetNowLine() != bullet->GetNowLine()) { // レーンが違う場合は当たらない
 				return true;
@@ -109,10 +86,12 @@ void BulletManager::Update()
 
 
 			if (player_->GetIsForward()) { // プレイヤーが前を向いている場合のみダメージを受ける
+				GameManager::GetInstance()->AddScore(player_->GetIsDamaged());
 				player_->OnCollision(bulletDamege_);
 			}
 			else { // 敵がダメージを受ける
-				enemy_->OnCollision(bulletDamege_);
+				//enemy_->OnCollision(bulletDamege_);
+				SpawnReflectBullet(bullet->GetNowLine(), reflectSpeed_);
 			}
 
 			return true;
@@ -120,17 +99,13 @@ void BulletManager::Update()
 		return false;
 	});
 
+	bulletCaveat_->Update();
+	bulletCaveat_->DebugUI();
+
 #ifdef _DEBUG
 
 	// 始点・終点モデルの更新
 	for (int i = 0; i < 3; ++i) {
-		/*startSprites_[i]->SetPosition({ launchPosition_.x + startDistance_ * (i - 1), launchPosition_.y });
-		startSprites_[i]->size = { minSize_, minSize_ };
-		targetSprites_[i]->SetPosition({ launchPosition_.x + endDistance_ * (i - 1), endLine_ });
-		targetSprites_[i]->size = { maxSize_, maxSize_ };*/
-
-		/*startModels_[i]->worldMatrix = MLEngine::Math::MakeAffineMatrix(startScale_, { 0.0f, 0.0f, 0.0f, 1.0f }, { startTranslate_.x + startDistance_ * (i - 1), startTranslate_.y, startTranslate_.z });
-		endModels_[i]->worldMatrix = MLEngine::Math::MakeAffineMatrix(endScale_, { 0.0f, 0.0f, 0.0f, 1.0f }, { endTranslate_.x + endDistance_ * (i - 1), endTranslate_.y, endTranslate_.z });*/
 		startSprite3D_[i]->transform.scale = startScale_;
 		startSprite3D_[i]->transform.translate = { startTranslate_.x + startDistance_ * (i - 1), startTranslate_.y, startTranslate_.z };
 		endSprite3D_[i]->transform.scale = endScale_;
@@ -165,6 +140,9 @@ void BulletManager::Update()
 	ImGui::DragInt("弾ダメージ", &bulletDamege_, 1);
 	global_->datas_["BulletParameters"].items["BulletDamege"].value = bulletDamege_;
 
+	ImGui::DragFloat("反射速度", &reflectSpeed_, 0.01f);
+	global_->datas_["BulletParameters"].items["ReflectSpeed"].value = reflectSpeed_;
+
 	if (ImGui::Button("Save")) {
 		global_->SaveFile("BulletParameters");
 		std::string message = std::format("{}.json saved", "BulletParameters");
@@ -181,7 +159,7 @@ void BulletManager::Update()
 void BulletManager::SpawnBullet(int laneNumber, float time)
 {
 	std::unique_ptr<Bullet> newBullet = std::make_unique<Bullet>();
-	newBullet->Initialize();
+	newBullet->Initialize("./Resources/Texture/enemy_bullet.png");
 	newBullet->SetPosition(
 		{ startTranslate_.x + startDistance_ * (laneNumber - 1), startTranslate_.y, startTranslate_.z },
 		{ endTranslate_.x + endDistance_ * (laneNumber - 1), endTranslate_.y, endTranslate_.z }
@@ -189,6 +167,21 @@ void BulletManager::SpawnBullet(int laneNumber, float time)
 	newBullet->SetScale(startScale_, endScale_);
 	newBullet->SetTravelTime(time);
 	newBullet->SetNowLine(laneNumber);
+	bullets_.push_back(std::move(newBullet));
+}
+
+void BulletManager::SpawnReflectBullet(int laneNumber, float time)
+{
+	std::unique_ptr<Bullet> newBullet = std::make_unique<Bullet>();
+	newBullet->Initialize("./Resources/Texture/enemy_backBullet.png");
+	newBullet->SetPosition(
+		{ endTranslate_.x + endDistance_ * (laneNumber - 1), endTranslate_.y, endTranslate_.z },
+		{ startTranslate_.x + startDistance_ * (laneNumber - 1), startTranslate_.y, startTranslate_.z }
+	);
+	newBullet->SetScale(endScale_, startScale_);
+	newBullet->SetTravelTime(time);
+	newBullet->SetNowLine(laneNumber);
+	newBullet->SetIsReflect(true);
 	bullets_.push_back(std::move(newBullet));
 }
 

@@ -35,6 +35,9 @@ void Player::Initialize(){
 
 	global->SetValue("PlayerState", "Life", lifeMax_);
 	global->SetValue("PlayerState", "comboTime", damegeCount_);
+	global->SetValue("PlayerState", "recoveryValue", recoveryValue_);
+	global->SetValue("PlayerState", "recoverySpeed", recoverySpeed_);
+
 	nowLine_ = config_->centerLane_;
 	time_ = 0.0f;
 	recoverySpeed_ = 1.0f;
@@ -64,6 +67,8 @@ void Player::Update(const float deltaTime){
 
 	lifeMax_ = global->GetIntValue("PlayerState", "Life");
 	damegeCount_ = global->GetFloatValue("PlayerState", "comboTime");
+	recoveryValue_ = global->GetIntValue("PlayerState", "recoveryValue");
+	recoverySpeed_ = global->GetFloatValue("PlayerState", "recoverySpeed");
 #ifdef _DEBUG
 	DebugDraw();
 
@@ -150,7 +155,7 @@ void Player::OnCollision(const int damege){
 	life_ -= damege;
 #endif
 
-
+	bulletDamege_ = damege;
 	
 	isDamaged_ = true;
 	playerDamageSE_.Play(Audio::SEVolume);
@@ -257,7 +262,12 @@ void Player::PlayerRecovery(){
 	//時間以上で回復
 	if (time_ >= recoverySpeed_){
 		time_ = 0.0f;
-		life_ += recoveryValue_;
+		if (isRecoveryArea_){
+			life_ += (recoveryValue_ * 2);
+		}
+		else {
+			life_ += recoveryValue_;
+		}
 	}
 	
 	//超過していた場合調整
@@ -318,7 +328,7 @@ void Player::SyncFromNetwork(){
 			life_ -= bulletDamege_;
 			plState_.isClientHited = false;
 		}
-		isDamaged_ = netState.isDamagedFlug;
+		isDamaged_ = netState.isClientHited;
 
 #endif
 
