@@ -21,7 +21,7 @@ private:
 private:
 	Player* player_ = nullptr;
 
-	float PLyMax_ = 272.0f;
+	float PLyMax_ = 408.0f;
 
 	MLEngine::Resource::Texture texture_;
 

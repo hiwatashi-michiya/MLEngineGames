@@ -4,6 +4,7 @@
 #include <string>
 #include"VirtualController.h"
 #include "Audio/Audio.h"
+#include "Sprite/Sprite2D.h"
 
 class GameManager
 {
@@ -94,8 +95,8 @@ private:
     //チュートリアルクリアしたかどうか
     bool isTutorialClear_ = false;
 
-
-
+    //シーン切り替えフラグ
+    bool isSceneChange_ = false;
     //ゲームクリアしたかどうか
     bool isClear_ = false;
     bool isGameEnd_ = false;
@@ -135,6 +136,8 @@ private:
     //SE
     MLEngine::Resource::Audio titleStartSE_;
     MLEngine::Resource::Audio tutorialClearSE_;
-
+    //シーン切り替え用画像
+    MLEngine::Resource::Texture sceneChangeTex_;
+    std::unique_ptr<MLEngine::Resource::Sprite2D> sceneChangeSprite_;
 
 };

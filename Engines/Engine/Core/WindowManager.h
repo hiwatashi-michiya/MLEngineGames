@@ -79,9 +79,9 @@ namespace MLEngine::Core {
 			//ウィンドウクラス
 			WNDCLASS wc_{};
 			//ウィンドウ横幅
-			int32_t clientWidth_ = 1280;
+			int32_t clientWidth_ = 1920;
 			//ウィンドウ縦幅
-			int32_t clientHeight_ = 720;
+			int32_t clientHeight_ = 1080;
 			//ウィンドウスタイル
 			UINT windowStyle_;
 			//ウィンドウ情報

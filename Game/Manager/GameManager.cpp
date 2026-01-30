@@ -27,6 +27,9 @@ void GameManager::Initialize() {
     titleStartSE_.Load("SE/title_start.mp3");
     tutorialClearSE_.Load("SE/tutorial_clear.mp3");
 
+    sceneChangeSprite_.reset(MLEngine::Resource::Sprite2D::Create(sceneChangeTex_, {960.0f,540.0f}, {1.0f,1.0f,1.0f,1.0f}));
+    sceneChangeSprite_->isActive = false;
+
     score_ = 0;
     remainingTime_ = timeLimit_;
     state_ = GameState::Title;
@@ -102,6 +105,7 @@ void GameManager::Update(bool isJustTurned, bool isJustMoved) {
                 tuState_ = TutorialState::Wait;
             }
             break;
+        //シーン切り替え実装したら削除
         case GameManager::TutorialState::Wait:
             if (!isJustMoved and !isJustTurned) {
                 time_ += deltaTime_;
@@ -181,6 +185,10 @@ void GameManager::Debug() {
 }
 
 void GameManager::SceneUpdate(){
+
+    //TODO:シーン切り替え演出の実装
+
+    //次のシーンが更新されていたら、切り替える
     if (nextState_ != state_) {
         state_ = nextState_;
     }
