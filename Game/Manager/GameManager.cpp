@@ -31,6 +31,8 @@ void GameManager::Initialize() {
     moveCount_ = 0;
     turnCount_ = 0;
     time_ = 0;
+
+    ResetCombo();
 }
 
 void GameManager::Finalize() {

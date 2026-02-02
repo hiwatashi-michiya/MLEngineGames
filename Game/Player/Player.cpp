@@ -115,7 +115,9 @@ void Player::DebugDraw(){
 	ImGui::Text("今の体力	%d", plState_.life);
 	ImGui::Text("傷コンボ	%d", plState_.isDamagedFlug);
 	if (ImGui::Button("体力を減らす")){
-		OnCollision(20);
+
+		OnCollision(5);
+		GameManager::GetInstance()->AddScore(plState_.isDamagedFlug);
 	}
 	ImGui::End();
 #endif // _DEBUG
@@ -135,7 +137,7 @@ void Player::OnCollision(const int damege){
 	// Server Debug処理
 	life_ -= damege;
 #endif
-
+	damageTime_ = 0.0f;
 	bulletDamege_ = damege;
 	
 	isDamaged_ = true;

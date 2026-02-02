@@ -1,10 +1,63 @@
 {
     "UIState": {
+        "ComboColor": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
         "PLLifeColor": [
             0.0,
             1.0,
             0.0,
             1.0
+        ],
+        "ScoreBoardPos": [
+            100.0,
+            100.0
+        ],
+        "ScoreBoardSize": [
+            220.0,
+            153.60000610351563
+        ],
+        "ScoreComboPos": [
+            116.27999877929688,
+            38.70000076293945
+        ],
+        "ScoreComboSize": [
+            100.0,
+            80.9000015258789
+        ],
+        "ScoreNumColor": [
+            0.10000000149011612,
+            1.0,
+            0.10000000149011612,
+            1.0
+        ],
+        "comboNumOnePos": [
+            131.02999877929688,
+            29.0
+        ],
+        "comboNumTenPos": [
+            106.0,
+            29.0
+        ],
+        "comboNumTenSize": [
+            32.0,
+            32.0
+        ],
+        "comboRotate": 0.0,
+        "scoreNumOnePos": [
+            90.0,
+            100.0
+        ],
+        "scoreNumTenPos": [
+            40.0,
+            100.0
+        ],
+        "scoreNumTenSize": [
+            64.0,
+            64.0
         ]
     }
 }
