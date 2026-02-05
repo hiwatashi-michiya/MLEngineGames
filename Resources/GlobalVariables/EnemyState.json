@@ -3,6 +3,7 @@
         "AngryAnimation": 0.25,
         "AngryAttackAnimation": 0.5,
         "AngryTotalTime": 3.0,
+        "AttackCount": 7,
         "BerserkBulletSpeed": 1.5,
         "BerserkFireInterval": 1.5,
         "DownTime": 15.0,
@@ -14,7 +15,7 @@
         "NormalAnimation": 1.0,
         "NormalAttackAnimation": 1.0,
         "NormalBulletSpeed": 2.0,
-        "NormalFireInterval": 3.0,
+        "NormalFireInterval": 2.0,
         "Scale": [
             2.0,
             2.299999952316284,
