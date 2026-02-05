@@ -164,5 +164,8 @@ position DistanceSensor::CheckPosition()
 #endif
 		return position::pRIGHT;
 	}
+#ifdef _DEBUG
 	ImGui::End();
+#endif
+	return None;
 }

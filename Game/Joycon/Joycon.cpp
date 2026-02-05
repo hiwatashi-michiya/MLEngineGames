@@ -44,6 +44,7 @@ void Joycon::Update() {
 		}
 	}
 
+#pragma region
 	// ボタンの押し込みがビットフラグで表現されている。
 	if (Buttanflag == false) {
 		if (buff[5] & Buttan::DOWN) {
@@ -60,44 +61,53 @@ void Joycon::Update() {
 		}
 		Buttanflag = true;
 	}
-	static constexpr float kRotCalc = (4588.f / 65535) / 360;
-
-	std::array<int16_t, 3> Gyro;
-
-	std::memcpy(Gyro.data(), buff.data() + 19, sizeof(int8_t) * 6);
-
-	//デッドゾーンの設定
-
-	static constexpr std::array<uint16_t, 3> cal_gyro_offset{ 0x000E, 0xFFDF, 0xFFD0 };
-	static constexpr uint16_t cal_gyro_coeff = 13371;
-
-	std::transform(Gyro.begin(), Gyro.end(), cal_gyro_offset.begin(), Gyro_Normalized.begin(), [](int16_t gyro, uint16_t offset) {
-		const float gyro_cal_coeff = (float)(936.0f / static_cast<float>(cal_gyro_coeff - std::bit_cast<int16_t>(offset)));
-		return (gyro - std::bit_cast<int16_t>(offset)) * (gyro_cal_coeff); });
-
-	Vector3 temp;
-	std::transform(Gyro_Normalized.begin(), Gyro_Normalized.end(), &temp.x, [](int16_t v)->float {return v * kRotCalc; });
-
-	if (-0.0002f < temp.x && temp.x < 0.0002f) {
-		temp.x = 0.0f;
-	}
-	if (-0.0004f < temp.y && temp.y < 0.0004f) {
-		temp.y = 0.0f;
-	}
-	if (-0.0006f < temp.z && temp.z < 0.0006f) {
-		temp.z = 0.0f;
-	}
-#ifdef _DEBUG
-	ImGui::Begin("Gyro Frame");
-	ImGui::Text("GyroX:%f", temp.z);
-	ImGui::End();
-#endif
-	temp.y *= -1;
-	temp.x *= -1;
-	Vrotate_ = temp;
 	if (buff[5] == 0) {
 		Buttanflag = false;
 	}
+#pragma endregion ボタン入力処理
+
+#pragma region
+
+	static constexpr float kRotCalc = (4588.f / 65535) / 360;
+
+	Vrotate_ = { 0.0f,0.0f,0.0f };
+	for (int i = 0; i < 3; i++) {
+		Vector3 temp = {0.0f,0.0f,0.0f};
+		std::array<int16_t, 3> Gyro;
+
+		std::memcpy(Gyro.data(), buff.data() + 19 + (12 * i), sizeof(int8_t) * 6);
+
+		//デッドゾーンの設定
+
+		static constexpr std::array<uint16_t, 3> cal_gyro_offset{ 0x000E, 0xFFDF, 0xFFD0 };
+		static constexpr uint16_t cal_gyro_coeff = 13371;
+		std::transform(Gyro.begin(), Gyro.end(), cal_gyro_offset.begin(), Gyro_Normalized.begin(), [](int16_t gyro, uint16_t offset) {
+			const float gyro_cal_coeff = (float)(936.0f / static_cast<float>(cal_gyro_coeff - std::bit_cast<int16_t>(offset)));
+			return (gyro - std::bit_cast<int16_t>(offset)) * (gyro_cal_coeff); });
+
+	
+		std::transform(Gyro_Normalized.begin(), Gyro_Normalized.end(), &temp.x, [](int16_t v)->float {return v * kRotCalc; });
+
+		if (-0.0002f < temp.x && temp.x < 0.0002f) {
+			temp.x = 0.0f;
+		}
+		if (-0.0004f < temp.y && temp.y < 0.0004f) {
+			temp.y = 0.0f;
+		}
+		if (-0.0006f < temp.z && temp.z < 0.0006f) {
+			temp.z = 0.0f;
+		}
+#ifdef _DEBUG
+		ImGui::Begin("Gyro Frame");
+		ImGui::Text("GyroX:%f", temp.x);
+		ImGui::End();
+#endif
+		temp.y *= -1;
+		temp.x *= -1;
+		Vrotate_ += temp;
+	}
+
+#pragma endregion
 }
 bool Joycon::IsPush(Buttan key)
 {
@@ -122,17 +132,16 @@ bool Joycon::SendSubcommand(hid_device* device, std::byte subcommandId, const st
 
 direction Joycon::CheakRadius()
 {
-	//TODO:ジョイコンがなければ抜ける
+	//ジョイコンがなければ抜ける
 	if (device_ == nullptr) {
 		return no;
 	}
 
-	test += GetVecRotate() * (180 / std::numbers::pi);
-	#ifdef _DEBUG
+	test += GetVecRotate() * (180 / std::numbers::pi) /2;
+#ifdef _DEBUG
 	ImGui::Begin("Gyro");
-	ImGui::Text("GyroX:%f", test.x);
-	ImGui::Text("GyroY:%f", test.y);
-	ImGui::Text("GyroZ:%f", test.z);
+	ImGui::DragFloat("x", &test.x);
+
 	ImGui::End();
 #endif	
 	if (360.0f < test.x) {
@@ -144,11 +153,10 @@ direction Joycon::CheakRadius()
 
 	if (std::abs(test.x) <= 180) {
 		return front;
-	}else if (180 <= std::abs(test.x)) {
+	}
+	else if (180 <= std::abs(test.x)) {
 		return back;
 	}
-
-
 }
 
 
