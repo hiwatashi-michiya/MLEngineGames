@@ -46,6 +46,10 @@ void GameManager::Update(bool isJustTurned, bool isJustMoved) {
     moveCountMax_ = global->GetIntValue("Tutorial", "MoveCount");
     waitTime_ = global->GetFloatValue("Tutorial", "WaitTime");
 
+    if (isGetScored_ == true){
+        isGetScored_ = false;
+    }
+
     /*ゴミなのでちゃんとstatePatternにします・・・*/
     switch (state_){
     case GameManager::GameState::Title:
@@ -159,5 +163,7 @@ void GameManager::AddScore(bool isCombo){
     }
 
     scratchCombo_++;
+
+    isGetScored_ = true;
 }
 

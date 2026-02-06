@@ -93,11 +93,12 @@ private:
     //チュートリアルクリアしたかどうか
     bool isTutorialClear_ = false;
 
-
-
     //ゲームクリアしたかどうか
     bool isClear_ = false;
     bool isGameEnd_ = false;
+
+    //スコアを獲得したかどうか
+    bool isGetScored_ = false;
 
     //チュートリアルでのカウント
     int moveCount_ = 0;
