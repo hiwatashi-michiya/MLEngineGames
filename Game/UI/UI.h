@@ -29,7 +29,8 @@ public:
 	bool GetIsStartEasing() const { return isStartEasing_; }
 	//イージング終了取得
 	bool GetIsEndEasing() const { return isEndEasing_; }
-
+	//スプライト取得
+	MLEngine::Resource::Sprite2D* GetSprite() { return sprite_.get(); }
 	//開始座標
 	MLEngine::Math::Vector2 startPosition{};
 	//中間座標
