@@ -122,9 +122,6 @@ inline void PlayScene::Initialize(){
 	rotate_.x = 1.48f;
 	scale_ = { 3.0f,30.0f,1.0f };
 
-	hitParticle_ = std::make_unique<HitParticle>();
-	hitParticle_->Initialize();
-
 }
 
 void PlayScene::Finalize(){
@@ -214,14 +211,6 @@ void PlayScene::Update(){
 
 		lifeUI_->Update();
 
-
-
-		if (input_->GetKeyboard()->Trigger(DIK_8)) {
-			hitParticle_->Spawn(MLEngine::Math::Vector3(0.0f, 2.0f, -5.0f));
-		}
-
-		hitParticle_->Update();
-
 	}
 	else {
 		bulletManager_->SetIsModelActive(false);
@@ -254,12 +243,6 @@ void PlayScene::Update(){
 	camera_.Update();	
 
 	gameManager_->SceneUpdate();
-
-	if (input_->GetKeyboard()->Trigger(DIK_8)) {
-		hitParticle_->Spawn(MLEngine::Math::Vector3(5.0f, 2.0f, 0.0f));
-	}
-
-	hitParticle_->Update();
 
 
 #ifdef CLIENT_BUILD

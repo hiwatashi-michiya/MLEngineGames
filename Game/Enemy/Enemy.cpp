@@ -66,6 +66,9 @@ void Enemy::Initialize()
 	rightHand_ = std::make_unique<EnemyHand>();
 	rightHand_->Initialize(transform_.get(), false);
 
+	hitParticle_ = std::make_unique<HitParticle>();
+	hitParticle_->Initialize();
+
 	ChangeState(std::make_unique<EnemyNormalState>());
 	// 
 	ChangeMotionState(std::make_unique<EnemyIdleState>());
@@ -138,6 +141,7 @@ void Enemy::Update()
 	leftHand_->Update();
 	rightHand_->Update();
 
+	hitParticle_->Update();
 
 	// トランスフォーム更新
 	offsetTransform_->rotateQuaternion = MLEngine::Math::ConvertFromEuler(rotate_);
@@ -318,7 +322,7 @@ void Enemy::ChangeMotionState(std::unique_ptr<EnemyMotionState> newMotionState)
 	motionState_->Enter(this);
 }
 
-void Enemy::OnCollision(int damege)
+void Enemy::OnCollision(MLEngine::Math::Vector3 position, int damege)
 {
 	if(!dynamic_cast<EnemyDownState*>(currentState_.get())) {
 		downCount_++;
@@ -330,6 +334,8 @@ void Enemy::OnCollision(int damege)
 	}
 
 	ChangeMotionState(std::make_unique<EnemyOnHitState>());
+
+	hitParticle_->Spawn(position);
 }
 
 void Enemy::ChangeTexture(Mode mode)

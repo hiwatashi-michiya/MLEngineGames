@@ -214,9 +214,9 @@ void HitParticle::Spawn(MLEngine::Math::Vector3 position)
 
 		// カラー
 #ifdef CLIENT_BUILD
-		newSpick.particle3D->particleData[i].color = grainEnemy2Color_;
+		newSpick.particle3D->particleData[i].color = spickEnemy2Color_;
 #else
-		newSpick.particle3D->particleData[i].color = grainEnemy1Color_;
+		newSpick.particle3D->particleData[i].color = spickEnemy1Color_;
 #endif
 		
 	}

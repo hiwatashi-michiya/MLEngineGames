@@ -10,7 +10,7 @@
 #include "Enemy/EnemyMotionState.h"
 #include "Sprite3D.h"
 #include "Enemy/EnemyHand.h"
-
+#include "Particle/HitParticle.h"
 
 class Enemy
 {
@@ -42,7 +42,7 @@ public:
 	void ChangeMotionState(std::unique_ptr<EnemyMotionState> newMotionState);
 
 	// 衝突処理
-	void OnCollision(int damege);
+	void OnCollision(MLEngine::Math::Vector3 position, int damege);
 
 	void ChangeTexture(Mode mode);
 
@@ -140,10 +140,12 @@ private:
 	// 弾マネージャー
 	BulletManager* bulletManager_;
 
-
+	// 左手
 	std::unique_ptr<EnemyHand> leftHand_;
+	// 右手
 	std::unique_ptr<EnemyHand> rightHand_;
-
+	// 
+	std::unique_ptr<HitParticle> hitParticle_;
 	// 体力
 	int maxHp_ = 500;
 	int hp_ = 0;

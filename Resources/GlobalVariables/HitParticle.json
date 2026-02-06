@@ -1,6 +1,18 @@
 {
     "HitParticle": {
         "GrainDivision": 10,
+        "GrainEnemy1Color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
+        "GrainEnemy2Color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
         "GrainGravity": -0.0020000000949949026,
         "GrainLimitTime": 1.0,
         "GrainOffset": 0.10000000149011612,
@@ -10,6 +22,18 @@
             0.10000000149011612
         ],
         "SpickDivision": 10,
+        "SpickEnemy1Color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
+        "SpickEnemy2Color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
         "SpickLimitTime": 0.75,
         "SpickMaxScale": [
             0.10000000149011612,
