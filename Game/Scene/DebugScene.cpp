@@ -32,15 +32,15 @@ inline void DebugScene::Initialize()
 	tex_.Load("./Resources/white.png");
 
 	sprite3D_.Initialize("./Resources/texture/player_back.png", 1);
-	model_.Initialize("./Resources/EngineResources/testObjects/axis.obj");
-	model2_.Initialize("./Resources/model/block/glassBlock.obj");
+	model2_.Initialize("./Resources/model/stageStone/stage_stone.obj");
+	model2_.materialData.enableLighting = true;
 	model3_.Initialize("./Resources/model/block/glassBlock.obj");
 	model3_.SetTexture("./Resources/EngineResources/paperMask.png");
 	particle_.reset(Particle3D::Create("./Resources/model/plane/plane.obj", 32));
 	sprite_.reset(Sprite2D::Create(tex_, { 200.0f,200.0f }, { 0.0f,1.0f,0.0f,1.0f }));
 	sprite_->size = { 200.0f,200.0f };
 	//読み込み("./Resources/audio/"以降のパスでOK)
-	se1_.Load("SE/test.mp3");
+	se1_.Load("SE/title_start.mp3");
 
 	box_.SetCollisionAttribute(0x00000002);
 	//当たった瞬間の呼び出し関数
@@ -64,7 +64,7 @@ inline void DebugScene::Initialize()
 	distanceSensor_->Init();
 #pragma endregion アルディーノ
 
-	dLight_.cbData->direction = MLEngine::Math::Normalize(dLight_.cbData->direction);
+	dLight_.cbData->normalDirection = MLEngine::Math::Normalize(dLight_.cbData->normalDirection);
 
 }
 
@@ -79,6 +79,10 @@ void DebugScene::Update()
 	{
 
 #ifdef _DEBUG
+
+		ImGui::Begin("平行光源");
+		dLight_.Debug();
+		ImGui::End();
 
 		ImGui::Begin("テスト");
 
@@ -131,7 +135,7 @@ void DebugScene::Update()
 		}
 
 		if (ImGui::Checkbox("show sprite", &sprite_->isActive)) {
-
+			
 		}
 
 		if (ImGui::Checkbox("show particle", &particle_->isActive)) {
@@ -147,10 +151,13 @@ void DebugScene::Update()
 		}
 
 		ImGui::End();
+
+		sprite_->ImGuiUpdate("spritedebug");
+
 	Quaternion hoge;
 	modelRot_ *= ConvertFromEuler(joyconInput->GetVecRotate());
 
-	test += joyconInput->GetVecRotate() * (180/std::numbers::pi);
+	test += joyconInput->GetVecRotate() * (180.0f/std::numbers::pi);
 	ImGui::Begin("Gyro");
 	ImGui::Text("DeX:%f", test.x);
 	ImGui::Text("DeY:%f", test.y);

@@ -3,6 +3,8 @@
 #include "Math/Rand.h"
 #include "Enemy.h"
 
+using namespace MLEngine::Resource;
+
 #pragma region 通常攻撃状態
 
 void EnemyNormalState::Enter(Enemy* enemy)
@@ -15,10 +17,18 @@ void EnemyNormalState::Enter(Enemy* enemy)
 	isAnimation_ = false;
 	normalAnimationTime_ = global->GetFloatValue("EnemyState", "NormalAnimation");
 	attackAnimationTime_ = global->GetFloatValue("EnemyState", "NormalAttackAnimation");
+	enemy->GetLeftHand()->SetHandState(EnemyHand::HandState::kNormal);
+	enemy->GetRightHand()->SetHandState(EnemyHand::HandState::kNormal);
+	enemyAttackSE_.Load("SE/enemy_attack.mp3");
 }
 
 void EnemyNormalState::Update(Enemy* enemy)
 {
+	if (!EnemyAttackTurnController::GetInstance().CanMyEnemyAttack()) {
+		return;
+	}
+
+
 	if (intervalTime_ >= fireInterval)
 	{
 		int laneNumber = MLEngine::Math::RandomInt(0, 2);
@@ -27,12 +37,16 @@ void EnemyNormalState::Update(Enemy* enemy)
 		{
 			laneNumber = MLEngine::Math::RandomInt(0, 2);
 		}
+
+		EnemyAttackTurnController::GetInstance().OnMyEnemyAttackFinished(laneNumber, -1);
+
 		enemy->GetBulletManager()->SpawnBullet(laneNumber, bulletSpeed_);
 		enemy->ChangeMotionState(std::make_unique<EnemyAttackState>());
 		enemy->ChangeTexture(Enemy::Mode::kNormal);
 		enemy->GetFrontSprite()->SetAnimationTime(normalAnimationTime_);
 		intervalTime_ = 0.0f;
 		prevLaneNumber = laneNumber;
+		enemyAttackSE_.Play(Audio::SEVolume);
 
 		isAnimation_ = false;
 	}
@@ -44,7 +58,10 @@ void EnemyNormalState::Update(Enemy* enemy)
 			isAnimation_ = true;
 			enemy->ChangeTexture(Enemy::Mode::kAttack);
 			enemy->GetFrontSprite()->SetAnimationTime(attackAnimationTime_);
+			enemy->GetLeftHand()->SetHandState(EnemyHand::HandState::kAttack);
+			enemy->GetRightHand()->SetHandState(EnemyHand::HandState::kAttack);
 		}
+
 
 	}
 }
@@ -68,6 +85,8 @@ void EnemyDownState::Enter(Enemy* enemy)
 
 void EnemyDownState::Update(Enemy* enemy)
 {
+	EnemyAttackTurnController::GetInstance().OnMyEnemyAttackFinished(-1, -1);
+
 	elapsedTime_ += 1.0f / 60.0f;
 	if (elapsedTime_ >= downTime)
 	{
@@ -94,24 +113,42 @@ void EnemyBerserkState::Enter(Enemy* enemy)
 	normalAnimationTime_ = global->GetFloatValue("EnemyState", "AngryAnimation");
 	attackAnimationTime_ = global->GetFloatValue("EnemyState", "AngryAttackAnimation");
 	enemy->ChangeTexture(Enemy::Mode::kAngry);
+	enemy->GetLeftHand()->SetHandState(EnemyHand::HandState::kAngry);
+	enemy->GetRightHand()->SetHandState(EnemyHand::HandState::kAngry);
 }
 
 void EnemyBerserkState::Update(Enemy* enemy)
 {
+	if (!EnemyAttackTurnController::GetInstance().CanMyEnemyAttack()) {
+		return;
+	}
+
+
 	if (intervalTime_ >= fireInterval)
 	{
-		int laneNumber = MLEngine::Math::RandomInt(0, 2);
+		int laneNumber[2];
 
-		while (laneNumber == prevLaneNumber)
+		laneNumber[0] = MLEngine::Math::RandomInt(0, 2);
+		while (laneNumber[0] == prevLaneNumber)
 		{
-			laneNumber = MLEngine::Math::RandomInt(0, 2);
+			laneNumber[0] = MLEngine::Math::RandomInt(0, 2);
 		}
-		enemy->GetBulletManager()->SpawnBullet(laneNumber, bulletSpeed_);
+
+		laneNumber[1] = MLEngine::Math::RandomInt(0, 2);
+		while(laneNumber[1] == laneNumber[0])
+		{
+			laneNumber[1] = MLEngine::Math::RandomInt(0, 2);
+		}
+
+		EnemyAttackTurnController::GetInstance().OnMyEnemyAttackFinished(laneNumber[0], laneNumber[1]);
+
+		enemy->GetBulletManager()->SpawnBullet(laneNumber[0], bulletSpeed_);
+		enemy->GetBulletManager()->SpawnBullet(laneNumber[1], bulletSpeed_);
 		enemy->ChangeMotionState(std::make_unique<EnemyAttackState>());
 		enemy->ChangeTexture(Enemy::Mode::kAngry);
 		enemy->GetFrontSprite()->SetAnimationTime(normalAnimationTime_);
 		intervalTime_ = 0.0f;
-		prevLaneNumber = laneNumber;
+		prevLaneNumber = laneNumber[0];
 
 		isAnimation_ = false;
 	}
@@ -123,6 +160,8 @@ void EnemyBerserkState::Update(Enemy* enemy)
 			isAnimation_ = true;
 			enemy->ChangeTexture(Enemy::Mode::kAttack);
 			enemy->GetFrontSprite()->SetAnimationTime(attackAnimationTime_);
+			enemy->GetLeftHand()->SetHandState(EnemyHand::HandState::kAttack);
+			enemy->GetRightHand()->SetHandState(EnemyHand::HandState::kAttack);
 		}
 	}
 }

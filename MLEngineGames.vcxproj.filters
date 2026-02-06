@@ -21,9 +21,10 @@
     <ClCompile Include="Game\Joycon\Joycon.cpp" />
     <ClCompile Include="Game\hidapi\hidManager.cpp" />
     <ClCompile Include="Game\DeviceIO\UltrasonicSensor\UltrasonicSensor.cpp" />
-    <ClCompile Include="Game\DeviceIO\DistanceSensor\DistanceSensor.cpp" />
-    <ClCompile Include="Game\DeviceIO\DistanceSensor\packet_io.cpp" />
-    <ClCompile Include="Game\DeviceIO\DistanceSensor\vendor_serial.cpp" />
+    <ClCompile Include="Game\Bullet\BulletCaveat.cpp" />
+    <ClCompile Include="Game\Enemy\EnemyAttackTurnController.cpp" />
+    <ClCompile Include="Game\Enemy\EnemyHand.cpp" />
+    <ClCompile Include="Game\UI\UI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -77,8 +78,14 @@
     <ClCompile Include="Game\Enemy\EnemyMotionState.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Score\ScoreNumber.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
+  <ClInclude Include="Game\Score\ScoreNumber.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
     <ClInclude Include="Game\Character\BaseCharacter.h" />
     <ClInclude Include="Game\Config\GameConfig.h" />
     <ClInclude Include="Game\Enemy\EnemyMotionState.h" />
@@ -98,8 +105,12 @@
     <ClInclude Include="Game\Joycon\Joycon.h" />
     <ClInclude Include="Game\hidapi\hidManager.h" />
     <ClInclude Include="Game\DeviceIO\UltrasonicSensor\UltrasonicSensor.h" />
+    <ClInclude Include="Game\DeviceIO\serial\include\serial\serial.h" />
+    <ClInclude Include="Game\Bullet\BulletCaveat.h" />
     <ClInclude Include="Game\Character\BaseCharacter.h" />
     <ClInclude Include="Game\Config\GameConfig.h" />
+    <ClInclude Include="Game\Enemy\EnemyAttackTurnController.h" />
+    <ClInclude Include="Game\Enemy\EnemyHand.h" />
     <ClInclude Include="Game\Enemy\EnemyMotionState.h" />
     <ClInclude Include="Game\Enemy\EnemyUI.h" />
     <ClInclude Include="Game\LifeUI\LifeUI.h" />
@@ -115,8 +126,7 @@
     <ClInclude Include="Game\Scene\SceneFactory.h" />
     <ClInclude Include="Network\NetworkManager.h" />
     <ClInclude Include="Resources\icon\resource.h" />
-    <ClInclude Include="Game\DeviceIO\DistanceSensor\packet_io.h" />
-    <ClInclude Include="Game\DeviceIO\DistanceSensor\DistanceSensor.h" />
+    <ClInclude Include="Game\UI\UI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

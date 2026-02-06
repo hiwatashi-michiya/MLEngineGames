@@ -4,6 +4,7 @@
 #include<../Network/NetworkManager.h>
 #include<Engine/Tool/GlobalVariables.h>
 #include <Sprite3D.h>
+#include "Audio/Audio.h"
 
 #include "../Joycon/Joycon.h"
 #include "../DeviceIO/DistanceSensor/DistanceSensor.h"
@@ -52,8 +53,16 @@ public:
 		return life_;
 	}
 
+	float GetLifeRatio() const {
+		return lifeRatio_;
+	}
+
 	bool GetIsJustMoved() const {
 		return isJustMoved_;
+	}
+
+	bool GetIsDamaged() const {
+		return isDamaged_;
 	}
 
 	bool GetIsJustTurned() const {
@@ -67,6 +76,17 @@ public:
 
 	void SetIsTitleScene(bool isTitleScene) {
 		isTitleScene_ = isTitleScene;
+	}
+	//回復雲のレーンにいるか
+	void ChackInRecoveryArea(int RecoveryArea) {
+		if (nowLine_ == RecoveryArea){
+			isRecoveryArea_ = true;
+		}
+		else {
+			isRecoveryArea_ = false;
+		}
+
+		
 	}
 
 private:
@@ -117,6 +137,8 @@ private:
 	bool isJustTurned_ = false;
 	bool isJustMoved_ = false;
 
+	bool isRecoveryArea_ = false;
+
 	float damageTime_ = 0.0f;
 
 	float damegeCount_ = 3.0f;
@@ -134,11 +156,21 @@ private:
 
 
 	int bulletDamege_ = 10;
+	//体力の残り割合
+	float lifeRatio_ = 1.0f;
 
 	//joycon
 	std::unique_ptr<Joycon> joyconInput;
 	//距離センサー
 	std::unique_ptr<DistanceSensor> DistanceSensor_;
+
+	//SE
+	MLEngine::Resource::Audio playerMoveSE_;
+	MLEngine::Resource::Audio playerTurnSE_;
+	MLEngine::Resource::Audio playerBounceSE_;
+	MLEngine::Resource::Audio playerDamageSE_;
+
+
 };
 
 

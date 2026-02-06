@@ -17,7 +17,8 @@ float DegToRad(float degrees) {
 
 void EnemyIdleState::Enter(Enemy* enemy)
 {
-
+	enemy->GetLeftHand()->SetHandState(enemy->GetLeftHand()->GetPreviousHandState());
+	enemy->GetRightHand()->SetHandState(enemy->GetRightHand()->GetPreviousHandState());
 }
 
 void EnemyIdleState::Update(Enemy* enemy)
@@ -35,10 +36,6 @@ void EnemyOnHitState::Enter(Enemy* enemy)
 {
 	GlobalVariables* global = GlobalVariables::GetInstance();
 	global->CreateGroup("EnemyMotionState");
-
-	global->AddItem("EnemyMotionState", "OnHit", 2.0f);
-	global->AddItem("EnemyMotionState", "AddDegrees", 5.0f);
-	global->AddItem("EnemyMotionState", "LimitDegrees", 45.0f);
 
 	elapsedTime_ = 0.0f;
 	targetTime_ = global->GetFloatValue("EnemyMotionState", "OnHit");
@@ -82,10 +79,6 @@ void EnemyAttackState::Enter(Enemy* enemy)
 	GlobalVariables* global = GlobalVariables::GetInstance();
 	global->CreateGroup("EnemyMotionState");
 
-	global->AddItem("EnemyMotionState", "Attack", 0.5f);
-	global->AddItem("EnemyMotionState", "ShakeOffset", MLEngine::Math::Vector2{ 0.01f, 0.01f });
-
-
 	elapsedTime_ = 0.0f;
 	targetTime_ = global->GetFloatValue("EnemyMotionState", "Attack");
 	shakeOffset_ = global->GetVector2Value("EnemyMotionState", "ShakeOffset");
@@ -120,11 +113,6 @@ void EnemyknockDownState::Enter(Enemy* enemy)
 {
 	GlobalVariables* global = GlobalVariables::GetInstance();
 	global->CreateGroup("EnemyMotionState");
-
-	global->AddItem("EnemyMotionState", "RotateSection", 0.2f);
-	global->AddItem("EnemyMotionState", "LieDownSection", 0.3f);
-	global->AddItem("EnemyMotionState", "GetUpSection", 0.8f);
-	global->AddItem("EnemyMotionState", "LieDownAngle_", 70.0f);
 
 	elapsedTime_ = 0.0f;
 	targetTime_ = global->GetFloatValue("EnemyState", "DownTime");

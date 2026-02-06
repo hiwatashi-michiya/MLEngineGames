@@ -1,12 +1,13 @@
 #include "Bullet.h"
+#include "Utility/Easing.h"
 
 #include "Resource/Texture/Texture.h"
 
-void Bullet::Initialize()
+using namespace MLEngine::Utility;
+
+void Bullet::Initialize(std::string texturehandle)
 {
-	/*model_.Initialize("./Resources/model/plane/plane.obj");
-	model_.worldMatrix = MLEngine::Math::MakeAffineMatrix(scale_, { 0.0f, 0.0f, 0.0f, 1.0f }, position_);*/
-	sprite3D_.Initialize("./Resources/Texture/enemy_bullet.png", 6);
+	sprite3D_.Initialize(texturehandle, 6);
 	sprite3D_.StartAnimation();
 
 
@@ -17,8 +18,8 @@ void Bullet::Initialize()
 void Bullet::Update()
 {
 
-	position_ = MLEngine::Math::Lerp(startPosition_, targetPosition_, elapsedTime_ / travelTime_);
-	scale_ = MLEngine::Math::Lerp(startScale_, endScale_, elapsedTime_ / travelTime_);
+	position_ = Lerp(startPosition_, targetPosition_, Easing::InQuart(elapsedTime_ / travelTime_));
+	scale_ = Lerp(startScale_, endScale_, Easing::InQuart(elapsedTime_ / travelTime_));
 	//model_.worldMatrix = MLEngine::Math::MakeAffineMatrix(scale_, { 0.0f, 0.0f, 0.0f, 1.0f }, position_);
 	sprite3D_.transform.scale = scale_;
 	sprite3D_.transform.translate = position_;
@@ -35,7 +36,3 @@ void Bullet::Update()
 	sprite3D_.UpdateAnimation();
 }
 
-void Bullet::Draw(MLEngine::Object::Camera* camera)
-{
-	
-}

@@ -6,6 +6,7 @@
 #include <iostream>
 #include <atomic>
 #include<../Game/Manager/GameManager.h>
+#include <../Game/Enemy/EnemyAttackTurnController.h>
 
 #pragma comment(lib, "wsock32.lib")
 #pragma comment(lib, "winmm.lib")
@@ -26,6 +27,7 @@ public:
         //現在いるラインの番号
         int nowLine;
     };
+
 #pragma pack(pop)
 
 #pragma pack(push, 1)	
@@ -40,6 +42,15 @@ public:
         PacketHeader header;
         SendPlayerState state;
     };
+
+    struct EnemyAttackTurnPacket {
+        PacketHeader header;
+		uint8_t enemyId;
+        int lane0;
+        int lane1;
+    };
+
+
 
     // シングルトンインスタンス
     static NetworkManager& GetInstance() {
@@ -76,6 +87,8 @@ public:
 
     void GetSceneState(GameManager::GameState& out)const;
 
+    bool GetLatestEnemyAttackTurn(EnemyAttackTurnPacket& out);
+
     void GetEnemyDeadFlug(bool& out)const;
 private:
     NetworkManager() = default;
@@ -111,6 +124,10 @@ private:
     SendPlayerState playerState_{};
     
     GameManager::GameState gameState_{};
+
+    EnemyAttackTurnPacket enemyAttackTurn_{};
+    bool hasNewEnemyAttackTurn_ = false;
+   
 
     bool isEnemyDead_ = false;
 };
