@@ -54,6 +54,7 @@ inline void PlayScene::Initialize(){
 	playerManager_->Initialize();
 
 	EnemyAttackTurnController::GetInstance().Initialize();
+	EnemyStateController::GetInstance().Initialize();
 
 	enemy_ = std::make_unique<Enemy>();
 	enemy_->Initialize();
@@ -120,6 +121,9 @@ inline void PlayScene::Initialize(){
 
 	rotate_.x = 1.48f;
 	scale_ = { 3.0f,30.0f,1.0f };
+
+	hitParticle_ = std::make_unique<HitParticle>();
+	hitParticle_->Initialize();
 
 }
 
@@ -203,12 +207,20 @@ void PlayScene::Update(){
 	if (gameManager_->GetState() == GameManager::GameState::Playing){
 		enemy_->SetIsActive(true);
 		EnemyAttackTurnController::GetInstance().Update();
+		EnemyStateController::GetInstance().Update();
 		enemy_->Update();
 		bulletManager_->SetIsModelActive(true);
 		bulletManager_->Update();
 
 		lifeUI_->Update();
 
+
+
+		if (input_->GetKeyboard()->Trigger(DIK_8)) {
+			hitParticle_->Spawn(MLEngine::Math::Vector3(0.0f, 2.0f, -5.0f));
+		}
+
+		hitParticle_->Update();
 
 	}
 	else {
@@ -242,6 +254,12 @@ void PlayScene::Update(){
 	camera_.Update();	
 
 	gameManager_->SceneUpdate();
+
+	if (input_->GetKeyboard()->Trigger(DIK_8)) {
+		hitParticle_->Spawn(MLEngine::Math::Vector3(5.0f, 2.0f, 0.0f));
+	}
+
+	hitParticle_->Update();
 
 
 #ifdef CLIENT_BUILD

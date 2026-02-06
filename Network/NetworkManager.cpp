@@ -179,6 +179,13 @@ void NetworkManager::RecvLoop() {
 			enemyAttackTurn_ = eat;
 			hasNewEnemyAttackTurn_ = true;
 		} break;
+		case 4: { // EnemyState
+			EnemyStatePacket esp{}; 
+			Receive(esp);
+			enemyState_.greatAttackFlag = esp.greatAttackFlag;
+			enemyState_.angryAttackFlag = esp.angryAttackFlag;
+			hasNewEnemyState_ = true;
+		}
 
 		default:
 			// 未知パケット → 破棄
@@ -219,6 +226,17 @@ bool NetworkManager::GetLatestEnemyAttackTurn(EnemyAttackTurnPacket& out)
 
 	out = enemyAttackTurn_;
 	hasNewEnemyAttackTurn_ = false; // 消費
+	return true;
+}
+
+bool NetworkManager::GetLatestEnemyState(EnemyStatePacket& out)
+{
+	if (!hasNewEnemyState_) {
+		return false;   // 新着がなければ返さない
+	}
+
+	out = enemyState_;
+	hasNewEnemyState_ = false; // 消費
 	return true;
 }
 

@@ -51,6 +51,11 @@ public:
         bool isAngry;
     };
 
+    struct EnemyStatePacket {
+        bool greatAttackFlag;
+        bool angryAttackFlag;
+	};
+
 
 
     // シングルトンインスタンス
@@ -89,6 +94,8 @@ public:
     void GetSceneState(GameManager::GameState& out)const;
 
     bool GetLatestEnemyAttackTurn(EnemyAttackTurnPacket& out);
+
+    bool GetLatestEnemyState(EnemyStatePacket& out);
 private:
     NetworkManager() = default;
     ~NetworkManager() = default;
@@ -126,6 +133,9 @@ private:
 
     EnemyAttackTurnPacket enemyAttackTurn_{};
     bool hasNewEnemyAttackTurn_ = false;
+
+	EnemyStatePacket enemyState_{};
+	bool hasNewEnemyState_ = false;
    
 };
 

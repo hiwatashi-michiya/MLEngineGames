@@ -49,7 +49,7 @@ public:
 	void ParantTransform();
 
 	void AddGrateAttackTime(float time) {
-		grateAttackTime_ += time;
+		greatAttackTime_ += time;
 	}
 
 	void AddAngryTime(float time) {
@@ -74,6 +74,8 @@ public:
 			return false;
 		}
 	}
+	float GetGreatAttackTime() const { return greatAttackTime_; }
+	float GetAngryTime() const { return angryTime_; }
 
 	// セット関数
 	// 弾マネージャー取得
@@ -89,6 +91,12 @@ public:
 	void SetIsActive(const bool isActive) {
 		frontPlane_.isActive = isActive;
 		backPlane_.isActive = isActive;
+	}
+	void ResetGreatAttackTime() {
+		greatAttackTime_ = 0.0f;
+	}
+	void ResetAngryTime() {
+		angryTime_ = 0.0f;
 	}
 
 
@@ -140,11 +148,14 @@ private:
 	int maxHp_ = 500;
 	int hp_ = 0;
 
+	// ダウンカウント
 	int maxDownCount_ = 10;
 	int downCount_ = 0;
 
-	float grateAttackTime_ = 0.0f;
+	// 大技用
+	float greatAttackTime_ = 0.0f;
 	float maxGrateAttackTime_ = 20.0f;
+	// 怒り用
 	float angryTime_ = 0.0f;
 	float maxAngryTime_ = 6.0f;
 

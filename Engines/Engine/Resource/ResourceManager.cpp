@@ -57,7 +57,7 @@ void Manager::Update() {
 	//パーティクル描画
 	for (Particle3D* particle : particle3ds_) {
 
-		if (particle->isActive) {
+ 		if (particle->isActive) {
 
 			particle->Draw(camera_);
 

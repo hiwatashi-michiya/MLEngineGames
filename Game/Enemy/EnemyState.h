@@ -2,6 +2,7 @@
 
 #include ".vs/../Engine/Tool/GlobalVariables.h"	
 #include "Enemy/EnemyAttackTurnController.h"
+#include "Enemy/EnemyStateController.h"
 
 class Enemy;
 
@@ -34,6 +35,9 @@ public:
 	float normalAnimationTime_;
 	float attackAnimationTime_;
 	bool isAnimation_;
+	// 
+	float maxGrateAttackTime_ = 20.0f;
+	float maxAngryTime_ = 6.0f;
 };
 
 class EnemyDownState : public EnemyState {

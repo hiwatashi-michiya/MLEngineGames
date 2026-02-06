@@ -15,6 +15,8 @@ void EnemyNormalState::Enter(Enemy* enemy)
 	isAnimation_ = false;
 	normalAnimationTime_ = global->GetFloatValue("EnemyState", "NormalAnimation");
 	attackAnimationTime_ = global->GetFloatValue("EnemyState", "NormalAttackAnimation");
+	maxGrateAttackTime_ = global->GetFloatValue("EnemyState", "MaxGreatAttackTime");
+	maxAngryTime_ = global->GetFloatValue("EnemyState", "MaxAngryTime");
 
 	enemy->ChangeTexture(Enemy::Mode::kNormal);
 	enemy->GetFrontSprite()->SetAnimationTime(normalAnimationTime_);
@@ -26,6 +28,21 @@ void EnemyNormalState::Enter(Enemy* enemy)
 void EnemyNormalState::Update(Enemy* enemy)
 {
 	if (!EnemyAttackTurnController::GetInstance().CanMyEnemyAttack()) {
+
+		if(enemy->GetLeftHand()->GetHandState() != EnemyHand::HandState::kAttack)
+		{
+			if (enemy->GetGreatAttackTime() > maxGrateAttackTime_) {
+				enemy->ChangeState(std::make_unique<EnemyGreatAttackState>());
+				/*EnemyStateController::GetInstance().OnMyEnemyStateFinished(false, EnemyStateController::GetInstance().GetAngryFlag());
+				enemy->ResetGreatAttackTime();*/
+			}
+			if (enemy->GetAngryTime() > maxAngryTime_) {
+				enemy->ChangeState(std::make_unique<EnemyBerserkState>());
+				/*EnemyStateController::GetInstance().OnMyEnemyStateFinished(EnemyStateController::GetInstance().GetGreatAttackFlag(), false);
+				enemy->ResetAngryTime();*/
+			}
+		}
+
 		return;
 	}
 	
@@ -54,9 +71,27 @@ void EnemyNormalState::Update(Enemy* enemy)
 	{
 		intervalTime_ += 1.0f / 60.0f;
 
-		if (!isAnimation_) {
-			enemy->AddAngryTime(1.0f / 60.0f);
+
+		if(EnemyStateController::GetInstance().GetGreatAttackFlag())
+		{
 			enemy->AddGrateAttackTime(1.0f / 60.0f);
+		}
+		if(EnemyStateController::GetInstance().GetAngryFlag())
+		{
+ 			enemy->AddAngryTime(1.0f / 60.0f);
+		}
+
+		if (intervalTime_ < fireInterval - attackAnimationTime_) {
+			if (enemy->GetGreatAttackTime() > maxGrateAttackTime_) {
+				enemy->ChangeState(std::make_unique<EnemyGreatAttackState>());
+				/*EnemyStateController::GetInstance().OnMyEnemyStateFinished(false, EnemyStateController::GetInstance().GetAngryFlag());
+				enemy->ResetGreatAttackTime();*/
+			}
+			if (enemy->GetAngryTime() > maxAngryTime_) {
+				enemy->ChangeState(std::make_unique<EnemyBerserkState>());
+				/*EnemyStateController::GetInstance().OnMyEnemyStateFinished(EnemyStateController::GetInstance().GetGreatAttackFlag(), false);
+				enemy->ResetAngryTime();*/
+			}
 		}
 
 		if (!isAnimation_ && intervalTime_ >= fireInterval - attackAnimationTime_) {
@@ -130,6 +165,10 @@ void EnemyBerserkState::Update(Enemy* enemy)
 		if (enemy->GetLeftHand()->GetHandState() != EnemyHand::HandState::kAttack && time_ > totalTime_)
 		{
 			enemy->ChangeState(std::make_unique<EnemyNormalState>());
+
+
+			EnemyStateController::GetInstance().OnMyEnemyStateFinished(EnemyStateController::GetInstance().GetGreatAttackFlag(), false);
+			enemy->ResetAngryTime();
 		}
 
 		return;
@@ -155,7 +194,6 @@ void EnemyBerserkState::Update(Enemy* enemy)
 		}
 
 		EnemyAttackTurnController::GetInstance().OnMyEnemyAttackFinished(laneNumber[0], laneNumber[1], true);
-
 		enemy->GetBulletManager()->SpawnBullet(laneNumber[0], bulletSpeed_);
 		enemy->GetBulletManager()->SpawnBullet(laneNumber[1], bulletSpeed_);
 		enemy->ChangeMotionState(std::make_unique<EnemyAttackState>());
@@ -169,7 +207,8 @@ void EnemyBerserkState::Update(Enemy* enemy)
 	}
 	else
 	{
-		enemy->AddGrateAttackTime(1.0f / 60.0f);
+
+
 		if (!isAnimation_ && intervalTime_ >= fireInterval - attackAnimationTime_) {
 			isAnimation_ = true;
 			enemy->ChangeTexture(Enemy::Mode::kAttack);
@@ -215,6 +254,7 @@ void EnemyGreatAttackState::Update(Enemy* enemy)
 
 
 	if (currentAttackCount_ > attackCount_) {
+		EnemyStateController::GetInstance().OnMyEnemyStateFinished(false, EnemyStateController::GetInstance().GetAngryFlag());
 		enemy->ChangeState(std::make_unique<EnemyNormalState>());
 	}
 	else if (intervalTime_ >= fireInterval)
@@ -223,6 +263,7 @@ void EnemyGreatAttackState::Update(Enemy* enemy)
 		enemy->GetBulletManager()->SpawnBullet(laneNumber_[1], bulletSpeed_);
 		enemy->ChangeMotionState(std::make_unique<EnemyAttackState>());
 		EnemyAttackTurnController::GetInstance().OnMyEnemyAttackFinished(laneNumber_[0], laneNumber_[1], true);
+		//EnemyStateController::GetInstance().OnMyEnemyStateFinished(true, false);
 		enemy->ChangeTexture(Enemy::Mode::kNormal);
 		enemy->GetFrontSprite()->SetAnimationTime(normalAnimationTime_);
 		intervalTime_ = 0.0f;

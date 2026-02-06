@@ -14,6 +14,9 @@
 #include "Enemy/Enemy.h"
 #include "Bullet/BulletManager.h"
 #include "Enemy/EnemyAttackTurnController.h"
+#include "Enemy/EnemyStateController.h"
+
+#include "Particle/HitParticle.h"
 
 class PlayScene : public BaseScene
 {
@@ -108,6 +111,8 @@ private:
 
 	std::string groundTexture_;
 	std::string laneTexture_;
+
+	std::unique_ptr<HitParticle> hitParticle_;
 
 };
 

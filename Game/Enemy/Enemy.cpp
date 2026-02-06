@@ -11,9 +11,6 @@ void Enemy::Initialize()
 {
 	global_ = GlobalVariables::GetInstance();
 
-	global_->AddItem("EnemyState", "GreatAttackCount", 7);
-	global_->AddItem("EnemyState", "AngryTotalTime", 3.0f);
-
 	// 
 	scale_ = global_->GetVector3Value("EnemyState", "Scale");
 	translate_ = global_->GetVector3Value("EnemyState", "Translate");
@@ -96,7 +93,11 @@ void Enemy::Update()
 	motionState_->Update(this);
 
 	if (hp_ <= 0) {
+#ifdef CLIENT_BUILD
 		EnemyAttackTurnController::GetInstance().OnMyEnemyAttackFinished(-1, -1, false);
+#else
+		EnemyAttackTurnController::GetInstance().OnMyEnemyAttackFinished(-1, -1, false);
+#endif
 		return;
 	}
 
@@ -119,15 +120,17 @@ void Enemy::Update()
 
 	currentState_->Update(this);
 
-	if (grateAttackTime_ > maxGrateAttackTime_) {
+	/*if (greatAttackTime_ > maxGrateAttackTime_) {
 		ChangeState(std::make_unique<EnemyGreatAttackState>());
-		grateAttackTime_ = 0.0f;
+		EnemyStateController::GetInstance().OnMyEnemyStateFinished(false, EnemyStateController::GetInstance().GetAngryFlag());
+		greatAttackTime_ = 0.0f;
 	}
 
 	if (angryTime_ > maxAngryTime_) {
 		ChangeState(std::make_unique<EnemyBerserkState>());
+		EnemyStateController::GetInstance().OnMyEnemyStateFinished(EnemyStateController::GetInstance().GetGreatAttackFlag(), false);
 		angryTime_ = 0.0f;
-	}
+	}*/
 
 	// UI更新
 	enemyUI_->Update();
