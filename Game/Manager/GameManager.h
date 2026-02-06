@@ -58,6 +58,8 @@ public:
     int GetScore() const { return score_; }
 
     int GetCombo() const { return scratchCombo_; }
+    //スコアのレベルを計算して取得
+    int GetScoreLevel();
 
     // 残り時間（制限時間）管理
     void SetTimeLimit(float t) { timeLimit_ = t; }
@@ -124,7 +126,7 @@ private:
     int score_ = 0;
     //傷コンボ
     int scratchCombo_ = 0;
-    
+
     // 制限時間管理
     float timeLimit_ = 60.0f;       // 秒
     float remainingTime_ = 60.0f;

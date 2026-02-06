@@ -238,6 +238,7 @@ void GameManager::Debug() {
     ImGui::Begin("スコア回り");
 
     ImGui::Text("スコア：%d", score_);
+    ImGui::DragInt("スコアデバッグ", &score_, 0.1f, 0, 10000);
     ImGui::Text("傷コンボ：%d", scratchCombo_);
 
     ImGui::End();
@@ -325,5 +326,25 @@ void GameManager::AddScore(bool isCombo){
     }
 
     scratchCombo_++;
+}
+
+int GameManager::GetScoreLevel()
+{
+
+    int level = 0;
+
+    if (score_ <= 15 and score_ > 0) {
+        level = ((score_ - 1) / 5) + 1;
+    }
+    else if(score_ <= 45) {
+        level = ((score_ - 16) / 10) + 1;
+        level += 3;
+    }
+    else {
+        level = 7;
+    }
+
+    return level;
+
 }
 

@@ -121,6 +121,7 @@ private:
 
 	std::string frontTextureName_;
 	std::string backTextureName_;
+	std::string damageTextureName_;
 
 		
 	bool isTitleScene_ = false;
