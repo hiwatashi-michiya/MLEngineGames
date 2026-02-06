@@ -176,6 +176,7 @@ Sprite2D::Sprite2D(Texture texture, Vector2 pos, Vector2 s, Vector4 col) {
 	texture_ = texture;
 	position = pos;
 	size = s;
+	defaultSize_ = s;
 	anchorPoint = Vector2(0.5f, 0.5f);
 	viewRect = { 1.0f,1.0f };
 	color = col;
@@ -340,9 +341,9 @@ void Sprite2D::Draw() {
 	vertMap_[3].position = { size.x - anchorPoint.x * size.x,0.0f - anchorPoint.y * size.y, 0.0f,1.0f };
 	vertMap_[3].texcoord = { viewRect.x,0.0f };
 
-	Matrix4x4 worldMatrix = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, { 0.0f,0.0f,0.0f }, { position.x, position.y, 0.5f });
+	Matrix4x4 worldMatrix = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, { 0.0f,0.0f,rotate }, { position.x, position.y, 0.5f });
 	Matrix4x4 viewMatrix = MakeIdentity4x4();
-	Matrix4x4 projectionMatrix = MakeOrthographicMatrix(0.0f, 0.0f, 1280.0f, 720.0f, 0.0f, 100.0f);
+	Matrix4x4 projectionMatrix = MakeOrthographicMatrix(0.0f, 0.0f, float(Window::Manager::GetInstance()->GetClientWidth()), float(Window::Manager::GetInstance()->GetClientHeight()), 0.0f, 100.0f);
 	Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
 	*matTransformMap_ = worldViewProjectionMatrix;
 
@@ -384,6 +385,7 @@ void Sprite2D::ImGuiUpdate(const std::string name) {
 	ImGui::Begin(name.c_str());
 	ImGui::DragFloat2("position", &position.x, 0.1f);
 	ImGui::DragFloat2("size", &size.x, 0.01f);
+	ImGui::DragFloat("rotate", &rotate, 0.01f);
 	ImGui::DragFloat2("view rect", &viewRect.x, 0.01f, 0.0f, 1.0f);
 	ImGui::DragFloat2("uv scale", &uvScale.x, 0.01f);
 	ImGui::DragFloat("uv rotate", &uvRotate, 0.01f);
@@ -391,5 +393,13 @@ void Sprite2D::ImGuiUpdate(const std::string name) {
 	ImGui::End();
 
 #endif // _DEBUG
+
+}
+
+void Sprite2D::SetDrawID(int32_t id)
+{
+
+	drawID_ = id;
+	Resource::Manager::GetInstance()->SortSprite2D();
 
 }

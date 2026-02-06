@@ -15,6 +15,9 @@
 #include "Enemy/Enemy.h"
 #include "Bullet/BulletManager.h"
 #include "Enemy/EnemyAttackTurnController.h"
+#include "Render/PostEffect/PostEffectDrawer.h"
+#include "MLMath.h"
+#include "../UI/UI.h"
 
 class PlayScene : public BaseScene
 {
@@ -52,8 +55,39 @@ private:
 
 private:
 
+	//ビネット演出の設定
+	struct VignetteConfig {
+		//色
+		MLEngine::Math::Vector3 color = { 0.75f, 0.2f, 0.0f };
+		//パワーの値の範囲最小
+		float minPowerRange = 0.05f;
+		//パワーの値の範囲最大
+		float maxPowerRange = 0.1f;
+		//パワーの値最小値
+		float minPower = 0.2f;
+		//パワーの値最大値
+		float maxPower = 0.45f;
+		//ビネットの拡縮時間最小
+		float scalingMinTime = 0.5f;
+		//ビネットの拡縮時間最長
+		float scalingMaxTime = 1.5f;
+		//現在の経過時間
+		float currentTime = 0.0f;
+		//ビネットがかかり始めるプレイヤーの体力比率
+		float startRatio = 0.4f;
+		//ビネットの強さが最大になるプレイヤーの体力比率
+		float endRatio = 0.2f;
+
+	};
+
 	//入力デバイス
 	MLEngine::Input::Manager* input_ = nullptr;
+
+	//ポストエフェクトの描画管理
+	MLEngine::Core::Render::PostEffect::PostEffectDrawer* postEffect_ = nullptr;
+
+	//ビネット演出設定
+	VignetteConfig vignetteConfig_;
 
 	//カメラ
 	//MLEngine::Object::Camera camera_;
@@ -118,10 +152,31 @@ private:
 	MLEngine::Resource::Sprite3D groundPlane_;
 	MLEngine::Resource::Sprite3D lanePlane_;
 
+	//天球
+	MLEngine::Resource::RigidModel skydome_;
+	MLEngine::Object::Transform skydomeTransform_;
+
+	static const int32_t kMaxStone_ = 3;
+
+	//縁石
+	std::array<MLEngine::Resource::RigidModel, kMaxStone_> stoneLeft_;
+	std::array<MLEngine::Resource::RigidModel, kMaxStone_> stoneRight_;
+	std::array<MLEngine::Object::Transform, kMaxStone_> stoneLeftTF_;
+	std::array<MLEngine::Object::Transform, kMaxStone_> stoneRightTF_;
+
 	std::string groundTexture_;
 	std::string laneTexture_;
 
 	bool isClientEnemyDead_ = false;
+
+	//UI関係
+	MLEngine::Resource::Texture ingameStartTex_;
+	MLEngine::Resource::Texture ingameGameoverTex_;
+	MLEngine::Resource::Texture ingameFinishTex_;
+
+	UI ingameStartUI_;
+	UI ingameGameoverUI_;
+	UI ingameFinishUI_;
 
 };
 

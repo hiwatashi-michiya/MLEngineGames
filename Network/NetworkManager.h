@@ -46,7 +46,8 @@ public:
     struct EnemyAttackTurnPacket {
         PacketHeader header;
 		uint8_t enemyId;
-        int lane;
+        int lane0;
+        int lane1;
     };
 
 

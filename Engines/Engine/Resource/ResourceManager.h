@@ -28,9 +28,15 @@ namespace MLEngine::Resource {
 		//剛体モデル削除(重くなったらイテレータを利用してeraseに書き換える)
 		void RemoveRigidModel(RigidModel* model) { rigidModels_.remove(model); }
 		//スプライト追加
-		void AddSprite2D(Sprite2D* sprite) { sprite2Ds_.push_back(sprite); }
+		void AddSprite2D(Sprite2D* sprite) { 
+			sprite2Ds_.push_back(sprite);
+			SortSprite2D();
+		}
 		//スプライト削除
-		void RemoveSprite2D(Sprite2D* sprite) { sprite2Ds_.remove(sprite); }
+		void RemoveSprite2D(Sprite2D* sprite) { 
+			sprite2Ds_.remove(sprite);
+			SortSprite2D();
+		}
 		//スプライト追加
 		void AddSprite3D(Sprite3D* sprite) { sprite3Ds_.push_back(sprite); }
 		//スプライト削除
@@ -43,6 +49,8 @@ namespace MLEngine::Resource {
 		void AddLine(Line* line) { lines_.push_back(line); }
 		//ライン削除
 		void RemoveLine(Line* line) { lines_.remove(line); }
+		//スプライト2Dのソート
+		void SortSprite2D();
 
 	private:
 		//モデルのポインタリスト

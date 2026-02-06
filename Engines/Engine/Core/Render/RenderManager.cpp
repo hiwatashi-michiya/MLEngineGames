@@ -60,57 +60,43 @@ void Manager::Render()
 	}
 
 	Particle3D::PostDraw();
-	//レンダーテクスチャの対象設定
-	DirectXSetter::GetInstance()->RenderTexturePreDraw(1);
-	//0番目にモデルの描画を全てしているので、0番目をシェーダーリソースとして扱って1番目のリソースに描画する
 
-	//ポストエフェクト適用
+	//描画ターゲットのインデックス
+	int32_t tergetIndex = 1;
+	//描画するインデックス
+	int32_t drawIndex = 0;
+	//適用するエフェクトタイプのリスト
+	std::vector<PostEffect::PostEffectType> applyEffectList = postEffect_->GetApplyEffectList();
+
+	//追加したポストエフェクトを全て適用
+	for (int32_t i = 0; i < applyEffectList.size(); i++) {
+
+		//レンダーテクスチャの対象設定
+		DirectXSetter::GetInstance()->RenderTexturePreDraw(tergetIndex);
+
+		//ポストエフェクト適用
+		postEffect_->SetType(applyEffectList[i]);
+		postEffect_->SetBarrier(0, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+		postEffect_->Draw(drawIndex);
+		postEffect_->SetBarrier(0, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
+
+		//数字を入れ替える
+		int32_t tmp = tergetIndex;
+		tergetIndex = drawIndex;
+		drawIndex = tmp;
+
+	}
+
 	postEffect_->SetType(PostEffect::PostEffectType::kNone);
-	postEffect_->SetBarrier(0, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
-	postEffect_->Draw(0);
-	postEffect_->SetBarrier(0, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
-
-	////レンダーテクスチャの対象設定
-	//DirectXSetter::GetInstance()->RenderTexturePreDraw(0);
-	////1番目に書き込みがされたので、それを利用して0番目に上書き
-
-	////ポストエフェクト適用
-	//postEffect_->SetType(PostEffect::PostEffectType::kGrayscale);
-	//postEffect_->SetBarrier(1, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
-	//postEffect_->Draw(1);
-	//postEffect_->SetBarrier(1, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
-
-	////レンダーテクスチャの対象設定
-	//DirectXSetter::GetInstance()->RenderTexturePreDraw(1);
-	////適用したいエフェクトが無くなるまで繰り返し
-
-	////ポストエフェクト適用
-	//postEffect_->SetType(PostEffect::PostEffectType::kVignette);
-	//postEffect_->SetBarrier(0, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
-	//postEffect_->Draw(0);
-	//postEffect_->SetBarrier(0, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
-
-	////レンダーテクスチャの対象設定
-	//DirectXSetter::GetInstance()->RenderTexturePreDraw(0);
-	////ポストエフェクト適用
-	//postEffect_->SetType(PostEffect::PostEffectType::kRadialBlur);
-	//postEffect_->SetBarrier(1, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
-	//postEffect_->Draw(1);
-	//postEffect_->SetBarrier(1, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
-
-	////レンダーテクスチャの対象設定
-	//DirectXSetter::GetInstance()->RenderTexturePreDraw(1);
-	////ポストエフェクト適用
-	//postEffect_->SetType(PostEffect::PostEffectType::kHSVFilter);
-	//postEffect_->SetBarrier(0, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
-	//postEffect_->Draw(0);
-	//postEffect_->SetBarrier(0, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
 	//ここまでがポストエフェクトの対象
 	MLEngine::Core::DirectXSetter::GetInstance()->PreDraw();
 	postEffect_->SetBarrier(1, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
-	postEffect_->Draw(1);
+	postEffect_->Draw(drawIndex);
 	postEffect_->SetBarrier(1, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
+
+	//適用するエフェクトリストをリセット
+	postEffect_->ResetApplyEffectList();
 
 	//スプライト描画
 	Sprite2D::PreDraw(MLEngine::Core::DirectXSetter::GetInstance()->GetCommandList());

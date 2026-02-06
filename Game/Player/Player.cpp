@@ -2,22 +2,28 @@
 #include"Externals/imgui/imgui.h"
 
 using namespace MLEngine::Math;
+using namespace MLEngine::Resource;
 
 Player::Player(){
 	//必須となる情報の読み込み
-	backTextureName_ = ("./Resources/Texture/player_back.png");
-	frontTextureName_ = ("./Resources/Texture/player_front.png");
+	backTextureName_ = ("./Resources/Texture/player_anime_back.png");
+	frontTextureName_ = ("./Resources/Texture/player_anime_front.png");
 
-	sprite3D_.Initialize("./Resources/texture/player_back.png", 1);
+	sprite3D_.Initialize("./Resources/texture/player_back.png", 7);
 	sprite3D_.color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	sprite3D_.transform.scale = { 2.5f,2.5f,1.0f };
+	sprite3D_.transform.scale = { 17.5f,2.5f,1.0f };
 	sprite3D_.isActive = true;
+	sprite3D_.StartAnimation();
 	vController_ = &VirtualController::GetInstance();
 
 	input_ = MLEngine::Input::Manager::GetInstance();
 
 	config_ = GameConfig::GetInstance();
 
+	playerMoveSE_.Load("SE/player_move.mp3");
+	playerTurnSE_.Load("SE/player_turn.mp3");
+	playerBounceSE_.Load("SE/player_bounce.mp3");
+	playerDamageSE_.Load("SE/player_damage.mp3");
 
 }
 
@@ -108,6 +114,12 @@ void Player::Update(const float deltaTime){
 	if (life_ <= 0){
 		isDead_ = true;
 	}
+
+	//最大値が0でない場合
+	if (lifeMax_ != 0.0f) {
+		lifeRatio_ = float(life_) / float(lifeMax_);
+	}
+
 }
 
 void Player::Draw(){
@@ -149,6 +161,8 @@ void Player::OnCollision(const int damege){
 	bulletDamege_ = damege;
 	
 	isDamaged_ = true;
+	playerDamageSE_.Play(Audio::SEVolume);
+
 }
 
 void Player::PlayerMove(){
@@ -161,6 +175,7 @@ void Player::PlayerMove(){
 		if (nowLine_ > 0){
 			nowLine_--;
 			isJustMoved_ = true;
+			playerMoveSE_.Play(Audio::SEVolume);
 		}
 		
 	}
@@ -169,6 +184,7 @@ void Player::PlayerMove(){
 		if (nowLine_ < config_->maxLane_ - 1) {
 			nowLine_++;
 			isJustMoved_ = true;
+			playerMoveSE_.Play(Audio::SEVolume);
 		}
 	}
 
@@ -179,6 +195,7 @@ void Player::PlayerMove(){
 		if (nowLine_ != number) {
 			nowLine_ = number;
 			isJustMoved_ = true;
+			playerMoveSE_.Play(Audio::SEVolume);
 		}
 	}
 	else if (input_->GetKeyboard()->Trigger(DIK_2)) {
@@ -186,6 +203,7 @@ void Player::PlayerMove(){
 		if (nowLine_ != number) {
 			nowLine_ = number;
 			isJustMoved_ = true;
+			playerMoveSE_.Play(Audio::SEVolume);
 		}
 	}
 	else if (input_->GetKeyboard()->Trigger(DIK_3)) {
@@ -193,6 +211,7 @@ void Player::PlayerMove(){
 		if (nowLine_ != number) {
 			nowLine_ = number;
 			isJustMoved_ = true;
+			playerMoveSE_.Play(Audio::SEVolume);
 		}
 	}
 	
@@ -201,6 +220,7 @@ void Player::PlayerMove(){
 	if (vController_->Decide() || joyconInput->CheakRadius(75.0f)) {
 		isForward_ = !isForward_;
 		isJustTurned_ = true;
+		playerTurnSE_.Play(Audio::SEVolume);
 	}
 
 	

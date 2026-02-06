@@ -22,7 +22,7 @@ namespace MLEngine::Lighting {
 			//色
 			MLEngine::Math::Vector4 color;
 			//方向
-			MLEngine::Math::Vector3 direction;
+			MLEngine::Math::Vector3 normalDirection;
 			//強さ
 			float intensity;
 		};
@@ -31,8 +31,12 @@ namespace MLEngine::Lighting {
 		Microsoft::WRL::ComPtr<ID3D12Resource> GetBuffer() { return buffer_; }
 		//コマンドリストにセット
 		void SetLightCBV(UINT index);
+		//デバッグ
+		void Debug();
 		//平行光源の変数を格納したデータ
 		CBData* cbData;
+		//ライトの向き
+		MLEngine::Math::Vector3 direction;
 
 	private:
 
