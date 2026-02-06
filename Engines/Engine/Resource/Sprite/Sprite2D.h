@@ -64,7 +64,8 @@ namespace MLEngine::Resource {
 
 		//UV回転
 		float uvRotate = 0.0f;
-
+		//スプライト回転
+		float rotate = 0.0f;
 		//UVスケール
 		MLEngine::Math::Vector2 uvScale{ 1.0f,1.0f };
 

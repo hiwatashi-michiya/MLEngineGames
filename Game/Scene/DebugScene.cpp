@@ -40,7 +40,7 @@ inline void DebugScene::Initialize()
 	sprite_.reset(Sprite2D::Create(tex_, { 200.0f,200.0f }, { 0.0f,1.0f,0.0f,1.0f }));
 	sprite_->size = { 200.0f,200.0f };
 	//読み込み("./Resources/audio/"以降のパスでOK)
-	se1_.Load("SE/test.mp3");
+	se1_.Load("SE/title_start.mp3");
 
 	box_.SetCollisionAttribute(0x00000002);
 	//当たった瞬間の呼び出し関数
@@ -135,7 +135,7 @@ void DebugScene::Update()
 		}
 
 		if (ImGui::Checkbox("show sprite", &sprite_->isActive)) {
-
+			
 		}
 
 		if (ImGui::Checkbox("show particle", &particle_->isActive)) {
@@ -151,6 +151,9 @@ void DebugScene::Update()
 		}
 
 		ImGui::End();
+
+		sprite_->ImGuiUpdate("spritedebug");
+
 	Quaternion hoge;
 	modelRot_ *= ConvertFromEuler(joyconInput->GetVecRotate());
 

@@ -6,13 +6,14 @@ using namespace MLEngine::Resource;
 
 Player::Player(){
 	//必須となる情報の読み込み
-	backTextureName_ = ("./Resources/Texture/player_back.png");
-	frontTextureName_ = ("./Resources/Texture/player_front.png");
+	backTextureName_ = ("./Resources/Texture/player_anime_back.png");
+	frontTextureName_ = ("./Resources/Texture/player_anime_front.png");
 
-	sprite3D_.Initialize("./Resources/texture/player_back.png", 1);
+	sprite3D_.Initialize("./Resources/texture/player_back.png", 7);
 	sprite3D_.color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	sprite3D_.transform.scale = { 2.5f,2.5f,1.0f };
+	sprite3D_.transform.scale = { 17.5f,2.5f,1.0f };
 	sprite3D_.isActive = true;
+	sprite3D_.StartAnimation();
 	vController_ = &VirtualController::GetInstance();
 
 	input_ = MLEngine::Input::Manager::GetInstance();
