@@ -156,6 +156,33 @@ inline void PlayScene::Initialize(){
 
 	}
 
+	ingameStartTex_.Load("./Resources/Texture/ingame_UI_start.png");
+	ingameGameoverTex_.Load("./Resources/Texture/ingame_UI_gameOver.png");
+	ingameFinishTex_.Load("./Resources/Texture/ingame_UI_gameFinish.png");
+
+	ingameStartUI_.Initialize(ingameStartTex_, {});
+	ingameStartUI_.startPosition = { 2920.0f, 540.0f };
+	ingameStartUI_.middlePosition = { 960.0f, 540.0f };
+	ingameStartUI_.endPosition = { -1000.0f, 540.0f };
+	ingameStartUI_.easingTime = 4.0f;
+	ingameStartUI_.startToMiddleTime = 1.0f;
+	ingameStartUI_.stayMiddleTime = 2.0f;
+	ingameGameoverUI_.Initialize(ingameGameoverTex_, {});
+	ingameGameoverUI_.startPosition = { 960.0f, 540.0f };
+	ingameGameoverUI_.middlePosition = { 960.0f, 540.0f };
+	ingameGameoverUI_.endPosition = { 960.0f, 540.0f };
+	ingameGameoverUI_.startScale = { 0.0f,0.0f };
+	ingameGameoverUI_.easingTime = 1.0f;
+	ingameGameoverUI_.startToMiddleTime = 0.5f;
+	ingameGameoverUI_.stayMiddleTime = 0.1f;
+	ingameFinishUI_.Initialize(ingameFinishTex_, {});
+	ingameFinishUI_.startPosition = { 2920.0f, 540.0f };
+	ingameFinishUI_.middlePosition = { 960.0f, 540.0f };
+	ingameFinishUI_.endPosition = { 960.0f, 540.0f };
+	ingameFinishUI_.easingTime = 1.0f;
+	ingameFinishUI_.startToMiddleTime = 1.0f;
+	ingameFinishUI_.stayMiddleTime = 0.0f;
+
 }
 
 void PlayScene::Finalize(){
@@ -253,14 +280,10 @@ void PlayScene::Update(){
 		tutorialSprite_.isActive = false;
 	}
 
+	//リザルト更新
 	if (gameManager_->GetState() == GameManager::GameState::Result) {
-		resultSprite_->isActive = true;
-		if (gameManager_->GetIsClear()){
-			resultSprite_->SetTexture(gameClearTexture_);
-		}
-		else {
-			resultSprite_->SetTexture(gameOverTexture_);
-		}
+		
+
 
 	}
 	else {
@@ -287,22 +310,50 @@ void PlayScene::Update(){
 
 	if (gameManager_->GetState() == GameManager::GameState::Playing){
 		enemy_->SetIsActive(true);
-		EnemyAttackTurnController::GetInstance().Update();
-		enemy_->Update();
 		bulletManager_->SetIsModelActive(true);
-		bulletManager_->Update();
 
-		lifeUI_->Update();
+		ingameStartUI_.SetIsActive(true);
+		ingameGameoverUI_.SetIsActive(true);
+		ingameFinishUI_.SetIsActive(true);
 
+		//イージングが開始していない場合、開始させる
+		if (not ingameStartUI_.GetIsStartEasing() and not ingameStartUI_.GetIsEndEasing()) {
+			ingameStartUI_.Start();
+		}
+
+		if (gameManager_->GetIsGameOver() and
+			not ingameGameoverUI_.GetIsStartEasing() and not ingameGameoverUI_.GetIsEndEasing()) {
+			ingameGameoverUI_.Start();
+		}
+
+		if (gameManager_->GetIsClear() and
+			not ingameFinishUI_.GetIsStartEasing() and not ingameFinishUI_.GetIsEndEasing()) {
+			ingameFinishUI_.Start();
+		}
+
+		//開始UIが動き終わったら更新。ゲーム終了時は更新を止める
+		if (ingameStartUI_.GetIsEndEasing() and not gameManager_->GetIsGameOver() and
+			not gameManager_->GetIsClear()) {
+
+			EnemyAttackTurnController::GetInstance().Update();
+			enemy_->Update();
+			bulletManager_->Update();
+
+			lifeUI_->Update();
+
+		}
 
 	}
 	else {
 		bulletManager_->SetIsModelActive(false);
 		enemy_->SetIsActive(false);
+		ingameStartUI_.SetIsActive(false);
+		ingameGameoverUI_.SetIsActive(false);
+		ingameFinishUI_.SetIsActive(false);
 	}
 	
 	if (playerManager_->GetPlayer()->GetIsDead()){
-		gameManager_->SetGameEnd(true);
+		gameManager_->SetIsGameOver(true);
 	}
 	else if (enemy_->GetIsDead() and isClientEnemyDead_){
 		gameManager_->SetGameEnd(true);
@@ -345,6 +396,9 @@ void PlayScene::Update(){
 
 	gameManager_->SceneUpdate();
 
+	ingameStartUI_.Update();
+	ingameGameoverUI_.Update();
+	ingameFinishUI_.Update();
 
 #ifdef CLIENT_BUILD
 	// Client専用処理

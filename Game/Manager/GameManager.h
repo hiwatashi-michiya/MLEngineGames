@@ -47,9 +47,11 @@ public:
     TutorialState GetTutorialState() const { return tuState_; }
     
     bool GetIsClear()const { return isClear_; }
+    bool GetIsGameOver() const { return isGameOver_; }
 
     void SetIsClear(bool isClear) { isClear_ = isClear; }
     void SetGameEnd(bool isGameEnd) { isGameEnd_ = isGameEnd; }
+    void SetIsGameOver(bool flag) { isGameOver_ = flag; }
 
     // スコア管理
     void AddScore(bool isCombo);
@@ -100,6 +102,8 @@ private:
     //ゲームクリアしたかどうか
     bool isClear_ = false;
     bool isGameEnd_ = false;
+    bool isGameOver_ = false;
+    bool isReset_ = false;
 
     //チュートリアルでのカウント
     int moveCount_ = 0;
@@ -107,7 +111,7 @@ private:
     int moveCountMax_ = 0;
     int turnCountMax_ = 0;
 
-    float waitTime_ = 3.0f;
+    float waitTime_ = 1.0f;
     float time_ = 0.0f;
     //後で正式なものと交換
     float deltaTime_ = 1.0f / 60.0f;
@@ -132,6 +136,14 @@ private:
     float sceneChangeTime_ = 1.0f;
     //シーン切り替えカウント
     float sceneChangeCounter_ = 0.0f;
+    //ゲームオーバー後の待機時間
+    float gameOverWaitTime_ = 3.0f;
+    //ゲームオーバー待機カウント
+    float gameOverWaitCounter_ = 0.0f;
+    //ゲームクリア後の待機時間
+    float gameClearWaitTime_ = 1.5f;
+    //ゲームクリア待機カウント
+    float gameClearWaitCounter_ = 0.0f;
     //画像の最大スケール
     MLEngine::Math::Vector2 maxSpriteScale_ = { 10.0f,10.0f };
 
@@ -143,6 +155,8 @@ private:
     //SE
     MLEngine::Resource::Audio titleStartSE_;
     MLEngine::Resource::Audio tutorialClearSE_;
+    MLEngine::Resource::Audio gameOverSE_;
+    MLEngine::Resource::Audio clearSE_;
     //シーン切り替え用画像
     MLEngine::Resource::Texture sceneChangeTex_;
     std::unique_ptr<MLEngine::Resource::Sprite2D> sceneChangeSprite_;

@@ -29,6 +29,8 @@ void GameManager::Initialize() {
 
     titleStartSE_.Load("SE/title_start.mp3");
     tutorialClearSE_.Load("SE/tutorial_clear.mp3");
+    gameOverSE_.Load("SE/ingame_gameover.mp3");
+    clearSE_.Load("SE/ingame_finish.mp3");
 
     sceneChangeTex_.Load("./Resources/Texture/sceneChange_player.png");
     sceneChangeSprite_.reset(MLEngine::Resource::Sprite2D::Create(sceneChangeTex_, {960.0f,540.0f}, {1.0f,1.0f,1.0f,1.0f}));
@@ -42,8 +44,15 @@ void GameManager::Initialize() {
     tuState_ = TutorialState::LaneMove;
     isTutorialClear_ = false;
     isGameEnd_ = false;
-    isSceneChange_ = false;
+    isSceneChange_ = true;
+    sceneChangeCounter_ = sceneChangeTime_ * 0.5f;
     isClear_ = false;
+    isReset_ = false;
+    isGameOver_ = false;
+    gameOverWaitCounter_ = 0.0f;
+    gameClearWaitCounter_ = 0.0f;
+
+    titleBGM_.Play(Audio::BGMVolume, true);
 
     moveCount_ = 0;
     turnCount_ = 0;
@@ -55,9 +64,14 @@ void GameManager::Finalize() {
 }
 
 void GameManager::Update(bool isJustTurned, bool isJustMoved) {
-    
+
+    //デルタタイムの更新
+    deltaTime_ = 1.0f * MLEngine::Core::FrameTracker::GetInstance()->GetDeltaTimeF();
+
     //シーン切り替え中は更新しない
-    
+    if (isSceneChange_) {
+        return;
+    }
 
     GlobalVariables* global = GlobalVariables::GetInstance();
 
@@ -137,16 +151,50 @@ void GameManager::Update(bool isJustTurned, bool isJustMoved) {
         break;
     case GameManager::GameState::Playing:
 
-        if (not ingameBGM_.IsPlaying()) {
+        //ゲームオーバー時以外はBGMを鳴らす
+        if (not  isGameOver_ and not isClear_ and not ingameBGM_.IsPlaying()) {
             ingameBGM_.Play(Audio::BGMVolume, true);
             tutorialBGM_.Stop();
             titleBGM_.Stop();
             resultBGM_.Stop();
         }
 
+        //ゲームオーバーになったら
+        if (isGameOver_) {
+
+            if (ingameBGM_.IsPlaying()) {
+                ingameBGM_.Stop();
+                gameOverSE_.Play(Audio::SEVolume);
+            }
+
+            //カウント開始
+            if (gameOverWaitCounter_ < gameOverWaitTime_) {
+                gameOverWaitCounter_ += deltaTime_;
+            }
+            //規定時間を超えたらリセット開始
+            if (gameOverWaitCounter_ >= gameOverWaitTime_) {
+                isReset_ = true;
+            }
+
+        }
+
         //ゲームが終わったらリザルトに
-        if (isGameEnd_){
-            nextState_ = GameState::Result;
+        if (isClear_){
+
+            if (ingameBGM_.IsPlaying()) {
+                ingameBGM_.Stop();
+                clearSE_.Play(Audio::SEVolume);
+            }
+
+            //カウント開始
+            if (gameClearWaitCounter_ < gameClearWaitTime_) {
+                gameClearWaitCounter_ += deltaTime_;
+            }
+            //時間を超えたらリザルトへ移行
+            if (gameClearWaitCounter_ >= gameClearWaitTime_) {
+                nextState_ = GameState::Result;
+            }
+
         }
 
         break;
@@ -161,7 +209,8 @@ void GameManager::Update(bool isJustTurned, bool isJustMoved) {
 
         //決定ボタンでシーンを初期化
         if (vController_->Decide()) {
-            MLEngine::Scene::Manager::GetInstance()->ChangeScene("Play");
+            resultBGM_.Stop();
+            isReset_ = true;
         };
 
 
@@ -190,6 +239,23 @@ void GameManager::Debug() {
     ImGui::Text("傷コンボ：%d", scratchCombo_);
 
     ImGui::End();
+
+    ImGui::Begin("フラグ");
+
+    if (ImGui::Checkbox("チュートリアルクリア", &isTutorialClear_)) {
+
+    }
+
+    if (ImGui::Checkbox("ゲームオーバー", &isGameOver_)) {
+
+    }
+
+    if (ImGui::Checkbox("ゲームクリア", &isClear_)) {
+
+    }
+
+    ImGui::End();
+
 #endif // _DEBUG
 
 }
@@ -197,7 +263,7 @@ void GameManager::Debug() {
 void GameManager::SceneUpdate(){
 
     //次のシーンが更新されていたら、切り替えをはじめる
-    if (nextState_ != state_) {
+    if (nextState_ != state_ or isReset_) {
         isSceneChange_ = true;
     }
 
@@ -208,7 +274,7 @@ void GameManager::SceneUpdate(){
     if (sceneChangeCounter_ <= sceneChangeTime_) {
 
         sceneChangeSprite_->isActive = true;
-        sceneChangeCounter_ += 1.0f * MLEngine::Core::FrameTracker::GetInstance()->GetDeltaTimeF();
+        sceneChangeCounter_ += deltaTime_;
 
         Vector2 minSize = { 0.0f,0.0f };
         Vector2 maxSize = sceneChangeSprite_->GetDefaultSize();
@@ -221,6 +287,11 @@ void GameManager::SceneUpdate(){
             //次のシーンに切り替え
             if (nextState_ != state_) {
                 state_ = nextState_;
+            }
+
+            if (isReset_) {
+                isReset_ = false;
+                MLEngine::Scene::Manager::GetInstance()->ChangeScene("Play");
             }
 
         }

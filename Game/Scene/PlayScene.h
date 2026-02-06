@@ -16,6 +16,7 @@
 #include "Enemy/EnemyAttackTurnController.h"
 #include "Render/PostEffect/PostEffectDrawer.h"
 #include "MLMath.h"
+#include "../UI/UI.h"
 
 class PlayScene : public BaseScene
 {
@@ -163,6 +164,15 @@ private:
 	std::string laneTexture_;
 
 	bool isClientEnemyDead_ = false;
+
+	//UI関係
+	MLEngine::Resource::Texture ingameStartTex_;
+	MLEngine::Resource::Texture ingameGameoverTex_;
+	MLEngine::Resource::Texture ingameFinishTex_;
+
+	UI ingameStartUI_;
+	UI ingameGameoverUI_;
+	UI ingameFinishUI_;
 
 };
 
