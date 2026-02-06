@@ -4,7 +4,7 @@
 using namespace MLEngine::Math;
 using namespace MLEngine::Resource;
 
-Player::Player(){
+Player::Player() {
 	//必須となる情報の読み込み
 	backTextureName_ = ("./Resources/Texture/player_anime_back.png");
 	frontTextureName_ = ("./Resources/Texture/player_anime_front.png");
@@ -27,11 +27,11 @@ Player::Player(){
 
 }
 
-Player::~Player(){
+Player::~Player() {
 
 }
 
-void Player::Initialize(){
+void Player::Initialize() {
 	GlobalVariables* global = GlobalVariables::GetInstance();
 
 	global->SetValue("PlayerState", "Life", lifeMax_);
@@ -42,7 +42,7 @@ void Player::Initialize(){
 	nowLine_ = config_->centerLane_;
 	time_ = 0.0f;
 	recoverySpeed_ = 1.0f;
-	life_ = lifeMax_ ;
+	life_ = lifeMax_;
 	pos_ = Vector3(640.0f, -3.0f, -2.0f);
 	color_ = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
 	isDead_ = false;
@@ -53,17 +53,21 @@ void Player::Initialize(){
 	joyconInput->Init();
 #pragma endregion ジョイコン
 
+#ifdef _SERVER
+	// Client専用処理
 #pragma region
 	DistanceSensor_ = std::make_unique<DistanceSensor>();
 	DistanceSensor_->Init();
 #pragma endregion 距離センサー
-}
-
-void Player::Finalize(){
+#endif
 
 }
 
-void Player::Update(const float deltaTime){
+void Player::Finalize() {
+
+}
+
+void Player::Update(const float deltaTime) {
 	GlobalVariables* global = GlobalVariables::GetInstance();
 
 	deltaTime;
@@ -82,7 +86,7 @@ void Player::Update(const float deltaTime){
 
 #pragma region
 	joyconInput->Update();
-	
+
 #pragma endregion Joycon
 
 #ifdef CLIENT_BUILD
@@ -93,7 +97,7 @@ void Player::Update(const float deltaTime){
 	PlayerRecovery();
 	PlayerMove();
 #endif
-	
+
 
 	PlayerInfoInsertion();
 	//managerを介してクライアントに送る
@@ -107,7 +111,7 @@ void Player::Update(const float deltaTime){
 
 	sprite3D_.transform.translate = pos_;
 
-	if (isForward_){
+	if (isForward_) {
 		sprite3D_.SetTexture(backTextureName_);
 	}
 	else {
@@ -116,7 +120,7 @@ void Player::Update(const float deltaTime){
 
 	sprite3D_.UpdateAnimation();
 
-	if (life_ <= 0){
+	if (life_ <= 0) {
 		isDead_ = true;
 	}
 
@@ -127,11 +131,11 @@ void Player::Update(const float deltaTime){
 
 }
 
-void Player::Draw(){
+void Player::Draw() {
 	/*sprite_->Draw();*/
 }
 
-void Player::DebugDraw(){
+void Player::DebugDraw() {
 #ifdef _DEBUG
 	ImGui::Begin("プレイヤー");
 	ImGui::DragFloat3("座標", &pos_.x, 1.0f);
@@ -139,7 +143,7 @@ void Player::DebugDraw(){
 	ImGui::Text("今の体力	%d", plState_.life);
 	ImGui::Text("傷コンボ	%d", plState_.isDamagedFlug);
 	sprite3D_.Debug();
-	if (ImGui::Button("体力を減らす")){
+	if (ImGui::Button("体力を減らす")) {
 
 		OnCollision(5);
 		GameManager::GetInstance()->AddScore(plState_.isDamagedFlug);
@@ -149,7 +153,7 @@ void Player::DebugDraw(){
 
 }
 
-void Player::OnCollision(const int damege){
+void Player::OnCollision(const int damege) {
 #ifdef CLIENT_BUILD
 	// Client専用処理
 	plState_.isClientHited = true;
@@ -164,25 +168,25 @@ void Player::OnCollision(const int damege){
 #endif
 	damageTime_ = 0.0f;
 	bulletDamege_ = damege;
-	
+
 	isDamaged_ = true;
 	playerDamageSE_.Play(Audio::SEVolume);
 
 }
 
-void Player::PlayerMove(){
-	if (isTitleScene_){
+void Player::PlayerMove() {
+	if (isTitleScene_) {
 		return;
 	}
 
 	//左入力
 	if (vController_->LeftTriger()) {
-		if (nowLine_ > 0){
+		if (nowLine_ > 0) {
 			nowLine_--;
 			isJustMoved_ = true;
 			playerMoveSE_.Play(Audio::SEVolume);
 		}
-		
+
 	}
 	//右入力
 	if (vController_->RightTriger()) {
@@ -192,24 +196,34 @@ void Player::PlayerMove(){
 			playerMoveSE_.Play(Audio::SEVolume);
 		}
 	}
+#ifdef _SERVER
+	// Client専用処理
+
 
 	int movenum = DistanceSensor_->CheckPosition();
-//#ifndef CLIENT_BUILD
-	if (movenum == position::pLEFT) {
-		nowLine_ = movenum;
-		isJustMoved_ = true;
+	//#ifndef CLIENT_BUILD
+	if (premovenum != movenum) {
+		playerMoveSE_.Play(Audio::SEVolume);
+		if (movenum == position::pLEFT) {
+			nowLine_ = movenum;
+			isJustMoved_ = true;
+		}
+		else if (movenum == position::pRIGHT) {
+			nowLine_ = movenum;
+			isJustMoved_ = true;
+		}
+		else if (movenum == position::pMID) {
+			nowLine_ = movenum;
+			isJustMoved_ = true;
+		}
 	}
-	else if (movenum == position::pRIGHT) {
-		nowLine_ = movenum;
-		isJustMoved_ = true;
-	}else if(movenum == position::pMID){
-		nowLine_ = movenum;
-		isJustMoved_ = true;
-	}
-//#endif
+	premovenum = movenum;
+#endif
+
+	//#endif
 	int number = 0;
 
-	if (input_->GetKeyboard()->Trigger(DIK_1)){
+	if (input_->GetKeyboard()->Trigger(DIK_1)) {
 		number = 0;
 		if (nowLine_ != number) {
 			nowLine_ = number;
@@ -233,7 +247,7 @@ void Player::PlayerMove(){
 			playerMoveSE_.Play(Audio::SEVolume);
 		}
 	}
-	
+
 	//タイトルシーンでなければ反転入力
 	if (vController_->Decide()) {
 		isForward_ = !isForward_;
@@ -242,27 +256,32 @@ void Player::PlayerMove(){
 	}
 
 	direction dir = joyconInput->CheakRadius();
-//#ifndef CLIENT_BUILD
-	if (dir == direction::front) {
-		isForward_ = true;
-		isJustTurned_ = true;
-	}
-	else if (dir == direction::back) {
-		isForward_ = false;
-		isJustTurned_ = true;
-	}
-//#endif
+	//#ifndef CLIENT_BUILD
+	if (predir != dir) {
+		if (dir == direction::front) {
+			isForward_ = true;
+			isJustTurned_ = true;
+		}
+		else if (dir == direction::back) {
+			isForward_ = false;
+			isJustTurned_ = true;
+		}
 #ifdef _DEBUG
-	else if (dir == direction::no) {
-		ImGui::Begin("Joycon");
-		ImGui::Text("NOconectJoycon");
-		ImGui::End();
-	}
+		else if (dir == direction::no) {
+				ImGui::Begin("Joycon");
+				ImGui::Text("NOconectJoycon");
+				ImGui::End();
+			}
 #endif	
+	}
+
+	predir = dir;
+	//#endif
+
 
 }
 
-void Player::TimeProcess(const float deltaTime){
+void Player::TimeProcess(const float deltaTime) {
 	//回復のタイマー
 	if (lifeMax_ <= life_) {
 		isLifeMax_ = true;
@@ -285,7 +304,7 @@ void Player::TimeProcess(const float deltaTime){
 	}
 }
 
-float Player::LaneSpecificCalculation(){
+float Player::LaneSpecificCalculation() {
 	float result = 0;
 	//レーンの差
 	int laneDis = 0;
@@ -296,33 +315,33 @@ float Player::LaneSpecificCalculation(){
 	return result;
 }
 
-void Player::PlayerRecovery(){
+void Player::PlayerRecovery() {
 	//時間以上で回復
-	if (time_ >= recoverySpeed_){
+	if (time_ >= recoverySpeed_) {
 		time_ = 0.0f;
-		if (isRecoveryArea_){
+		if (isRecoveryArea_) {
 			life_ += (recoveryValue_ * 2);
 		}
 		else {
 			life_ += recoveryValue_;
 		}
 	}
-	
+
 	//超過していた場合調整
-	if (life_ >= lifeMax_){
+	if (life_ >= lifeMax_) {
 		life_ = lifeMax_;
-		
+
 	}
 }
 
-void Player::PlayerInfoInsertion(){
+void Player::PlayerInfoInsertion() {
 	plState_.isDamagedFlug = isDamaged_;
 	plState_.isForwardFlug = isForward_;
 	plState_.life = life_;
 	plState_.nowLine = nowLine_;
 
 
-	
+
 	//if (not isForward_) {
 	//	//後ろを向いているなら青色
 	//	sprite_->color = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
@@ -333,11 +352,11 @@ void Player::PlayerInfoInsertion(){
 	//}
 }
 
-void Player::SyncFromNetwork(){
+void Player::SyncFromNetwork() {
 	NetworkManager::SendPlayerState netState{};
 
 	// 最新の受信データを NetworkManager から取得
-	if (NetworkManager::GetInstance().GetLatestPlayerState(netState)){
+	if (NetworkManager::GetInstance().GetLatestPlayerState(netState)) {
 
 #ifdef CLIENT_BUILD
 		// Client専用処理
@@ -345,24 +364,24 @@ void Player::SyncFromNetwork(){
 		life_ = netState.life;
 		isForward_ = !netState.isForwardFlug;
 		isDamaged_ = netState.isDamagedFlug;
-		if (netState.nowLine == 0){
+		if (netState.nowLine == 0) {
 			nowLine_ = 2;
 		}
-		else if (netState.nowLine == 2){
+		else if (netState.nowLine == 2) {
 			nowLine_ = 0;
 		}
 		else {
 			nowLine_ = netState.nowLine;
 		}
-		
+
 		plState_.isClientHited = netState.isClientHited;
-		
+
 #else
 		// Server処理
 		// 受信状態を自プレイヤーに適用
 		plState_.isClientHited = netState.isClientHited;
 
-		if (plState_.isClientHited){
+		if (plState_.isClientHited) {
 			life_ -= bulletDamege_;
 			plState_.isClientHited = false;
 		}
@@ -370,11 +389,11 @@ void Player::SyncFromNetwork(){
 
 #endif
 
-		
+
 	}
 }
 
-void Player::ResetEvents(){
+void Player::ResetEvents() {
 	if (isJustTurned_) isJustTurned_ = false;
 	if (isJustMoved_) isJustMoved_ = false;
 }

@@ -161,16 +161,22 @@ private:
 
 	//joycon
 	std::unique_ptr<Joycon> joyconInput;
+#ifdef _SERVER
+	// Client専用処理
 	//距離センサー
 	std::unique_ptr<DistanceSensor> DistanceSensor_;
+
+#endif
 
 	//SE
 	MLEngine::Resource::Audio playerMoveSE_;
 	MLEngine::Resource::Audio playerTurnSE_;
 	MLEngine::Resource::Audio playerBounceSE_;
 	MLEngine::Resource::Audio playerDamageSE_;
-
-
+	//前のフレームの移動レーン番号
+	int premovenum;
+	//前のフレームの向き
+	direction predir;
 };
 
 
