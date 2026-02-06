@@ -35,7 +35,6 @@ private:
     void End();
 
 
-
     std::unique_ptr<PacketIO>packet_io;
     static constexpr int WIDTH = 8;
     static constexpr int HEIGHT = 8;
