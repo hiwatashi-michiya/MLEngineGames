@@ -267,10 +267,10 @@ void PlayScene::Update(){
 	resultSprite_->size = resultScale_;
 
 	camera_.Update();
+	scoreUI_->Update();
 
 	gameManager_->SceneUpdate();
 
-	scoreUI_->Update();
 
 #ifdef CLIENT_BUILD
 	// Client専用処理
