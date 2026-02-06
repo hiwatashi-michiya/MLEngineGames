@@ -1,16 +1,20 @@
 #include "PlayScene.h"
 #include"Externals/imgui/imgui.h"
 #include "DebugScene.h"
+#include "FrameTracker.h"
 
 using namespace MLEngine::Math;
 
 using namespace MLEngine::Resource;
+using namespace MLEngine::Core::Render::PostEffect;
+using namespace MLEngine::Core;
 
 PlayScene::PlayScene(){
 	input_ = MLEngine::Input::Manager::GetInstance();
 	gameManager_ = GameManager::GetInstance();
 	config_ = GameConfig::GetInstance();
 	config_->Initialize();
+	postEffect_ = PostEffectDrawer::GetInstance();
 }
 
 PlayScene::~PlayScene(){
@@ -44,6 +48,10 @@ void PlayScene::GlobalGetValue(){
 
 inline void PlayScene::Initialize(){
 	
+	dLight_.cbData->normalDirection = { 0.0f,-1.0f,0.0f };
+	dLight_.cbData->normalDirection = Normalize(dLight_.cbData->normalDirection);
+	dLight_.cbData->intensity = 1.0f;
+
 	GlobalSetValue();
 
 	gameManager_->Initialize();
@@ -132,6 +140,56 @@ inline void PlayScene::Initialize(){
 	rotate_.x = 1.48f;
 	scale_ = { 10.0f,30.0f,1.0f };
 
+	skydome_.Initialize("./Resources/model/skydome/skydome.obj");
+	skydomeTransform_.scale = { 1000.0f,1000.0f,1000.0f };
+	skydomeTransform_.UpdateMatrix();
+	skydome_.SetWorldMatrix(skydomeTransform_.worldMatrix);
+
+	for (int32_t i = 0; i < kMaxStone_; i++) {
+
+		stoneLeft_[i].Initialize("./Resources/model/stageStone/stage_stone.obj");
+		stoneLeft_[i].materialData.enableLighting = true;
+		stoneRight_[i].Initialize("./Resources/model/stageStone/stage_stone.obj");
+		stoneRight_[i].materialData.enableLighting = true;
+
+		stoneLeftTF_[i].translate = { -8.0f,-4.0f + 6.5f * i,0.0f + 70.0f * i };
+		stoneLeftTF_[i].scale = { 1.0f,3.0f,3.0f };
+		stoneLeftTF_[i].rotate = { -0.09f,0.0f,0.0f };
+		stoneLeftTF_[i].rotateQuaternion = ConvertFromEuler(stoneLeftTF_[i].rotate);
+		stoneRightTF_[i].translate = { 8.0f,-4.0f + 6.5f * i,0.0f + 70.0f * i };
+		stoneRightTF_[i].scale = { 1.0f,3.0f,3.0f };
+		stoneRightTF_[i].rotate = { -0.09f,0.0f,0.0f };
+		stoneRightTF_[i].rotateQuaternion = ConvertFromEuler(stoneRightTF_[i].rotate);
+
+	}
+
+	ingameStartTex_.Load("./Resources/Texture/ingame_UI_start.png");
+	ingameGameoverTex_.Load("./Resources/Texture/ingame_UI_gameOver.png");
+	ingameFinishTex_.Load("./Resources/Texture/ingame_UI_gameFinish.png");
+
+	ingameStartUI_.Initialize(ingameStartTex_, {});
+	ingameStartUI_.startPosition = { 2920.0f, 540.0f };
+	ingameStartUI_.middlePosition = { 960.0f, 540.0f };
+	ingameStartUI_.endPosition = { -1000.0f, 540.0f };
+	ingameStartUI_.easingTime = 4.0f;
+	ingameStartUI_.startToMiddleTime = 1.0f;
+	ingameStartUI_.stayMiddleTime = 2.0f;
+	ingameGameoverUI_.Initialize(ingameGameoverTex_, {});
+	ingameGameoverUI_.startPosition = { 960.0f, 540.0f };
+	ingameGameoverUI_.middlePosition = { 960.0f, 540.0f };
+	ingameGameoverUI_.endPosition = { 960.0f, 540.0f };
+	ingameGameoverUI_.startScale = { 0.0f,0.0f };
+	ingameGameoverUI_.easingTime = 1.0f;
+	ingameGameoverUI_.startToMiddleTime = 0.5f;
+	ingameGameoverUI_.stayMiddleTime = 0.1f;
+	ingameFinishUI_.Initialize(ingameFinishTex_, {});
+	ingameFinishUI_.startPosition = { 2920.0f, 540.0f };
+	ingameFinishUI_.middlePosition = { 960.0f, 540.0f };
+	ingameFinishUI_.endPosition = { 960.0f, 540.0f };
+	ingameFinishUI_.easingTime = 1.0f;
+	ingameFinishUI_.startToMiddleTime = 1.0f;
+	ingameFinishUI_.stayMiddleTime = 0.0f;
+
 }
 
 void PlayScene::Finalize(){
@@ -165,6 +223,43 @@ void PlayScene::Update(){
 
 
 #else
+
+	//体力が一定以下になったら
+	if (playerManager_->GetPlayer()->GetLifeRatio() <= vignetteConfig_.startRatio) {
+
+		//ビネットをかける
+		postEffect_->AddApplyEffect(PostEffectType::kVignette);
+
+		float a = (vignetteConfig_.startRatio - playerManager_->GetPlayer()->GetLifeRatio());
+
+		float b = (1.0f / (vignetteConfig_.startRatio - vignetteConfig_.endRatio));
+
+		float t = a * b;
+
+		float powerRange = Lerp(vignetteConfig_.minPowerRange, vignetteConfig_.maxPowerRange, t);
+
+		float power = Lerp(vignetteConfig_.minPower, vignetteConfig_.maxPower, t);
+
+		float scalingTime = Lerp(vignetteConfig_.scalingMaxTime, vignetteConfig_.scalingMinTime, t);
+
+		vignetteConfig_.currentTime += FrameTracker::GetInstance()->GetDeltaTimeF();
+
+		if (vignetteConfig_.currentTime >= scalingTime) {
+			vignetteConfig_.currentTime = 0.0f;
+		}
+
+		float resultPower = Lerp(power - powerRange, power + powerRange, 1.0f - std::clamp((vignetteConfig_.currentTime / scalingTime), 0.0f, 1.0f));
+
+		//ビネットのパラメータを設定
+		if (auto* vignette = dynamic_cast<Vignette*>(postEffect_->GetPostEffects()[PostEffectType::kVignette].get())) {
+
+			vignette->parameter_->color = vignetteConfig_.color;
+			vignette->parameter_->power = resultPower;
+
+		}
+
+	}
+
 	// Server 処理
 	gameManager_->Update(playerManager_->GetPlayer()->GetIsJustTurned(), playerManager_->GetPlayer()->GetIsJustMoved());
 
@@ -192,14 +287,10 @@ void PlayScene::Update(){
 		tutorialSprite_.isActive = false;
 	}
 
+	//リザルト更新
 	if (gameManager_->GetState() == GameManager::GameState::Result) {
-		resultSprite_->isActive = true;
-		if (gameManager_->GetIsClear()){
-			resultSprite_->SetTexture(gameClearTexture_);
-		}
-		else {
-			resultSprite_->SetTexture(gameOverTexture_);
-		}
+		
+
 
 	}
 	else {
@@ -226,22 +317,50 @@ void PlayScene::Update(){
 
 	if (gameManager_->GetState() == GameManager::GameState::Playing){
 		enemy_->SetIsActive(true);
-		EnemyAttackTurnController::GetInstance().Update();
-		enemy_->Update();
 		bulletManager_->SetIsModelActive(true);
-		bulletManager_->Update();
 
-		lifeUI_->Update();
+		ingameStartUI_.SetIsActive(true);
+		ingameGameoverUI_.SetIsActive(true);
+		ingameFinishUI_.SetIsActive(true);
 
+		//イージングが開始していない場合、開始させる
+		if (not ingameStartUI_.GetIsStartEasing() and not ingameStartUI_.GetIsEndEasing()) {
+			ingameStartUI_.Start();
+		}
+
+		if (gameManager_->GetIsGameOver() and
+			not ingameGameoverUI_.GetIsStartEasing() and not ingameGameoverUI_.GetIsEndEasing()) {
+			ingameGameoverUI_.Start();
+		}
+
+		if (gameManager_->GetIsClear() and
+			not ingameFinishUI_.GetIsStartEasing() and not ingameFinishUI_.GetIsEndEasing()) {
+			ingameFinishUI_.Start();
+		}
+
+		//開始UIが動き終わったら更新。ゲーム終了時は更新を止める
+		if (ingameStartUI_.GetIsEndEasing() and not gameManager_->GetIsGameOver() and
+			not gameManager_->GetIsClear()) {
+
+			EnemyAttackTurnController::GetInstance().Update();
+			enemy_->Update();
+			bulletManager_->Update();
+
+			lifeUI_->Update();
+
+		}
 
 	}
 	else {
 		bulletManager_->SetIsModelActive(false);
 		enemy_->SetIsActive(false);
+		ingameStartUI_.SetIsActive(false);
+		ingameGameoverUI_.SetIsActive(false);
+		ingameFinishUI_.SetIsActive(false);
 	}
 	
 	if (playerManager_->GetPlayer()->GetIsDead()){
-		gameManager_->SetGameEnd(true);
+		gameManager_->SetIsGameOver(true);
 	}
 	else if (enemy_->GetIsDead() and isClientEnemyDead_){
 		gameManager_->SetGameEnd(true);
@@ -253,6 +372,18 @@ void PlayScene::Update(){
 	planeTransform_->scale = scale_;
 	planeTransform_->rotateQuaternion = MLEngine::Math::ConvertFromEuler(rotate_);
 	planeTransform_->UpdateMatrix();
+
+	skydomeTransform_.UpdateMatrix();
+	skydome_.SetWorldMatrix(skydomeTransform_.worldMatrix);
+
+	for (int32_t i = 0; i < kMaxStone_; i++) {
+
+		stoneLeftTF_[i].UpdateMatrix();
+		stoneRightTF_[i].UpdateMatrix();
+		stoneLeft_[i].SetWorldMatrix(stoneLeftTF_[i].worldMatrix);
+		stoneRight_[i].SetWorldMatrix(stoneRightTF_[i].worldMatrix);
+
+	}
 
 	titleSprite_->position = titlePos_;
 	titleSprite_->size = titleScale_;
@@ -271,6 +402,10 @@ void PlayScene::Update(){
 
 	gameManager_->SceneUpdate();
 
+	ingameStartUI_.Update();
+	ingameGameoverUI_.Update();
+	ingameFinishUI_.Update();
+	scoreUI_->Update();
 
 #ifdef CLIENT_BUILD
 	// Client専用処理
@@ -311,6 +446,9 @@ void PlayScene::Draw(){
 
 void PlayScene::DrawImgui() {
 #ifdef _DEBUG
+
+	postEffect_->Debug();
+
 	config_->Debug();
 
 	gameManager_->Debug();
@@ -338,7 +476,31 @@ void PlayScene::DrawImgui() {
 	
 	ImGui::End();
 
-	
+	ImGui::Begin("縁石");
+
+	for (int32_t i = 0; i < kMaxStone_; i++) {
+
+		std::string leftStr = "左" + std::to_string(i);
+		std::string rightStr = "右" + std::to_string(i);
+
+		if (ImGui::TreeNode(leftStr.c_str())) {
+
+			stoneLeftTF_[i].Debug();
+			ImGui::TreePop();
+		}
+
+		if (ImGui::TreeNode(rightStr.c_str())) {
+			stoneRightTF_[i].Debug();
+			ImGui::TreePop();
+		}
+
+	}
+
+	ImGui::End();
+
+	ImGui::Begin("平行光源");
+	dLight_.Debug();
+	ImGui::End();
 
 	ImGui::Begin("シーン");
 

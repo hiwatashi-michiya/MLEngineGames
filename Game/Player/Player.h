@@ -4,6 +4,7 @@
 #include<../Network/NetworkManager.h>
 #include<Engine/Tool/GlobalVariables.h>
 #include <Sprite3D.h>
+#include "Audio/Audio.h"
 
 #include "../Joycon/Joycon.h"
 
@@ -49,6 +50,10 @@ public:
 
 	int GetLife()const {
 		return life_;
+	}
+
+	float GetLifeRatio() const {
+		return lifeRatio_;
 	}
 
 	bool GetIsJustMoved() const {
@@ -150,9 +155,19 @@ private:
 
 
 	int bulletDamege_ = 10;
+	//体力の残り割合
+	float lifeRatio_ = 1.0f;
 
 	//ジャングル
 	std::unique_ptr<Joycon> joyconInput;
+
+	//SE
+	MLEngine::Resource::Audio playerMoveSE_;
+	MLEngine::Resource::Audio playerTurnSE_;
+	MLEngine::Resource::Audio playerBounceSE_;
+	MLEngine::Resource::Audio playerDamageSE_;
+
+
 };
 
 

@@ -23,15 +23,15 @@ LifeUI::LifeUI(Player* player){
 }
 
 void LifeUI::Initialize() {
-	plMeterPos_ = { 60.0f,568.0f };
-	plMeterSize_ = { 45.0f,223.0f };
+	plMeterPos_ = { 90.0f,780.0f };
+	plMeterSize_ = { 67.5f,334.5f };
 
 	meter_->anchorPoint = { 0.5f,1.0f };
 
 	frame_->anchorPoint = { 0.5f,1.0f };
 
 
-	plFrameSize_ = { 100.0f,400.0f };
+	plFrameSize_ = { 150.0f,600.0f };
 }
 
 
@@ -48,7 +48,7 @@ void LifeUI::Update() {
 	meter_->position = plMeterPos_;	
 	meter_->size = plMeterSize_;
 
-	plFramePos_ = { plMeterPos_.x,plMeterPos_.y + 20.0f };
+	plFramePos_ = { plMeterPos_.x,plMeterPos_.y + 30.0f };
 	//plFrameSize_ = { plMeterSize_.x * 1.5f,PLyMax_ + 30.0f };
 
 	frame_->position = plFramePos_;
@@ -65,12 +65,12 @@ void LifeUI::DebugDraw() {
 	ImGui::Begin("PlayerLifeTex");
 
 
-	ImGui::DragFloat2("座標", &plMeterPos_.x, 0.5f, 0.0f, 1280.0f);
+	ImGui::DragFloat2("座標", &plMeterPos_.x, 0.5f, 0.0f, 1920.0f);
 
-	ImGui::DragFloat2("メーターサイズ", &plMeterSize_.x, 0.5f, 0.0f, 1280.0f);
-	ImGui::DragFloat2("フレームサイズ", &plFrameSize_.x, 0.5f, 0.0f, 1280.0f);
+	ImGui::DragFloat2("メーターサイズ", &plMeterSize_.x, 0.5f, 0.0f, 1920.0f);
+	ImGui::DragFloat2("フレームサイズ", &plFrameSize_.x, 0.5f, 0.0f, 1920.0f);
 
-	ImGui::DragFloat("縦の最大サイズ", &PLyMax_, 0.5f, 1.0f, 1280.0f);
+	ImGui::DragFloat("縦の最大サイズ", &PLyMax_, 0.5f, 1.0f, 1920.0f);
 
 	ImGui::End();
 }

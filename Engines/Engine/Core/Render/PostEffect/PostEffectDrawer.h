@@ -36,6 +36,15 @@ namespace MLEngine::Core::Render::PostEffect {
 		void SetCamera(MLEngine::Object::Camera* camera) { for (int32_t i = 0; i < postEffects_.size(); i++) { postEffects_[i]->SetCamera(camera); } }
 		//ポストエフェクトリスト取得
 		std::vector<std::shared_ptr<PostEffects>> GetPostEffects() const { return postEffects_; }
+		//適用させるエフェクトを追加
+		void AddApplyEffect(PostEffectType type) { applyEffectList_.push_back(type); }
+		//適用させるポストエフェクトのリストを取得
+		std::vector<PostEffectType> GetApplyEffectList() const { return applyEffectList_; }
+		//適用させるエフェクトリストをリセット
+		void ResetApplyEffectList() { 
+			applyEffectList_.clear();
+			type_ = PostEffectType::kNone;
+		}
 
 	private:
 
@@ -46,6 +55,8 @@ namespace MLEngine::Core::Render::PostEffect {
 		std::vector<std::shared_ptr<PostEffects>> postEffects_;
 		//レンダーテクスチャリスト
 		std::vector<RenderTexture> renderTextures_;
+		//適用させるポストエフェクトのリスト
+		std::vector<PostEffectType> applyEffectList_;
 		//ポストエフェクトのタイプ
 		PostEffectType type_ = kDepthBasedOutline;
 
