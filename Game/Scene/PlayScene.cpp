@@ -398,9 +398,15 @@ void PlayScene::Update(){
 	resultSprite_->size = resultScale_;
 
 	camera_.Update();
-	scoreUI_->Update();
 
 	gameManager_->SceneUpdate();
+
+	if (gameManager_->GetIsGetScore()) {
+		scoreUI_->ScoreEase();
+		if (playerManager_->GetPlayer()->GetIsDamaged()){
+			scoreUI_->ComboEase();
+		}
+	}
 
 	ingameStartUI_.Update();
 	ingameGameoverUI_.Update();

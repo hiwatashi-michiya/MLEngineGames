@@ -47,6 +47,7 @@ public:
     TutorialState GetTutorialState() const { return tuState_; }
     
     bool GetIsClear()const { return isClear_; }
+    bool GetIsGetScore()const { return isGetScored_; }
     bool GetIsGameOver() const { return isGameOver_; }
 
     void SetIsClear(bool isClear) { isClear_ = isClear; }

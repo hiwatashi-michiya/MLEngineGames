@@ -1,5 +1,6 @@
 #pragma once
 #include<Manager/PlayerManager.h>
+#include <UI/UI.h>
 
 /*スコアのUIを管理するクラス*/
 class ScoreNumber {
@@ -9,6 +10,17 @@ public:
 	void Initialize();
 
 	void Update();
+
+	void ScoreEase() {
+		scoreNumTen_.ReStart();
+		scoreNumOne_.ReStart();
+	}
+
+	void ComboEase() {
+		comboNumTen_.ReStart();
+		comboNumOne_.ReStart();
+		scoreCombo_.ReStart();
+	}
 
 private:
 	void GlobalSetValues();
@@ -32,19 +44,19 @@ private:
 
 	MLEngine::Math::Vector2 scoreBoardSize_{};
 	//コンボ表示
-	std::unique_ptr<MLEngine::Resource::Sprite2D> scoreCombo_;
+	UI scoreCombo_;
 
 	MLEngine::Math::Vector2 scoreComboPos_{};
 
 	MLEngine::Math::Vector2 scoreComboSize_{};
 	//スコアの十の位
-	std::unique_ptr<MLEngine::Resource::Sprite2D> scoreNumTen_;
+	UI scoreNumTen_;
 
 	MLEngine::Math::Vector2 scoreNumTenPos_{};
 
 	MLEngine::Math::Vector2 scoreNumTenSize_{};
 	//スコアの一の位
-	std::unique_ptr<MLEngine::Resource::Sprite2D> scoreNumOne_;
+	UI scoreNumOne_;
 
 	MLEngine::Math::Vector2 scoreNumOnePos_{};
 
@@ -52,17 +64,20 @@ private:
 
 
 	//コンボの十の位
-	std::unique_ptr<MLEngine::Resource::Sprite2D> comboNumTen_;
+	UI comboNumTen_;
 
 	MLEngine::Math::Vector2 comboNumTenPos_{};
 
 	MLEngine::Math::Vector2 comboNumTenSize_{};
 	//コンボの一の位
-	std::unique_ptr<MLEngine::Resource::Sprite2D> comboNumOne_;
+	UI comboNumOne_;
 
 	MLEngine::Math::Vector2 comboNumOnePos_{};
 
 	MLEngine::Math::Vector2 comboNumOneSize_{};
+
+	//拡大率
+	float magnification_ = 1.2f;
 
 	//コンボなどの傾き
 	float comboRotate_ = 0.0f;

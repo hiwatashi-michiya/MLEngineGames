@@ -137,7 +137,7 @@ void Player::DebugDraw(){
 	if (ImGui::Button("体力を減らす")){
 
 		OnCollision(5);
-		GameManager::GetInstance()->AddScore(plState_.isDamagedFlug);
+		//GameManager::GetInstance()->AddScore(plState_.isDamagedFlug);
 	}
 	ImGui::End();
 #endif // _DEBUG
