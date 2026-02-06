@@ -9,8 +9,12 @@
 #include "VirtualController.h"
 #include "Particle3D.h"
 #include <memory>
+
 #include "Collider.h"
 #include "Transform.h"
+
+#include "../Joycon/Joycon.h"
+#include "../DeviceIO/UltrasonicSensor/UltrasonicSensor.h"
 
 /// <summary>
 /// デバッグシーン、エンジン機能理解用
@@ -45,6 +49,7 @@ private:
 	MLEngine::Resource::Audio se1_;
 	//通常モデル
 	MLEngine::Resource::Sprite3D sprite3D_;
+	MLEngine::Resource::RigidModel model_;
 	MLEngine::Resource::RigidModel model2_;
 	MLEngine::Resource::RigidModel model3_;
 	//トランスフォーム
@@ -69,6 +74,10 @@ private:
 	bool showSphere_ = true;
 	bool isDebugCamera_ = false;
 
+	std::unique_ptr<Joycon> joyconInput;
+	std::unique_ptr<UltrasonicSensor> ultrasonicSensor_;
+	Vector3 test;
+	Quaternion modelRot_;
 };
 
 

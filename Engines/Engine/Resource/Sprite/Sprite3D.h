@@ -73,6 +73,9 @@ namespace MLEngine::Resource {
 		//トランスフォーム
 		MLEngine::Object::Transform transform;
 
+		//UVをループさせる回数
+		MLEngine::Math::Vector2 uvLoopScale_{ 1.0f,1.0f };
+
 	private:
 
 		//画像サイズのパラメータセット

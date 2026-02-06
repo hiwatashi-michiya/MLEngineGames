@@ -10,12 +10,14 @@ Player::Player(){
 
 	sprite3D_.Initialize("./Resources/texture/player_back.png", 1);
 	sprite3D_.color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	sprite3D_.transform.scale = { 2.5f,2.5f,1.0f };
 	sprite3D_.isActive = true;
 	vController_ = &VirtualController::GetInstance();
 
 	input_ = MLEngine::Input::Manager::GetInstance();
 
 	config_ = GameConfig::GetInstance();
+
 
 }
 
@@ -39,6 +41,11 @@ void Player::Initialize(){
 	color_ = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
 	isDead_ = false;
 	bulletDamege_ = 10;
+
+#pragma region
+	joyconInput = std::make_unique<Joycon>();
+	joyconInput->Init();
+#pragma endregion ジョイコン
 }
 
 void Player::Finalize(){
@@ -62,8 +69,11 @@ void Player::Update(const float deltaTime){
 
 #endif // _DEBUG
 
+#pragma region
+	joyconInput->Update();
 	
-	
+#pragma endregion Joycon
+
 #ifdef CLIENT_BUILD
 	// Client専用処理
 #else
@@ -85,7 +95,6 @@ void Player::Update(const float deltaTime){
 	pos_.x = LaneSpecificCalculation();
 
 	sprite3D_.transform.translate = pos_;
-	sprite3D_.transform.scale = Vector3(1.0f, 1.0f, 0.1f);
 
 	if (isForward_){
 		sprite3D_.SetTexture(backTextureName_);
@@ -99,8 +108,6 @@ void Player::Update(const float deltaTime){
 	if (life_ <= 0){
 		isDead_ = true;
 	}
-
-
 }
 
 void Player::Draw(){
@@ -114,6 +121,7 @@ void Player::DebugDraw(){
 	ImGui::Text("今のレーン	%d", plState_.nowLine);
 	ImGui::Text("今の体力	%d", plState_.life);
 	ImGui::Text("傷コンボ	%d", plState_.isDamagedFlug);
+	sprite3D_.Debug();
 	if (ImGui::Button("体力を減らす")){
 
 		OnCollision(5);
@@ -190,7 +198,7 @@ void Player::PlayerMove(){
 	
 
 	//タイトルシーンでなければ反転入力
-	if (vController_->Decide()) {
+	if (vController_->Decide() || joyconInput->CheakRadius(75.0f)) {
 		isForward_ = !isForward_;
 		isJustTurned_ = true;
 	}

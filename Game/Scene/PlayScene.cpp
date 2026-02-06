@@ -93,6 +93,7 @@ inline void PlayScene::Initialize(){
 	lanePlane_.Initialize(laneTexture_, 1);
 	lanePlane_.transform.translate = { 0.0f, 0.0f, -0.01f };
 	lanePlane_.transform.scale = { 1.0f, 10.0f, 1.0f };
+	lanePlane_.uvLoopScale_.y = 10.0f;
 	lanePlane_.transform.SetParent(planeTransform_.get());
 
 	//必須となる情報の読み込み

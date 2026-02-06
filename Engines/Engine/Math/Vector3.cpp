@@ -6,6 +6,7 @@
 #include <iostream>
 #include <algorithm>
 #include <numbers>
+#include "WindowManager.h"
 
 using namespace MLEngine::Math;
 
@@ -113,11 +114,14 @@ Vector3 MLEngine::Math::CoordTransform(const Vector3& vector, const Matrix4x4& m
 Vector3 MLEngine::Math::ScreenToWorld(const Vector2& position, float zValue, const Matrix4x4& matView, const Matrix4x4& matProjection)
 {
 
+	float width = (float)(MLEngine::Core::Window::Manager::GetInstance()->GetClientWidth());
+	float height = (float)(MLEngine::Core::Window::Manager::GetInstance()->GetClientHeight());
+
 	zValue = std::clamp(zValue, 0.0f, 1.0f);
 
 	Vector3 result = { position.x, position.y, zValue };
 
-	Matrix4x4 viewPort = MakeViewportMatrix(0.0f, 0.0f, 1280.0f, 720.0f, 0.0f, 1.0f);
+	Matrix4x4 viewPort = MakeViewportMatrix(0.0f, 0.0f, width, height, 0.0f, 1.0f);
 
 	result = MLEngine::Math::CoordTransform(result, Inverse(viewPort));
 	result = MLEngine::Math::CoordTransform(result, Inverse(matProjection));
