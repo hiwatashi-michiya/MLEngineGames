@@ -22,8 +22,11 @@ void UI::Initialize(Texture texture, Vector2 pos, Vector4 col) {
 }
 
 void UI::Stop() {
-
-
+	currentEasingTime_ = 0.0f;
+	isStartEasing_ = false;
+	isEndEasing_ = false;
+	sprite_->position = startPosition;
+	sprite_->size = { sprite_->GetDefaultSize().x * startScale.x, sprite_->GetDefaultSize().y * startScale.y };
 
 }
 

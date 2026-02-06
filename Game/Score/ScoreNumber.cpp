@@ -11,66 +11,126 @@ ScoreNumber::ScoreNumber(){
 	scoreBoard_.reset(MLEngine::Resource::Sprite2D::Create(texture_, scoreBoardPos_, baseColor_));
 
 	texture_.Load("./Resources/Texture/ingame_UI_combo.png");
-	scoreCombo_.reset(MLEngine::Resource::Sprite2D::Create(texture_, scoreComboPos_, comboColor_));
+	scoreCombo_.Initialize(texture_, {});
 
 	texture_.Load("./Resources/Texture/number.png");
-	scoreNumTen_.reset(MLEngine::Resource::Sprite2D::Create(texture_, scoreNumTenPos_, scoreNumColor_));
-	scoreNumOne_.reset(MLEngine::Resource::Sprite2D::Create(texture_, scoreNumOnePos_, scoreNumColor_));
-	comboNumTen_.reset(MLEngine::Resource::Sprite2D::Create(texture_, comboNumTenPos_, comboNumColor_));
-	comboNumOne_.reset(MLEngine::Resource::Sprite2D::Create(texture_, comboNumOnePos_, comboNumColor_));
+	scoreNumTen_.Initialize(texture_, {});
+	scoreNumOne_.Initialize(texture_, {});
+	comboNumTen_.Initialize(texture_, {});
+	comboNumOne_.Initialize(texture_, {});
 
 }
 
 void ScoreNumber::Initialize() {
+	/*ingameStartUI_.Initialize(ingameStartTex_, {});
+	ingameStartUI_.startPosition = { 2920.0f, 540.0f };
+	ingameStartUI_.middlePosition = { 960.0f, 540.0f };
+	ingameStartUI_.endPosition = { -1000.0f, 540.0f };
+	ingameStartUI_.easingTime = 4.0f;
+	ingameStartUI_.startToMiddleTime = 1.0f;
+	ingameStartUI_.stayMiddleTime = 2.0f;*/
 	
-
 }
 
 void ScoreNumber::Update() {
 	GlobalGetValues();
 	ScoreCulc();
 	ComboCulc();
+
 	//ボード
 	scoreBoard_->position = scoreBoardPos_;
 	scoreBoard_->size = scoreBoardSize_;
 	
-	//スコアの数字
-	scoreNumTen_->position = scoreNumTenPos_;
-	scoreNumTen_->size = scoreNumTenSize_;
-	scoreNumTen_->uvScale.x = 0.1f;
-	scoreNumTen_->uvTranslate.x = 0.1f * scoreTen_;
 
-	scoreNumOne_->position = scoreNumOnePos_;
-	scoreNumOne_->size = scoreNumTenSize_;
-	scoreNumOne_->uvScale.x = 0.1f;
-	scoreNumOne_->uvTranslate.x = 0.1f * scoreOne_;
+	//スコアの数字十の位
+	scoreNumTen_.startPosition = scoreNumTenPos_;
+	scoreNumTen_.middlePosition = scoreNumTenPos_;
+	scoreNumTen_.endPosition = scoreNumTenPos_;
+	scoreNumTen_.startScale = scoreNumTenSize_;
+	scoreNumTen_.middleScale = scoreNumTenSize_ * magnification_;
+	scoreNumTen_.endScale = scoreNumTenSize_;
+	scoreNumTen_.SetUVScale({ 0.1f,1.0f });
 
+	//スコアの数字一の位
+	scoreNumOne_.startPosition = scoreNumOnePos_;
+	scoreNumOne_.middlePosition = scoreNumOnePos_;
+	scoreNumOne_.endPosition = scoreNumOnePos_;
+	scoreNumOne_.startScale = scoreNumTenSize_;
+	scoreNumOne_.middleScale = scoreNumTenSize_ * magnification_;
+	scoreNumOne_.endScale = scoreNumTenSize_;
+	scoreNumOne_.SetUVScale({ 0.1f,1.0f });
 
-	//コンボ
-	scoreCombo_->position = scoreComboPos_;
-	scoreCombo_->size = scoreComboSize_;
-	//コンボの数字
-	comboNumTen_->position = comboNumTenPos_;
-	comboNumTen_->size = comboNumTenSize_;
-	comboNumTen_->uvScale.x = 0.1f;
-	comboNumTen_->uvTranslate.x = 0.1f * comboTen_;
-
-	comboNumOne_->position = comboNumOnePos_;
-	comboNumOne_->size = comboNumTenSize_;
-	comboNumOne_->uvScale.x = 0.1f;
-	comboNumOne_->uvTranslate.x = 0.1f * comboOne_;
-
-	//コンボが0の場合
+	//コンボのボード
+	scoreCombo_.startPosition = scoreComboPos_;
+	scoreCombo_.middlePosition = scoreComboPos_;
+	scoreCombo_.endPosition = scoreComboPos_;
+	scoreCombo_.startScale = scoreComboSize_;
+	scoreCombo_.middleScale = scoreComboSize_ * magnification_;
+	scoreCombo_.endScale = scoreComboSize_;
+	scoreCombo_.SetRotate(comboRotate_);
+	//コンボの十の位
+	comboNumTen_.startPosition = comboNumTenPos_;
+	comboNumTen_.middlePosition = comboNumTenPos_;
+	comboNumTen_.endPosition = comboNumTenPos_;
+	comboNumTen_.startScale = comboNumTenSize_;
+	comboNumTen_.middleScale = comboNumTenSize_ * magnification_;
+	comboNumTen_.endScale = comboNumTenSize_;
+	comboNumTen_.SetUVScale({ 0.1f,1.0f });
+	comboNumTen_.SetRotate(comboRotate_);
+	//コンボの一の位
+	comboNumOne_.startPosition = comboNumOnePos_;
+	comboNumOne_.middlePosition = comboNumOnePos_;
+	comboNumOne_.endPosition = comboNumOnePos_;
+	comboNumOne_.startScale = comboNumTenSize_;
+	comboNumOne_.middleScale = comboNumTenSize_ * magnification_;
+	comboNumOne_.endScale = comboNumTenSize_;
+	comboNumOne_.SetUVScale({ 0.1f,1.0f });
+	comboNumOne_.SetRotate(comboRotate_);
+	//コンボが０の場合
 	if (comboTen_ == 0 and comboOne_ == 0){
-		scoreCombo_->isActive = false;
-		comboNumTen_->isActive = false;
-		comboNumOne_->isActive = false;
+		scoreCombo_.startScale = Vector2{};
+		comboNumTen_.startScale = Vector2{};
+		comboNumOne_.startScale = Vector2{};
+
+		scoreCombo_.endScale = Vector2{};
+		comboNumTen_.endScale = Vector2{};
+		comboNumOne_.endScale = Vector2{};
+
 	}
-	else {
-		scoreCombo_->isActive = true;
-		comboNumTen_->isActive = true;
-		comboNumOne_->isActive = true;
+	//コンボが０の場合
+	if (comboTen_ == 0 and comboOne_ == 1) {
+		scoreCombo_.startScale = Vector2{};
+		comboNumTen_.startScale = Vector2{};
+		comboNumOne_.startScale = Vector2{};
 	}
+
+	scoreNumTen_.Update();
+	scoreNumOne_.Update();
+	scoreCombo_.Update();
+	comboNumTen_.Update();
+	comboNumOne_.Update();
+
+	//スコアの数字
+	scoreNumTen_.SetUVTrans({ 0.1f * scoreTen_,0.0f });
+	scoreNumTen_.SetColor(scoreNumColor_);
+	scoreNumOne_.SetUVTrans({ 0.1f * scoreOne_,0.0f });
+	scoreNumOne_.SetColor(scoreNumColor_);
+	//コンボの数字
+	comboNumTen_.SetUVTrans({ 0.1f * comboTen_,0.0f });
+	comboNumTen_.SetColor(comboNumColor_);
+	comboNumOne_.SetUVTrans({ 0.1f * comboOne_,0.0f });
+	comboNumOne_.SetColor(comboNumColor_);
+	////コンボが0の場合
+	//if (comboTen_ == 0 and comboOne_ == 0){
+	//	scoreCombo_->isActive = false;
+	//	comboNumTen_->isActive = false;
+	//	comboNumOne_->isActive = false;
+	//}
+	//else {
+	//	scoreCombo_->isActive = true;
+	//	comboNumTen_->isActive = true;
+	//	comboNumOne_->isActive = true;
+	//}
 
 }
 

@@ -156,7 +156,7 @@ void Player::DebugDraw(){
 	if (ImGui::Button("体力を減らす")){
 
 		OnCollision(5);
-		GameManager::GetInstance()->AddScore(plState_.isDamagedFlug);
+		//GameManager::GetInstance()->AddScore(plState_.isDamagedFlug);
 	}
 	ImGui::End();
 #endif // _DEBUG
@@ -175,6 +175,7 @@ void Player::OnCollision(const int damege){
 #else
 	// Server Debug処理
 	life_ -= damege;
+	GameManager::GetInstance()->AddScore(isDamaged_);
 #endif
 	damageTime_ = 0.0f;
 	bulletDamege_ = damege;
@@ -348,6 +349,7 @@ void Player::SyncFromNetwork(){
 
 		if (plState_.isClientHited){
 			life_ -= bulletDamege_;
+			GameManager::GetInstance()->AddScore(isDamaged_);
 			plState_.isClientHited = false;
 		}
 		isDamaged_ = netState.isClientHited;

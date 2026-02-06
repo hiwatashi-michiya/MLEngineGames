@@ -47,6 +47,7 @@ public:
     TutorialState GetTutorialState() const { return tuState_; }
     
     bool GetIsClear()const { return isClear_; }
+    bool GetIsGetScore()const { return isGetScored_; }
     bool GetIsGameOver() const { return isGameOver_; }
 
     void SetIsClear(bool isClear) { isClear_ = isClear; }
@@ -106,6 +107,9 @@ private:
     bool isGameEnd_ = false;
     bool isGameOver_ = false;
     bool isReset_ = false;
+
+    //スコアを獲得したかどうか
+    bool isGetScored_ = false;
 
     //チュートリアルでのカウント
     int moveCount_ = 0;
