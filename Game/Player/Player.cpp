@@ -1,5 +1,6 @@
 #include "Player.h"
 #include"Externals/imgui/imgui.h"
+#include "../Manager/GameManager.h"
 
 using namespace MLEngine::Math;
 using namespace MLEngine::Resource;
@@ -8,6 +9,7 @@ Player::Player(){
 	//必須となる情報の読み込み
 	backTextureName_ = ("./Resources/Texture/player_anime_back.png");
 	frontTextureName_ = ("./Resources/Texture/player_anime_front.png");
+	damageTextureName_ = ("./Resources/Texture/player_anime_damage");
 
 	sprite3D_.Initialize("./Resources/texture/player_back.png", 7);
 	sprite3D_.color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -60,6 +62,7 @@ void Player::Finalize(){
 
 void Player::Update(const float deltaTime){
 	GlobalVariables* global = GlobalVariables::GetInstance();
+	GameManager* gameManager = GameManager::GetInstance();
 
 	deltaTime;
 	SyncFromNetwork();
@@ -106,7 +109,23 @@ void Player::Update(const float deltaTime){
 		sprite3D_.SetTexture(backTextureName_);
 	}
 	else {
-		sprite3D_.SetTexture(frontTextureName_);
+
+		//ノーダメージ(スコア0)のとき
+		if (gameManager->GetScore() <= 0) {
+			sprite3D_.SetTexture(frontTextureName_);
+		}
+		//スコアが1以上の時
+		else {
+
+			std::string textureName = damageTextureName_;
+
+			textureName += std::to_string(gameManager->GetScoreLevel());
+			textureName += ".png";
+
+			sprite3D_.SetTexture(textureName);
+
+		}
+
 	}
 
 	sprite3D_.UpdateAnimation();

@@ -52,7 +52,16 @@ void GameManager::Initialize() {
     gameOverWaitCounter_ = 0.0f;
     gameClearWaitCounter_ = 0.0f;
 
+    //クライアント側では音を出さない
+#ifdef CLIENT_BUILD
+    Audio::SEVolume = 0.0f;
+    Audio::BGMVolume = 0.0f;
+#endif
+
     titleBGM_.Play(Audio::BGMVolume, true);
+    tutorialBGM_.Stop();
+    ingameBGM_.Stop();
+    resultBGM_.Stop();
 
     moveCount_ = 0;
     turnCount_ = 0;
@@ -132,11 +141,11 @@ void GameManager::Update(bool isJustTurned, bool isJustMoved) {
 
             if (turnCount_ >= turnCountMax_) {
                 tutorialClearSE_.Play(Audio::SEVolume);
-                tuState_ = TutorialState::Wait;
+                isTutorialClear_ = true;
             }
             break;
         //シーン切り替え実装したら削除
-        case GameManager::TutorialState::Wait:
+       /* case GameManager::TutorialState::Wait:
             if (!isJustMoved and !isJustTurned) {
                 time_ += deltaTime_;
             }
@@ -144,7 +153,7 @@ void GameManager::Update(bool isJustTurned, bool isJustMoved) {
             if (time_ >= waitTime_){
                 isTutorialClear_ = true;
             }
-            break;
+            break;*/
         default:
             break;
         }
@@ -242,6 +251,7 @@ void GameManager::Debug() {
     ImGui::Begin("スコア回り");
 
     ImGui::Text("スコア：%d", score_);
+    ImGui::DragInt("スコアデバッグ", &score_, 0.1f, 0, 10000);
     ImGui::Text("傷コンボ：%d", scratchCombo_);
 
     ImGui::End();
@@ -331,5 +341,25 @@ void GameManager::AddScore(bool isCombo){
     scratchCombo_++;
 
     isGetScored_ = true;
+}
+
+int GameManager::GetScoreLevel()
+{
+
+    int level = 0;
+
+    if (score_ <= 15 and score_ > 0) {
+        level = ((score_ - 1) / 5) + 1;
+    }
+    else if(score_ <= 45) {
+        level = ((score_ - 16) / 10) + 1;
+        level += 3;
+    }
+    else {
+        level = 7;
+    }
+
+    return level;
+
 }
 
