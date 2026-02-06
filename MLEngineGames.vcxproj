@@ -284,6 +284,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Game\Bullet\BulletCaveat.cpp" />
+    <ClCompile Include="Game\DeviceIO\DistanceSensor\DistanceSensor.cpp" />
+    <ClCompile Include="Game\DeviceIO\DistanceSensor\packet_io.cpp" />
+    <ClCompile Include="Game\DeviceIO\DistanceSensor\vendor_serial.cpp" />
     <ClCompile Include="Game\DeviceIO\UltrasonicSensor\UltrasonicSensor.cpp" />
     <ClCompile Include="Game\Character\BaseCharacter.cpp" />
     <ClCompile Include="Game\Config\GameConfig.cpp" />
@@ -311,6 +314,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Bullet\BulletCaveat.h" />
+    <ClInclude Include="Game\DeviceIO\DistanceSensor\DistanceSensor.h" />
+    <ClInclude Include="Game\DeviceIO\DistanceSensor\packet_io.h" />
     <ClInclude Include="Game\DeviceIO\serial\include\serial\serial.h" />
     <ClInclude Include="Game\DeviceIO\UltrasonicSensor\UltrasonicSensor.h" />
     <ClInclude Include="Game\Character\BaseCharacter.h" />
@@ -336,6 +341,7 @@
     <ClInclude Include="Game\Score\ScoreNumber.h" />
     <ClInclude Include="Network\NetworkManager.h" />
     <ClInclude Include="Resources\icon\resource.h" />
+    <ClInclude Include="vendor\serial\include\serial\serial.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
