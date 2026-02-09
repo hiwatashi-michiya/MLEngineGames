@@ -96,6 +96,14 @@ void Player::Update(const float deltaTime) {
 
 #ifdef CLIENT_BUILD
 	// Client専用処理
+
+	if (isResultScene_) {
+		sprite3D_.isActive = false;
+	}
+	else {
+		sprite3D_.isActive = true;
+	}
+
 #else
 	// Server Debug処理
 	TimeProcess(deltaTime);

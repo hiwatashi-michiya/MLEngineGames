@@ -246,6 +246,32 @@ void PlayScene::Update(){
 
 	int size = sizeof(gameState);
 
+	//リザルトシーンで縁石削除
+	if (gameManager_->GetState() == GameManager::GameState::Result) {
+
+		for (int32_t i = 0; i < kMaxStone_; i++) {
+
+			stoneLeft_[i].isActive = false;
+			stoneRight_[i].isActive = false;
+
+		}
+
+		playerManager_->GetPlayer()->SetIsResultScene(true);
+
+	}
+	else {
+
+		for (int32_t i = 0; i < kMaxStone_; i++) {
+
+			stoneLeft_[i].isActive = true;
+			stoneRight_[i].isActive = true;
+
+		}
+
+		playerManager_->GetPlayer()->SetIsResultScene(false);
+
+	}
+
 	//タイトルに戻ったときに初期化できるように
 	if (gameManager_->GetState() == GameManager::GameState::Result and static_cast<GameManager::GameState>(gameState.gameState)== GameManager::GameState::Title){
 		MLEngine::Scene::Manager::GetInstance()->ChangeScene("Play");
