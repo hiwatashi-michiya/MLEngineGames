@@ -246,6 +246,32 @@ void PlayScene::Update(){
 
 	int size = sizeof(gameState);
 
+	//リザルトシーンで縁石削除
+	if (gameManager_->GetState() == GameManager::GameState::Result) {
+
+		for (int32_t i = 0; i < kMaxStone_; i++) {
+
+			stoneLeft_[i].isActive = false;
+			stoneRight_[i].isActive = false;
+
+		}
+
+		playerManager_->GetPlayer()->SetIsResultScene(true);
+
+	}
+	else {
+
+		for (int32_t i = 0; i < kMaxStone_; i++) {
+
+			stoneLeft_[i].isActive = true;
+			stoneRight_[i].isActive = true;
+
+		}
+
+		playerManager_->GetPlayer()->SetIsResultScene(false);
+
+	}
+
 	//タイトルに戻ったときに初期化できるように
 	if (gameManager_->GetState() == GameManager::GameState::Result and static_cast<GameManager::GameState>(gameState.gameState)== GameManager::GameState::Title){
 		MLEngine::Scene::Manager::GetInstance()->ChangeScene("Play");
@@ -257,6 +283,9 @@ void PlayScene::Update(){
 	}
 	
 	if (gameManager_->GetScore() != gameState.score){
+		gameManager_->SetIsGetScored(true);
+	}
+	else if (gameManager_->GetCombo() != gameState.combo and gameManager_->GetCombo() < gameState.combo){
 		gameManager_->SetIsGetScored(true);
 	}
 	gameManager_->SetState(static_cast<GameManager::GameState>(gameState.gameState));
@@ -522,9 +551,9 @@ void PlayScene::Update(){
 
 	if (gameManager_->GetIsGetScore()) {
 		scoreUI_->ScoreEase();
-		if (playerManager_->GetPlayer()->GetIsDamaged()){
-			scoreUI_->ComboEase();
-		}
+		
+		scoreUI_->ComboEase();
+		
 	}
 
 	ingameStartUI_.Update();
