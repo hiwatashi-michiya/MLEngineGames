@@ -52,6 +52,7 @@ public:
     };
 
     struct EnemyStatePacket {
+
         bool greatAttackFlag;
         bool angryAttackFlag;
 	};
