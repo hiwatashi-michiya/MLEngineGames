@@ -1,5 +1,14 @@
 {
     "BulletCaveat": {
+        "ContinuousPosition": [
+            970.0,
+            360.0
+        ],
+        "ContinuousSize": [
+            1350.0,
+            300.0
+        ],
+        "ContinuousTotalTime": 3.0,
         "Distance": 520.0,
         "Position": [
             970.0,
@@ -10,6 +19,6 @@
             250.0
         ],
         "SwitchTime": 0.10000000149011612,
-        "TotalTime": 1.0
+        "TotalTime": 1.5
     }
 }
