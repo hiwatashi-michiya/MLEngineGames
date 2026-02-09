@@ -37,7 +37,7 @@ void Player::Initialize(){
 	GlobalVariables* global = GlobalVariables::GetInstance();
 
 	global->SetValue("PlayerState", "Life", lifeMax_);
-	global->SetValue("PlayerState", "comboTime", damegeCount_);
+	global->SetValue("PlayerState", "comboTime", damageCount_);
 	global->SetValue("PlayerState", "recoveryValue", recoveryValue_);
 	global->SetValue("PlayerState", "recoverySpeed", recoverySpeed_);
 	global->SetValue("PlayerState", "resultPosition", resultPosition_);
@@ -71,7 +71,7 @@ void Player::Update(const float deltaTime){
 	ResetEvents();
 
 	lifeMax_ = global->GetIntValue("PlayerState", "Life");
-	damegeCount_ = global->GetFloatValue("PlayerState", "comboTime");
+	damageCount_ = global->GetFloatValue("PlayerState", "comboTime");
 	recoveryValue_ = global->GetIntValue("PlayerState", "recoveryValue");
 	recoverySpeed_ = global->GetFloatValue("PlayerState", "recoverySpeed");
 	resultPosition_ = global->GetVector3Value("PlayerState", "resultPosition");
@@ -295,13 +295,14 @@ void Player::TimeProcess(const float deltaTime){
 
 	if (damageBlinkingCount_ >= damageBlinkingTime_) {
 		damageBlinkingCount_ = 0.0f;
+		damageBlinkingTime_ = 0.5f * ((damageCount_ - damageTime_) / damageCount_) + 0.1f;
 		sprite3D_.color = { 10.0f,10.0f,10.0f,1.0f };
 	}
 	else {
 		sprite3D_.color = { 1.0f,1.0f,1.0f,1.0f };
 	}
 
-	if (damageTime_ >= damegeCount_) {
+	if (damageTime_ >= damageCount_) {
 		isDamaged_ = false;
 		damageTime_ = 0.0f;
 		damageBlinkingCount_ = 0.0f;
