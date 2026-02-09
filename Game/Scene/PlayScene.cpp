@@ -412,7 +412,6 @@ void PlayScene::Update(){
 	
 
 	if (gameManager_->GetState() == GameManager::GameState::Playing){
-		enemy_->SetIsActive(true);
 		bulletManager_->SetIsModelActive(true);
 
 		ingameStartUI_.SetIsActive(true);
@@ -438,6 +437,10 @@ void PlayScene::Update(){
 		//開始UIが動き終わったら更新。ゲーム終了時は更新を止める
 		if (ingameStartUI_.GetIsEndEasing() and not gameManager_->GetIsGameOver() and
 			not gameManager_->GetIsClear()) {
+
+			if (!enemy_->GetIsActive()) {
+				enemy_->SetIsActive(true);
+			}
 
 			EnemyAttackTurnController::GetInstance().Update();
 			enemy_->Update();

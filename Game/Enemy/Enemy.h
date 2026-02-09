@@ -67,6 +67,8 @@ public:
 		}
 	}
 
+	bool GetIsActive() const { return frontPlane_.isActive; }
+
 	// セット関数
 	// 弾マネージャー取得
 	void SetBulletManager(BulletManager* bulletManager) {
@@ -83,6 +85,8 @@ public:
 		backPlane_.isActive = isActive;
 		enemyUI_->SetIsActive(isActive);
 		bulletManager_->SetIsModelActive(isActive);
+		leftHand_->SetIsActive(isActive);
+		rightHand_->SetIsActive(isActive);
 	}
 
 
