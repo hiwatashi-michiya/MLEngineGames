@@ -91,6 +91,8 @@ public:
 	void SetIsActive(const bool isActive) {
 		frontPlane_.isActive = isActive;
 		backPlane_.isActive = isActive;
+		leftHand_->SetIsActive(isActive);
+		rightHand_->SetIsActive(isActive);
 	}
 	void ResetGreatAttackTime() {
 		greatAttackTime_ = 0.0f;

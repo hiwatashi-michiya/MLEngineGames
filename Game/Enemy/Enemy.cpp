@@ -335,7 +335,7 @@ void Enemy::OnCollision(MLEngine::Math::Vector3 position, int damege)
 
 	ChangeMotionState(std::make_unique<EnemyOnHitState>());
 
-	hitParticle_->Spawn(position);
+	hitParticle_->Spawn(MLEngine::Math::Vector3(0.0f, 0.0f, -2.0f) + position);
 }
 
 void Enemy::ChangeTexture(Mode mode)
