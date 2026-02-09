@@ -124,6 +124,9 @@ inline void PlayScene::Initialize(){
 	tutorialSprite_.transform.translate.y = 1.0f;
 	tutorialSprite_.transform.SetParent(tutorialTransform_.get());
 
+	tutorialSprite_.SetTexture(tutorialTurnTexture_);
+	tutorialSprite_.SetTexture(tutorialMoveTexture_);
+
 	resultSprite_.reset(MLEngine::Resource::Sprite2D::Create(gameOverTexture_, resultPos_, resultColor_));
 	resultSprite_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	resultSprite_->isActive = false;

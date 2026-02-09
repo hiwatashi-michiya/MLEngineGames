@@ -32,6 +32,7 @@
 #include "Resource/ResourceManager.h"
 #include "DXDevice.h"
 #include "FrameTracker.h"
+#include "Texture/PreLoader.h"
 
 namespace MLEngine {
 
