@@ -336,6 +336,11 @@ void GameManager::SceneUpdate(){
 /// </summary>
 /// <param name="isCombo"></param>
 void GameManager::AddScore(bool isCombo){
+    //ゲームオーバーの時は計算しない
+    if (isGameOver_){
+        return;
+    }
+
     if (isCombo){
         score_ += scoreBase_ * scoreMagnification_;        
     }
@@ -348,7 +353,7 @@ void GameManager::AddScore(bool isCombo){
     isGetScored_ = true;
 }
 
-int GameManager::GetScoreLevel()
+int GameManager::GetScoreLevel() const
 {
 
     int level = 0;

@@ -75,7 +75,7 @@ public:
 
 
     //スコアのレベルを計算して取得
-    int GetScoreLevel();
+    int GetScoreLevel() const;
 
     // 残り時間（制限時間）管理
     void SetTimeLimit(float t) { timeLimit_ = t; }

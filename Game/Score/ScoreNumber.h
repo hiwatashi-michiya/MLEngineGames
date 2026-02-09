@@ -35,6 +35,8 @@ private:
 	void ScoreCulc();
 
 	void ComboCulc();
+	//スコアによる表示の挙動
+	void NumberDrawControl();
 
 private:
 

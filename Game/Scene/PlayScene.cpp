@@ -285,6 +285,9 @@ void PlayScene::Update(){
 	if (gameManager_->GetScore() != gameState.score){
 		gameManager_->SetIsGetScored(true);
 	}
+	else if (gameManager_->GetCombo() != gameState.combo and gameManager_->GetCombo() < gameState.combo){
+		gameManager_->SetIsGetScored(true);
+	}
 	gameManager_->SetState(static_cast<GameManager::GameState>(gameState.gameState));
 	gameManager_->SetScore(gameState.score);
 	gameManager_->SetCombo(gameState.combo);
@@ -486,6 +489,7 @@ void PlayScene::Update(){
 			}
 
 			EnemyAttackTurnController::GetInstance().Update();
+			EnemyStateController::GetInstance().Update();
 			enemy_->Update();
 			bulletManager_->Update();
 
@@ -547,9 +551,9 @@ void PlayScene::Update(){
 
 	if (gameManager_->GetIsGetScore()) {
 		scoreUI_->ScoreEase();
-		if (playerManager_->GetPlayer()->GetIsDamaged()){
-			scoreUI_->ComboEase();
-		}
+		
+		scoreUI_->ComboEase();
+		
 	}
 
 	ingameStartUI_.Update();
