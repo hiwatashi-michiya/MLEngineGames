@@ -51,6 +51,8 @@ public:
 
 	void AddGrateAttackTime(float time) {
 		greatAttackTime_ += time;
+
+
 	}
 
 	void AddAngryTime(float time) {

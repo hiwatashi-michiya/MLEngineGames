@@ -34,6 +34,21 @@ void BulletCaveat::Initialize(Player* player)
 	}
 
 	effectElements_.clear();
+
+	global_->AddItem("BulletCaveat", "ContinuousPosition", MLEngine::Math::Vector2(640.0f, 360.0f));
+	global_->AddItem("BulletCaveat", "ContinuousSize", MLEngine::Math::Vector2(450.0f, 100.0f));
+	global_->AddItem("BulletCaveat", "ContinuousTotalTime", 3.0f);
+
+	continuousPosition_ = global_->GetVector2Value("BulletCaveat", "ContinuousPosition");
+	continuousSize_ = global_->GetVector2Value("BulletCaveat", "ContinuousSize");
+	continuousTotalTime_ = global_->GetFloatValue("BulletCaveat", "ContinuousTotalTime");
+
+	texture.Load("./Resources/Texture/ingame_UI_enemyBigAttack.png");
+	continuousSprite_.reset(MLEngine::Resource::Sprite2D::Create(texture, continuousPosition_, { 1.0f, 1.0f, 1.0f, 1.0f }));
+	continuousSprite_->isActive = false;
+	continuousSprite_->size = continuousSize_;
+
+
 }
 
 void BulletCaveat::Update()
@@ -77,6 +92,30 @@ void BulletCaveat::Update()
 #endif // _DEBUG
 	}
 
+	if (isContinuous_) {
+		if (effectElement_.time < effectElement_.totalTime) {
+			effectElement_.time += 1.0f / 60.0f;
+
+			// 
+			int currentIndex = static_cast<int>(effectElement_.time / effectElement_.switchTime);
+
+			// 表示切り替え
+			if (currentIndex != effectElement_.prevSwitchIndex) {
+				continuousSprite_->isActive ^= true;
+				effectElement_.prevSwitchIndex = currentIndex;
+			}
+			
+		}
+		else {
+			isContinuous_ = false;
+			continuousSprite_->isActive = false;
+		}
+	}
+
+#ifdef _DEBUG
+	continuousSprite_->position = continuousPosition_;
+	continuousSprite_->size = continuousSize_;
+#endif // _DEBUG
 
 }
 
@@ -95,6 +134,14 @@ void BulletCaveat::DebugUI() {
 	global_->datas_["BulletCaveat"].items["SwitchTime"].value = switchTime_;
 	ImGui::DragFloat("表示時間", &totalTime_, 0.01f, 0.0f);
 	global_->datas_["BulletCaveat"].items["TotalTime"].value = totalTime_;
+
+	ImGui::Separator();
+	ImGui::DragFloat2("大技警告の座標", &continuousPosition_.x, 1.0f);
+	global_->datas_["BulletCaveat"].items["ContinuousPosition"].value = continuousPosition_;
+	ImGui::DragFloat2("大技警告のサイズ", &continuousSize_.x, 1.0f);
+	global_->datas_["BulletCaveat"].items["ContinuousSize"].value = continuousSize_;
+	ImGui::DragFloat("大技警告の時間", &continuousTotalTime_, 0.1f, 0.0f, 10.0f);
+	global_->datas_["BulletCaveat"].items["ContinuousTotalTime"].value = continuousTotalTime_;
 
 
 	if (ImGui::Button("Save")) {
@@ -116,4 +163,12 @@ void BulletCaveat::Warn(int lane)
 	EffectElement effectElement = { 0.0f, switchTime_, totalTime_, lane , 0 };
 
 	effectElements_.push_back(effectElement);
+}
+
+void BulletCaveat::Continuous()
+{
+	if (!isContinuous_) {
+		isContinuous_ = true;
+		effectElement_ = { 0.0f, switchTime_, continuousTotalTime_, -1, 0 };
+	}
 }

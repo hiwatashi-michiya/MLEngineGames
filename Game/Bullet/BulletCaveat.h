@@ -22,6 +22,7 @@ public:
 	void Update();
 	void DebugUI();
 	void Warn(int lane);
+	void Continuous();
 	void SetPlayer(Player* player) { player_ = player; }
 private:
 	GlobalVariables* global_ = nullptr;
@@ -41,5 +42,14 @@ private:
 	std::list<EffectElement> effectElements_;
 	float switchTime_ = 0.1f;
 	float totalTime_ = 1.0f;
+
+	std::unique_ptr<MLEngine::Resource::Sprite2D> continuousSprite_;
+	EffectElement effectElement_;
+	bool isContinuous_;
+	MLEngine::Math::Vector2 continuousPosition_;
+	MLEngine::Math::Vector2 continuousSize_;
+	float continuousTotalTime_ = 3.0f;
+	
+
 
 };
