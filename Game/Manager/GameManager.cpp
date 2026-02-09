@@ -5,6 +5,7 @@
 #include"Externals/imgui/imgui.h"
 #include "Core/FrameTracker.h"
 #include "Utility/Easing.h"
+#include "Texture/PreLoader.h"
 
 using namespace MLEngine::Resource;
 using namespace MLEngine::Utility;
@@ -289,7 +290,11 @@ void GameManager::SceneUpdate(){
     if (sceneChangeCounter_ <= sceneChangeTime_) {
 
         sceneChangeSprite_->isActive = true;
-        sceneChangeCounter_ += deltaTime_;
+
+        //画像読み込みが完了するまでカウントを止める
+        if (PreLoader::GetInstance()->GetIsEndLoad()) {
+            sceneChangeCounter_ += deltaTime_;
+        }
 
         Vector2 minSize = { 0.0f,0.0f };
         Vector2 maxSize = sceneChangeSprite_->GetDefaultSize();
