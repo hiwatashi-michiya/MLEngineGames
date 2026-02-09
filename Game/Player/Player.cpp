@@ -226,9 +226,6 @@ void Player::OnCollision(const int damege) {
 	playerDamageSE_.Play(Audio::SEVolume);
 
 }
-
-void Player::PlayerMove() {
-	if (isTitleScene_) {
 void Player::PlayerMove(){
 	if (isTitleScene_ or isResultScene_){
 		return;
