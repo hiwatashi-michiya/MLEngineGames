@@ -66,6 +66,9 @@ void BulletCaveat::Update()
 		if (!player_->GetIsForward()) {
 			caveatSprites_[i]->isActive = false;
 		}
+		else if (effectElements_.size() == 0) {
+			caveatSprites_[i]->isActive = false;
+		}
 
 
 #ifdef _DEBUG

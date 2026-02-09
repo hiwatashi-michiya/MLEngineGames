@@ -37,6 +37,7 @@ void DistanceSensor::Init() {
 
 	serialThread = std::thread(&DistanceSensor::Thread, this);
 	is_running = true;
+	isThreadActive = true;
 }
 
 void DistanceSensor::Update()
@@ -87,7 +88,10 @@ void DistanceSensor::Thread() {
 
 void DistanceSensor::End() {
 	is_running = false;
-	serialThread.join();
+	if (isThreadActive) {
+		serialThread.join();
+	}
+
 }
 
 position DistanceSensor::CheckPosition()

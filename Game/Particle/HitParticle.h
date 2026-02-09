@@ -11,7 +11,9 @@
 
 class HitParticle {
 	struct Grain {
-		std::unique_ptr<MLEngine::Resource::Particle3D> particle3D;
+		//std::unique_ptr<MLEngine::Resource::Particle3D> particle3D;
+		std::unique_ptr < MLEngine::Resource::Sprite3D> sprite3D_;
+		MLEngine::Math::Vector3 velocity_;
 		float gravity_ = 0.01f;
 		float lifeTime_ = 0.0f;
 		float limitTime_ = 0.0f;
@@ -25,7 +27,8 @@ class HitParticle {
 	};
 
 	struct Spick {
-		std::unique_ptr<MLEngine::Resource::Particle3D> particle3D;
+		//std::unique_ptr<MLEngine::Resource::Particle3D> particle3D;
+		std::unique_ptr<MLEngine::Resource::Sprite3D> sprite3D_;
 		MLEngine::Math::Vector3 maxScale_{};
 		float lifeTime_ = 0.0f;
 		float limitTime_ = 0.0f;
@@ -46,9 +49,6 @@ public:
 	void Spawn(MLEngine::Math::Vector3 position);
 private:
 	GlobalVariables* global_;
-
-	// パーティクル
-	std::unique_ptr<MLEngine::Resource::Particle3D> particle_;
 
 	// 粒
 	std::list<Grain> grains_;

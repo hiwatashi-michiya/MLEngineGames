@@ -231,7 +231,9 @@ void GameManager::Update(bool isJustTurned, bool isJustMoved) {
         break;
     }
 
-    
+    if (MLEngine::Input::Manager::GetInstance()->GetKeyboard()->Trigger(DIK_R)) {
+        isReset_ = true;
+    }
    
 }
 

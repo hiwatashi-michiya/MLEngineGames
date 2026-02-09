@@ -95,16 +95,17 @@ void Enemy::Update()
 	leftHand_->DebugUI("左手", "Left");
 	rightHand_->DebugUI("右手", "Right");
 
-	// モーション更新
-	motionState_->Update(this);
-
 	if (hp_ <= 0) {
-#ifdef CLIENT_BUILD
-		EnemyAttackTurnController::GetInstance().OnMyEnemyAttackFinished(-1, -1, false);
-#else
-		EnemyAttackTurnController::GetInstance().OnMyEnemyAttackFinished(-1, -1, false);
-#endif
-		return;
+		if (!dynamic_cast<EnemyDownState*>(currentState_.get())) {
+			ChangeState(std::make_unique<EnemyDownState>());
+			ChangeMotionState(std::make_unique<EnemyknockDownState>());
+			enemyDownSE_.Play(Audio::SEVolume);
+		}
+//#ifdef CLIENT_BUILD
+//		EnemyAttackTurnController::GetInstance().OnMyEnemyAttackFinished(-1, -1, false);
+//#else
+//		EnemyAttackTurnController::GetInstance().OnMyEnemyAttackFinished(-1, -1, false);
+//#endif
 	}
 
 	// 状態遷移判定
@@ -115,38 +116,29 @@ void Enemy::Update()
 		}
 	}*/
 	// ダウン状態へ移行判定
-	if (!dynamic_cast<EnemyDownState*>(currentState_.get())) {
+	/*if (!dynamic_cast<EnemyDownState*>(currentState_.get())) {
 		if(downCount_ >= maxDownCount_) {
 			ChangeState(std::make_unique<EnemyDownState>());
 			ChangeMotionState(std::make_unique<EnemyknockDownState>());
 			downCount_ = 0;
 			enemyDownSE_.Play(Audio::SEVolume);
 		}
-	}
+	}*/
 
 	MLEngine::Input::Manager* input = MLEngine::Input::Manager::GetInstance();
 
 	currentState_->Update(this);
 
-	/*if (greatAttackTime_ > maxGrateAttackTime_) {
-		ChangeState(std::make_unique<EnemyGreatAttackState>());
-		EnemyStateController::GetInstance().OnMyEnemyStateFinished(false, EnemyStateController::GetInstance().GetAngryFlag());
-		greatAttackTime_ = 0.0f;
-	}
-
-	if (angryTime_ > maxAngryTime_) {
-		ChangeState(std::make_unique<EnemyBerserkState>());
-		EnemyStateController::GetInstance().OnMyEnemyStateFinished(EnemyStateController::GetInstance().GetGreatAttackFlag(), false);
-		angryTime_ = 0.0f;
-	}*/
-
-	// UI更新
-	enemyUI_->Update();
-
 	leftHand_->Update();
 	rightHand_->Update();
 
 	hitParticle_->Update();
+
+	// モーション更新
+	motionState_->Update(this);
+
+	// UI更新
+	enemyUI_->Update();
 
 	// トランスフォーム更新
 	offsetTransform_->rotateQuaternion = MLEngine::Math::ConvertFromEuler(rotate_);

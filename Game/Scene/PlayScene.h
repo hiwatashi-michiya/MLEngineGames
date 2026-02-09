@@ -100,6 +100,7 @@ private:
 
 	// 敵
 	std::unique_ptr<Enemy> enemy_;
+	bool isEnemyReset_;
 
 	// 弾マネージャー
 	std::unique_ptr<BulletManager> bulletManager_;

@@ -259,6 +259,7 @@ void Player::PlayerMove(){
 	if (vController_->LeftTriger()) {
 		if (nowLine_ > 0) {
 			nowLine_--;
+			standTime_ = 0;
 			isJustMoved_ = true;
 			playerMoveSE_.Play(Audio::SEVolume);
 		}
@@ -268,6 +269,7 @@ void Player::PlayerMove(){
 	if (vController_->RightTriger()) {
 		if (nowLine_ < config_->maxLane_ - 1) {
 			nowLine_++;
+			standTime_ = 0;
 			isJustMoved_ = true;
 			playerMoveSE_.Play(Audio::SEVolume);
 		}
@@ -280,6 +282,7 @@ void Player::PlayerMove(){
 	//#ifndef CLIENT_BUILD
 	if (premovenum != movenum) {
 		playerMoveSE_.Play(Audio::SEVolume);
+		standTime_ = 0;
 		if (movenum == position::pLEFT) {
 			nowLine_ = movenum;
 			isJustMoved_ = true;
@@ -303,6 +306,7 @@ void Player::PlayerMove(){
 		number = 0;
 		if (nowLine_ != number) {
 			nowLine_ = number;
+			standTime_ = 0;
 			isJustMoved_ = true;
 			playerMoveSE_.Play(Audio::SEVolume);
 		}
@@ -311,6 +315,7 @@ void Player::PlayerMove(){
 		number = 1;
 		if (nowLine_ != number) {
 			nowLine_ = number;
+			standTime_ = 0;
 			isJustMoved_ = true;
 			playerMoveSE_.Play(Audio::SEVolume);
 		}
@@ -319,6 +324,7 @@ void Player::PlayerMove(){
 		number = 2;
 		if (nowLine_ != number) {
 			nowLine_ = number;
+			standTime_ = 0;
 			isJustMoved_ = true;
 			playerMoveSE_.Play(Audio::SEVolume);
 		}
@@ -357,7 +363,9 @@ void Player::PlayerMove(){
 
 }
 
-void Player::TimeProcess(const float deltaTime) {
+void Player::TimeProcess(const float deltaTime){
+	standTime_ += deltaTime;
+
 	//回復のタイマー
 	if (lifeMax_ <= life_) {
 		isLifeMax_ = true;
@@ -407,8 +415,11 @@ void Player::PlayerRecovery() {
 	//時間以上で回復
 	if (time_ >= recoverySpeed_) {
 		time_ = 0.0f;
-		if (isRecoveryArea_) {
-			life_ += (recoveryValue_ * 2);
+		if (standTime_ >= recoveryDoubleUpCount_){
+			life_ += (recoveryValue_ * 2.0f);
+		}
+		else if (standTime_ >= recoveryUpCount_){
+			life_ += recoveryValue_ * 1.5f;
 		}
 		else {
 			life_ += recoveryValue_;
