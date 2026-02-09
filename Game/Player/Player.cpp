@@ -375,9 +375,9 @@ void Player::SyncFromNetwork(){
 		plState_.isClientHited = netState.isClientHited;
 
 		if (plState_.isClientHited){
-			isDamaged_ = netState.isClientHited;
 			life_ -= bulletDamege_;
 			GameManager::GetInstance()->AddScore(isDamaged_);
+			isDamaged_ = netState.isClientHited;
 			plState_.isClientHited = false;
 		}
 		
