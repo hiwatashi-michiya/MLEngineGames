@@ -235,18 +235,29 @@ void PlayScene::Update(){
 	config_->Update();
 
 	GlobalGetValue();
+
+	gameManager_->ScoreUpdate();
 #ifdef CLIENT_BUILD
 	//// Client専用処理
 
-	GameManager::GameState gameState{};
+	NetworkManager::SendGameState gameState{};
 
-	NetworkManager::GetInstance().GetSceneState(gameState);
+	NetworkManager::GetInstance().GetGameStatesState(gameState);
+
+	int size = sizeof(gameState);
+
 	//タイトルに戻ったときに初期化できるように
-	if (gameManager_->GetState() == GameManager::GameState::Result and gameState == GameManager::GameState::Title){
+	if (gameManager_->GetState() == GameManager::GameState::Result and static_cast<GameManager::GameState>(gameState.gameState)== GameManager::GameState::Title){
 		MLEngine::Scene::Manager::GetInstance()->ChangeScene("Play");
 	}
 	
-	gameManager_->SetState(static_cast<GameManager::GameState>(gameState));
+	if (gameManager_->GetScore() != gameState.score){
+		gameManager_->SetIsGetScored(true);
+	}
+	gameManager_->SetState(static_cast<GameManager::GameState>(gameState.gameState));
+	gameManager_->SetScore(gameState.score);
+	gameManager_->SetCombo(gameState.combo);
+
 
 	titleSprite_->isActive = false;
 	tutorialSprite_.isActive = false;
@@ -533,10 +544,12 @@ void PlayScene::Update(){
 #else
 	// Server Debug処理
 	//managerを介してクライアントに送る
-	GameStatePacket gamePacket{};
+	NetworkManager::GameStatePacket gamePacket{};
 	gamePacket.header.type = 2;
-	gamePacket.header.size = sizeof(GameStatePacket);
-	gamePacket.gameState = gameManager_->GetState();
+	gamePacket.header.size = sizeof(NetworkManager::GameStatePacket);
+	gamePacket.gameState.gameState = gameManager_->GetStateToInt();
+	gamePacket.gameState.score = gameManager_->GetScore();
+	gamePacket.gameState.combo = gameManager_->GetCombo();
 
 	NetworkManager::GetInstance().Send(gamePacket);
 #endif	
