@@ -17,12 +17,11 @@ void Joycon::Init() {
 		OutputDebugStringA("Joycon is Conected\n");
 	}
 	std::byte arg;
-	arg = std::byte(0x30);
-	Joycon::SendSubcommand(device_, std::byte(0x03), { &arg,1 });
+
 	arg = std::byte(0x1);
 	Joycon::SendSubcommand(device_, std::byte(0x40), { &arg,1 });
-	arg = std::byte(03);
-	Joycon::SendSubcommand(device_, std::byte(0x41), { &arg,1 });
+	arg = std::byte(0x30);
+	Joycon::SendSubcommand(device_, std::byte(0x03), { &arg,1 });
 
 	rotate_.x = 90.0f;
 }
