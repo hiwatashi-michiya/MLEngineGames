@@ -18,6 +18,22 @@ Player::Player() {
 	sprite3D_.StartAnimation();
 	vController_ = &VirtualController::GetInstance();
 
+	//読み込み用に一旦セット
+	sprite3D_.SetTexture(frontTextureName_);
+
+	for (int32_t i = 1; i < 8; i++) {
+
+		std::string textureName = damageTextureName_;
+
+		textureName += std::to_string(i);
+		textureName += ".png";
+
+		sprite3D_.SetTexture(textureName);
+
+	}
+
+	sprite3D_.SetTexture(backTextureName_);
+
 	input_ = MLEngine::Input::Manager::GetInstance();
 
 	config_ = GameConfig::GetInstance();
