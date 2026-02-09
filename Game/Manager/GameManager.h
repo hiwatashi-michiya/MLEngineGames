@@ -25,6 +25,13 @@ public:
     // シーン更新
     void SceneUpdate();
 
+    // シーン更新
+    void ScoreUpdate() {
+        if (isGetScored_ == true) {
+            isGetScored_ = false;
+        }
+    };
+
     // 状態管理
     enum class GameState : uint8_t {
         Title,      //タイトル
@@ -42,7 +49,9 @@ public:
     
 
     void SetState(GameState newState) { nextState_ = newState; }
-    GameState GetState() const { return state_; }
+    uint8_t GetStateToInt() const { return (uint8_t)(state_); }
+
+    GameState GetState() const { return (state_); }
 
     TutorialState GetTutorialState() const { return tuState_; }
     
@@ -50,6 +59,7 @@ public:
     bool GetIsGetScore()const { return isGetScored_; }
     bool GetIsGameOver() const { return isGameOver_; }
 
+    void SetIsGetScored(bool isScored) { isGetScored_ = isScored; }
     void SetIsClear(bool isClear) { isClear_ = isClear; }
     void SetGameEnd(bool isGameEnd) { isGameEnd_ = isGameEnd; }
     void SetIsGameOver(bool flag) { isGameOver_ = flag; }
@@ -57,8 +67,12 @@ public:
     // スコア管理
     void AddScore(bool isCombo);
     int GetScore() const { return score_; }
+    void SetScore(int score) { score_ = score; }
 
     int GetCombo() const { return scratchCombo_; }
+    void SetCombo(int combo) { scratchCombo_ = combo; }
+
+
     //スコアのレベルを計算して取得
     int GetScoreLevel();
 

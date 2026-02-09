@@ -169,9 +169,9 @@ void NetworkManager::RecvLoop() {
 		} break;
 
 		case 2: { // GameState
-			GameManager::GameState g;
+			SendGameState g;
 			Receive(g);
-			gameState_ = g;
+			gamestates_ = g;
 		} break;
 		case 3: { // EnemyAttackTurn
 			EnemyAttackTurnPacket eat;
@@ -211,8 +211,9 @@ bool NetworkManager::GetLatestPlayerState(SendPlayerState& out) const {
 	return true;
 }
 
-void NetworkManager::GetSceneState(GameManager::GameState& out) const {
-	out = gameState_;
+void NetworkManager::GetGameStatesState(SendGameState& out) const {
+	out = gamestates_;
+
 }
 
 bool NetworkManager::GetLatestEnemyAttackTurn(EnemyAttackTurnPacket& out)
