@@ -290,10 +290,21 @@ void Player::TimeProcess(const float deltaTime){
 	//被弾のタイマー
 	if (isDamaged_) {
 		damageTime_ += deltaTime;
+		damageBlinkingCount_ += deltaTime;
 	}
+
+	if (damageBlinkingCount_ >= damageBlinkingTime_) {
+		damageBlinkingCount_ = 0.0f;
+		sprite3D_.color = { 10.0f,10.0f,10.0f,1.0f };
+	}
+	else {
+		sprite3D_.color = { 1.0f,1.0f,1.0f,1.0f };
+	}
+
 	if (damageTime_ >= damegeCount_) {
 		isDamaged_ = false;
 		damageTime_ = 0.0f;
+		damageBlinkingCount_ = 0.0f;
 	}
 }
 

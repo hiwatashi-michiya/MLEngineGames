@@ -166,7 +166,10 @@ private:
 	int bulletDamege_ = 10;
 	//体力の残り割合
 	float lifeRatio_ = 1.0f;
-
+	//ダメージ時の点滅感覚
+	float damageBlinkingTime_ = 0.1f;
+	//点滅時間カウント
+	float damageBlinkingCount_ = 0.0f;
 	//ジャングル
 	std::unique_ptr<Joycon> joyconInput;
 
