@@ -337,6 +337,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Tool\GlobalVariables.cpp" />
     <ClCompile Include="Engine\Resource\Particle\Particle.cpp" />
     <ClCompile Include="Engine\Tool\LevelDataLoader.cpp" />
+    <ClCompile Include="Engine\Resource\Texture\PreLoader.cpp" />
     <ClCompile Include="Engine\Utility\Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -425,6 +426,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Tool\GlobalVariables.h" />
     <ClInclude Include="Engine\Resource\Particle\Particle.h" />
     <ClInclude Include="Engine\Tool\LevelDataLoader.h" />
+    <ClInclude Include="Engine\Resource\Texture\PreLoader.h" />
     <ClInclude Include="Engine\Utility\Utility.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>

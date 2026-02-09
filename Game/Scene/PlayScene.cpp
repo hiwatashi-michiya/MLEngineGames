@@ -237,43 +237,6 @@ void PlayScene::Update(){
 	GlobalGetValue();
 
 	gameManager_->ScoreUpdate();
-#ifdef CLIENT_BUILD
-	//// Client専用処理
-
-	NetworkManager::SendGameState gameState{};
-
-	NetworkManager::GetInstance().GetGameStatesState(gameState);
-
-	int size = sizeof(gameState);
-
-	//タイトルに戻ったときに初期化できるように
-	if (gameManager_->GetState() == GameManager::GameState::Result and static_cast<GameManager::GameState>(gameState.gameState)== GameManager::GameState::Title){
-		MLEngine::Scene::Manager::GetInstance()->ChangeScene("Play");
-	}
-
-	//タイトルに戻ったときに初期化できるように
-	if (gameManager_->GetState() == GameManager::GameState::Playing and static_cast<GameManager::GameState>(gameState.gameState) == GameManager::GameState::Title) {
-		MLEngine::Scene::Manager::GetInstance()->ChangeScene("Play");
-	}
-	
-	if (gameManager_->GetScore() != gameState.score){
-		gameManager_->SetIsGetScored(true);
-	}
-	else if (gameManager_->GetCombo() != gameState.combo and gameManager_->GetCombo() < gameState.combo){
-		gameManager_->SetIsGetScored(true);
-	}
-	gameManager_->SetState(static_cast<GameManager::GameState>(gameState.gameState));
-	gameManager_->SetScore(gameState.score);
-	gameManager_->SetCombo(gameState.combo);
-
-
-	titleSprite_->isActive = false;
-	tutorialSprite_.isActive = false;
-	resultSprite_->isActive = false;
-
-
-
-#else
 
 	//体力が一定以下になったら
 	if (playerManager_->GetPlayer()->GetLifeRatio() <= vignetteConfig_.startRatio) {
@@ -310,6 +273,70 @@ void PlayScene::Update(){
 		}
 
 	}
+
+#ifdef CLIENT_BUILD
+	//// Client専用処理
+
+	NetworkManager::SendGameState gameState{};
+
+	NetworkManager::GetInstance().GetGameStatesState(gameState);
+
+	int size = sizeof(gameState);
+
+	//リザルトシーンで縁石削除
+	if (gameManager_->GetState() == GameManager::GameState::Result) {
+
+		for (int32_t i = 0; i < kMaxStone_; i++) {
+
+			stoneLeft_[i].isActive = false;
+			stoneRight_[i].isActive = false;
+
+		}
+
+		playerManager_->GetPlayer()->SetIsResultScene(true);
+
+	}
+	else {
+
+		for (int32_t i = 0; i < kMaxStone_; i++) {
+
+			stoneLeft_[i].isActive = true;
+			stoneRight_[i].isActive = true;
+
+		}
+
+		playerManager_->GetPlayer()->SetIsResultScene(false);
+
+	}
+
+	//タイトルに戻ったときに初期化できるように
+	if (gameManager_->GetState() == GameManager::GameState::Result and static_cast<GameManager::GameState>(gameState.gameState)== GameManager::GameState::Title){
+		MLEngine::Scene::Manager::GetInstance()->ChangeScene("Play");
+	}
+
+	//タイトルに戻ったときに初期化できるように
+	if (gameManager_->GetState() == GameManager::GameState::Playing and static_cast<GameManager::GameState>(gameState.gameState) == GameManager::GameState::Title) {
+		MLEngine::Scene::Manager::GetInstance()->ChangeScene("Play");
+	}
+	
+	if (gameManager_->GetScore() != gameState.score){
+		gameManager_->SetIsGetScored(true);
+	}
+	else if (gameManager_->GetCombo() != gameState.combo and gameManager_->GetCombo() < gameState.combo){
+		gameManager_->SetIsGetScored(true);
+	}
+	gameManager_->SetState(static_cast<GameManager::GameState>(gameState.gameState));
+	gameManager_->SetScore(gameState.score);
+	gameManager_->SetCombo(gameState.combo);
+
+
+	titleSprite_->isActive = false;
+	tutorialSprite_.isActive = false;
+	resultSprite_->isActive = false;
+
+
+
+#else
 
 	// Server 処理
 	gameManager_->Update(playerManager_->GetPlayer()->GetIsJustTurned(), playerManager_->GetPlayer()->GetIsJustMoved());
@@ -376,6 +403,10 @@ void PlayScene::Update(){
 				num = score / devideNum;
 
 				resultScoreUIs_[i].GetSprite()->uvTranslate.x = 0.1f * num;
+
+				if (i == 0 and num == 0) {
+					resultScoreUIs_[i].SetIsActive(false);
+				}
 
 				score = score % devideNum;
 
@@ -632,6 +663,10 @@ void PlayScene::DrawImgui() {
 
 	}
 
+	ImGui::End();
+
+	ImGui::Begin("FPS");
+	FrameTracker::GetInstance()->Debug();
 	ImGui::End();
 
 	ImGui::Begin("平行光源");

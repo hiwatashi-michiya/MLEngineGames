@@ -7,6 +7,7 @@
 #include "Audio/Audio.h"
 
 #include "../Joycon/Joycon.h"
+#include "../DeviceIO/DistanceSensor/DistanceSensor.h"
 
 //プレイヤーが操作する自機
 class Player : public BaseCharacter{
@@ -179,15 +180,25 @@ private:
 	//点滅時間カウント
 	float damageBlinkingCount_ = 0.0f;
 	//ジャングル
+
+	//joycon
 	std::unique_ptr<Joycon> joyconInput;
+#ifdef _SERVER
+	// Client専用処理
+	//距離センサー
+	std::unique_ptr<DistanceSensor> DistanceSensor_;
+
+#endif
 
 	//SE
 	MLEngine::Resource::Audio playerMoveSE_;
 	MLEngine::Resource::Audio playerTurnSE_;
 	MLEngine::Resource::Audio playerBounceSE_;
 	MLEngine::Resource::Audio playerDamageSE_;
-
-
+	//前のフレームの移動レーン番号
+	int premovenum;
+	//前のフレームの向き
+	direction predir;
 };
 
 
