@@ -148,17 +148,25 @@ private:
 	bool isRecoveryArea_ = false;
 
 	float damageTime_ = 0.0f;
+	//レーンを動かずに立っている時間
+	float standTime_ = 0.0f;
+
+	//回復量が1.5byになる時間
+	float recoveryUpCount_ = 1.0f;
+
+	////回復量が2倍になる時間
+	float recoveryDoubleUpCount_ = 3.0f;
 
 	float damageCount_ = 3.0f;
 
 	float time_ = 0.0f;
 
 	//体力最大値
-	int lifeMax_ = 100;
+	float lifeMax_ = 100.0f;
 	//回復速度
 	float recoverySpeed_ = 1.0f;
 	//回復量
-	int recoveryValue_ = 1;
+	float recoveryValue_ = 1.0f;
 	//現在いるラインの番号
 	int nowLine_ = 2;
 
