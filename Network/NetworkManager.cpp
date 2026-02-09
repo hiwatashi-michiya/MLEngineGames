@@ -6,7 +6,7 @@
 bool NetworkManager::Initialize(bool isServer, const std::string& ip, int port) {
 	isRunning_ = false;
 	playerState_.life = -1;
-	enemyAttackTurn_.enemyId = -1;
+	//enemyAttackTurn_.enemyId = -1;
 	WSADATA wsaData;
 	if (WSAStartup(MAKEWORD(2, 0), &wsaData) != 0) {
 		std::cerr << "WSAStartup failed." << std::endl;

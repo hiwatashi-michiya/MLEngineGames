@@ -44,8 +44,8 @@ public:
     };
 
     struct EnemyAttackTurnPacket {
-        PacketHeader header;
-		uint8_t enemyId;
+		//uint8_t enemyId;
+        bool isShot;
         int lane0;
         int lane1;
         bool isAngry;
