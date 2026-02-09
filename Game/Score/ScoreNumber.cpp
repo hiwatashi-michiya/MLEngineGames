@@ -86,23 +86,23 @@ void ScoreNumber::Update() {
 	comboNumOne_.endScale = comboNumTenSize_;
 	comboNumOne_.SetUVScale({ 0.1f,1.0f });
 	comboNumOne_.SetRotate(comboRotate_);
-	////コンボが０の場合
-	//if (comboTen_ == 0 and comboOne_ == 0){
-	//	scoreCombo_.startScale = Vector2{};
-	//	comboNumTen_.startScale = Vector2{};
-	//	comboNumOne_.startScale = Vector2{};
+	//コンボが０の場合
+	if (comboTen_ == 0 and comboOne_ == 0){
+		scoreCombo_.startScale = Vector2{};
+		comboNumTen_.startScale = Vector2{};
+		comboNumOne_.startScale = Vector2{};
 
-	//	scoreCombo_.endScale = Vector2{};
-	//	comboNumTen_.endScale = Vector2{};
-	//	comboNumOne_.endScale = Vector2{};
+		scoreCombo_.endScale = Vector2{};
+		comboNumTen_.endScale = Vector2{};
+		comboNumOne_.endScale = Vector2{};
 
-	//}
-	////コンボが０の場合
-	//if (comboTen_ == 0 and comboOne_ == 1) {
-	//	scoreCombo_.startScale = Vector2{};
-	//	comboNumTen_.startScale = Vector2{};
-	//	comboNumOne_.startScale = Vector2{};
-	//}
+	}
+	//コンボが０の場合
+	if (comboTen_ == 0 and comboOne_ == 1) {
+		scoreCombo_.startScale = Vector2{};
+		comboNumTen_.startScale = Vector2{};
+		comboNumOne_.startScale = Vector2{};
+	}
 
 	scoreNumTen_.Update();
 	scoreNumOne_.Update();
