@@ -115,6 +115,10 @@ void GameManager::Update(bool isJustTurned, bool isJustMoved) {
         break;
     case GameManager::GameState::Tutorial:
 
+        if (MLEngine::Input::Manager::GetInstance()->GetKeyboard()->Trigger(DIK_P)){
+            isTutorialClear_ = true;
+        }
+
         if (not tutorialBGM_.IsPlaying()) {
             tutorialBGM_.Play(Audio::BGMVolume, true);
             titleBGM_.Stop();
@@ -144,16 +148,7 @@ void GameManager::Update(bool isJustTurned, bool isJustMoved) {
                 isTutorialClear_ = true;
             }
             break;
-        //シーン切り替え実装したら削除
-       /* case GameManager::TutorialState::Wait:
-            if (!isJustMoved and !isJustTurned) {
-                time_ += deltaTime_;
-            }
-
-            if (time_ >= waitTime_){
-                isTutorialClear_ = true;
-            }
-            break;*/
+        
         default:
             break;
         }
