@@ -213,6 +213,7 @@ inline void PlayScene::Initialize(){
 		resultScoreUIs_[i].middleScale = { 0.02f,0.2f };
 		resultScoreUIs_[i].endScale = { 0.02f,0.2f };
 		resultScoreUIs_[i].GetSprite()->uvScale.x = 0.1f;
+		resultScoreUIs_[i].GetSprite()->color = { 0.1f,1.0f,0.1f,1.0f };
 
 		resultScoreUIs_[i].easingTime = 1.0f;
 		resultScoreUIs_[i].startToMiddleTime = 1.0f;
@@ -417,6 +418,7 @@ void PlayScene::Update(){
 		ingameStartUI_.SetIsActive(true);
 		ingameGameoverUI_.SetIsActive(true);
 		ingameFinishUI_.SetIsActive(true);
+		scoreUI_->SetIsActive(true);
 
 		//イージングが開始していない場合、開始させる
 		if (not ingameStartUI_.GetIsStartEasing() and not ingameStartUI_.GetIsEndEasing()) {
@@ -452,6 +454,7 @@ void PlayScene::Update(){
 		ingameStartUI_.SetIsActive(false);
 		ingameGameoverUI_.SetIsActive(false);
 		ingameFinishUI_.SetIsActive(false);
+		scoreUI_->SetIsActive(false);
 	}
 	
 	if (playerManager_->GetPlayer()->GetIsDead()){

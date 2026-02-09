@@ -22,6 +22,8 @@ public:
 		scoreCombo_.ReStart();
 	}
 
+	void SetIsActive(bool flag);
+
 private:
 	void GlobalSetValues();
 
