@@ -112,17 +112,19 @@ void EnemyDownState::Enter(Enemy* enemy)
 	elapsedTime_ = 0.0f;
 	GlobalVariables* global = GlobalVariables::GetInstance();
 	downTime = global->GetFloatValue("EnemyState", "DownTime");
+	enemy->ChangeMotionState(std::make_unique<EnemyknockDownState>());
 }
 
 void EnemyDownState::Update(Enemy* enemy)
 {
 	EnemyAttackTurnController::GetInstance().OnMyEnemyAttackFinished(-1, -1, false);
+	EnemyStateController::GetInstance().OnMyEnemyStateFinished(false, false);
 
-	elapsedTime_ += 1.0f / 60.0f;
+	/*elapsedTime_ += 1.0f / 60.0f;
 	if (elapsedTime_ >= downTime)
 	{
 		enemy->ChangeState(std::make_unique<EnemyNormalState>());
-	}
+	}*/
 }
 
 void EnemyDownState::Exit(Enemy* enemy)
