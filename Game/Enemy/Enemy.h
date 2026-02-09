@@ -83,6 +83,8 @@ public:
 		backPlane_.isActive = isActive;
 		enemyUI_->SetIsActive(isActive);
 		bulletManager_->SetIsModelActive(isActive);
+		leftHand_->SetIsActive(isActive);
+		rightHand_->SetIsActive(isActive);
 	}
 
 

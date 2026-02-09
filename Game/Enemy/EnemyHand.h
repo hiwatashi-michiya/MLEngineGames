@@ -29,6 +29,10 @@ public:
 	HandState GetPreviousHandState() { return prevHandState_; }
 
 	void SetHandState(HandState state);
+	void SetIsActive(const bool isActive) {
+		frontPlane_.isActive = isActive;
+		backPlane_.isActive = isActive;
+	}
 
 
 private:
