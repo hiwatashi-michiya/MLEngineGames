@@ -31,6 +31,8 @@
     <ClCompile Include="Game\DeviceIO\DistanceSensor\vendor_serial.cpp" />
     <ClCompile Include="Game\Enemy\EnemyStateController.cpp" />
     <ClCompile Include="Game\Particle\HitParticle.cpp" />
+    <ClCompile Include="Game\Enemy\EnemyStateController.cpp" />
+    <ClCompile Include="Game\Particle\HitParticle.cpp" />
     <ClCompile Include="Game\Particle\SmokeParticle.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -188,6 +190,8 @@
     <ClInclude Include="vendor\serial\include\serial\serial.h" />
     <ClInclude Include="Game\Enemy\EnemyStateController.h" />
     <ClInclude Include="Game\Particle\HitParticle.h" />
+    <ClInclude Include="Game\Enemy\EnemyStateController.h" />
+    <ClInclude Include="Game\Particle\HitParticle.h" />
     <ClInclude Include="Game\Particle\SmokeParticle.h" />
   </ItemGroup>
   <ItemGroup>
@@ -199,5 +203,8 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resources\icon\icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Resources\shaders\CRT.PS.hlsl" />
   </ItemGroup>
 </Project>

@@ -622,7 +622,7 @@
     <FxCompile Include="Resources\shaders\Vignette.PS.hlsl">
       <Filter>shader</Filter>
     </FxCompile>
-    <FxCompile Include="Resources\shaders\Paper.PS.hlsl" />
+    <FxCompile Include="Resources\shaders\CRT.PS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MLEngine.rc">
