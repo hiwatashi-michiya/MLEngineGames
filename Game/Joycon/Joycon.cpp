@@ -146,9 +146,10 @@ direction Joycon::CheakRadius()
 #ifdef _DEBUG
 	ImGui::Begin("Gyro");
 	ImGui::DragFloat("x", &rotate_.x);
-
 	ImGui::End();
 #endif
+
+
 	if (360.0f < rotate_.x) {
 		rotate_.x = 0.0f;
 	}
@@ -156,21 +157,24 @@ direction Joycon::CheakRadius()
 		rotate_.x = 360.0f;
 	}
 
-	if (preDir == back) {
-		if (std::abs(rotate_.x) <= 45.0f && 135.0f >= std::abs(rotate_.x)) {
-			preDir = front;
-			return front;
-		}
-		return preDir;
-	}
-	if (preDir == front) {
-		if (std::abs(rotate_.x) >= 225.0f && 315.0f <= std::abs(rotate_.x)) {
-			preDir = back;
-			return back;
-		}
-		return preDir;
+	if () {
+
 	}
 
+
+	if (preDir == nowDir) {
+		count += MLEngine::Core::FrameTracker::GetInstance()->GetDeltaTimeF();
+	}
+	else if (preDir != nowDir) {
+		count = 0.0f;
+	}
+	if (count >= 2.0f) {
+		rotate_.x = 90.0f;
+	}
+
+	preDir = nowDir;
+
+	return nowDir;
 }
 
 

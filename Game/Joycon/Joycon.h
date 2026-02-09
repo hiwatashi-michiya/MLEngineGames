@@ -57,5 +57,8 @@ private:
 	Vector3 Vrotate_;
 	Vector3 rotate_;
 	float second;
+
+	direction nowDir;
 	direction preDir;
+	float count;
 };
