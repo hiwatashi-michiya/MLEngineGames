@@ -241,6 +241,7 @@ void EnemyHand::Update()
 			}
 		}
 
+		transform_->translate.y = startPosition_.y;
 		
 		break;
 	case EnemyHand::HandState::kAngry:
