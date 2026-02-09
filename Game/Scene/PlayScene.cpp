@@ -250,6 +250,11 @@ void PlayScene::Update(){
 	if (gameManager_->GetState() == GameManager::GameState::Result and static_cast<GameManager::GameState>(gameState.gameState)== GameManager::GameState::Title){
 		MLEngine::Scene::Manager::GetInstance()->ChangeScene("Play");
 	}
+
+	//タイトルに戻ったときに初期化できるように
+	if (gameManager_->GetState() == GameManager::GameState::Playing and static_cast<GameManager::GameState>(gameState.gameState) == GameManager::GameState::Title) {
+		MLEngine::Scene::Manager::GetInstance()->ChangeScene("Play");
+	}
 	
 	if (gameManager_->GetScore() != gameState.score){
 		gameManager_->SetIsGetScored(true);
