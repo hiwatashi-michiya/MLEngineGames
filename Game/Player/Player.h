@@ -76,6 +76,11 @@ public:
 	void SetIsTitleScene(bool isTitleScene) {
 		isTitleScene_ = isTitleScene;
 	}
+
+	void SetIsResultScene(bool flag) {
+		isResultScene_ = flag;
+	}
+
 	//回復雲のレーンにいるか
 	void ChackInRecoveryArea(int RecoveryArea) {
 		if (nowLine_ == RecoveryArea){
@@ -123,8 +128,11 @@ private:
 	std::string backTextureName_;
 	std::string damageTextureName_;
 
+	MLEngine::Math::Vector3 resultPosition_{};
+
 		
 	bool isTitleScene_ = false;
+	bool isResultScene_ = false;
 	//前を向いているか
 	bool isForward_ = true;
 	//体力が最大かどうか

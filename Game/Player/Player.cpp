@@ -40,6 +40,7 @@ void Player::Initialize(){
 	global->SetValue("PlayerState", "comboTime", damegeCount_);
 	global->SetValue("PlayerState", "recoveryValue", recoveryValue_);
 	global->SetValue("PlayerState", "recoverySpeed", recoverySpeed_);
+	global->SetValue("PlayerState", "resultPosition", resultPosition_);
 
 	nowLine_ = config_->centerLane_;
 	time_ = 0.0f;
@@ -73,6 +74,7 @@ void Player::Update(const float deltaTime){
 	damegeCount_ = global->GetFloatValue("PlayerState", "comboTime");
 	recoveryValue_ = global->GetIntValue("PlayerState", "recoveryValue");
 	recoverySpeed_ = global->GetFloatValue("PlayerState", "recoverySpeed");
+	resultPosition_ = global->GetVector3Value("PlayerState", "resultPosition");
 #ifdef _DEBUG
 	DebugDraw();
 
@@ -101,14 +103,9 @@ void Player::Update(const float deltaTime){
 	plPacket.state = plState_;
 	NetworkManager::GetInstance().Send(plPacket);
 
-	pos_.x = LaneSpecificCalculation();
+	if (isResultScene_) {
 
-	sprite3D_.transform.translate = pos_;
-
-	if (isForward_){
-		sprite3D_.SetTexture(backTextureName_);
-	}
-	else {
+		sprite3D_.transform.translate = resultPosition_;
 
 		//ノーダメージ(スコア0)のとき
 		if (gameManager->GetScore() <= 0) {
@@ -123,6 +120,36 @@ void Player::Update(const float deltaTime){
 			textureName += ".png";
 
 			sprite3D_.SetTexture(textureName);
+
+		}
+
+	}
+	else {
+
+		pos_.x = LaneSpecificCalculation();
+
+		sprite3D_.transform.translate = pos_;
+
+		if (isForward_) {
+			sprite3D_.SetTexture(backTextureName_);
+		}
+		else {
+
+			//ノーダメージ(スコア0)のとき
+			if (gameManager->GetScore() <= 0) {
+				sprite3D_.SetTexture(frontTextureName_);
+			}
+			//スコアが1以上の時
+			else {
+
+				std::string textureName = damageTextureName_;
+
+				textureName += std::to_string(gameManager->GetScoreLevel());
+				textureName += ".png";
+
+				sprite3D_.SetTexture(textureName);
+
+			}
 
 		}
 
@@ -186,7 +213,7 @@ void Player::OnCollision(const int damege){
 }
 
 void Player::PlayerMove(){
-	if (isTitleScene_){
+	if (isTitleScene_ or isResultScene_){
 		return;
 	}
 

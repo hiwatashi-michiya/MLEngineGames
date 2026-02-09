@@ -1,6 +1,13 @@
 {
     "PlayerState": {
         "Life": 80,
-        "comboTime": 6.0
+        "comboTime": 6.0,
+        "recoverySpeed": 1.0,
+        "recoveryValue": 1,
+        "resultPosition": [
+            3.5,
+            0.0,
+            0.0
+        ]
     }
 }

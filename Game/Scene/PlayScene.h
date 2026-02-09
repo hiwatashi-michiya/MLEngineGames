@@ -174,10 +174,14 @@ private:
 	MLEngine::Resource::Texture ingameStartTex_;
 	MLEngine::Resource::Texture ingameGameoverTex_;
 	MLEngine::Resource::Texture ingameFinishTex_;
+	MLEngine::Resource::Texture resultScoreBackTex_;
+	MLEngine::Resource::Texture numTex_;
 
 	UI ingameStartUI_;
 	UI ingameGameoverUI_;
 	UI ingameFinishUI_;
+	UI resultScoreBackUI_;
+	std::array<UI, 2> resultScoreUIs_;
 
 };
 
