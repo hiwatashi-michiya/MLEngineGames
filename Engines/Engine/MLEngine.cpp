@@ -81,7 +81,6 @@ void Engine::Initialize(const char* title, int width, int height) {
 	resourceManager_ = Resource::Manager::GetInstance();
 	resourceManager_->Initialize();
 	sceneManager_ = Scene::Manager::GetInstance();
-	PreLoader::GetInstance()->Initialize();
 
 #ifdef _DEBUG
 	
@@ -109,9 +108,6 @@ void Engine::Run(BaseScene* startScene, BaseSceneFactory* sceneFactory) {
 #endif //DEBUG
 		//ゲームシーン更新
 		sceneManager_->Update();
-
-		//事前読み込みの更新
-		PreLoader::GetInstance()->Update();
 
 		//当たり判定チェック
 		collisionManager_->CheckAllCollisions();
