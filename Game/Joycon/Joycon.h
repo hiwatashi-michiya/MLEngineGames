@@ -37,6 +37,9 @@ public:
 	bool SendSubcommand(hid_device* device, std::byte subcommandId, const std::span<std::byte>& args);
 
 	direction CheakRadius();
+	void ResetRotate() {
+		rotate_.x = 90.0f;
+	};
 
 	Quaternion GetQuaRotate() { return Qrotate_; };
 	Vector3 GetVecRotate() { return Vrotate_; };
@@ -52,6 +55,7 @@ private:
 	Quaternion Qrotate_;
 	std::array<uint16_t, 3> Gyro_Normalized;
 	Vector3 Vrotate_;
-	Vector3 test;
+	Vector3 rotate_;
 	float second;
+	direction preDir;
 };

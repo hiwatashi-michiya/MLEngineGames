@@ -13,12 +13,17 @@ void Joycon::Init() {
 		OutputDebugStringA("Joycon is not Conected\n");
 		return;
 	}
+	else {
+		OutputDebugStringA("Joycon is Conected\n");
+	}
 	std::byte arg;
+
 	arg = std::byte(0x1);
 	Joycon::SendSubcommand(device_, std::byte(0x40), { &arg,1 });
 	arg = std::byte(0x30);
 	Joycon::SendSubcommand(device_, std::byte(0x03), { &arg,1 });
-	test.x = 90.0f;
+
+	rotate_.x = 90.0f;
 }
 
 void Joycon::Update() {
@@ -72,7 +77,7 @@ void Joycon::Update() {
 
 	Vrotate_ = { 0.0f,0.0f,0.0f };
 	for (int i = 0; i < 3; i++) {
-		Vector3 temp = {0.0f,0.0f,0.0f};
+		Vector3 temp = { 0.0f,0.0f,0.0f };
 		std::array<int16_t, 3> Gyro;
 
 		std::memcpy(Gyro.data(), buff.data() + 19 + (12 * i), sizeof(int8_t) * 6);
@@ -85,7 +90,7 @@ void Joycon::Update() {
 			const float gyro_cal_coeff = (float)(936.0f / static_cast<float>(cal_gyro_coeff - std::bit_cast<int16_t>(offset)));
 			return (gyro - std::bit_cast<int16_t>(offset)) * (gyro_cal_coeff); });
 
-	
+
 		std::transform(Gyro_Normalized.begin(), Gyro_Normalized.end(), &temp.x, [](int16_t v)->float {return v * kRotCalc; });
 
 		if (-0.0002f < temp.x && temp.x < 0.0002f) {
@@ -137,26 +142,35 @@ direction Joycon::CheakRadius()
 		return no;
 	}
 
-	test += GetVecRotate() * (180 / std::numbers::pi) /2;
+	rotate_ += GetVecRotate() * (180 / std::numbers::pi) / 2;
 #ifdef _DEBUG
 	ImGui::Begin("Gyro");
-	ImGui::DragFloat("x", &test.x);
+	ImGui::DragFloat("x", &rotate_.x);
 
 	ImGui::End();
-#endif	
-	if (360.0f < test.x) {
-		test.x = 0.0f;
+#endif
+	if (360.0f < rotate_.x) {
+		rotate_.x = 0.0f;
 	}
-	else if (test.x < 0.0f) {
-		test.x = 360.0f;
+	else if (rotate_.x < 0.0f) {
+		rotate_.x = 360.0f;
 	}
 
-	if (std::abs(test.x) <= 180) {
-		return front;
+	if (preDir == back) {
+		if (std::abs(rotate_.x) <= 45.0f && 135.0f >= std::abs(rotate_.x)) {
+			preDir = front;
+			return front;
+		}
+		return preDir;
 	}
-	else if (180 <= std::abs(test.x)) {
-		return back;
+	if (preDir == front) {
+		if (std::abs(rotate_.x) >= 225.0f && 315.0f <= std::abs(rotate_.x)) {
+			preDir = back;
+			return back;
+		}
+		return preDir;
 	}
+
 }
 
 
