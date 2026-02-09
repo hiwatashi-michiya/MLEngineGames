@@ -404,6 +404,10 @@ void PlayScene::Update(){
 
 				resultScoreUIs_[i].GetSprite()->uvTranslate.x = 0.1f * num;
 
+				if (i == 0 and num == 0) {
+					resultScoreUIs_[i].SetIsActive(false);
+				}
+
 				score = score % devideNum;
 
 			}
