@@ -10,6 +10,7 @@
 #include "Enemy/EnemyMotionState.h"
 #include "Sprite3D.h"
 #include "Enemy/EnemyHand.h"
+#include "Audio/Audio.h"
 #include "Particle/HitParticle.h"
 
 class Enemy
@@ -77,6 +78,8 @@ public:
 	float GetGreatAttackTime() const { return greatAttackTime_; }
 	float GetAngryTime() const { return angryTime_; }
 
+	bool GetIsActive() const { return frontPlane_.isActive; }
+
 	// セット関数
 	// 弾マネージャー取得
 	void SetBulletManager(BulletManager* bulletManager) {
@@ -91,6 +94,8 @@ public:
 	void SetIsActive(const bool isActive) {
 		frontPlane_.isActive = isActive;
 		backPlane_.isActive = isActive;
+		enemyUI_->SetIsActive(isActive);
+		bulletManager_->SetIsModelActive(isActive);
 		leftHand_->SetIsActive(isActive);
 		rightHand_->SetIsActive(isActive);
 	}
@@ -166,6 +171,10 @@ private:
 	// ImGui用状態選択インデックス
 	int stateIndex = 0;
 
-	
+	//SE
+	MLEngine::Resource::Audio enemyDamageSE_;
+	MLEngine::Resource::Audio enemyAngrySE_;
+	MLEngine::Resource::Audio enemyDownSE_;
+
 };
 

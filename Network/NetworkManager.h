@@ -95,6 +95,8 @@ public:
 
     bool GetLatestEnemyAttackTurn(EnemyAttackTurnPacket& out);
 
+    void GetEnemyDeadFlug(bool& out)const;
+
     bool GetLatestEnemyState(EnemyStatePacket& out);
 private:
     NetworkManager() = default;
@@ -133,6 +135,9 @@ private:
 
     EnemyAttackTurnPacket enemyAttackTurn_{};
     bool hasNewEnemyAttackTurn_ = false;
+   
+
+    bool isEnemyDead_ = false;
 
 	EnemyStatePacket enemyState_{};
 	bool hasNewEnemyState_ = false;

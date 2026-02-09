@@ -210,7 +210,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
         output.color = totalColor;
     }
     
-    if (output.color.a == 0.0)
+    if (output.color.a <= 0.9)
     {
         discard;
     }

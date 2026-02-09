@@ -2,6 +2,6 @@
     "Tutorial": {
         "MoveCount": 10,
         "TurnCount": 6,
-        "WaitTime": 3.0
+        "WaitTime": 1.0
     }
 }

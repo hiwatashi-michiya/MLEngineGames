@@ -21,7 +21,7 @@ private:
 private:
 	Player* player_ = nullptr;
 
-	float PLyMax_ = 272.0f;
+	float PLyMax_ = 408.0f;
 
 	MLEngine::Resource::Texture texture_;
 
@@ -40,6 +40,6 @@ private:
 
 
 
-	MLEngine::Math::Vector4 plColor_ = { 0.0f,1.0f,0.0f,1.0f };
+	MLEngine::Math::Vector4 plColor_ = { 1.0f,1.0f,1.0f,1.0f };
 };
 

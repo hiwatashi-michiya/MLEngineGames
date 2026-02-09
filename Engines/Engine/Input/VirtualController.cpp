@@ -2,6 +2,10 @@
 
 void VirtualController::Initialize() {
     input_ = MLEngine::Input::Manager::GetInstance();
+#pragma region
+    joyconInput = std::make_unique<Joycon>();
+    joyconInput->Init();
+#pragma endregion ジョイコン
 }
 
 bool VirtualController::UpTriger() const{

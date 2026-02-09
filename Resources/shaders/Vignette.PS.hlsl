@@ -30,10 +30,11 @@ PixelShaderOutput main(VertexShaderOutput input)
     //n乗する
     vignette = saturate(pow(vignette, gParameter.power));
     //係数として乗算
-    output.color.r *= vignette + (gParameter.color.r - vignette) * gParameter.colorPower;
-    output.color.g *= vignette + (gParameter.color.g - vignette) * gParameter.colorPower;
-    output.color.b *= vignette + (gParameter.color.b - vignette) * gParameter.colorPower;
-    output.color.a = 1.0f;
+    output.color.rgb = lerp(output.color.rgb, output.color.rgb * gParameter.color.rgb, 1.0f - vignette);
+    
+    //output.color.r *= vignette + (gParameter.color.r - vignette) * gParameter.colorPower;
+    //output.color.g *= vignette + (gParameter.color.g - vignette) * gParameter.colorPower;
+    //output.color.b *= vignette + (gParameter.color.b - vignette) * gParameter.colorPower;
     
     return output;
 }

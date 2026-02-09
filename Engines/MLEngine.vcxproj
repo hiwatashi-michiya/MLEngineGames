@@ -270,6 +270,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Lighting\LightingManager.cpp" />
     <ClCompile Include="Engine\Lighting\PointLight.cpp" />
     <ClCompile Include="Engine\Input\VirtualController.cpp" />
+    <ClCompile Include="Engine\Math\MLMath.cpp" />
     <ClCompile Include="Engine\Resource\Audio\Audio.cpp" />
     <ClCompile Include="Engine\Resource\InstancingResource.cpp" />
     <ClCompile Include="Engine\Resource\Particle\Particle2D.cpp" />
@@ -351,6 +352,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Lighting\LightingManager.h" />
     <ClInclude Include="Engine\Lighting\PointLight.h" />
     <ClInclude Include="Engine\Input\VirtualController.h" />
+    <ClInclude Include="Engine\Math\MLMath.h" />
     <ClInclude Include="Engine\Resource\Audio\Audio.h" />
     <ClInclude Include="Engine\Resource\InstancingResource.h" />
     <ClInclude Include="Engine\Resource\Particle\Particle2D.h" />
@@ -424,6 +426,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Resource\Particle\Particle.h" />
     <ClInclude Include="Engine\Tool\LevelDataLoader.h" />
     <ClInclude Include="Engine\Utility\Utility.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
@@ -667,6 +670,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Clientrelease|x64'">true</ExcludedFromBuild>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="MLEngine.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

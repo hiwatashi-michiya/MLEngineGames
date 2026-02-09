@@ -3,6 +3,10 @@
 #include"VirtualController.h"
 #include<../Network/NetworkManager.h>
 #include<Engine/Tool/GlobalVariables.h>
+#include <Sprite3D.h>
+#include "Audio/Audio.h"
+
+#include "../Joycon/Joycon.h"
 
 //プレイヤーが操作する自機
 class Player : public BaseCharacter{
@@ -48,8 +52,16 @@ public:
 		return life_;
 	}
 
+	float GetLifeRatio() const {
+		return lifeRatio_;
+	}
+
 	bool GetIsJustMoved() const {
 		return isJustMoved_;
+	}
+
+	bool GetIsDamaged() const {
+		return isDamaged_;
 	}
 
 	bool GetIsJustTurned() const {
@@ -63,6 +75,17 @@ public:
 
 	void SetIsTitleScene(bool isTitleScene) {
 		isTitleScene_ = isTitleScene;
+	}
+	//回復雲のレーンにいるか
+	void ChackInRecoveryArea(int RecoveryArea) {
+		if (nowLine_ == RecoveryArea){
+			isRecoveryArea_ = true;
+		}
+		else {
+			isRecoveryArea_ = false;
+		}
+
+		
 	}
 
 private:
@@ -94,10 +117,11 @@ private:
 
 	MLEngine::Input::Manager* input_ = nullptr;
 
-	std::unique_ptr<MLEngine::Resource::Sprite2D> sprite_;
+	MLEngine::Resource::Sprite3D sprite3D_;
 
-	MLEngine::Resource::Texture frontTexture_;
-	MLEngine::Resource::Texture backTexture_;
+	std::string frontTextureName_;
+	std::string backTextureName_;
+	std::string damageTextureName_;
 
 		
 	bool isTitleScene_ = false;
@@ -112,6 +136,8 @@ private:
 	//瞬間を記録する
 	bool isJustTurned_ = false;
 	bool isJustMoved_ = false;
+
+	bool isRecoveryArea_ = false;
 
 	float damageTime_ = 0.0f;
 
@@ -130,6 +156,18 @@ private:
 
 
 	int bulletDamege_ = 10;
+	//体力の残り割合
+	float lifeRatio_ = 1.0f;
+
+	//ジャングル
+	std::unique_ptr<Joycon> joyconInput;
+
+	//SE
+	MLEngine::Resource::Audio playerMoveSE_;
+	MLEngine::Resource::Audio playerTurnSE_;
+	MLEngine::Resource::Audio playerBounceSE_;
+	MLEngine::Resource::Audio playerDamageSE_;
+
 
 };
 

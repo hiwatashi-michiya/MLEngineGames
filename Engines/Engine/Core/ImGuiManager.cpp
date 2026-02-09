@@ -87,6 +87,20 @@ void ImGuiManager::Render()
 
 }
 
+void ImGuiManager::SetDisplay()
+{
 
+	RECT rc;
+	GetClientRect(Window::Manager::GetInstance()->GetHwnd(), &rc);
+
+	ImGuiIO& io = ImGui::GetIO();
+	io.DisplaySize = ImVec2(
+		(float)(rc.right - rc.left),
+		(float)(rc.bottom - rc.top));
+
+	float dpiScale = ImGui_ImplWin32_GetDpiScaleForHwnd(Window::Manager::GetInstance()->GetHwnd());
+	io.FontGlobalScale = dpiScale;
+
+}
 
 #endif // _DEBUG

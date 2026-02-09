@@ -105,7 +105,7 @@ namespace MLEngine {
 		//シーンファクトリー生成
 		std::unique_ptr<BaseSceneFactory> factory = std::make_unique<Factory>();
 
-		engine->Initialize(title, 1280, 720);
+		engine->Initialize(title, 1920, 1080);
 #ifdef CLIENT_BUILD
 		network->Initialize(false);
 #else

@@ -179,14 +179,17 @@ void NetworkManager::RecvLoop() {
 			enemyAttackTurn_ = eat;
 			hasNewEnemyAttackTurn_ = true;
 		} break;
-		case 4: { // EnemyState
-			EnemyStatePacket esp{}; 
+
+		case 4: { // EnemyAliveFlug
+			Receive(isEnemyDead_);
+		} break;
+		case 5: { // EnemyState
+			EnemyStatePacket esp{};
 			Receive(esp);
 			enemyState_.greatAttackFlag = esp.greatAttackFlag;
 			enemyState_.angryAttackFlag = esp.angryAttackFlag;
 			hasNewEnemyState_ = true;
-		}
-
+		} break;
 		default:
 			// 未知パケット → 破棄
 			break;
@@ -229,6 +232,10 @@ bool NetworkManager::GetLatestEnemyAttackTurn(EnemyAttackTurnPacket& out)
 	return true;
 }
 
+void NetworkManager::GetEnemyDeadFlug(bool& out) const {
+	out = isEnemyDead_;
+}
+
 bool NetworkManager::GetLatestEnemyState(EnemyStatePacket& out)
 {
 	if (!hasNewEnemyState_) {
@@ -244,6 +251,3 @@ bool NetworkManager::GetLatestEnemyState(EnemyStatePacket& out)
 template void NetworkManager::Send(const struct SendPlayerState& data);
 template bool NetworkManager::Receive(struct SendPlayerState& outData);
 
-//// 明示的なテンプレートインスタンス化
-//template void NetworkManager::Send(const struct uint8_t& data);
-//template bool NetworkManager::Receive(struct uint8_t& outData);

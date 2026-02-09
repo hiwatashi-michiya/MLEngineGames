@@ -429,9 +429,9 @@ void Vignette::Create() {
 		buffer_->Map(0, nullptr, reinterpret_cast<void**>(&parameter_));
 
 		parameter_->color = { 1.0f,1.0f,1.0f };
-		parameter_->colorPower = 0.2f;
-		parameter_->scale = 16.0f;
-		parameter_->power = 0.8f;
+		parameter_->colorPower = 0.0f;
+		parameter_->scale = 30.0f;
+		parameter_->power = 0.2f;
 
 		buffer_->Unmap(0, nullptr);
 

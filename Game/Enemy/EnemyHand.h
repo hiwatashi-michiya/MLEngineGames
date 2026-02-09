@@ -34,6 +34,7 @@ public:
 		backPlane_.isActive = isActive;
 	}
 
+
 private:
 
 	std::string enemytype_;

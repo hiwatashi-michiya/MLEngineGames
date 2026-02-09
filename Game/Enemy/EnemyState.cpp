@@ -3,6 +3,8 @@
 #include "Math/Rand.h"
 #include "Enemy.h"
 
+using namespace MLEngine::Resource;
+
 #pragma region 通常攻撃状態
 
 void EnemyNormalState::Enter(Enemy* enemy)
@@ -23,6 +25,7 @@ void EnemyNormalState::Enter(Enemy* enemy)
 
 	enemy->GetLeftHand()->SetHandState(EnemyHand::HandState::kNormal);
 	enemy->GetRightHand()->SetHandState(EnemyHand::HandState::kNormal);
+	enemyAttackSE_.Load("SE/enemy_attack.mp3");
 }
 
 void EnemyNormalState::Update(Enemy* enemy)
@@ -64,6 +67,7 @@ void EnemyNormalState::Update(Enemy* enemy)
 		enemy->GetFrontSprite()->SetAnimationTime(normalAnimationTime_);
 		intervalTime_ = 0.0f;
 		prevLaneNumber = laneNumber;
+		enemyAttackSE_.Play(Audio::SEVolume);
 
 		isAnimation_ = false;
 	}

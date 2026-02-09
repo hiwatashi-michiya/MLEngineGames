@@ -6,6 +6,7 @@
 #include "InstancingModel.h"
 #include "FrameTracker.h"
 
+using namespace MLEngine::Math;
 using namespace MLEngine::Resource;
 using namespace MLEngine::Object::Collision;
 
@@ -23,6 +24,7 @@ inline void DebugScene::Initialize()
 	//お試しプッシュ
 	vController_ = &VirtualController::GetInstance();
 
+#pragma region
 	camera_.Initialize();
 	camera_.position_ = { 0.0f,0.0f,-30.0f };
 	debugCamera_.Initialize();
@@ -30,14 +32,15 @@ inline void DebugScene::Initialize()
 	tex_.Load("./Resources/white.png");
 
 	sprite3D_.Initialize("./Resources/texture/player_back.png", 1);
-	model2_.Initialize("./Resources/model/block/glassBlock.obj");
+	model2_.Initialize("./Resources/model/stageStone/stage_stone.obj");
+	model2_.materialData.enableLighting = true;
 	model3_.Initialize("./Resources/model/block/glassBlock.obj");
 	model3_.SetTexture("./Resources/EngineResources/paperMask.png");
 	particle_.reset(Particle3D::Create("./Resources/model/plane/plane.obj", 32));
 	sprite_.reset(Sprite2D::Create(tex_, { 200.0f,200.0f }, { 0.0f,1.0f,0.0f,1.0f }));
 	sprite_->size = { 200.0f,200.0f };
 	//読み込み("./Resources/audio/"以降のパスでOK)
-	se1_.Load("SE/test.mp3");
+	se1_.Load("SE/title_start.mp3");
 
 	box_.SetCollisionAttribute(0x00000002);
 	//当たった瞬間の呼び出し関数
@@ -50,8 +53,18 @@ inline void DebugScene::Initialize()
 	lineBox_.SetOBB(&box_.collider_);
 	sphere_.SetCollisionAttribute(0x00000001);
 	lineSphere_.SetSphere(&sphere_.collider_);
+#pragma endregion
 
-	dLight_.cbData->direction = MLEngine::Math::Normalize(dLight_.cbData->direction);
+#pragma region
+	joyconInput = std::make_unique<Joycon>();
+	joyconInput->Init();
+#pragma endregion ジョイコン
+#pragma region
+	ultrasonicSensor_ = std::make_unique<UltrasonicSensor>();
+	ultrasonicSensor_->Init();
+#pragma endregion アルディーノ
+
+	dLight_.cbData->normalDirection = MLEngine::Math::Normalize(dLight_.cbData->normalDirection);
 
 }
 
@@ -61,10 +74,15 @@ void DebugScene::Finalize()
 
 void DebugScene::Update()
 {
-
+	joyconInput->Update();
+	ultrasonicSensor_->Update();
 	{
 
 #ifdef _DEBUG
+
+		ImGui::Begin("平行光源");
+		dLight_.Debug();
+		ImGui::End();
 
 		ImGui::Begin("テスト");
 
@@ -117,7 +135,7 @@ void DebugScene::Update()
 		}
 
 		if (ImGui::Checkbox("show sprite", &sprite_->isActive)) {
-
+			
 		}
 
 		if (ImGui::Checkbox("show particle", &particle_->isActive)) {
@@ -134,6 +152,18 @@ void DebugScene::Update()
 
 		ImGui::End();
 
+		sprite_->ImGuiUpdate("spritedebug");
+
+	Quaternion hoge;
+	modelRot_ *= ConvertFromEuler(joyconInput->GetVecRotate());
+
+	test += joyconInput->GetVecRotate() * (180.0f/std::numbers::pi);
+	ImGui::Begin("Gyro");
+	ImGui::Text("DeX:%f", test.x);
+	ImGui::Text("DeY:%f", test.y);
+	ImGui::Text("DeZ:%f", test.z);
+	ImGui::End();
+
 #endif // _DEBUG
 
 	}
@@ -141,6 +171,10 @@ void DebugScene::Update()
 	if (input_->GetKeyboard()->Trigger(DIK_Q)) {
 		//SE再生
 		se1_.Play(0.5f, false);
+	}
+	if (joyconInput->IsPush(UP)) {
+		modelRot_ = modelRot_.IdentityQuaternion();
+		test = { 0.0f,0.0f,0.0f };
 	}
 
 	if (input_->GetKeyboard()->Trigger(DIK_W)) {
@@ -163,10 +197,6 @@ void DebugScene::Update()
 		se1_.SetVolume(0.1f);
 	}
 
-	if (input_->GetKeyboard()->Trigger(DIK_SPACE)) {
-		sceneManager_->ChangeScene(new PlayScene());
-	}
-
 	//Particle3D
 	{
 
@@ -185,7 +215,24 @@ void DebugScene::Update()
 
 	}
 
+	//トランスフォーム
+	Matrix4x4 result;
+	modelRot_ *= ConvertFromEuler(joyconInput->GetVecRotate());
+
+	if (joyconInput->IsPush(UP)) {
+		modelRot_ = modelRot_.IdentityQuaternion();
+		test = { 0.0f,0.0f,0.0f };
+	}
+
+	//ジョイコンの回転情報からアフィン行列を作成
+	result = MakeAffineMatrix(Vector3(1.0f, 1.0f, 1.0f), modelRot_, Vector3(0.0f, 0.0f, 0.0f));
+	//モデルに行列をセット
+	model_.SetWorldMatrix(result);
+
 	if (vController_->Decide()) {
+		sceneManager_->ChangeScene(new PlayScene());
+	}
+	if (input_->GetKeyboard()->Trigger(DIK_SPACE)) {
 		sceneManager_->ChangeScene(new PlayScene());
 	}
 
@@ -195,6 +242,7 @@ void DebugScene::Update()
 	else {
 		camera_.Update();
 	}
+	camera_.Update();
 
 		lineBox_.Update();
 		lineSphere_.Update();
@@ -206,14 +254,27 @@ void DebugScene::Update()
 	model2_.SetWorldMatrix(transform2_.worldMatrix);
 	model3_.SetWorldMatrix(transform3_.worldMatrix);
 
+	lineBox_.Update();
+	lineSphere_.Update();
 }
 
 void DebugScene::Draw()
 {
+#ifdef _DEBUG
+	ultrasonicSensor_->Draw();
+#endif
+	//model_.GetInstancingModel().Draw(&camera_);
+
+	//particle_->Draw(&camera_);
+
+	//lineSphere_.Draw(&camera_);
+
+	//lineBox_.Draw(&camera_);
+
 }
 
 
-void DebugScene::DrawImgui(){
+void DebugScene::DrawImgui() {
 #ifdef _DEBUG
 
 

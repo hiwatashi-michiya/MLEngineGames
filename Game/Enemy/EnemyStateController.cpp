@@ -56,7 +56,7 @@ void EnemyStateController::SendIfNeeded()
 {
 	if (!needSend_) return;
 	NetworkManager::PacketHeader header{};
-	header.type = 4;
+	header.type = 5;
 	header.size = sizeof(NetworkManager::EnemyStatePacket);
 	NetworkManager::EnemyStatePacket statePacket{};
 	/*statePacket.header.type = 4;

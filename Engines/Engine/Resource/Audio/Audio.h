@@ -13,6 +13,10 @@ namespace MLEngine::Resource {
 		Audio() = default;
 		~Audio() = default;
 
+		//BGM共通ボリューム。応急処置なので修正必要
+		static float BGMVolume;
+		//SE共通ボリューム。応急処置なので修正必要
+		static float SEVolume;
 		//オーディオファイル読み込み("./Resources/audio/"以降のパス)
 		void Load(const std::string& filename);
 

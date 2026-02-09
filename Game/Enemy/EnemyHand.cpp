@@ -112,9 +112,13 @@ void EnemyHand::Initialize(MLEngine::Object::Transform* parentTransform, bool is
 	backPlane_.transform.scale = transform_->scale;
 	backPlane_.transform.SetParent(jointTransform_.get());
 
+#ifdef _DEBUG
 	joint_.Initialize("./Resources/white.png", 1);
 	joint_.transform.scale = { 0.1f,0.1f,0.1f };
 	joint_.color = { 1.0f, 0.5f, 0.0f, 1.0f };
+	
+#endif // _DEBUG
+	
 
 	
 	

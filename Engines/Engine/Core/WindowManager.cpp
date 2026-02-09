@@ -1,4 +1,6 @@
 #include "WindowManager.h"
+#include "resource.h"
+#include "ImGuiManager.h"
 
 #ifdef _DEBUG
 
@@ -57,6 +59,8 @@ void Manager::CreateGameWindow(const wchar_t* windowName, int32_t clientWidth, i
 
 	//カーソル
 	wc_.hCursor = LoadCursor(nullptr, IDC_ARROW);
+	//アイコン
+	wc_.hIcon = LoadIcon(wc_.hInstance, MAKEINTRESOURCE(IDI_ICON1));
 
 	//ウィンドウクラスを登録する
 	RegisterClass(&wc_);
@@ -64,6 +68,9 @@ void Manager::CreateGameWindow(const wchar_t* windowName, int32_t clientWidth, i
 	//ウィンドウサイズセット
 	clientWidth_ = clientWidth;
 	clientHeight_ = clientHeight;
+
+	//ウィンドウスタイル保存
+	windowStyle_ = WS_OVERLAPPEDWINDOW & ~(WS_MAXIMIZEBOX | WS_THICKFRAME);
 
 	//ウィンドウサイズを表す構造体にクライアント領域を入れる
 	RECT wrc = { 0,0, clientWidth_, clientHeight_ };
@@ -87,6 +94,67 @@ void Manager::CreateGameWindow(const wchar_t* windowName, int32_t clientWidth, i
 
 	//ウィンドウを表示する
 	ShowWindow(hwnd_, SW_SHOW);
+
+}
+
+void Manager::SetWindowMode()
+{
+
+	if (currentMode_ == WindowMode::Window) { return; }
+
+	currentMode_ = WindowMode::Window;
+
+	SetWindowLong(hwnd_, GWL_STYLE, windowStyle_);
+
+	SetWindowPos(hwnd_, HWND_NOTOPMOST, windowRect_.left, windowRect_.top,
+		windowRect_.right - windowRect_.left, windowRect_.bottom - windowRect_.top,
+		SWP_FRAMECHANGED | SWP_NOACTIVATE);
+
+	ShowWindow(hwnd_, SW_NORMAL);
+
+#ifdef _DEBUG
+
+	ImGuiManager::GetInstance()->SetDisplay();
+
+#endif // _DEBUG
+
+
+}
+
+void Manager::SetFullScreenMode()
+{
+
+	if (currentMode_ == WindowMode::FullScreen) { return; }
+
+	currentMode_ = WindowMode::FullScreen;
+
+	//ウィンドウ情報を保存
+	GetWindowRect(hwnd_, &windowRect_);
+	//フルスクリーン化
+	SetWindowLong(hwnd_, GWL_STYLE, windowStyle_ &
+		~(WS_CAPTION | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SYSMENU | WS_THICKFRAME));
+
+
+	RECT fullScreenRect{ 0 };
+	HMONITOR hMonitor = MonitorFromWindow(hwnd_, MONITOR_DEFAULTTONEAREST);
+	MONITORINFO monitorInfo;
+	monitorInfo.cbSize = sizeof(monitorInfo);
+	GetMonitorInfo(hMonitor, &monitorInfo);
+
+	fullScreenRect.right = monitorInfo.rcMonitor.right - monitorInfo.rcMonitor.left;
+	fullScreenRect.bottom = monitorInfo.rcMonitor.bottom - monitorInfo.rcMonitor.top;
+
+	SetWindowPos(
+		hwnd_, HWND_NOTOPMOST, fullScreenRect.left, fullScreenRect.top,
+		fullScreenRect.right, fullScreenRect.bottom, SWP_FRAMECHANGED | SWP_NOACTIVATE);
+
+	ShowWindow(hwnd_, SW_MAXIMIZE);
+
+#ifdef _DEBUG
+
+	ImGuiManager::GetInstance()->SetDisplay();
+
+#endif // _DEBUG
 
 }
 
