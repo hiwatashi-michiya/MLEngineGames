@@ -32,20 +32,6 @@ void EnemyNormalState::Update(Enemy* enemy)
 {
 	if (!EnemyAttackTurnController::GetInstance().CanMyEnemyAttack()) {
 
-		if(enemy->GetLeftHand()->GetHandState() != EnemyHand::HandState::kAttack)
-		{
-			if (enemy->GetGreatAttackTime() > maxGrateAttackTime_) {
-				enemy->ChangeState(std::make_unique<EnemyGreatAttackState>());
-				/*EnemyStateController::GetInstance().OnMyEnemyStateFinished(false, EnemyStateController::GetInstance().GetAngryFlag());
-				enemy->ResetGreatAttackTime();*/
-			}
-			if (enemy->GetAngryTime() > maxAngryTime_) {
-				enemy->ChangeState(std::make_unique<EnemyBerserkState>());
-				/*EnemyStateController::GetInstance().OnMyEnemyStateFinished(EnemyStateController::GetInstance().GetGreatAttackFlag(), false);
-				enemy->ResetAngryTime();*/
-			}
-		}
-
 		return;
 	}
 	
@@ -88,18 +74,19 @@ void EnemyNormalState::Update(Enemy* enemy)
 		if (intervalTime_ < fireInterval - attackAnimationTime_) {
 			if (enemy->GetGreatAttackTime() > maxGrateAttackTime_) {
 				enemy->ChangeState(std::make_unique<EnemyGreatAttackState>());
-				/*EnemyStateController::GetInstance().OnMyEnemyStateFinished(false, EnemyStateController::GetInstance().GetAngryFlag());
-				enemy->ResetGreatAttackTime();*/
+				enemy->ResetGreatAttackTime();
+				
 			}
-			if (enemy->GetAngryTime() > maxAngryTime_) {
+			else if (enemy->GetAngryTime() > maxAngryTime_) {
 				enemy->ChangeState(std::make_unique<EnemyBerserkState>());
-				/*EnemyStateController::GetInstance().OnMyEnemyStateFinished(EnemyStateController::GetInstance().GetGreatAttackFlag(), false);
-				enemy->ResetAngryTime();*/
+				enemy->ResetAngryTime();
+				
 			}
 		}
 
 		if (!isAnimation_ && intervalTime_ >= fireInterval - attackAnimationTime_) {
 			isAnimation_ = true;
+			enemyAttackSE_.Play(Audio::SEVolume);
 			enemy->ChangeTexture(Enemy::Mode::kAttack);
 			enemy->GetFrontSprite()->SetAnimationTime(attackAnimationTime_);
 			enemy->GetLeftHand()->SetHandState(EnemyHand::HandState::kAttack);
@@ -161,6 +148,7 @@ void EnemyBerserkState::Enter(Enemy* enemy)
 	enemy->GetFrontSprite()->SetAnimationTime(normalAnimationTime_);
 	enemy->GetLeftHand()->SetHandState(EnemyHand::HandState::kAngry);
 	enemy->GetRightHand()->SetHandState(EnemyHand::HandState::kAngry);
+	enemyAttackSE_.Load("SE/enemy_attack.mp3");
 }
 
 void EnemyBerserkState::Update(Enemy* enemy)
@@ -212,9 +200,9 @@ void EnemyBerserkState::Update(Enemy* enemy)
 	else
 	{
 
-
 		if (!isAnimation_ && intervalTime_ >= fireInterval - attackAnimationTime_) {
 			isAnimation_ = true;
+			enemyAttackSE_.Play(Audio::SEVolume);
 			enemy->ChangeTexture(Enemy::Mode::kAttack);
 			enemy->GetFrontSprite()->SetAnimationTime(attackAnimationTime_);
 			enemy->GetLeftHand()->SetHandState(EnemyHand::HandState::kAttack);
@@ -232,6 +220,8 @@ void EnemyBerserkState::Exit(Enemy* enemy)
 {
 	enemy->GetLeftHand()->SetHandState(EnemyHand::HandState::kNormal);
 	enemy->GetRightHand()->SetHandState(EnemyHand::HandState::kNormal);
+	EnemyStateController::GetInstance().OnMyEnemyStateFinished(EnemyStateController::GetInstance().GetGreatAttackFlag(), false);
+
 }
 
 #pragma endregion
@@ -248,6 +238,7 @@ void EnemyGreatAttackState::Enter(Enemy* enemy)
 	{
 		laneNumber_[1] = MLEngine::Math::RandomInt(0, 2);
 	}
+	enemyAttackSE_.Load("SE/enemy_attack.mp3");
 }
 
 void EnemyGreatAttackState::Update(Enemy* enemy)
@@ -267,7 +258,6 @@ void EnemyGreatAttackState::Update(Enemy* enemy)
 		enemy->GetBulletManager()->SpawnBullet(laneNumber_[1], bulletSpeed_);
 		enemy->ChangeMotionState(std::make_unique<EnemyAttackState>());
 		EnemyAttackTurnController::GetInstance().OnMyEnemyAttackFinished(laneNumber_[0], laneNumber_[1], true);
-		//EnemyStateController::GetInstance().OnMyEnemyStateFinished(true, false);
 		enemy->ChangeTexture(Enemy::Mode::kNormal);
 		enemy->GetFrontSprite()->SetAnimationTime(normalAnimationTime_);
 		intervalTime_ = 0.0f;
@@ -296,4 +286,5 @@ void EnemyGreatAttackState::Exit(Enemy* enemy)
 {
 	enemy->GetLeftHand()->SetHandState(EnemyHand::HandState::kNormal);
 	enemy->GetRightHand()->SetHandState(EnemyHand::HandState::kNormal);
+	EnemyStateController::GetInstance().OnMyEnemyStateFinished(false, EnemyStateController::GetInstance().GetAngryFlag());
 }

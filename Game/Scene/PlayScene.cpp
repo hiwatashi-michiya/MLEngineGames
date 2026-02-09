@@ -463,6 +463,7 @@ void PlayScene::Update(){
 			}
 
 			EnemyAttackTurnController::GetInstance().Update();
+			EnemyStateController::GetInstance().Update();
 			enemy_->Update();
 			bulletManager_->Update();
 

@@ -78,6 +78,8 @@ public:
 	float normalAnimationTime_;
 	float attackAnimationTime_;
 	bool isAnimation_;
+	//SE
+	MLEngine::Resource::Audio enemyAttackSE_;
 };
 
 class EnemyGreatAttackState : public EnemyState {
@@ -107,4 +109,6 @@ class EnemyGreatAttackState : public EnemyState {
 	float normalAnimationTime_;
 	float attackAnimationTime_;
 	bool isAnimation_;
+	//SE
+	MLEngine::Resource::Audio enemyAttackSE_;
 };
