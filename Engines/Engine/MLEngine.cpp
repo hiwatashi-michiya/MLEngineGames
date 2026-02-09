@@ -85,7 +85,7 @@ void Engine::Initialize(const char* title, int width, int height) {
 #ifdef _DEBUG
 	
 #else
-	windowManager_->SetFullScreenMode();
+	//windowManager_->SetFullScreenMode();
 #endif 
 
 

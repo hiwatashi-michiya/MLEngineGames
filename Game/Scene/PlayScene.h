@@ -18,14 +18,12 @@
 #include "Render/PostEffect/PostEffectDrawer.h"
 #include "MLMath.h"
 #include "../UI/UI.h"
+#include "Enemy/EnemyStateController.h"
 
 class PlayScene : public BaseScene
 {
 public:
-	struct GameStatePacket {
-		NetworkManager::PacketHeader header;
-		GameManager::GameState gameState;
-	};
+	
 
 	struct EnemyFlugPacket {
 		NetworkManager::PacketHeader header;

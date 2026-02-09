@@ -6,7 +6,7 @@
 bool NetworkManager::Initialize(bool isServer, const std::string& ip, int port) {
 	isRunning_ = false;
 	playerState_.life = -1;
-	enemyAttackTurn_.enemyId = -1;
+	//enemyAttackTurn_.enemyId = -1;
 	WSADATA wsaData;
 	if (WSAStartup(MAKEWORD(2, 0), &wsaData) != 0) {
 		std::cerr << "WSAStartup failed." << std::endl;
@@ -169,9 +169,9 @@ void NetworkManager::RecvLoop() {
 		} break;
 
 		case 2: { // GameState
-			GameManager::GameState g;
+			SendGameState g;
 			Receive(g);
-			gameState_ = g;
+			gamestates_ = g;
 		} break;
 		case 3: { // EnemyAttackTurn
 			EnemyAttackTurnPacket eat;
@@ -180,16 +180,22 @@ void NetworkManager::RecvLoop() {
 			hasNewEnemyAttackTurn_ = true;
 		} break;
 
-        case 4: { // EnemyAliveFlug
-            Receive(isEnemyDead_);
-        } break;
-
-        default:
-            // 未知パケット → 破棄
-            break;
-        }
-        std::this_thread::sleep_for(std::chrono::milliseconds(3));
-    }
+		case 4: { // EnemyAliveFlug
+			Receive(isEnemyDead_);
+		} break;
+		case 5: { // EnemyState
+			EnemyStatePacket esp{};
+			Receive(esp);
+			enemyState_.greatAttackFlag = esp.greatAttackFlag;
+			enemyState_.angryAttackFlag = esp.angryAttackFlag;
+			hasNewEnemyState_ = true;
+		} break;
+		default:
+			// 未知パケット → 破棄
+			break;
+		}
+		std::this_thread::sleep_for(std::chrono::milliseconds(3));
+	}
 
 
 
@@ -211,8 +217,9 @@ bool NetworkManager::GetLatestPlayerState(SendPlayerState& out) const {
 	return true;
 }
 
-void NetworkManager::GetSceneState(GameManager::GameState& out) const {
-	out = gameState_;
+void NetworkManager::GetGameStatesState(SendGameState& out) const {
+	out = gamestates_;
+
 }
 
 bool NetworkManager::GetLatestEnemyAttackTurn(EnemyAttackTurnPacket& out)
@@ -226,8 +233,19 @@ bool NetworkManager::GetLatestEnemyAttackTurn(EnemyAttackTurnPacket& out)
 	return true;
 }
 
-void NetworkManager::GetEnemyDeadFlug(bool& out) const{
-    out = isEnemyDead_;
+void NetworkManager::GetEnemyDeadFlug(bool& out) const {
+	out = isEnemyDead_;
+}
+
+bool NetworkManager::GetLatestEnemyState(EnemyStatePacket& out)
+{
+	if (!hasNewEnemyState_) {
+		return false;   // 新着がなければ返さない
+	}
+
+	out = enemyState_;
+	hasNewEnemyState_ = false; // 消費
+	return true;
 }
 
 // 明示的なテンプレートインスタンス化
