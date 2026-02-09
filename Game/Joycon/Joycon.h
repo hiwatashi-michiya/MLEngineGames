@@ -4,11 +4,17 @@
 #include <bit>
 #include <numbers>
 #include "imgui.h"
-#include "Engine/Core/FrameTracker.h"
 #include "../hidapi/hidManager.h"
 #include "Externals/hidapi/include/hidapi.h"
 #include "Quaternion.h"
+#include "../Engine/Core/FrameTracker.h"
+
 using namespace MLEngine::Math;
+enum direction {
+	front = 0,
+	back = 1,
+	no = 2,
+};
 enum Buttan {
 	DOWN = 0x01,
 	UP = 0x02,
@@ -30,7 +36,7 @@ public:
 
 	bool SendSubcommand(hid_device* device, std::byte subcommandId, const std::span<std::byte>& args);
 
-	bool CheakRadius(float radius);
+	direction CheakRadius();
 
 	Quaternion GetQuaRotate() { return Qrotate_; };
 	Vector3 GetVecRotate() { return Vrotate_; };

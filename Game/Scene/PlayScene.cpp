@@ -668,6 +668,10 @@ void PlayScene::DrawImgui() {
 
 	ImGui::End();
 
+	ImGui::Begin("FPS");
+	FrameTracker::GetInstance()->Debug();
+	ImGui::End();
+
 	ImGui::Begin("平行光源");
 	dLight_.Debug();
 	ImGui::End();

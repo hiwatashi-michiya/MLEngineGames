@@ -81,8 +81,6 @@ void UltrasonicSensor::SerialReceiveThread() {
 				}
 				line.clear();
 
-				//returnから絶対変更するように(別スレッドが理想)
-				//return;
 			}
 			//\r以外を読む
 			else if (buf[i] != '\r') {
