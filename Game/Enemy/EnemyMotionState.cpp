@@ -129,7 +129,7 @@ void EnemyknockDownState::Update(Enemy* enemy)
 		elapsedTime_ += deltaTime_;
 	}
 	else {
-		enemy->ChangeMotionState(std::make_unique<EnemyIdleState>());
+		//enemy->ChangeMotionState(std::make_unique<EnemyIdleState>());
 		return;
 	}
 
@@ -137,12 +137,12 @@ void EnemyknockDownState::Update(Enemy* enemy)
 		
 		rotate_.y = DegToRad(360.0f * (elapsedTime_ / (targetTime_ * rotateSection_)));
 	}
-	if (elapsedTime_ < targetTime_ * liedownSection_) {
+	else if (elapsedTime_ < targetTime_ * liedownSection_) {
 		rotate_.x = DegToRad(lieDownAngle_ * (elapsedTime_ / (targetTime_ * liedownSection_)));
 	}
-	else if (elapsedTime_ > targetTime_ * getupSection_) {
+	/*else if (elapsedTime_ > targetTime_ * getupSection_) {
 		rotate_.x = DegToRad(lieDownAngle_ + (0.0f - lieDownAngle_) * ((elapsedTime_ - targetTime_ * getupSection_) / (targetTime_ - targetTime_ * getupSection_)));
-	}
+	}*/
 
 	enemy->SetRotate(rotate_);
 
