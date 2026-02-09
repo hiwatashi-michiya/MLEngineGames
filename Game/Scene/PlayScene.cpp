@@ -2,6 +2,7 @@
 #include"Externals/imgui/imgui.h"
 #include "DebugScene.h"
 #include "FrameTracker.h"
+#include "Rand.h"
 
 using namespace MLEngine::Math;
 
@@ -63,6 +64,7 @@ inline void PlayScene::Initialize(){
 	playerManager_->Initialize();
 
 	EnemyAttackTurnController::GetInstance().Initialize();
+	EnemyStateController::GetInstance().Initialize();
 
 	enemy_ = std::make_unique<Enemy>();
 	enemy_->Initialize();
@@ -166,6 +168,8 @@ inline void PlayScene::Initialize(){
 	ingameStartTex_.Load("./Resources/Texture/ingame_UI_start.png");
 	ingameGameoverTex_.Load("./Resources/Texture/ingame_UI_gameOver.png");
 	ingameFinishTex_.Load("./Resources/Texture/ingame_UI_gameFinish.png");
+	resultScoreBackTex_.Load("./Resources/Texture/ingame_UI_scoreBack.png");
+	numTex_.Load("./Resources/Texture/number.png");
 
 	ingameStartUI_.Initialize(ingameStartTex_, {});
 	ingameStartUI_.startPosition = { 2920.0f, 540.0f };
@@ -189,6 +193,34 @@ inline void PlayScene::Initialize(){
 	ingameFinishUI_.easingTime = 1.0f;
 	ingameFinishUI_.startToMiddleTime = 1.0f;
 	ingameFinishUI_.stayMiddleTime = 0.0f;
+	resultScoreBackUI_.Initialize(resultScoreBackTex_, {});
+	resultScoreBackUI_.startPosition = { -1000.0f, 540.0f };
+	resultScoreBackUI_.middlePosition = { 520.0f, 540.0f };
+	resultScoreBackUI_.endPosition = { 520.0f, 540.0f };
+	resultScoreBackUI_.startScale = { 0.5f,0.5f };
+	resultScoreBackUI_.middleScale = { 0.5f,0.5f };
+	resultScoreBackUI_.endScale = { 0.5f,0.5f };
+	resultScoreBackUI_.easingTime = 1.0f;
+	resultScoreBackUI_.startToMiddleTime = 1.0f;
+	resultScoreBackUI_.stayMiddleTime = 0.0f;
+
+	for (int32_t i = 0; i < 2; i++) {
+
+		resultScoreUIs_[i].Initialize(numTex_, {});
+		resultScoreUIs_[i].startPosition = { -1000.0f, 540.0f };
+		resultScoreUIs_[i].middlePosition = { 320.0f + i * 200.0f, 540.0f };
+		resultScoreUIs_[i].endPosition = { 320.0f + i * 200.0f, 540.0f };
+		resultScoreUIs_[i].startScale= { 0.02f,0.2f };
+		resultScoreUIs_[i].middleScale = { 0.02f,0.2f };
+		resultScoreUIs_[i].endScale = { 0.02f,0.2f };
+		resultScoreUIs_[i].GetSprite()->uvScale.x = 0.1f;
+		resultScoreUIs_[i].GetSprite()->color = { 0.1f,1.0f,0.1f,1.0f };
+
+		resultScoreUIs_[i].easingTime = 1.0f;
+		resultScoreUIs_[i].startToMiddleTime = 1.0f;
+		resultScoreUIs_[i].stayMiddleTime = 0.0f;
+
+	}
 
 }
 
@@ -301,11 +333,76 @@ void PlayScene::Update(){
 	//リザルト更新
 	if (gameManager_->GetState() == GameManager::GameState::Result) {
 		
+		playerManager_->GetPlayer()->SetIsResultScene(true);
 
+		if (not resultScoreBackUI_.GetIsStartEasing() and not resultScoreBackUI_.GetIsEndEasing()) {
+
+			for (int32_t i = 0; i < 2; i++) {
+				resultScoreUIs_[i].Start();
+			}
+
+			resultScoreBackUI_.Start();
+
+		}
+
+		for (int32_t i = 0; i < kMaxStone_; i++) {
+
+			stoneLeft_[i].isActive = false;
+			stoneRight_[i].isActive = false;
+
+		}
+
+		int score = gameManager_->GetScore();
+
+		for (int32_t i = 0; i < 2; i++) {
+			
+			resultScoreUIs_[i].SetIsActive(true);
+
+			int num;
+
+			//スコア表示
+			if (gameManager_->GetIsEndShuffle()) {
+
+				int devideNum = int(std::powf(10, 1 - i));
+
+				num = score / devideNum;
+
+				resultScoreUIs_[i].GetSprite()->uvTranslate.x = 0.1f * num;
+
+				score = score % devideNum;
+
+			}
+			//シャッフル中の数字表示
+			else {
+
+				num = RandomInt(0, 9);
+
+				resultScoreUIs_[i].GetSprite()->uvTranslate.x = 0.1f * num;
+
+			}
+
+		}
+
+		resultScoreBackUI_.SetIsActive(true);
 
 	}
 	else {
+
+		for (int32_t i = 0; i < kMaxStone_; i++) {
+
+			stoneLeft_[i].isActive = true;
+			stoneRight_[i].isActive = true;
+
+		}
+
+		for (int32_t i = 0; i < 2; i++) {
+			resultScoreUIs_[i].SetIsActive(false);
+		}
+
+		resultScoreBackUI_.SetIsActive(false);
+
 		resultSprite_->isActive = false;
+		playerManager_->GetPlayer()->SetIsResultScene(false);
 	}
 
 	if (!playerManager_->GetPlayer()->GetIsDamaged()){
@@ -315,7 +412,7 @@ void PlayScene::Update(){
 	NetworkManager::GetInstance().GetEnemyDeadFlug(isClientEnemyDead_);
 #endif	
 	
-	if (gameManager_->GetState() == GameManager::GameState::Title or gameManager_->GetState() == GameManager::GameState::Result){
+	if (gameManager_->GetState() == GameManager::GameState::Title){
 		playerManager_->GetPlayer()->SetIsTitleScene(true);
 	}
 	else {
@@ -327,12 +424,12 @@ void PlayScene::Update(){
 	
 
 	if (gameManager_->GetState() == GameManager::GameState::Playing){
-		enemy_->SetIsActive(true);
 		bulletManager_->SetIsModelActive(true);
 
 		ingameStartUI_.SetIsActive(true);
 		ingameGameoverUI_.SetIsActive(true);
 		ingameFinishUI_.SetIsActive(true);
+		scoreUI_->SetIsActive(true);
 
 		//イージングが開始していない場合、開始させる
 		if (not ingameStartUI_.GetIsStartEasing() and not ingameStartUI_.GetIsEndEasing()) {
@@ -353,6 +450,10 @@ void PlayScene::Update(){
 		if (ingameStartUI_.GetIsEndEasing() and not gameManager_->GetIsGameOver() and
 			not gameManager_->GetIsClear()) {
 
+			if (!enemy_->GetIsActive()) {
+				enemy_->SetIsActive(true);
+			}
+
 			EnemyAttackTurnController::GetInstance().Update();
 			enemy_->Update();
 			bulletManager_->Update();
@@ -368,6 +469,7 @@ void PlayScene::Update(){
 		ingameStartUI_.SetIsActive(false);
 		ingameGameoverUI_.SetIsActive(false);
 		ingameFinishUI_.SetIsActive(false);
+		scoreUI_->SetIsActive(false);
 	}
 	
 	if (playerManager_->GetPlayer()->GetIsDead()){
@@ -422,6 +524,12 @@ void PlayScene::Update(){
 	ingameStartUI_.Update();
 	ingameGameoverUI_.Update();
 	ingameFinishUI_.Update();
+	resultScoreBackUI_.Update();
+	
+	for (int32_t i = 0; i < 2; i++) {
+		resultScoreUIs_[i].Update();
+	}
+
 	scoreUI_->Update();
 
 #ifdef CLIENT_BUILD

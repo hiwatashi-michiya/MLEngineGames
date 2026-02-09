@@ -29,7 +29,7 @@ void BulletCaveat::Initialize(Player* player)
 			)
 		);
 		caveatSprite->isActive = false;
-
+		caveatSprite->size = size_;
 		caveatSprites_.push_back(std::move(caveatSprite));
 	}
 

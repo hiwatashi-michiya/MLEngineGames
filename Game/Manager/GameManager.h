@@ -58,6 +58,7 @@ public:
     bool GetIsClear()const { return isClear_; }
     bool GetIsGetScore()const { return isGetScored_; }
     bool GetIsGameOver() const { return isGameOver_; }
+    bool GetIsEndShuffle() const { return isEndShuffle_; }
 
     void SetIsGetScored(bool isScored) { isGetScored_ = isScored; }
     void SetIsClear(bool isClear) { isClear_ = isClear; }
@@ -164,6 +165,12 @@ private:
     float gameClearWaitTime_ = 1.5f;
     //ゲームクリア待機カウント
     float gameClearWaitCounter_ = 0.0f;
+    //シャッフルの時間
+    float resultShuffleTime_ = 2.5f;
+    //シャッフル時間カウント
+    float resultShuffleCounter_ = 0.0f;
+    //シャッフル完了したか
+    bool isEndShuffle_ = false;
     //画像の最大スケール
     MLEngine::Math::Vector2 maxSpriteScale_ = { 10.0f,10.0f };
 
@@ -177,6 +184,7 @@ private:
     MLEngine::Resource::Audio tutorialClearSE_;
     MLEngine::Resource::Audio gameOverSE_;
     MLEngine::Resource::Audio clearSE_;
+    MLEngine::Resource::Audio resultStartSE_;
     //シーン切り替え用画像
     MLEngine::Resource::Texture sceneChangeTex_;
     std::unique_ptr<MLEngine::Resource::Sprite2D> sceneChangeSprite_;

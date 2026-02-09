@@ -11,15 +11,16 @@
 #include "Sprite3D.h"
 #include "Enemy/EnemyHand.h"
 #include "Audio/Audio.h"
-
+#include "Particle/HitParticle.h"
 
 class Enemy
 {
 public:
-	const char* states[3] = {
+	const char* states[4] = {
 	"Normal",
 	"Down",
-	"Berserk"
+	"Berserk",
+	"GreatAttack"
 	};
 
 	enum class Mode {
@@ -42,11 +43,19 @@ public:
 	void ChangeMotionState(std::unique_ptr<EnemyMotionState> newMotionState);
 
 	// 衝突処理
-	void OnCollision(int damege);
+	void OnCollision(MLEngine::Math::Vector3 position, int damege);
 
 	void ChangeTexture(Mode mode);
 
 	void ParantTransform();
+
+	void AddGrateAttackTime(float time) {
+		greatAttackTime_ += time;
+	}
+
+	void AddAngryTime(float time) {
+		angryTime_ += time;
+	}
 
 
 	// ゲット関数
@@ -66,6 +75,10 @@ public:
 			return false;
 		}
 	}
+	float GetGreatAttackTime() const { return greatAttackTime_; }
+	float GetAngryTime() const { return angryTime_; }
+
+	bool GetIsActive() const { return frontPlane_.isActive; }
 
 	// セット関数
 	// 弾マネージャー取得
@@ -83,6 +96,14 @@ public:
 		backPlane_.isActive = isActive;
 		enemyUI_->SetIsActive(isActive);
 		bulletManager_->SetIsModelActive(isActive);
+		leftHand_->SetIsActive(isActive);
+		rightHand_->SetIsActive(isActive);
+	}
+	void ResetGreatAttackTime() {
+		greatAttackTime_ = 0.0f;
+	}
+	void ResetAngryTime() {
+		angryTime_ = 0.0f;
 	}
 
 
@@ -126,16 +147,26 @@ private:
 	// 弾マネージャー
 	BulletManager* bulletManager_;
 
-
+	// 左手
 	std::unique_ptr<EnemyHand> leftHand_;
+	// 右手
 	std::unique_ptr<EnemyHand> rightHand_;
-
+	// 
+	std::unique_ptr<HitParticle> hitParticle_;
 	// 体力
 	int maxHp_ = 500;
 	int hp_ = 0;
 
+	// ダウンカウント
 	int maxDownCount_ = 10;
 	int downCount_ = 0;
+
+	// 大技用
+	float greatAttackTime_ = 0.0f;
+	float maxGrateAttackTime_ = 20.0f;
+	// 怒り用
+	float angryTime_ = 0.0f;
+	float maxAngryTime_ = 6.0f;
 
 	// ImGui用状態選択インデックス
 	int stateIndex = 0;

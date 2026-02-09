@@ -11,6 +11,7 @@ void EnemyUI::Initialize(Enemy* enemy)
 
 	global_->AddItem("EnemyUI", "Enemy1HPBarColor", MLEngine::Math::Vector4(0.0f, 0.0f, 0.0f, 0.0f));
 	global_->AddItem("EnemyUI", "Enemy2HPBarColor", MLEngine::Math::Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+	global_->AddItem("EnemyUI", "ChangeFlag", false);
 
 	enemy_ = enemy;
 
@@ -84,6 +85,8 @@ void EnemyUI::Update() {
 	global_->datas_["EnemyUI"].items["FrameSize"].value = frameSize_;
 
 	ImGui::Checkbox("ゲージ減少変更モード", &changeFlag_);
+	global_->datas_["EnemyUI"].items["ChangeFlag"].value = changeFlag_;
+
 
 	if (ImGui::Button("Save")) {
 		global_->SaveFile("EnemyUI");

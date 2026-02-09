@@ -32,6 +32,17 @@ void ScoreNumber::Initialize() {
 	
 }
 
+void ScoreNumber::SetIsActive(bool flag) {
+
+	scoreBoard_->isActive = flag;
+	scoreCombo_.SetIsActive(flag);
+	scoreNumTen_.SetIsActive(flag);
+	scoreNumOne_.SetIsActive(flag);
+	comboNumTen_.SetIsActive(flag);
+	comboNumOne_.SetIsActive(flag);
+
+}
+
 void ScoreNumber::Update() {
 	GlobalGetValues();
 	ScoreCulc();

@@ -54,11 +54,17 @@ public:
     };
 
     struct EnemyAttackTurnPacket {
-        PacketHeader header;
-		uint8_t enemyId;
+		//uint8_t enemyId;
+        bool isShot;
         int lane0;
         int lane1;
+        bool isAngry;
     };
+
+    struct EnemyStatePacket {
+        bool greatAttackFlag;
+        bool angryAttackFlag;
+	};
 
 #pragma pack(pop)
 
@@ -103,6 +109,8 @@ public:
     bool GetLatestEnemyAttackTurn(EnemyAttackTurnPacket& out);
 
     void GetEnemyDeadFlug(bool& out)const;
+
+    bool GetLatestEnemyState(EnemyStatePacket& out);
 private:
     NetworkManager() = default;
     ~NetworkManager() = default;
@@ -143,5 +151,9 @@ private:
    
 
     bool isEnemyDead_ = false;
+
+	EnemyStatePacket enemyState_{};
+	bool hasNewEnemyState_ = false;
+   
 };
 

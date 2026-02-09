@@ -19,6 +19,8 @@ void Enemy::Initialize()
 	maxHp_ = global_->GetIntValue("EnemyState", "MaxHp");
 	hp_ = global_->GetIntValue("EnemyState", "MaxHp");
 	maxDownCount_ = global_->GetIntValue("EnemyState", "MaxDownCount");
+	maxGrateAttackTime_ = global_->GetFloatValue("EnemyState", "MaxGreatAttackTime");
+	maxAngryTime_ = global_->GetFloatValue("EnemyState", "MaxAngryTime");
 
 	offsetTransform_ = std::make_unique<MLEngine::Object::Transform>();
 	offsetTransform_->scale = scale_;
@@ -66,6 +68,9 @@ void Enemy::Initialize()
 	rightHand_ = std::make_unique<EnemyHand>();
 	rightHand_->Initialize(transform_.get(), false);
 
+	hitParticle_ = std::make_unique<HitParticle>();
+	hitParticle_->Initialize();
+
 	ChangeState(std::make_unique<EnemyNormalState>());
 	// 
 	ChangeMotionState(std::make_unique<EnemyIdleState>());
@@ -90,18 +95,25 @@ void Enemy::Update()
 	leftHand_->DebugUI("左手", "Left");
 	rightHand_->DebugUI("右手", "Right");
 
+	// モーション更新
+	motionState_->Update(this);
+
 	if (hp_ <= 0) {
-		EnemyAttackTurnController::GetInstance().OnMyEnemyAttackFinished(-1, -1);
+#ifdef CLIENT_BUILD
+		EnemyAttackTurnController::GetInstance().OnMyEnemyAttackFinished(-1, -1, false);
+#else
+		EnemyAttackTurnController::GetInstance().OnMyEnemyAttackFinished(-1, -1, false);
+#endif
 		return;
 	}
 
 	// 状態遷移判定
-	if (!dynamic_cast<EnemyBerserkState*>(currentState_.get())) {
+	/*if (!dynamic_cast<EnemyBerserkState*>(currentState_.get())) {
 		if(hp_ <= maxHp_ * 0.3f) {
 			ChangeState(std::make_unique<EnemyBerserkState>());
 			enemyAngrySE_.Play(Audio::SEVolume);
 		}
-	}
+	}*/
 	// ダウン状態へ移行判定
 	if (!dynamic_cast<EnemyDownState*>(currentState_.get())) {
 		if(downCount_ >= maxDownCount_) {
@@ -116,16 +128,25 @@ void Enemy::Update()
 
 	currentState_->Update(this);
 
+	/*if (greatAttackTime_ > maxGrateAttackTime_) {
+		ChangeState(std::make_unique<EnemyGreatAttackState>());
+		EnemyStateController::GetInstance().OnMyEnemyStateFinished(false, EnemyStateController::GetInstance().GetAngryFlag());
+		greatAttackTime_ = 0.0f;
+	}
+
+	if (angryTime_ > maxAngryTime_) {
+		ChangeState(std::make_unique<EnemyBerserkState>());
+		EnemyStateController::GetInstance().OnMyEnemyStateFinished(EnemyStateController::GetInstance().GetGreatAttackFlag(), false);
+		angryTime_ = 0.0f;
+	}*/
+
 	// UI更新
 	enemyUI_->Update();
 
 	leftHand_->Update();
 	rightHand_->Update();
 
-
-
-	// モーション更新
-	motionState_->Update(this);
+	hitParticle_->Update();
 
 	// トランスフォーム更新
 	offsetTransform_->rotateQuaternion = MLEngine::Math::ConvertFromEuler(rotate_);
@@ -154,6 +175,9 @@ void Enemy::DebugUI()
 		else if (stateIndex == 2) {
 			ChangeState(std::make_unique<EnemyBerserkState>());
 		}
+		else if( stateIndex == 3) {
+			ChangeState(std::make_unique<EnemyGreatAttackState>());
+		}
 	}
 	// 状態ごとのパラメーター
 	if (dynamic_cast<EnemyNormalState*>(currentState_.get())) { // 通常状態
@@ -180,18 +204,25 @@ void Enemy::DebugUI()
 		ImGui::DragFloat("発射間隔", &dynamic_cast<EnemyBerserkState*>(currentState_.get())->fireInterval, 0.1f);
 		ImGui::DragFloat("通常アニメーション時間", &dynamic_cast<EnemyBerserkState*>(currentState_.get())->normalAnimationTime_, 0.1f);
 		ImGui::DragFloat("攻撃アニメーション時間", &dynamic_cast<EnemyBerserkState*>(currentState_.get())->attackAnimationTime_, 0.1f);
+		ImGui::DragFloat("合計時間", &dynamic_cast<EnemyBerserkState*>(currentState_.get())->totalTime_, 0.1f);
 		ImGui::Text("経過時間 : %f", dynamic_cast<EnemyBerserkState*>(currentState_.get())->intervalTime_);
 		global_->datas_["EnemyState"].items["BerserkBulletSpeed"].value = dynamic_cast<EnemyBerserkState*>(currentState_.get())->bulletSpeed_;
 		global_->datas_["EnemyState"].items["BerserkFireInterval"].value = dynamic_cast<EnemyBerserkState*>(currentState_.get())->fireInterval;
 		global_->datas_["EnemyState"].items["AngryAnimation"].value = dynamic_cast<EnemyBerserkState*>(currentState_.get())->normalAnimationTime_;
 		global_->datas_["EnemyState"].items["AngryAttackAnimation"].value = dynamic_cast<EnemyBerserkState*>(currentState_.get())->attackAnimationTime_;
+		global_->datas_["EnemyState"].items["AngryTotalTime"].value = dynamic_cast<EnemyBerserkState*>(currentState_.get())->totalTime_;
 		stateIndex = 2;
+	}
+	else if (dynamic_cast<EnemyGreatAttackState*>(currentState_.get())) { // 大技状態
+		ImGui::SliderInt("攻撃数", &dynamic_cast<EnemyGreatAttackState*>(currentState_.get())->attackCount_, 1, 20);
+		global_->datas_["EnemyState"].items["AttackCount"].value = dynamic_cast<EnemyGreatAttackState*>(currentState_.get())->attackCount_;
+		stateIndex = 3;
 	}
 
 
 	ImGui::Separator();
 
-
+	// トランスフォーム
 	ImGui::DragFloat3("スケール", &scale_.x, 0.1f);
 	global_->datas_["EnemyState"].items["Scale"].value = scale_;
 	ImGui::DragFloat3("平行移動", &translate_.x, 0.1f);
@@ -211,6 +242,11 @@ void Enemy::DebugUI()
 
 	ImGui::SliderInt("ダウン回数上限", &maxDownCount_, 1, 100);
 	global_->datas_["EnemyState"].items["MaxDownCount"].value = maxDownCount_;
+
+	ImGui::SliderFloat("大攻撃までの時間", &maxGrateAttackTime_, 1.0f, 60.0f);
+	global_->datas_["EnemyState"].items["MaxGreatAttackTime"].value = maxGrateAttackTime_;
+	ImGui::SliderFloat("猛攻までの時間", &maxAngryTime_, 1.0f, 60.0f);
+	global_->datas_["EnemyState"].items["MaxAngryTime"].value = maxAngryTime_;
 
 	if (ImGui::Button("Save")) {
 		global_->SaveFile("EnemyState");
@@ -291,7 +327,7 @@ void Enemy::ChangeMotionState(std::unique_ptr<EnemyMotionState> newMotionState)
 	motionState_->Enter(this);
 }
 
-void Enemy::OnCollision(int damege)
+void Enemy::OnCollision(MLEngine::Math::Vector3 position, int damege)
 {
 	if(!dynamic_cast<EnemyDownState*>(currentState_.get())) {
 		downCount_++;
@@ -305,6 +341,8 @@ void Enemy::OnCollision(int damege)
 	enemyDamageSE_.Play(Audio::SEVolume);
 
 	ChangeMotionState(std::make_unique<EnemyOnHitState>());
+
+	hitParticle_->Spawn(MLEngine::Math::Vector3(0.0f, 0.0f, -2.0f) + position);
 }
 
 void Enemy::ChangeTexture(Mode mode)

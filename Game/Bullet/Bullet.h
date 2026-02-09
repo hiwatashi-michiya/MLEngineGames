@@ -20,7 +20,7 @@ public:
 	bool IsReflect() const { return isReflect_; }
 	// 現在のライン取得
 	int GetNowLine() const { return nowLine_; }
-
+	MLEngine::Math::Vector3 GetPosition() { return position_; }
 	
 
 	// 位置セット
