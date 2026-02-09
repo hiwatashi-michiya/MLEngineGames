@@ -67,6 +67,8 @@ public:
 		}
 	}
 
+	bool GetIsActive() const { return frontPlane_.isActive; }
+
 	// セット関数
 	// 弾マネージャー取得
 	void SetBulletManager(BulletManager* bulletManager) {
