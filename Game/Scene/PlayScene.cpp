@@ -237,6 +237,43 @@ void PlayScene::Update(){
 	GlobalGetValue();
 
 	gameManager_->ScoreUpdate();
+
+	//体力が一定以下になったら
+	if (playerManager_->GetPlayer()->GetLifeRatio() <= vignetteConfig_.startRatio) {
+
+		//ビネットをかける
+		postEffect_->AddApplyEffect(PostEffectType::kVignette);
+
+		float a = (vignetteConfig_.startRatio - playerManager_->GetPlayer()->GetLifeRatio());
+
+		float b = (1.0f / (vignetteConfig_.startRatio - vignetteConfig_.endRatio));
+
+		float t = a * b;
+
+		float powerRange = Lerp(vignetteConfig_.minPowerRange, vignetteConfig_.maxPowerRange, t);
+
+		float power = Lerp(vignetteConfig_.minPower, vignetteConfig_.maxPower, t);
+
+		float scalingTime = Lerp(vignetteConfig_.scalingMaxTime, vignetteConfig_.scalingMinTime, t);
+
+		vignetteConfig_.currentTime += FrameTracker::GetInstance()->GetDeltaTimeF();
+
+		if (vignetteConfig_.currentTime >= scalingTime) {
+			vignetteConfig_.currentTime = 0.0f;
+		}
+
+		float resultPower = Lerp(power - powerRange, power + powerRange, 1.0f - std::clamp((vignetteConfig_.currentTime / scalingTime), 0.0f, 1.0f));
+
+		//ビネットのパラメータを設定
+		if (auto* vignette = dynamic_cast<Vignette*>(postEffect_->GetPostEffects()[PostEffectType::kVignette].get())) {
+
+			vignette->parameter_->color = vignetteConfig_.color;
+			vignette->parameter_->power = resultPower;
+
+		}
+
+	}
+
 #ifdef CLIENT_BUILD
 	//// Client専用処理
 
@@ -300,42 +337,6 @@ void PlayScene::Update(){
 
 
 #else
-
-	//体力が一定以下になったら
-	if (playerManager_->GetPlayer()->GetLifeRatio() <= vignetteConfig_.startRatio) {
-
-		//ビネットをかける
-		postEffect_->AddApplyEffect(PostEffectType::kVignette);
-
-		float a = (vignetteConfig_.startRatio - playerManager_->GetPlayer()->GetLifeRatio());
-
-		float b = (1.0f / (vignetteConfig_.startRatio - vignetteConfig_.endRatio));
-
-		float t = a * b;
-
-		float powerRange = Lerp(vignetteConfig_.minPowerRange, vignetteConfig_.maxPowerRange, t);
-
-		float power = Lerp(vignetteConfig_.minPower, vignetteConfig_.maxPower, t);
-
-		float scalingTime = Lerp(vignetteConfig_.scalingMaxTime, vignetteConfig_.scalingMinTime, t);
-
-		vignetteConfig_.currentTime += FrameTracker::GetInstance()->GetDeltaTimeF();
-
-		if (vignetteConfig_.currentTime >= scalingTime) {
-			vignetteConfig_.currentTime = 0.0f;
-		}
-
-		float resultPower = Lerp(power - powerRange, power + powerRange, 1.0f - std::clamp((vignetteConfig_.currentTime / scalingTime), 0.0f, 1.0f));
-
-		//ビネットのパラメータを設定
-		if (auto* vignette = dynamic_cast<Vignette*>(postEffect_->GetPostEffects()[PostEffectType::kVignette].get())) {
-
-			vignette->parameter_->color = vignetteConfig_.color;
-			vignette->parameter_->power = resultPower;
-
-		}
-
-	}
 
 	// Server 処理
 	gameManager_->Update(playerManager_->GetPlayer()->GetIsJustTurned(), playerManager_->GetPlayer()->GetIsJustMoved());
