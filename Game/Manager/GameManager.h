@@ -25,6 +25,13 @@ public:
     // シーン更新
     void SceneUpdate();
 
+    // シーン更新
+    void ScoreUpdate() {
+        if (isGetScored_ == true) {
+            isGetScored_ = false;
+        }
+    };
+
     // 状態管理
     enum class GameState : uint8_t {
         Title,      //タイトル
@@ -42,13 +49,18 @@ public:
     
 
     void SetState(GameState newState) { nextState_ = newState; }
-    GameState GetState() const { return state_; }
+    uint8_t GetStateToInt() const { return (uint8_t)(state_); }
+
+    GameState GetState() const { return (state_); }
 
     TutorialState GetTutorialState() const { return tuState_; }
     
     bool GetIsClear()const { return isClear_; }
+    bool GetIsGetScore()const { return isGetScored_; }
     bool GetIsGameOver() const { return isGameOver_; }
+    bool GetIsEndShuffle() const { return isEndShuffle_; }
 
+    void SetIsGetScored(bool isScored) { isGetScored_ = isScored; }
     void SetIsClear(bool isClear) { isClear_ = isClear; }
     void SetGameEnd(bool isGameEnd) { isGameEnd_ = isGameEnd; }
     void SetIsGameOver(bool flag) { isGameOver_ = flag; }
@@ -56,8 +68,14 @@ public:
     // スコア管理
     void AddScore(bool isCombo);
     int GetScore() const { return score_; }
+    void SetScore(int score) { score_ = score; }
 
     int GetCombo() const { return scratchCombo_; }
+    void SetCombo(int combo) { scratchCombo_ = combo; }
+
+
+    //スコアのレベルを計算して取得
+    int GetScoreLevel() const;
 
     // 残り時間（制限時間）管理
     void SetTimeLimit(float t) { timeLimit_ = t; }
@@ -105,6 +123,9 @@ private:
     bool isGameOver_ = false;
     bool isReset_ = false;
 
+    //スコアを獲得したかどうか
+    bool isGetScored_ = false;
+
     //チュートリアルでのカウント
     int moveCount_ = 0;
     int turnCount_ = 0;
@@ -124,7 +145,7 @@ private:
     int score_ = 0;
     //傷コンボ
     int scratchCombo_ = 0;
-    
+
     // 制限時間管理
     float timeLimit_ = 60.0f;       // 秒
     float remainingTime_ = 60.0f;
@@ -144,6 +165,12 @@ private:
     float gameClearWaitTime_ = 1.5f;
     //ゲームクリア待機カウント
     float gameClearWaitCounter_ = 0.0f;
+    //シャッフルの時間
+    float resultShuffleTime_ = 2.5f;
+    //シャッフル時間カウント
+    float resultShuffleCounter_ = 0.0f;
+    //シャッフル完了したか
+    bool isEndShuffle_ = false;
     //画像の最大スケール
     MLEngine::Math::Vector2 maxSpriteScale_ = { 10.0f,10.0f };
 
@@ -157,6 +184,7 @@ private:
     MLEngine::Resource::Audio tutorialClearSE_;
     MLEngine::Resource::Audio gameOverSE_;
     MLEngine::Resource::Audio clearSE_;
+    MLEngine::Resource::Audio resultStartSE_;
     //シーン切り替え用画像
     MLEngine::Resource::Texture sceneChangeTex_;
     std::unique_ptr<MLEngine::Resource::Sprite2D> sceneChangeSprite_;

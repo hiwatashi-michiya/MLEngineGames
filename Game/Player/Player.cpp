@@ -1,5 +1,6 @@
 #include "Player.h"
 #include"Externals/imgui/imgui.h"
+#include "../Manager/GameManager.h"
 
 using namespace MLEngine::Math;
 using namespace MLEngine::Resource;
@@ -8,6 +9,7 @@ Player::Player() {
 	//必須となる情報の読み込み
 	backTextureName_ = ("./Resources/Texture/player_anime_back.png");
 	frontTextureName_ = ("./Resources/Texture/player_anime_front.png");
+	damageTextureName_ = ("./Resources/Texture/player_anime_damage");
 
 	sprite3D_.Initialize("./Resources/texture/player_back.png", 7);
 	sprite3D_.color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -35,9 +37,10 @@ void Player::Initialize() {
 	GlobalVariables* global = GlobalVariables::GetInstance();
 
 	global->SetValue("PlayerState", "Life", lifeMax_);
-	global->SetValue("PlayerState", "comboTime", damegeCount_);
+	global->SetValue("PlayerState", "comboTime", damageCount_);
 	global->SetValue("PlayerState", "recoveryValue", recoveryValue_);
 	global->SetValue("PlayerState", "recoverySpeed", recoverySpeed_);
+	global->SetValue("PlayerState", "resultPosition", resultPosition_);
 
 	nowLine_ = config_->centerLane_;
 	time_ = 0.0f;
@@ -69,6 +72,7 @@ void Player::Finalize() {
 
 void Player::Update(const float deltaTime) {
 	GlobalVariables* global = GlobalVariables::GetInstance();
+	GameManager* gameManager = GameManager::GetInstance();
 
 	deltaTime;
 	SyncFromNetwork();
@@ -76,9 +80,10 @@ void Player::Update(const float deltaTime) {
 	ResetEvents();
 
 	lifeMax_ = global->GetIntValue("PlayerState", "Life");
-	damegeCount_ = global->GetFloatValue("PlayerState", "comboTime");
+	damageCount_ = global->GetFloatValue("PlayerState", "comboTime");
 	recoveryValue_ = global->GetIntValue("PlayerState", "recoveryValue");
 	recoverySpeed_ = global->GetFloatValue("PlayerState", "recoverySpeed");
+	resultPosition_ = global->GetVector3Value("PlayerState", "resultPosition");
 #ifdef _DEBUG
 	DebugDraw();
 
@@ -107,15 +112,62 @@ void Player::Update(const float deltaTime) {
 	plPacket.state = plState_;
 	NetworkManager::GetInstance().Send(plPacket);
 
-	pos_.x = LaneSpecificCalculation();
+	if (isResultScene_) {
 
-	sprite3D_.transform.translate = pos_;
+		sprite3D_.transform.translate = resultPosition_;
+
+		//ノーダメージ(スコア0)のとき
+		if (gameManager->GetScore() <= 0) {
+			sprite3D_.SetTexture(frontTextureName_);
+		}
+		//スコアが1以上の時
+		else {
+
+			std::string textureName = damageTextureName_;
+
+			textureName += std::to_string(gameManager->GetScoreLevel());
+			textureName += ".png";
+
+			sprite3D_.SetTexture(textureName);
+
+		}
+
+	}
+	else {
+
+		pos_.x = LaneSpecificCalculation();
+
+		sprite3D_.transform.translate = pos_;
 
 	if (isForward_) {
 		sprite3D_.SetTexture(backTextureName_);
 	}
 	else {
 		sprite3D_.SetTexture(frontTextureName_);
+	}
+		if (isForward_) {
+			sprite3D_.SetTexture(backTextureName_);
+		}
+		else {
+
+			//ノーダメージ(スコア0)のとき
+			if (gameManager->GetScore() <= 0) {
+				sprite3D_.SetTexture(frontTextureName_);
+			}
+			//スコアが1以上の時
+			else {
+
+				std::string textureName = damageTextureName_;
+
+				textureName += std::to_string(gameManager->GetScoreLevel());
+				textureName += ".png";
+
+				sprite3D_.SetTexture(textureName);
+
+			}
+
+		}
+
 	}
 
 	sprite3D_.UpdateAnimation();
@@ -146,7 +198,7 @@ void Player::DebugDraw() {
 	if (ImGui::Button("体力を減らす")) {
 
 		OnCollision(5);
-		GameManager::GetInstance()->AddScore(plState_.isDamagedFlug);
+		//GameManager::GetInstance()->AddScore(plState_.isDamagedFlug);
 	}
 	ImGui::End();
 #endif // _DEBUG
@@ -165,6 +217,7 @@ void Player::OnCollision(const int damege) {
 #else
 	// Server Debug処理
 	life_ -= damege;
+	GameManager::GetInstance()->AddScore(isDamaged_);
 #endif
 	damageTime_ = 0.0f;
 	bulletDamege_ = damege;
@@ -176,6 +229,8 @@ void Player::OnCollision(const int damege) {
 
 void Player::PlayerMove() {
 	if (isTitleScene_) {
+void Player::PlayerMove(){
+	if (isTitleScene_ or isResultScene_){
 		return;
 	}
 
@@ -297,10 +352,22 @@ void Player::TimeProcess(const float deltaTime) {
 	//被弾のタイマー
 	if (isDamaged_) {
 		damageTime_ += deltaTime;
+		damageBlinkingCount_ += deltaTime;
 	}
-	if (damageTime_ >= damegeCount_) {
+
+	if (damageBlinkingCount_ >= damageBlinkingTime_) {
+		damageBlinkingCount_ = 0.0f;
+		damageBlinkingTime_ = 0.5f * ((damageCount_ - damageTime_) / damageCount_) + 0.1f;
+		sprite3D_.color = { 10.0f,10.0f,10.0f,1.0f };
+	}
+	else {
+		sprite3D_.color = { 1.0f,1.0f,1.0f,1.0f };
+	}
+
+	if (damageTime_ >= damageCount_) {
 		isDamaged_ = false;
 		damageTime_ = 0.0f;
+		damageBlinkingCount_ = 0.0f;
 	}
 }
 
@@ -383,9 +450,11 @@ void Player::SyncFromNetwork() {
 
 		if (plState_.isClientHited) {
 			life_ -= bulletDamege_;
+			GameManager::GetInstance()->AddScore(isDamaged_);
+			isDamaged_ = netState.isClientHited;
 			plState_.isClientHited = false;
 		}
-		isDamaged_ = netState.isClientHited;
+		
 
 #endif
 

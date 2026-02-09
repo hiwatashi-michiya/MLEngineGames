@@ -76,7 +76,7 @@ void BulletManager::Update()
 
 			if(bullet->IsReflect()){
 				// 反射していたら敵にダメージを与える
-				enemy_->OnCollision(bulletDamege_);
+				enemy_->OnCollision(bullet->GetPosition(), bulletDamege_);
 				return true;
 			}
 			
@@ -86,7 +86,7 @@ void BulletManager::Update()
 
 
 			if (player_->GetIsForward()) { // プレイヤーが前を向いている場合のみダメージを受ける
-				GameManager::GetInstance()->AddScore(player_->GetIsDamaged());
+				
 				player_->OnCollision(bulletDamege_);
 			}
 			else { // 敵がダメージを受ける

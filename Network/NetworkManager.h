@@ -35,7 +35,17 @@ public:
         uint8_t type;  // パケット種別
         uint16_t size; // データサイズ
     };
-#pragma pack(pop)
+
+    struct SendGameState {
+        uint8_t gameState;
+        int score;
+        int combo;
+    };
+
+    struct GameStatePacket {
+        PacketHeader header;
+        SendGameState gameState;
+    };
 
 
     struct PlayerStatePacket {
@@ -44,11 +54,21 @@ public:
     };
 
     struct EnemyAttackTurnPacket {
-        PacketHeader header;
-		uint8_t enemyId;
+		//uint8_t enemyId;
+        bool isShot;
         int lane0;
         int lane1;
+        bool isAngry;
     };
+
+    struct EnemyStatePacket {
+
+        bool greatAttackFlag;
+        bool angryAttackFlag;
+	};
+
+#pragma pack(pop)
+
 
 
 
@@ -85,11 +105,13 @@ public:
 
     bool GetLatestPlayerState(SendPlayerState& out) const;
 
-    void GetSceneState(GameManager::GameState& out)const;
+    void GetGameStatesState(SendGameState& out)const;
 
     bool GetLatestEnemyAttackTurn(EnemyAttackTurnPacket& out);
 
     void GetEnemyDeadFlug(bool& out)const;
+
+    bool GetLatestEnemyState(EnemyStatePacket& out);
 private:
     NetworkManager() = default;
     ~NetworkManager() = default;
@@ -107,7 +129,7 @@ private:
     HANDLE hThread_;
     DWORD dwID_;
 
-    SOCKET sWait_, sConnect_;                // 待機用と接続用
+    SOCKET sWait_, sConnect_;  // 待機用と接続用
     struct sockaddr_in saConnect_, recvConnect_ {};
     WORD wPort_ = 8000;
     int iLen_;
@@ -123,12 +145,16 @@ private:
 
     SendPlayerState playerState_{};
     
-    GameManager::GameState gameState_{};
+    SendGameState gamestates_{};
 
     EnemyAttackTurnPacket enemyAttackTurn_{};
     bool hasNewEnemyAttackTurn_ = false;
    
 
     bool isEnemyDead_ = false;
+
+	EnemyStatePacket enemyState_{};
+	bool hasNewEnemyState_ = false;
+   
 };
 

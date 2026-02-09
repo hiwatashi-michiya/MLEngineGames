@@ -1,7 +1,30 @@
 #include "Vector2.h"
+#include "Vector2.h"
+#include "Vector2.h"
 #include <algorithm>
 
 using namespace MLEngine::Math;
+
+Vector2 MLEngine::Math::operator+(const Vector2& v, const Vector2 v2){
+	Vector2 result{};
+	result.x = v.x + v2.x;
+	result.y = v.y + v2.y;
+	return result;
+}
+
+Vector2 MLEngine::Math::operator*(const Vector2& v, float s){
+	Vector2 result{};
+	result.x = v.x * s;
+	result.y = v.y * s;
+	return result;
+}
+
+Vector2 MLEngine::Math::operator/(const Vector2& v, float s){
+	Vector2 result{};
+	result.x = v.x / s;
+	result.y = v.y / s;
+	return result;
+}
 
 //線形補間
 Vector2 MLEngine::Math::Lerp(const Vector2& v1, const Vector2& v2, float t) {

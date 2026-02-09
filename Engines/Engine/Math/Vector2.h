@@ -10,6 +10,12 @@ namespace MLEngine::Math {
 		float y;
 	};
 
+	Vector2 operator+(const Vector2& v, const Vector2 v2);
+
+	Vector2 operator*(const Vector2& v, float s);
+
+	Vector2 operator/(const Vector2& v, float s);
+
 	//線形補間
 	Vector2 Lerp(const Vector2& v1, const Vector2& v2, float t);
 

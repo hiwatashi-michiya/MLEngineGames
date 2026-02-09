@@ -27,8 +27,12 @@ public:
 	void DebugUI(std::string uiname, std::string dir);
 
 	HandState GetPreviousHandState() { return prevHandState_; }
-
+	HandState GetHandState() { return handState_; }
 	void SetHandState(HandState state);
+	void SetIsActive(const bool isActive) {
+		frontPlane_.isActive = isActive;
+		backPlane_.isActive = isActive;
+	}
 
 
 private:

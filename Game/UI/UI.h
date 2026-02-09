@@ -23,6 +23,11 @@ public:
 	void Pause() { isStartEasing_ = false; }
 	//イージングを停止してリセット
 	void Stop();
+	//最初から再スタート
+	void ReStart() {
+		Stop();
+		Start();
+	}
 	//表示するかどうか
 	void SetIsActive(bool flag) { sprite_->isActive = flag; }
 	//イージング開始取得
@@ -30,6 +35,16 @@ public:
 	//イージング終了取得
 	bool GetIsEndEasing() const { return isEndEasing_; }
 
+	void SetUVScale(const MLEngine::Math::Vector2 vec) { sprite_->uvScale = vec; }
+
+	void SetUVTrans(const MLEngine::Math::Vector2 vec) { sprite_->uvTranslate = vec; }
+
+	void SetColor(const MLEngine::Math::Vector4 color) { sprite_->color = color; }
+
+	void SetRotate(float rotate) { sprite_->rotate = rotate; }
+
+	//スプライト取得
+	MLEngine::Resource::Sprite2D* GetSprite() { return sprite_.get(); }
 	//開始座標
 	MLEngine::Math::Vector2 startPosition{};
 	//中間座標

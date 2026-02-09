@@ -31,6 +31,7 @@ void GameManager::Initialize() {
     tutorialClearSE_.Load("SE/tutorial_clear.mp3");
     gameOverSE_.Load("SE/ingame_gameover.mp3");
     clearSE_.Load("SE/ingame_finish.mp3");
+    resultStartSE_.Load("SE/result_start.mp3");
 
     sceneChangeTex_.Load("./Resources/Texture/sceneChange_player.png");
     sceneChangeSprite_.reset(MLEngine::Resource::Sprite2D::Create(sceneChangeTex_, {960.0f,540.0f}, {1.0f,1.0f,1.0f,1.0f}));
@@ -49,10 +50,21 @@ void GameManager::Initialize() {
     isClear_ = false;
     isReset_ = false;
     isGameOver_ = false;
+    isEndShuffle_ = false;
     gameOverWaitCounter_ = 0.0f;
     gameClearWaitCounter_ = 0.0f;
+    resultShuffleCounter_ = 0.0f;
+
+    //クライアント側では音を出さない
+#ifdef CLIENT_BUILD
+    Audio::SEVolume = 0.0f;
+    Audio::BGMVolume = 0.0f;
+#endif
 
     titleBGM_.Play(Audio::BGMVolume, true);
+    tutorialBGM_.Stop();
+    ingameBGM_.Stop();
+    resultBGM_.Stop();
 
     moveCount_ = 0;
     turnCount_ = 0;
@@ -87,9 +99,6 @@ void GameManager::Update(bool isJustTurned, bool isJustMoved) {
 
         if (not titleBGM_.IsPlaying()) {
             titleBGM_.Play(Audio::BGMVolume, true);
-            tutorialBGM_.Stop();
-            ingameBGM_.Stop();
-            resultBGM_.Stop();
         }
 
         //決定ボタンでチュートリアルに移行
@@ -102,11 +111,12 @@ void GameManager::Update(bool isJustTurned, bool isJustMoved) {
         break;
     case GameManager::GameState::Tutorial:
 
+        if (MLEngine::Input::Manager::GetInstance()->GetKeyboard()->Trigger(DIK_P)){
+            isTutorialClear_ = true;
+        }
+
         if (not tutorialBGM_.IsPlaying()) {
             tutorialBGM_.Play(Audio::BGMVolume, true);
-            titleBGM_.Stop();
-            ingameBGM_.Stop();
-            resultBGM_.Stop();
         }
 
         switch (tuState_){
@@ -128,19 +138,10 @@ void GameManager::Update(bool isJustTurned, bool isJustMoved) {
 
             if (turnCount_ >= turnCountMax_) {
                 tutorialClearSE_.Play(Audio::SEVolume);
-                tuState_ = TutorialState::Wait;
-            }
-            break;
-        //シーン切り替え実装したら削除
-        case GameManager::TutorialState::Wait:
-            if (!isJustMoved and !isJustTurned) {
-                time_ += deltaTime_;
-            }
-
-            if (time_ >= waitTime_){
                 isTutorialClear_ = true;
             }
             break;
+        
         default:
             break;
         }
@@ -156,9 +157,6 @@ void GameManager::Update(bool isJustTurned, bool isJustMoved) {
         //ゲームオーバー時以外はBGMを鳴らす
         if (not  isGameOver_ and not isClear_ and not ingameBGM_.IsPlaying()) {
             ingameBGM_.Play(Audio::BGMVolume, true);
-            tutorialBGM_.Stop();
-            titleBGM_.Stop();
-            resultBGM_.Stop();
         }
 
         //ゲームオーバーになったら
@@ -202,15 +200,26 @@ void GameManager::Update(bool isJustTurned, bool isJustMoved) {
         break;
     case GameManager::GameState::Result:
 
-        if (not resultBGM_.IsPlaying()) {
+        if (not resultBGM_.IsPlaying() and isEndShuffle_) {
             resultBGM_.Play(Audio::BGMVolume, true);
-            tutorialBGM_.Stop();
-            ingameBGM_.Stop();
-            titleBGM_.Stop();
+        }
+
+        if (resultShuffleCounter_ < resultShuffleTime_) {
+
+            if (resultShuffleCounter_ <= 0.0f) {
+                resultStartSE_.Play(Audio::SEVolume);
+            }
+
+            resultShuffleCounter_ += deltaTime_;
+
+            if (resultShuffleCounter_ >= resultShuffleTime_) {
+                isEndShuffle_ = true;
+            }
+
         }
 
         //決定ボタンでシーンを初期化
-        if (vController_->Decide()) {
+        if (isEndShuffle_ and vController_->Decide()) {
             resultBGM_.Stop();
             isReset_ = true;
         };
@@ -238,6 +247,7 @@ void GameManager::Debug() {
     ImGui::Begin("スコア回り");
 
     ImGui::Text("スコア：%d", score_);
+    ImGui::DragInt("スコアデバッグ", &score_, 0.1f, 0, 10000);
     ImGui::Text("傷コンボ：%d", scratchCombo_);
 
     ImGui::End();
@@ -262,7 +272,8 @@ void GameManager::Debug() {
 
 }
 
-void GameManager::SceneUpdate(){
+void GameManager::SceneUpdate(){  
+
 
     //次のシーンが更新されていたら、切り替えをはじめる
     if (nextState_ != state_ or isReset_) {
@@ -289,10 +300,18 @@ void GameManager::SceneUpdate(){
             //次のシーンに切り替え
             if (nextState_ != state_) {
                 state_ = nextState_;
+                resultBGM_.Stop();
+                tutorialBGM_.Stop();
+                ingameBGM_.Stop();
+                titleBGM_.Stop();
             }
 
             if (isReset_) {
                 isReset_ = false;
+                resultBGM_.Stop();
+                tutorialBGM_.Stop();
+                ingameBGM_.Stop();
+                titleBGM_.Stop();
                 MLEngine::Scene::Manager::GetInstance()->ChangeScene("Play");
             }
 
@@ -317,6 +336,11 @@ void GameManager::SceneUpdate(){
 /// </summary>
 /// <param name="isCombo"></param>
 void GameManager::AddScore(bool isCombo){
+    //ゲームオーバーの時は計算しない
+    if (isGameOver_){
+        return;
+    }
+
     if (isCombo){
         score_ += scoreBase_ * scoreMagnification_;        
     }
@@ -325,5 +349,27 @@ void GameManager::AddScore(bool isCombo){
     }
 
     scratchCombo_++;
+
+    isGetScored_ = true;
+}
+
+int GameManager::GetScoreLevel() const
+{
+
+    int level = 0;
+
+    if (score_ <= 15 and score_ > 0) {
+        level = ((score_ - 1) / 5) + 1;
+    }
+    else if(score_ <= 45) {
+        level = ((score_ - 16) / 10) + 1;
+        level += 3;
+    }
+    else {
+        level = 7;
+    }
+
+    return level;
+
 }
 

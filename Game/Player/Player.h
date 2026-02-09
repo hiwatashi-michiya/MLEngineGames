@@ -77,6 +77,11 @@ public:
 	void SetIsTitleScene(bool isTitleScene) {
 		isTitleScene_ = isTitleScene;
 	}
+
+	void SetIsResultScene(bool flag) {
+		isResultScene_ = flag;
+	}
+
 	//回復雲のレーンにいるか
 	void ChackInRecoveryArea(int RecoveryArea) {
 		if (nowLine_ == RecoveryArea){
@@ -122,9 +127,13 @@ private:
 
 	std::string frontTextureName_;
 	std::string backTextureName_;
+	std::string damageTextureName_;
+
+	MLEngine::Math::Vector3 resultPosition_{};
 
 		
 	bool isTitleScene_ = false;
+	bool isResultScene_ = false;
 	//前を向いているか
 	bool isForward_ = true;
 	//体力が最大かどうか
@@ -141,7 +150,7 @@ private:
 
 	float damageTime_ = 0.0f;
 
-	float damegeCount_ = 3.0f;
+	float damageCount_ = 3.0f;
 
 	float time_ = 0.0f;
 
@@ -158,6 +167,11 @@ private:
 	int bulletDamege_ = 10;
 	//体力の残り割合
 	float lifeRatio_ = 1.0f;
+	//ダメージ時の点滅感覚
+	float damageBlinkingTime_ = 0.6f;
+	//点滅時間カウント
+	float damageBlinkingCount_ = 0.0f;
+	//ジャングル
 
 	//joycon
 	std::unique_ptr<Joycon> joyconInput;
