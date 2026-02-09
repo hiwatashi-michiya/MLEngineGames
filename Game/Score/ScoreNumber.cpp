@@ -131,17 +131,7 @@ void ScoreNumber::Update() {
 	comboNumTen_.SetColor(comboNumColor_);
 	comboNumOne_.SetUVTrans({ 0.1f * comboOne_,0.0f });
 	comboNumOne_.SetColor(comboNumColor_);
-	////コンボが0の場合
-	//if (comboTen_ == 0 and comboOne_ == 0){
-	//	scoreCombo_->isActive = false;
-	//	comboNumTen_->isActive = false;
-	//	comboNumOne_->isActive = false;
-	//}
-	//else {
-	//	scoreCombo_->isActive = true;
-	//	comboNumTen_->isActive = true;
-	//	comboNumOne_->isActive = true;
-	//}
+	
 
 }
 
