@@ -80,7 +80,7 @@ void PostEffectDrawer::Initialize() {
 
 	postEffects_.push_back(std::make_shared<Dissolve>());
 
-	postEffects_.push_back(std::make_shared<Paper>());
+	postEffects_.push_back(std::make_shared<CRT>());
 
 	for (int32_t i = 0; i < postEffects_.size(); i++) {
 
