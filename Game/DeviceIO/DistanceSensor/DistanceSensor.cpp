@@ -36,6 +36,7 @@ void DistanceSensor::Init() {
 	}
 
 	serialThread = std::thread(&DistanceSensor::Thread, this);
+	is_running = true;
 }
 
 void DistanceSensor::Update()
