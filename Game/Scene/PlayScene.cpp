@@ -68,6 +68,7 @@ inline void PlayScene::Initialize(){
 
 	enemy_ = std::make_unique<Enemy>();
 	enemy_->Initialize();
+	isEnemyReset_ = true;
 	enemy_->SetCamera(&camera_);
 
 	bulletManager_ = std::make_unique<BulletManager>();
@@ -342,6 +343,11 @@ void PlayScene::Update(){
 
 	if (gameManager_->GetState() == GameManager::GameState::Title){
 		titleSprite_->isActive = true;
+		if (!isEnemyReset_) {
+			enemy_->Initialize();
+			isEnemyReset_ = true;
+		}
+		
 	}
 	else {
 		titleSprite_->isActive = false;
@@ -509,10 +515,12 @@ void PlayScene::Update(){
 	
 	if (playerManager_->GetPlayer()->GetIsDead()){
 		gameManager_->SetIsGameOver(true);
+		isEnemyReset_ = false;
 	}
 	else if (enemy_->GetIsDead() and isClientEnemyDead_){
 		gameManager_->SetGameEnd(true);
 		gameManager_->SetIsClear(true);
+		isEnemyReset_ = false;
 	}
 	// トランスフォーム更新
 
