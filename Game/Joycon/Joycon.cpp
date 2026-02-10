@@ -158,7 +158,28 @@ direction Joycon::CheakRadius()
 		rotate_.x = 360.0f;
 	}
 
+	/*if (Prerotate_.x - 5.0f <= rotate_.x && rotate_.x >= Prerotate_.x + 5.0f) {
+		count += MLEngine::Core::FrameTracker::GetInstance()->GetDeltaTimeF();
+	}
+	else {
+		count = 0.0f;
+		Prerotate_ = rotate_;
+		if (Prerotate_.x + 5.0f >= 360.0f) {
+			Prerotate_.x = Prerotate_.x - 360.0f;
+		}
+		if (Prerotate_.x - 5.0f <= 0.0f) {
+			Prerotate_.x = Prerotate_.x + 360.0f;
+		}
+	}
 
+	if (count >= 3.0f) {
+		if (preDir == front) {
+			rotate_.x = 90.0f;
+		}
+		if (preDir == back) {
+			rotate_.x = 270.0f;
+		}
+	}*/
 
 	if (preDir == front) {
 		if (std::abs(rotate_.x) >= 225.0f && 315.0f >= std::abs(rotate_.x)) {
