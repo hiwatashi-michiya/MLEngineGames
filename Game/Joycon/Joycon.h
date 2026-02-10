@@ -60,5 +60,5 @@ private:
 
 	direction nowDir;
 	direction preDir;
-	float count;
+	Vector3 Prerotate_;
 };

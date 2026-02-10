@@ -24,6 +24,7 @@ void Joycon::Init() {
 	Joycon::SendSubcommand(device_, std::byte(0x03), { &arg,1 });
 
 	rotate_.x = 90.0f;
+	Prerotate_ = rotate_;
 }
 
 void Joycon::Update() {
@@ -157,24 +158,22 @@ direction Joycon::CheakRadius()
 		rotate_.x = 360.0f;
 	}
 
-	if () {
-
+	if (preDir == front) {
+		if (std::abs(rotate_.x) >= 225.0f && 315.0f >= std::abs(rotate_.x)) {
+			preDir = back;
+			return back;
+		}
+		return preDir;
+	}
+	if (preDir == back) {
+		if (std::abs(rotate_.x) >= 45.0f && 135.0f >= std::abs(rotate_.x)) {
+			preDir = front;
+			return front;
+		}
+		return preDir;
 	}
 
 
-	if (preDir == nowDir) {
-		count += MLEngine::Core::FrameTracker::GetInstance()->GetDeltaTimeF();
-	}
-	else if (preDir != nowDir) {
-		count = 0.0f;
-	}
-	if (count >= 2.0f) {
-		rotate_.x = 90.0f;
-	}
-
-	preDir = nowDir;
-
-	return nowDir;
 }
 
 
