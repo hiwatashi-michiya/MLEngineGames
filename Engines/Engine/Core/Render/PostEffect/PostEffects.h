@@ -25,7 +25,7 @@ namespace MLEngine::Core::Render::PostEffect {
 		kRadialBlur, //放射状ブラー
 		kHSVFilter, //HSV
 		kDissolve, //ディゾルブ
-		kPaper, //紙っぽいシェーダー
+		kCRT, //紙っぽいシェーダー
 		kMaxEffects, //エフェクト最大数
 
 	};
@@ -378,22 +378,22 @@ namespace MLEngine::Core::Render::PostEffect {
 	};
 
 	/// <summary>
-	/// 紙シェーダー
+	/// ブラウン管シェーダー
 	/// </summary>
-	class Paper : public PostEffects
+	class CRT : public PostEffects
 	{
 
 	public:
 		//固有のパラメータ
 		struct Parameter {
 			//彩度
-			float Threshold = 0.5f;
+			float Time = 0.5f;
 		};
 
 	public:
 
-		Paper() = default;
-		~Paper() = default;
+		CRT() = default;
+		~CRT() = default;
 
 		void Create() override;
 
@@ -406,8 +406,6 @@ namespace MLEngine::Core::Render::PostEffect {
 	private:
 
 		Microsoft::WRL::ComPtr<ID3D12Resource> buffer_;
-
-		MLEngine::Resource::Texture maskTexture_;
 
 	};
 

@@ -125,6 +125,9 @@ inline void PlayScene::Initialize(){
 	tutorialSprite_.transform.translate.y = 1.0f;
 	tutorialSprite_.transform.SetParent(tutorialTransform_.get());
 
+	tutorialSprite_.SetTexture(tutorialTurnTexture_);
+	tutorialSprite_.SetTexture(tutorialMoveTexture_);
+
 	resultSprite_.reset(MLEngine::Resource::Sprite2D::Create(gameOverTexture_, resultPos_, resultColor_));
 	resultSprite_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	resultSprite_->isActive = false;
@@ -238,6 +241,20 @@ void PlayScene::Update(){
 	GlobalGetValue();
 
 	gameManager_->ScoreUpdate();
+
+	//ブラウン管
+	postEffect_->AddApplyEffect(PostEffectType::kCRT);
+
+	//CRTパラメータを設定
+	if (auto* crt = dynamic_cast<CRT*>(postEffect_->GetPostEffects()[PostEffectType::kCRT].get())) {
+
+		crt->parameter_->Time += FrameTracker::GetInstance()->GetDeltaTimeF();
+
+		if (crt->parameter_->Time > 100.0f) {
+			crt->parameter_->Time = 0.0f;
+		}
+
+	}
 
 	//体力が一定以下になったら
 	if (playerManager_->GetPlayer()->GetLifeRatio() <= vignetteConfig_.startRatio) {
