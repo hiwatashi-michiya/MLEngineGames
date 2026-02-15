@@ -160,7 +160,7 @@ void BulletCaveat::Warn(int lane)
 	if(lane < 0 || lane > 2){
 		return;
 	}
-	EffectElement effectElement = { 0.0f, switchTime_, totalTime_, lane , 0 };
+	EffectElement effectElement = { 0.0f, switchTime_, totalTime_, 2 - lane , 0 };
 
 	effectElements_.push_back(effectElement);
 }
