@@ -31,6 +31,8 @@ void BulletManager::Initialize(Player* player, Enemy* enemy)
 	bulletCaveat_ = std::make_unique<BulletCaveat>();
 	bulletCaveat_->Initialize(player_);
 
+	smokeParticle_ = std::make_unique<SmokeParticle>();
+	smokeParticle_->Initialize();
 
 
 #ifdef _DEBUG
@@ -81,6 +83,7 @@ void BulletManager::Update()
 			}
 			
 			if (player_->GetNowLine() != bullet->GetNowLine()) { // レーンが違う場合は当たらない
+				smokeParticle_->Spawn(bullet->GetPosition());
 				return true;
 			}
 
@@ -101,6 +104,8 @@ void BulletManager::Update()
 
 	bulletCaveat_->Update();
 	bulletCaveat_->DebugUI();
+
+	smokeParticle_->Update();
 
 #ifdef _DEBUG
 

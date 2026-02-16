@@ -45,4 +45,6 @@ private:
     std::thread serialThread;
 
     static constexpr int DISTANCE_THRESHOLD = 3000;
+    
+	bool isThreadActive = false;
 };

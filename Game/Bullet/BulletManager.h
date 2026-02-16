@@ -8,6 +8,7 @@
 #include ".vs/../Engine/Tool/GlobalVariables.h"
 #include "Player/Player.h"
 #include "BulletCaveat.h"
+#include "Particle/SmokeParticle.h"
 
 class Enemy;
 //class BulletCaveat;
@@ -66,4 +67,6 @@ private:
 	bool isModelActive_ = true;
 
 	float reflectSpeed_ = 0.5f;
+
+	std::unique_ptr<SmokeParticle> smokeParticle_;
 };

@@ -59,6 +59,7 @@ public:
         int lane0;
         int lane1;
         bool isAngry;
+        bool isGreat;
     };
 
     struct EnemyStatePacket {

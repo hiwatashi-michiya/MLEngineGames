@@ -58,13 +58,13 @@ private:
 		//色
 		MLEngine::Math::Vector3 color = { 0.75f, 0.2f, 0.0f };
 		//パワーの値の範囲最小
-		float minPowerRange = 0.05f;
+		float minPowerRange = 0.15f;
 		//パワーの値の範囲最大
-		float maxPowerRange = 0.1f;
+		float maxPowerRange = 0.3f;
 		//パワーの値最小値
-		float minPower = 0.2f;
+		float minPower = 0.75f;
 		//パワーの値最大値
-		float maxPower = 0.45f;
+		float maxPower = 1.15f;
 		//ビネットの拡縮時間最小
 		float scalingMinTime = 0.5f;
 		//ビネットの拡縮時間最長
@@ -100,6 +100,7 @@ private:
 
 	// 敵
 	std::unique_ptr<Enemy> enemy_;
+	bool isEnemyReset_;
 
 	// 弾マネージャー
 	std::unique_ptr<BulletManager> bulletManager_;

@@ -29,6 +29,11 @@
     <ClCompile Include="Game\DeviceIO\DistanceSensor\DistanceSensor.cpp" />
     <ClCompile Include="Game\DeviceIO\DistanceSensor\packet_io.cpp" />
     <ClCompile Include="Game\DeviceIO\DistanceSensor\vendor_serial.cpp" />
+    <ClCompile Include="Game\Enemy\EnemyStateController.cpp" />
+    <ClCompile Include="Game\Particle\HitParticle.cpp" />
+    <ClCompile Include="Game\Enemy\EnemyStateController.cpp" />
+    <ClCompile Include="Game\Particle\HitParticle.cpp" />
+    <ClCompile Include="Game\Particle\SmokeParticle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -179,16 +184,15 @@
     <ClInclude Include="Game\Bullet\BulletCaveat.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Enemy\EnemyStateController.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Particle\HitParticle.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Score\ScoreNumber.h" />
     <ClInclude Include="Game\DeviceIO\DistanceSensor\DistanceSensor.h" />
     <ClInclude Include="Game\DeviceIO\DistanceSensor\packet_io.h" />
     <ClInclude Include="vendor\serial\include\serial\serial.h" />
+    <ClInclude Include="Game\Enemy\EnemyStateController.h" />
+    <ClInclude Include="Game\Particle\HitParticle.h" />
+    <ClInclude Include="Game\Enemy\EnemyStateController.h" />
+    <ClInclude Include="Game\Particle\HitParticle.h" />
+    <ClInclude Include="Game\Particle\SmokeParticle.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -199,5 +203,8 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resources\icon\icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Resources\shaders\CRT.PS.hlsl" />
   </ItemGroup>
 </Project>

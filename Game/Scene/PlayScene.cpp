@@ -68,6 +68,7 @@ inline void PlayScene::Initialize(){
 
 	enemy_ = std::make_unique<Enemy>();
 	enemy_->Initialize();
+	isEnemyReset_ = true;
 	enemy_->SetCamera(&camera_);
 
 	bulletManager_ = std::make_unique<BulletManager>();
@@ -123,6 +124,9 @@ inline void PlayScene::Initialize(){
 	tutorialSprite_.isActive = false;
 	tutorialSprite_.transform.translate.y = 1.0f;
 	tutorialSprite_.transform.SetParent(tutorialTransform_.get());
+
+	tutorialSprite_.SetTexture(tutorialTurnTexture_);
+	tutorialSprite_.SetTexture(tutorialMoveTexture_);
 
 	resultSprite_.reset(MLEngine::Resource::Sprite2D::Create(gameOverTexture_, resultPos_, resultColor_));
 	resultSprite_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -238,6 +242,20 @@ void PlayScene::Update(){
 
 	gameManager_->ScoreUpdate();
 
+	//ブラウン管
+	postEffect_->AddApplyEffect(PostEffectType::kCRT);
+
+	//CRTパラメータを設定
+	if (auto* crt = dynamic_cast<CRT*>(postEffect_->GetPostEffects()[PostEffectType::kCRT].get())) {
+
+		crt->parameter_->Time += FrameTracker::GetInstance()->GetDeltaTimeF();
+
+		if (crt->parameter_->Time > 100.0f) {
+			crt->parameter_->Time = 0.0f;
+		}
+
+	}
+
 	//体力が一定以下になったら
 	if (playerManager_->GetPlayer()->GetLifeRatio() <= vignetteConfig_.startRatio) {
 
@@ -343,6 +361,11 @@ void PlayScene::Update(){
 
 	if (gameManager_->GetState() == GameManager::GameState::Title){
 		titleSprite_->isActive = true;
+		if (!isEnemyReset_) {
+			enemy_->Initialize();
+			isEnemyReset_ = true;
+		}
+		
 	}
 	else {
 		titleSprite_->isActive = false;
@@ -514,10 +537,12 @@ void PlayScene::Update(){
 	
 	if (playerManager_->GetPlayer()->GetIsDead()){
 		gameManager_->SetIsGameOver(true);
+		isEnemyReset_ = false;
 	}
 	else if (enemy_->GetIsDead() and isClientEnemyDead_){
 		gameManager_->SetGameEnd(true);
 		gameManager_->SetIsClear(true);
+		isEnemyReset_ = false;
 	}
 	// トランスフォーム更新
 

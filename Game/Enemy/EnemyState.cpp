@@ -75,13 +75,14 @@ void EnemyNormalState::Update(Enemy* enemy)
 			if (enemy->GetGreatAttackTime() > maxGrateAttackTime_) {
 				enemy->ChangeState(std::make_unique<EnemyGreatAttackState>());
 				enemy->ResetGreatAttackTime();
-				
+				enemy->GetBulletManager()->GetBulletCaveat()->Continuous();
 			}
 			else if (enemy->GetAngryTime() > maxAngryTime_) {
 				enemy->ChangeState(std::make_unique<EnemyBerserkState>());
 				enemy->ResetAngryTime();
 				
 			}
+
 		}
 
 		if (!isAnimation_ && intervalTime_ >= fireInterval - attackAnimationTime_) {
@@ -112,17 +113,19 @@ void EnemyDownState::Enter(Enemy* enemy)
 	elapsedTime_ = 0.0f;
 	GlobalVariables* global = GlobalVariables::GetInstance();
 	downTime = global->GetFloatValue("EnemyState", "DownTime");
+	enemy->ChangeMotionState(std::make_unique<EnemyknockDownState>());
 }
 
 void EnemyDownState::Update(Enemy* enemy)
 {
 	EnemyAttackTurnController::GetInstance().OnMyEnemyAttackFinished(-1, -1, false);
+	EnemyStateController::GetInstance().OnMyEnemyStateFinished(false, false);
 
-	elapsedTime_ += 1.0f / 60.0f;
+	/*elapsedTime_ += 1.0f / 60.0f;
 	if (elapsedTime_ >= downTime)
 	{
 		enemy->ChangeState(std::make_unique<EnemyNormalState>());
-	}
+	}*/
 }
 
 void EnemyDownState::Exit(Enemy* enemy)
@@ -233,6 +236,7 @@ void EnemyGreatAttackState::Enter(Enemy* enemy)
 	attackCount_ = GlobalVariables::GetInstance()->GetIntValue("EnemyState", "GreatAttackCount");
 	normalAnimationTime_ = GlobalVariables::GetInstance()->GetFloatValue("EnemyState", "NormalAnimation");
 	attackAnimationTime_ = GlobalVariables::GetInstance()->GetFloatValue("EnemyState", "AngryAttackAnimation");
+	continuousTime_ = GlobalVariables::GetInstance()->GetFloatValue("BulletCaveat", "ContinuousTotalTime");
 	laneNumber_[0] = MLEngine::Math::RandomInt(0, 2);
 	while(laneNumber_[0] == laneNumber_[1])
 	{
@@ -247,6 +251,11 @@ void EnemyGreatAttackState::Update(Enemy* enemy)
 		return;
 	}
 
+
+	if (waitTime_ < continuousTime_) {
+		waitTime_ += 1.0f / 60.0f;
+		return;
+	}
 
 	if (currentAttackCount_ > attackCount_) {
 		EnemyStateController::GetInstance().OnMyEnemyStateFinished(false, EnemyStateController::GetInstance().GetAngryFlag());
