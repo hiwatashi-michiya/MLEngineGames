@@ -77,7 +77,7 @@ inline void PlayScene::Initialize(){
 	bulletManager_->SetPlayer(playerManager_->GetPlayer());
 	bulletManager_->SetEnemy(enemy_.get());
 
-	EnemyAttackTurnController::GetInstance().SetBulletCaveat(bulletManager_->GetBulletCaveat());
+	//EnemyAttackTurnController::GetInstance().SetBulletCaveat(bulletManager_->GetBulletCaveat());
 
 	enemy_->SetBulletManager(bulletManager_.get());
 
