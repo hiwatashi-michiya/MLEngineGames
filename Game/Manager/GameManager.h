@@ -44,7 +44,8 @@ public:
     enum class TutorialState : uint8_t {
         LaneMove,      //レーン移動
         FlontBack,   //振り向き
-        Wait      //待機
+        Wait,      //待機
+        free      //
     };
     
 
