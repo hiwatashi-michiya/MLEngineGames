@@ -56,8 +56,8 @@ inline void DebugScene::Initialize()
 #pragma endregion
 
 #pragma region
-	joyconInput = std::make_unique<Joycon>();
-	joyconInput->Init();
+	joycon = std::make_unique<JoyconManager>();
+	joycon->Init();
 #pragma endregion ジョイコン
 #pragma region
 	distanceSensor_ = std::make_unique<DistanceSensor>();
@@ -74,7 +74,7 @@ void DebugScene::Finalize()
 
 void DebugScene::Update()
 {
-	joyconInput->Update();
+	joycon->Update();
 	distanceSensor_->Update();
 	{
 
@@ -155,9 +155,9 @@ void DebugScene::Update()
 		sprite_->ImGuiUpdate("spritedebug");
 
 	Quaternion hoge;
-	modelRot_ *= ConvertFromEuler(joyconInput->GetVecRotate());
+	//modelRot_ *= ConvertFromEuler(joycon->GetVecRotate());
 
-	test += joyconInput->GetVecRotate() * (180.0f/std::numbers::pi);
+	//test += joyconInput->GetVecRotate() * (180.0f/std::numbers::pi);
 	ImGui::Begin("Gyro");
 	ImGui::Text("DeX:%f", test.x);
 	ImGui::Text("DeY:%f", test.y);
@@ -171,10 +171,6 @@ void DebugScene::Update()
 	if (input_->GetKeyboard()->Trigger(DIK_Q)) {
 		//SE再生
 		se1_.Play(0.5f, false);
-	}
-	if (joyconInput->IsPush(UP)) {
-		modelRot_ = modelRot_.IdentityQuaternion();
-		test = { 0.0f,0.0f,0.0f };
 	}
 
 	if (input_->GetKeyboard()->Trigger(DIK_W)) {
@@ -217,12 +213,12 @@ void DebugScene::Update()
 
 	//トランスフォーム
 	Matrix4x4 result;
-	modelRot_ *= ConvertFromEuler(joyconInput->GetVecRotate());
+	//modelRot_ *= ConvertFromEuler(joyconInput->GetVecRotate());
 
-	if (joyconInput->IsPush(UP)) {
+	/*if (joyconInput->IsPush(UP)) {
 		modelRot_ = modelRot_.IdentityQuaternion();
 		test = { 0.0f,0.0f,0.0f };
-	}
+	}*/
 
 	//ジョイコンの回転情報からアフィン行列を作成
 	result = MakeAffineMatrix(Vector3(1.0f, 1.0f, 1.0f), modelRot_, Vector3(0.0f, 0.0f, 0.0f));

@@ -4,11 +4,11 @@
 
 std::array<uint8_t, 0x40>Joycon::buff;
 
-void Joycon::Init() {
+void Joycon::Init(unsigned short JoyconType) {
 	hidManager_ = std::make_unique<hidManager>();
 	hidManager_->Init();
 
-	device_ = hidManager_->Get(JOYCON_L_PRODUCT_ID);
+	device_ = hidManager_->Get(JoyconType);
 	if (device_ == nullptr) {
 		OutputDebugStringA("Joycon is not Conected\n");
 		return;
@@ -48,28 +48,6 @@ void Joycon::Update() {
 			buff = tmp;
 		}
 	}
-
-#pragma region
-	// ボタンの押し込みがビットフラグで表現されている。
-	if (Buttanflag == false) {
-		if (buff[5] & Buttan::DOWN) {
-			OutputDebugStringA("Down");
-		}
-		if (buff[5] & Buttan::UP) {
-			OutputDebugStringA("Up");
-		}
-		if (buff[5] & Buttan::RIGHT) {
-			OutputDebugStringA("Right");
-		}
-		if (buff[5] & Buttan::LEFT) {
-			OutputDebugStringA("Left");
-		}
-		Buttanflag = true;
-	}
-	if (buff[5] == 0) {
-		Buttanflag = false;
-	}
-#pragma endregion ボタン入力処理
 
 #pragma region
 
@@ -114,13 +92,7 @@ void Joycon::Update() {
 
 #pragma endregion
 }
-bool Joycon::IsPush(Buttan key)
-{
-	if (buff[5] & key) {
-		return true;
-	}
-	return false;
-}
+
 bool Joycon::SendSubcommand(hid_device* device, std::byte subcommandId, const std::span<std::byte>& args)
 {
 	static uint8_t packetNumber = 0;
@@ -148,8 +120,6 @@ direction Joycon::CheakRadius()
 	ImGui::DragFloat("x", &rotate_.x);
 	ImGui::End();
 #endif
-
-
 	if (360.0f < rotate_.x) {
 		rotate_.x = 0.0f;
 	}
@@ -157,22 +127,15 @@ direction Joycon::CheakRadius()
 		rotate_.x = 360.0f;
 	}
 
-	if () {
-
+	if (rotate_.x >= 180.0f) {
+		if (nowDir == front) {
+			nowDir = back;
+		}
+		else if (nowDir == back) {
+			nowDir = front;
+		}
 	}
-
-
-	if (preDir == nowDir) {
-		count += MLEngine::Core::FrameTracker::GetInstance()->GetDeltaTimeF();
-	}
-	else if (preDir != nowDir) {
-		count = 0.0f;
-	}
-	if (count >= 2.0f) {
-		rotate_.x = 90.0f;
-	}
-
-	preDir = nowDir;
+	preDir == nowDir;
 
 	return nowDir;
 }

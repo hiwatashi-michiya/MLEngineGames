@@ -6,7 +6,7 @@
 #include <Sprite3D.h>
 #include "Audio/Audio.h"
 
-#include "../Joycon/Joycon.h"
+#include "../Joycon/Joycon/Joycon.h"
 #include "../DeviceIO/DistanceSensor/DistanceSensor.h"
 
 //プレイヤーが操作する自機

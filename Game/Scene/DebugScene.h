@@ -13,7 +13,7 @@
 #include "Collider.h"
 #include "Transform.h"
 
-#include "../Joycon/Joycon.h"
+#include "../../Joycon/JoyconManager/JoyconManager.h"
 #include "../DeviceIO/UltrasonicSensor/UltrasonicSensor.h"
 #include "../DeviceIO/DistanceSensor/DistanceSensor.h"
 
@@ -75,7 +75,7 @@ private:
 	bool showSphere_ = true;
 	bool isDebugCamera_ = false;
 
-	std::unique_ptr<Joycon> joyconInput;
+	std::unique_ptr<JoyconManager> joycon;
 	std::unique_ptr<DistanceSensor> distanceSensor_;
 	Vector3 test;
 	Quaternion modelRot_;

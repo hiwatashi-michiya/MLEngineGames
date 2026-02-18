@@ -53,7 +53,7 @@ void Player::Initialize() {
 
 #pragma region
 	joyconInput = std::make_unique<Joycon>();
-	joyconInput->Init();
+	joyconInput->Init(JoyconType::JOYCON_L);
 #pragma endregion ジョイコン
 
 #ifdef _SERVER
