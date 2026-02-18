@@ -39,6 +39,8 @@ public:
 
 	bool SendSubcommand(hid_device* device, std::byte subcommandId, const std::span<std::byte>& args);
 
+	void ImGui(std::string title);
+
 	direction CheakRadius();
 	void ResetRotate() {
 		rotate_.x = 90.0f;

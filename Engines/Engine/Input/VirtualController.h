@@ -1,6 +1,6 @@
 #pragma once
 #include"Input.h"
-#include "../Game/Joycon/Joycon.h"
+#include "../Game/Joycon/JoyconManager/JoyconManager.h"
 
 //入力をまとめる仮想コントローラー
 class VirtualController{
@@ -37,7 +37,5 @@ private:
     VirtualController() = default;
     //入力デバイス
     MLEngine::Input::Manager* input_ = nullptr;
-    //ジョイコン
-    std::unique_ptr<Joycon> joyconInput;
 };
 

@@ -155,14 +155,6 @@ void DebugScene::Update()
 		sprite_->ImGuiUpdate("spritedebug");
 
 	Quaternion hoge;
-	//modelRot_ *= ConvertFromEuler(joycon->GetVecRotate());
-
-	//test += joyconInput->GetVecRotate() * (180.0f/std::numbers::pi);
-	ImGui::Begin("Gyro");
-	ImGui::Text("DeX:%f", test.x);
-	ImGui::Text("DeY:%f", test.y);
-	ImGui::Text("DeZ:%f", test.z);
-	ImGui::End();
 
 #endif // _DEBUG
 
@@ -257,6 +249,7 @@ void DebugScene::Update()
 void DebugScene::Draw()
 {
 #ifdef _DEBUG
+	joycon->Draw();
 	distanceSensor_->Draw();
 #endif
 	//model_.GetInstancingModel().Draw(&camera_);

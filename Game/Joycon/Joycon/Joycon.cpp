@@ -27,7 +27,9 @@ void Joycon::Init(unsigned short JoyconType) {
 }
 
 void Joycon::Update() {
-
+	if (device_ == nullptr) {
+		return;
+	}
 	// 読み込むサイズを指定。
 	static constexpr size_t kSize = 49;
 	//TODO:ジョイコンがあれば処理をする
@@ -80,11 +82,7 @@ void Joycon::Update() {
 		if (-0.0006f < temp.z && temp.z < 0.0006f) {
 			temp.z = 0.0f;
 		}
-#ifdef _DEBUG
-		ImGui::Begin("Gyro Frame");
-		ImGui::Text("GyroX:%f", temp.x);
-		ImGui::End();
-#endif
+
 		temp.y *= -1;
 		temp.x *= -1;
 		Vrotate_ += temp;
@@ -107,6 +105,24 @@ bool Joycon::SendSubcommand(hid_device* device, std::byte subcommandId, const st
 	return hid_write(device, std::bit_cast<const uint8_t*>(buffer.data()), buffer.size()) >= 0;
 }
 
+void Joycon::ImGui(std::string title)
+{
+
+	if (device_ == nullptr) {
+	#ifdef _DEBUG
+		ImGui::Begin(title.c_str());
+		ImGui::Text("No Conect");
+		ImGui::End();
+	#endif
+		return;
+	}
+#ifdef _DEBUG
+	ImGui::Begin(title.c_str());
+	ImGui::Text("GyroX:%f", Vrotate_.x);
+	ImGui::End();
+#endif
+}
+
 direction Joycon::CheakRadius()
 {
 	//ジョイコンがなければ抜ける
@@ -115,11 +131,7 @@ direction Joycon::CheakRadius()
 	}
 
 	rotate_ += GetVecRotate() * (180 / std::numbers::pi) / 2;
-#ifdef _DEBUG
-	ImGui::Begin("Gyro");
-	ImGui::DragFloat("x", &rotate_.x);
-	ImGui::End();
-#endif
+
 	if (360.0f < rotate_.x) {
 		rotate_.x = 0.0f;
 	}
