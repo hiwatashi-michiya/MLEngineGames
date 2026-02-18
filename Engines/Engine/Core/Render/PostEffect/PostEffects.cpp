@@ -1620,12 +1620,12 @@ void Dissolve::Debug() {
 
 }
 
-void Paper::Create() {
+void CRT::Create() {
 
 	HRESULT hr;
 
 	IDxcBlob* vsBlob_ = Shader::Manager::GetInstance()->CompileShader(L"./Resources/shaders/FullScreen.VS.hlsl", Shader::Type::kVS, "VSFullScreen");
-	IDxcBlob* psBlob_ = Shader::Manager::GetInstance()->CompileShader(L"./Resources/shaders/Paper.PS.hlsl", Shader::Type::kPS, "PSPaper");
+	IDxcBlob* psBlob_ = Shader::Manager::GetInstance()->CompileShader(L"./Resources/shaders/CRT.PS.hlsl", Shader::Type::kPS, "PSCRT");
 
 	RootSignatureDesc rootSignatureDesc{};
 	rootSignatureDesc.SetFlags(D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
@@ -1633,16 +1633,11 @@ void Paper::Create() {
 	DescriptorRange descriptorRange{};
 	descriptorRange.SetSize(1);
 	descriptorRange.SetDescriptorRange(0, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND, 0, 0);
-	//マスク画像用
-	DescriptorRange descriptorRangeForMask{};
-	descriptorRangeForMask.SetSize(1);
-	descriptorRangeForMask.SetDescriptorRange(1, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND, 0, 0);
 	//ルートパラメータ
 	RootParameter rootParameter{};
 	rootParameter.SetSize(3);
 	rootParameter.SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, descriptorRange.Get(), 0);
 	rootParameter.SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 0, 1);
-	rootParameter.SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, descriptorRangeForMask.Get(), 2);
 
 	StaticSampler staticSampler{};
 	staticSampler.SetSize(1);
@@ -1662,9 +1657,9 @@ void Paper::Create() {
 		assert(false);
 	}
 
-	RootSignature::Manager::GetInstance()->CreateRootSignature(signatureBlob, "Paper");
+	RootSignature::Manager::GetInstance()->CreateRootSignature(signatureBlob, "CRT");
 
-	rootSignature_ = RootSignature::Manager::GetInstance()->GetRootSignature("Paper");
+	rootSignature_ = RootSignature::Manager::GetInstance()->GetRootSignature("CRT");
 
 	//Blendstateの設定
 	D3D12_BLEND_DESC blendDesc{};
@@ -1712,32 +1707,30 @@ void Paper::Create() {
 	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
 	graphicsPipelineStateDesc.BlendState = blendDesc; //BlendState
 
-	Pipeline::Manager::GetInstance()->CreatePipeLine(graphicsPipelineStateDesc, "Paper");
+	Pipeline::Manager::GetInstance()->CreatePipeLine(graphicsPipelineStateDesc, "CRT");
 
-	pipelineState_ = Pipeline::Manager::GetInstance()->GetPipeline("Paper");
+	pipelineState_ = Pipeline::Manager::GetInstance()->GetPipeline("CRT");
 
 	//parameter
 	{
 
 		buffer_ = CreateBufferResource(DXDevice::GetInstance()->GetDevice(), sizeof(Parameter));
 
-		buffer_->SetName(L"PaperParam");
+		buffer_->SetName(L"CRTParam");
 
 		buffer_->Map(0, nullptr, reinterpret_cast<void**>(&parameter_));
 
-		parameter_->Threshold = 0.2f;
+		parameter_->Time = 0.2f;
 
 		buffer_->Unmap(0, nullptr);
 
 	}
 
-	maskTexture_.Load("./Resources/EngineResources/paperMask2.png");
-
-	name_ = "Paper";
+	name_ = "CRT";
 
 }
 
-void Paper::Render()
+void CRT::Render()
 {
 
 	ID3D12GraphicsCommandList* commandList = DirectXSetter::GetInstance()->GetCommandList();
@@ -1745,10 +1738,9 @@ void Paper::Render()
 	commandList->SetGraphicsRootSignature(rootSignature_);
 	commandList->SetPipelineState(pipelineState_);
 	commandList->SetGraphicsRootConstantBufferView(1, buffer_->GetGPUVirtualAddress());
-	commandList->SetGraphicsRootDescriptorTable(2, maskTexture_.GetGPUHandle());
 
 }
 
-void Paper::Debug()
+void CRT::Debug()
 {
 }

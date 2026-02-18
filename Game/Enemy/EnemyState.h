@@ -41,6 +41,7 @@ public:
 	// 
 	float maxGrateAttackTime_ = 20.0f;
 	float maxAngryTime_ = 6.0f;
+	float continousTime_ = 3.0f;
 };
 
 class EnemyDownState : public EnemyState {
@@ -93,6 +94,8 @@ class EnemyGreatAttackState : public EnemyState {
 	float fireInterval = 0.3f;
 	//経過時間(秒)
 	float intervalTime_ = 0.0f;
+	float waitTime_ = 0.0f;
+	float continuousTime_ = 3.0f;
 	// 移動量
 	const float speed_ = 7.0f;
 	const float wide_ = 1.0f;

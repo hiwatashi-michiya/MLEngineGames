@@ -9,10 +9,6 @@ void EnemyUI::Initialize(Enemy* enemy)
 {
 	global_ = GlobalVariables::GetInstance();
 
-	global_->AddItem("EnemyUI", "Enemy1HPBarColor", MLEngine::Math::Vector4(0.0f, 0.0f, 0.0f, 0.0f));
-	global_->AddItem("EnemyUI", "Enemy2HPBarColor", MLEngine::Math::Vector4(0.0f, 0.0f, 0.0f, 0.0f));
-	global_->AddItem("EnemyUI", "ChangeFlag", false);
-
 	enemy_ = enemy;
 
 	barPosition_ = global_->GetVector2Value("EnemyUI", "HPBarPosition");
@@ -39,7 +35,7 @@ void EnemyUI::Initialize(Enemy* enemy)
 	frame_.reset(MLEngine::Resource::Sprite2D::Create(texture_, framePosition_, frameColor_));
 	frame_->color = { 0.0f,0.0f,0.0f,1.0f };
 
-	
+	changeFlag_ = global_->GetIntValue("EnemyUI", "ChangeFlag");
 }
 
 void EnemyUI::Update() {

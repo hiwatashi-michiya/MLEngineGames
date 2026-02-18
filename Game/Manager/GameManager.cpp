@@ -289,6 +289,7 @@ void GameManager::SceneUpdate(){
     if (sceneChangeCounter_ <= sceneChangeTime_) {
 
         sceneChangeSprite_->isActive = true;
+
         sceneChangeCounter_ += deltaTime_;
 
         Vector2 minSize = { 0.0f,0.0f };

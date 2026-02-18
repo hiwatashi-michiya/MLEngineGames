@@ -109,7 +109,6 @@ void Engine::Run(BaseScene* startScene, BaseSceneFactory* sceneFactory) {
 		//ゲームシーン更新
 		sceneManager_->Update();
 
-
 		//当たり判定チェック
 		collisionManager_->CheckAllCollisions();
 

@@ -312,6 +312,10 @@ void Enemy::ChangeState(std::unique_ptr<EnemyState> newState)
 
 void Enemy::ChangeMotionState(std::unique_ptr<EnemyMotionState> newMotionState)
 {
+	if (dynamic_cast<EnemyknockDownState*>(motionState_.get())) {
+		return;
+	}
+
 	if (motionState_) {
 		motionState_->Exit(this);
 	}

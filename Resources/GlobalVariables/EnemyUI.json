@@ -1,5 +1,6 @@
 {
     "EnemyUI": {
+        "ChangeFlag": 0,
         "Enemy1HPBarColor": [
             1.0,
             0.07000000029802322,

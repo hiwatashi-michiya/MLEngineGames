@@ -337,7 +337,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Tool\GlobalVariables.cpp" />
     <ClCompile Include="Engine\Resource\Particle\Particle.cpp" />
     <ClCompile Include="Engine\Tool\LevelDataLoader.cpp" />
-    <ClCompile Include="Engine\Resource\Texture\PreLoader.cpp" />
     <ClCompile Include="Engine\Utility\Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -426,7 +425,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Tool\GlobalVariables.h" />
     <ClInclude Include="Engine\Resource\Particle\Particle.h" />
     <ClInclude Include="Engine\Tool\LevelDataLoader.h" />
-    <ClInclude Include="Engine\Resource\Texture\PreLoader.h" />
     <ClInclude Include="Engine\Utility\Utility.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
@@ -575,7 +573,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Clientrelease|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Resources\shaders\Paper.PS.hlsl">
+    <FxCompile Include="Resources\shaders\CRT.PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">Pixel</ShaderType>

@@ -61,6 +61,15 @@ void Manager::Render()
 
 	Particle3D::PostDraw();
 
+	//スプライト描画
+	Sprite2D::PreDraw(MLEngine::Core::DirectXSetter::GetInstance()->GetCommandList());
+
+	for (int32_t i = 0; i < sprite2Ds_.size(); i++) {
+		sprite2Ds_[i]->Render();
+	}
+
+	Sprite2D::PostDraw();
+
 	//描画ターゲットのインデックス
 	int32_t tergetIndex = 1;
 	//描画するインデックス
@@ -76,9 +85,9 @@ void Manager::Render()
 
 		//ポストエフェクト適用
 		postEffect_->SetType(applyEffectList[i]);
-		postEffect_->SetBarrier(0, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+		postEffect_->SetBarrier(drawIndex, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 		postEffect_->Draw(drawIndex);
-		postEffect_->SetBarrier(0, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
+		postEffect_->SetBarrier(drawIndex, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
 		//数字を入れ替える
 		int32_t tmp = tergetIndex;
@@ -91,21 +100,13 @@ void Manager::Render()
 
 	//ここまでがポストエフェクトの対象
 	MLEngine::Core::DirectXSetter::GetInstance()->PreDraw();
-	postEffect_->SetBarrier(1, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+	postEffect_->SetBarrier(drawIndex, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 	postEffect_->Draw(drawIndex);
-	postEffect_->SetBarrier(1, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	postEffect_->SetBarrier(drawIndex, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
 	//適用するエフェクトリストをリセット
 	postEffect_->ResetApplyEffectList();
 
-	//スプライト描画
-	Sprite2D::PreDraw(MLEngine::Core::DirectXSetter::GetInstance()->GetCommandList());
-
-	for (int32_t i = 0; i < sprite2Ds_.size(); i++) {
-		sprite2Ds_[i]->Render();
-	}
-
-	Sprite2D::PostDraw();
 	//ライン描画
 	Line::PreDraw(MLEngine::Core::DirectXSetter::GetInstance()->GetCommandList());
 
