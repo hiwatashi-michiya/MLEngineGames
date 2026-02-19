@@ -10,6 +10,9 @@ Player::Player() {
 	backTextureName_ = ("./Resources/Texture/player_anime_back.png");
 	frontTextureName_ = ("./Resources/Texture/player_anime_front.png");
 	damageTextureName_ = ("./Resources/Texture/player_anime_damage");
+	//必須となる情報の読み込み
+	texture_.Load("./Resources/Texture/ingame_player_defense.png");
+
 
 	sprite3D_.Initialize("./Resources/texture/player_back.png", 7);
 	sprite3D_.color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -58,14 +61,21 @@ void Player::Initialize() {
 	global->SetValue("PlayerState", "recoverySpeed", recoverySpeed_);
 	global->SetValue("PlayerState", "resultPosition", resultPosition_);
 
+	//ボードの調整
+	global->SetValue("UIState", "RefrectPos", laneDistanceRefrect_);
+	global->SetValue("UIState", "RefrectSize", refrectSize_);
+
+
 	nowLine_ = config_->centerLane_;
 	time_ = 0.0f;
 	recoverySpeed_ = 1.0f;
-	life_ = lifeMax_;
+	life_ = (int)lifeMax_;
 	pos_ = Vector3(640.0f, -3.0f, -2.0f);
 	color_ = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
 	isDead_ = false;
 	bulletDamege_ = 10;
+
+	refrectTex_.Initialize(texture_, {}, { 1.0f,1.0f,1.0f,1.0f });
 
 #pragma region
 	joyconInput = std::make_unique<Joycon>();
@@ -100,6 +110,10 @@ void Player::Update(const float deltaTime) {
 	recoveryValue_ = global->GetIntValue("PlayerState", "recoveryValue");
 	recoverySpeed_ = global->GetFloatValue("PlayerState", "recoverySpeed");
 	resultPosition_ = global->GetVector3Value("PlayerState", "resultPosition");
+
+	laneDistanceRefrect_ = global->GetFloatValue("UIState", "RefrectPos");
+	refrectSize_ = global->GetVector2Value("UIState", "RefrectSize");
+
 #ifdef _DEBUG
 	DebugDraw();
 
@@ -196,6 +210,35 @@ void Player::Update(const float deltaTime) {
 
 	sprite3D_.UpdateAnimation();
 
+	if (isRefrect_){
+		refrectCount_ += deltaTime;
+	}
+
+	refrectPos_.x = LaneSpecificCalculationRefrect();
+	refrectPos_.y = refrectPosY_;
+
+	refrectTex_.startPosition = refrectPos_;
+	refrectTex_.middlePosition = refrectPos_;
+	refrectTex_.endPosition = refrectPos_;
+	refrectTex_.startScale = Vector2();
+	refrectTex_.middleScale = refrectSize_ * 1.2f;
+	if (isRefrect_){
+		refrectTex_.endScale = refrectSize_;
+	}
+	else {
+		refrectTex_.endScale = Vector2();
+
+	}
+
+	refrectTex_.easingTime = 0.3f;
+	refrectTex_.startToMiddleTime = 0.15f;
+	refrectTex_.stayMiddleTime = 0.0f;
+	refrectTex_.Update();
+
+	if (refrectCount_ >= refrectTimer_) {
+		isRefrect_ = false;
+		refrectCount_ = 0.0f;
+	}
 	if (life_ <= 0) {
 		isDead_ = true;
 	}
@@ -225,8 +268,21 @@ void Player::DebugDraw() {
 		//GameManager::GetInstance()->AddScore(plState_.isDamagedFlug);
 	}
 	ImGui::End();
+
+	ImGui::Begin("反射板");
+	ImGui::DragInt("反射板のy座標", &refrectPosY_);
+	if (ImGui::Button("イージング開始")){
+		Refrect();
+	}
+
+	ImGui::End();
 #endif // _DEBUG
 
+}
+
+void Player::Refrect(){
+	isRefrect_ = true;
+	refrectTex_.ReStart();
 }
 
 void Player::OnCollision(const int damege) {
@@ -411,24 +467,35 @@ float Player::LaneSpecificCalculation() {
 	return result;
 }
 
+float Player::LaneSpecificCalculationRefrect(){
+	float result = 0;
+	//レーンの差
+	int laneDis = 0;
+	//中心のレーンからの差を求める
+	laneDis = config_->centerLane_ - nowLine_;
+	result = (float)(960.0f - (laneDistanceRefrect_ * laneDis));
+
+	return result;
+}
+
 void Player::PlayerRecovery() {
 	//時間以上で回復
 	if (time_ >= recoverySpeed_) {
 		time_ = 0.0f;
 		if (standTime_ >= recoveryDoubleUpCount_){
-			life_ += (recoveryValue_ * 2.0f);
+			life_ += (int)(recoveryValue_ * 2.0f);
 		}
 		else if (standTime_ >= recoveryUpCount_){
-			life_ += recoveryValue_ * 1.5f;
+			life_ += (int)(recoveryValue_ * 1.5f);
 		}
 		else {
-			life_ += recoveryValue_;
+			life_ += (int)(recoveryValue_);
 		}
 	}
 
 	//超過していた場合調整
 	if (life_ >= lifeMax_) {
-		life_ = lifeMax_;
+		life_ = (int)lifeMax_;
 
 	}
 }

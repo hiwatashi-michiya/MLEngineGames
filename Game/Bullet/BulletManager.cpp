@@ -79,6 +79,8 @@ void BulletManager::Update()
 			if(bullet->IsReflect()){
 				// 反射していたら敵にダメージを与える
 				enemy_->OnCollision(bullet->GetPosition(), bulletDamege_);
+				//反射のテクスチャを表示させる
+				player_->Refrect();
 				return true;
 			}
 			
