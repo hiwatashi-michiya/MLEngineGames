@@ -283,6 +283,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Game\Background\BackgroundMove.cpp" />
     <ClCompile Include="Game\Bullet\BulletCaveat.cpp" />
     <ClCompile Include="Game\DeviceIO\DistanceSensor\DistanceSensor.cpp" />
     <ClCompile Include="Game\DeviceIO\DistanceSensor\packet_io.cpp" />
@@ -316,6 +317,7 @@
     <ClCompile Include="Network\NetworkManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game\Background\BackgroundMove.h" />
     <ClInclude Include="Game\Bullet\BulletCaveat.h" />
     <ClInclude Include="Game\DeviceIO\DistanceSensor\DistanceSensor.h" />
     <ClInclude Include="Game\DeviceIO\DistanceSensor\packet_io.h" />
