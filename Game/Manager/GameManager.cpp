@@ -42,7 +42,7 @@ void GameManager::Initialize() {
     remainingTime_ = timeLimit_;
     state_ = GameState::Title;
     nextState_ = GameState::Title;
-    tuState_ = TutorialState::LaneMove;
+    tuState_ = TutorialState::free;
     isTutorialClear_ = false;
     isGameEnd_ = false;
     isSceneChange_ = true;
@@ -142,6 +142,7 @@ void GameManager::Update(bool isJustTurned, bool isJustMoved) {
             break;
         
         default:
+            tuState_ = GameManager::TutorialState::LaneMove;
             break;
         }
 
