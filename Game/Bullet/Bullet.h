@@ -10,9 +10,16 @@
 class Bullet
 {
 public:
+	enum class BulletType
+	{
+		kNormal,
+		kWeak,
+	};
+
+
 	Bullet() {};
 	~Bullet() {};
-	void Initialize(std::string texturehandle) ;
+	void Initialize(std::string texturehandle, BulletType type) ;
 	void Update();
 	// 死亡判定
 	bool IsDead() const { return !isActive_; }
@@ -21,6 +28,7 @@ public:
 	// 現在のライン取得
 	int GetNowLine() const { return nowLine_; }
 	MLEngine::Math::Vector3 GetPosition() { return position_; }
+	BulletType GetBulletType() const { return type_; }
 	
 
 	// 位置セット
@@ -83,5 +91,7 @@ private:
 	float travelTime_ = 0.0f;
 	// 経過時間
 	float elapsedTime_ = 0.0f;
+
+	BulletType type_ = BulletType::kNormal;
 };
 
