@@ -77,9 +77,14 @@ void BulletManager::Update()
 		if (bullet->IsDead()) {
 
 
-			if(bullet->IsReflect() && bullet->GetBulletType() == Bullet::BulletType::kNormal){
-				// 反射していたら敵にダメージを与える
-				enemy_->OnCollision(bullet->GetPosition(), bulletDamege_);
+			if(bullet->IsReflect()){
+				if (bullet->GetBulletType() == Bullet::BulletType::kNormal) {
+					// 反射していたら敵にダメージを与える
+					enemy_->OnCollision(bullet->GetPosition(), bulletDamege_);
+				}
+				/*else {
+					enemy_->OnCollision(bullet->GetPosition(), 0);
+				}*/
 				//反射のテクスチャを表示させる
 				player_->Refrect();
 				return true;
@@ -190,7 +195,7 @@ void BulletManager::SpawnBullet(int laneNumber, float time)
 		texturePath = "./Resources/Texture/enemy_bullet.png";
 		break;
 	case Bullet::BulletType::kWeak:
-		texturePath = "./Resources/Texture/enemy_bullet.png";
+		texturePath = "./Resources/Texture/enemy_bullet2.png";
 		break;
 	}
 
@@ -218,6 +223,7 @@ void BulletManager::SpawnReflectBullet(int laneNumber, float time, Bullet::Bulle
 	newBullet->SetTravelTime(time);
 	newBullet->SetNowLine(laneNumber);
 	newBullet->SetIsReflect(true);
+	newBullet->Update();
 	bullets_.push_back(std::move(newBullet));
 }
 
