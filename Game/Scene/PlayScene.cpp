@@ -343,7 +343,7 @@ void PlayScene::Update(){
 
 
 	titleSprite_->isActive = false;
-	tutorialSprite_.isActive = false;
+	tutorialSprite_.SetIsActive(false);
 	resultSprite_->isActive = false;
 
 
