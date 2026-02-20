@@ -34,6 +34,7 @@
     <ClCompile Include="Game\Enemy\EnemyStateController.cpp" />
     <ClCompile Include="Game\Particle\HitParticle.cpp" />
     <ClCompile Include="Game\Particle\SmokeParticle.cpp" />
+    <ClCompile Include="Game\Background\BackgroundMove.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -193,6 +194,7 @@
     <ClInclude Include="Game\Enemy\EnemyStateController.h" />
     <ClInclude Include="Game\Particle\HitParticle.h" />
     <ClInclude Include="Game\Particle\SmokeParticle.h" />
+    <ClInclude Include="Game\Background\BackgroundMove.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

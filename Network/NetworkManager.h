@@ -68,6 +68,18 @@ public:
         bool angryAttackFlag;
 	};
 
+    struct BackgroundState {
+
+        bool isEnteredClient;
+        bool isEnteredServer;
+
+    };
+
+    struct BackgroundPacket {
+        PacketHeader head;
+        BackgroundState state;
+    };
+
 #pragma pack(pop)
 
 

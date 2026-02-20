@@ -55,9 +55,8 @@ void GameManager::Initialize() {
     gameClearWaitCounter_ = 0.0f;
     resultShuffleCounter_ = 0.0f;
 
-    //クライアント側では音を出さない
+    //クライアント側ではBGMを出さない
 #ifdef CLIENT_BUILD
-    Audio::SEVolume = 0.0f;
     Audio::BGMVolume = 0.0f;
 #endif
 
