@@ -22,6 +22,8 @@ public:
         bool isDamagedFlug;
         //クライアントが攻撃を食らったか
         bool isClientHited;
+        //反射したかどうか
+        bool isRefrected;
         //体力
         int life;
         //現在いるラインの番号
