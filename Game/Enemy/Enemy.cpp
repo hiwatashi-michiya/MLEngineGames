@@ -212,6 +212,8 @@ void Enemy::DebugUI()
 	else if (dynamic_cast<EnemyGreatAttackState*>(currentState_.get())) { // 大技状態
 		ImGui::SliderInt("攻撃数", &dynamic_cast<EnemyGreatAttackState*>(currentState_.get())->attackCount_, 1, 20);
 		global_->datas_["EnemyState"].items["AttackCount"].value = dynamic_cast<EnemyGreatAttackState*>(currentState_.get())->attackCount_;
+		ImGui::SliderFloat("発射間隔", &dynamic_cast<EnemyGreatAttackState*>(currentState_.get())->fireInterval, 0.0f, 10.0f);
+		global_->datas_["EnemyState"].items["GreatAttackFireInterval"].value = dynamic_cast<EnemyGreatAttackState*>(currentState_.get())->fireInterval;
 		stateIndex = 3;
 	}
 
