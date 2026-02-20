@@ -28,8 +28,9 @@ void PlayScene::GlobalSetValue(){
 	global->SetValue("TextureState", "TitlePos", titlePos_);
 	global->SetValue("TextureState", "TitleScale", titleScale_);
 
-	global->SetValue("TextureState", "TutorialPos3D", tutorialPos_);
-	global->SetValue("TextureState", "TutorialScale3D", tutorialScale_);
+	global->SetValue("TextureState", "TutorialPosStart", tutorialPosStart_);
+	global->SetValue("TextureState", "TutorialPos", tutorialPosEnd_);
+	global->SetValue("TextureState", "TutorialScale", tutorialScaleEnd_);
 	global->SetValue("TextureState", "ResultPos", resultPos_);
 	global->SetValue("TextureState", "ResultScale", resultScale_);
 }
@@ -40,8 +41,9 @@ void PlayScene::GlobalGetValue(){
 	titlePos_ = global->GetVector2Value("TextureState", "TitlePos");
 	titleScale_ = global->GetVector2Value("TextureState", "TitleScale");
 
-	tutorialPos_ = global->GetVector3Value("TextureState", "TutorialPos3D");
-	tutorialScale_ = global->GetVector3Value("TextureState", "TutorialScale3D");
+	tutorialPosStart_= global->GetVector2Value("TextureState", "TutorialPosStart");
+	tutorialPosEnd_ = global->GetVector2Value("TextureState", "TutorialPos");
+	tutorialScaleEnd_ = global->GetVector2Value("TextureState", "TutorialScale");
 	resultPos_ = global->GetVector2Value("TextureState", "ResultPos");
 	resultScale_ = global->GetVector2Value("TextureState", "ResultScale");
 
@@ -109,21 +111,16 @@ inline void PlayScene::Initialize(){
 
 	//必須となる情報の読み込み
 	titleTexture_.Load("./Resources/Texture/title_logo.png");
-	tutorialMoveTexture_ = ("./Resources/Texture/tutorial_ui_move.png");
-	tutorialTurnTexture_ = ("./Resources/Texture/tutorial_ui_turn.png");
+	tutorialMoveTexture_.Load("./Resources/Texture/tutorial_ui_move.png");
+	tutorialTurnTexture_.Load("./Resources/Texture/tutorial_ui_turn.png");
 	gameClearTexture_.Load("./Resources/Texture/gameClear.png");
 	gameOverTexture_.Load("./Resources/Texture/gameOver.png");
 
 	titleSprite_.reset(MLEngine::Resource::Sprite2D::Create(titleTexture_, titlePos_, titleColor_));
 	titleSprite_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 
-	tutorialTransform_ = std::make_unique<MLEngine::Object::Transform>();
-
-	tutorialSprite_.Initialize(tutorialMoveTexture_, 1);
-	tutorialSprite_.color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	tutorialSprite_.isActive = false;
-	tutorialSprite_.transform.translate.y = 1.0f;
-	tutorialSprite_.transform.SetParent(tutorialTransform_.get());
+	tutorialSprite_.Initialize(tutorialMoveTexture_, {},tutorialColor_);
+	tutorialSprite_.SetIsActive(false);
 
 	tutorialSprite_.SetTexture(tutorialTurnTexture_);
 	tutorialSprite_.SetTexture(tutorialMoveTexture_);
@@ -135,9 +132,6 @@ inline void PlayScene::Initialize(){
 
 	titlePos_ = { 640.0f,120.0f };
 	titleScale_ = { 510.0f,505.0f };
-
-	tutorialPos_ = { 1015.0f,200.0f };
-	tutorialScale_ = { 550.0f,385.0f };
 
 	resultPos_ = { 640.0f,120.0f };
 	resultScale_ = { 512.0f,128.0f };
@@ -349,12 +343,15 @@ void PlayScene::Update(){
 
 
 	titleSprite_->isActive = false;
-	tutorialSprite_.isActive = false;
+	tutorialSprite_.SetIsActive(false);
 	resultSprite_->isActive = false;
 
 
 
 #else
+
+	GameManager::TutorialState beforeState = gameManager_->GetTutorialState();
+	GameManager::GameState beforeGameState = gameManager_->GetState();
 
 	// Server 処理
 	gameManager_->Update(playerManager_->GetPlayer()->GetIsJustTurned(), playerManager_->GetPlayer()->GetIsJustMoved());
@@ -372,20 +369,21 @@ void PlayScene::Update(){
 	}
 
 	if (gameManager_->GetState() == GameManager::GameState::Tutorial) {
-		tutorialSprite_.isActive = true;
+		tutorialSprite_.SetIsActive(true);
 	}
 	else {
-		tutorialSprite_.isActive = false;
-	}
+		tutorialSprite_.SetIsActive(false);
 
-	if (gameManager_->GetTutorialState() == GameManager::TutorialState::LaneMove) {
+	}
+	
+
+	if (gameManager_->GetTutorialState() == GameManager::TutorialState::LaneMove and beforeState != GameManager::TutorialState::LaneMove) {
 		tutorialSprite_.SetTexture(tutorialMoveTexture_);
+		tutorialSprite_.ReStart();
 	}
-	else if(gameManager_->GetTutorialState() == GameManager::TutorialState::FlontBack) {
+	else if(gameManager_->GetTutorialState() == GameManager::TutorialState::FlontBack and beforeState != GameManager::TutorialState::FlontBack) {
 		tutorialSprite_.SetTexture(tutorialTurnTexture_);
-	}
-	else {
-		tutorialSprite_.isActive = false;
+		tutorialSprite_.ReStart();
 	}
 
 	//リザルト更新
@@ -487,7 +485,7 @@ void PlayScene::Update(){
 
 	if (gameManager_->GetState() == GameManager::GameState::Playing){
 		bulletManager_->SetIsModelActive(true);
-
+		
 		ingameStartUI_.SetIsActive(true);
 		ingameGameoverUI_.SetIsActive(true);
 		ingameFinishUI_.SetIsActive(true);
@@ -565,12 +563,22 @@ void PlayScene::Update(){
 
 	titleSprite_->position = titlePos_;
 	titleSprite_->size = titleScale_;
+
+	tutorialPosMiddle_ = (tutorialPosStart_ + tutorialPosEnd_) / 2.0f;
+	tutorialScaleMiddle_ = (tutorialScaleStart_ + tutorialScaleEnd_) / 2.0f;
 	
-	tutorialTransform_->translate = tutorialPos_;
-	tutorialTransform_->rotateQuaternion = MLEngine::Math::ConvertFromEuler(tutorialRotate_);
-	tutorialTransform_->scale = tutorialScale_;
-	tutorialTransform_->UpdateMatrix();
-	tutorialSprite_.UpdateAnimation();
+	tutorialSprite_.startPosition =tutorialPosStart_;
+	tutorialSprite_.middlePosition = tutorialPosMiddle_;
+	tutorialSprite_.endPosition = tutorialPosEnd_;
+	tutorialSprite_.startScale = tutorialScaleStart_;
+	tutorialSprite_.middleScale = tutorialScaleMiddle_;
+	tutorialSprite_.endScale = tutorialScaleEnd_;
+
+	tutorialSprite_.easingTime = 0.4f;
+	tutorialSprite_.startToMiddleTime = 0.2f;
+	tutorialSprite_.stayMiddleTime = 0.0f;
+	tutorialSprite_.Update();
+
 
 	resultSprite_->position = resultPos_;
 	resultSprite_->size = resultScale_;
@@ -656,16 +664,9 @@ void PlayScene::DrawImgui() {
 	ImGui::Text("タイトル");
 	ImGui::DragFloat2("タイトル座標", &titlePos_.x, 1.0f);
 	ImGui::DragFloat2("タイトル大きさ", &titleScale_.x, 1.0f);
-
-	ImGui::Text("チュートリアル");
-	ImGui::DragFloat3("チュートリアル座標", &tutorialPos_.x, 0.1f);
-	ImGui::DragFloat3("チュートリアル回転", &tutorialRotate_.x, 0.01f);
-	ImGui::DragFloat3("チュートリアル大きさ", &tutorialScale_.x, 0.1f);
-
-	ImGui::DragFloat3("チュートリアル2座標", &tutorialSprite_.transform.translate.x, 0.1f);
-	ImGui::DragFloat3("チュートリアル2回転", &tutorialSprite_.transform.rotate.x, 0.01f);
-	ImGui::DragFloat3("チュートリアル2大きさ", &tutorialSprite_.transform.scale.x, 0.1f);
-	
+	if (ImGui::Button("チュートリアルのイージング再生")) {
+		tutorialSprite_.ReStart();
+	}
 	ImGui::End();
 
 	ImGui::Begin("縁石");
