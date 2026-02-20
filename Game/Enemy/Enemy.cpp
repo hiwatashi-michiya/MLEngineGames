@@ -36,11 +36,15 @@ void Enemy::Initialize()
 	attackTexture_ = "./Resources/Texture/enemy2_attack.png";
 
 	normalTexture_ = "./Resources/Texture/enemy2_normal.png";
+
+	cryTesture_ = "./Resources/Texture/enemy2_cry.png";
 #else
 	angryTexture_ = "./Resources/Texture/enemy1_angry.png";
 	attackTexture_ = "./Resources/Texture/enemy1_attack.png";
 
 	normalTexture_ = "./Resources/Texture/enemy1_normal.png";
+
+	cryTesture_ = "./Resources/Texture/enemy1_cry.png";
 #endif
 
 	// 前面スプライト初期化
@@ -351,6 +355,9 @@ void Enemy::ChangeTexture(Mode mode)
 	}
 	else if (mode == Mode::kAttack) {
 		frontPlane_.SetTexture(attackTexture_);
+	}
+	else if (mode == Mode::kCry) {
+		frontPlane_.SetTexture(cryTesture_);
 	}
 }
 

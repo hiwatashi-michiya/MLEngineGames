@@ -26,7 +26,7 @@ public:
 
 	void SetEnemyHP(int hp) { enemyHP_ = hp; }
 
-    void SetBulletCaveat(BulletCaveat* bulletCaveat) { bulletCaveat_ = bulletCaveat; }
+   // void SetBulletCaveat(BulletCaveat* bulletCaveat) { bulletCaveat_ = bulletCaveat; }
 
 private:
     EnemyAttackTurnController() = default;
@@ -43,6 +43,6 @@ private:
 	int laneNumber_[2];
 	bool isAngry_ = false;
     int enemyHP_ = 0;
-    BulletCaveat* bulletCaveat_;
+    //BulletCaveat* bulletCaveat_;
 
 };

@@ -23,7 +23,9 @@ class BulletManager {
 		// 弾を生成する
 		void SpawnBullet(int laneNumber, float time);
 
-		void SpawnReflectBullet(int laneNumber, float time);
+		void SpawnReflectBullet(int laneNumber, float time, Bullet::BulletType type);
+
+		Bullet::BulletType GetBulletType(int normalNum, int normalDen,int weakNum, int weakDen);
 
 		BulletCaveat* GetBulletCaveat() { return bulletCaveat_.get(); }
 
@@ -69,4 +71,9 @@ private:
 	float reflectSpeed_ = 0.5f;
 
 	std::unique_ptr<SmokeParticle> smokeParticle_;
+
+	int normalBumerator_ = 2;
+	int normalDenominator_ = 3;
+	int weakNumerator_ = 1;
+	int weakDenominator_ = 3;
 };

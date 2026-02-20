@@ -26,7 +26,8 @@ public:
 	enum class Mode {
 		kNormal,
 		kAngry,
-		kAttack
+		kAttack,
+		kCry
 	};
 
 public:
@@ -134,6 +135,7 @@ private:
 	std::string angryTexture_;
 	std::string attackTexture_;
 	std::string backTextrue_;
+	std::string cryTesture_;
 
 	// 3Dスプライトのトランスフォーム
 	std::unique_ptr<MLEngine::Object::Transform> transform_;
