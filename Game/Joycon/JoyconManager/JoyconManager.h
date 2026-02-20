@@ -7,6 +7,7 @@ public:
 	void Init();
 	void Update();
 	void Draw();
+	void CheakRadius();
 private:
 	//joycon
 	std::unique_ptr<Joycon> joyconL;

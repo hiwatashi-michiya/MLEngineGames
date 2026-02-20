@@ -10,11 +10,15 @@ void JoyconManager::Init() {
 void JoyconManager::Update() {
 	joyconL->Update();
 	joyconR->Update();
-	joyconL->CheakRadius();
-	joyconR->CheakRadius();
+	CheakRadius();
 }
 
 void JoyconManager::Draw() {
 	joyconL->ImGui("joyconL");
 	joyconR->ImGui("joyconR");
+}
+
+void JoyconManager::CheakRadius() {
+	joyconL->CheakRadius();
+	joyconR->CheakRadius();
 }
