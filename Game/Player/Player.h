@@ -169,6 +169,8 @@ private:
 	bool isJustTurned_ = false;
 	bool isJustMoved_ = false;
 
+	bool isJustRefrected_ = false;
+
 	bool isRecoveryArea_ = false;
 
 	float damageTime_ = 0.0f;

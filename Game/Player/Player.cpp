@@ -208,6 +208,9 @@ void Player::Update(const float deltaTime) {
 
 	}
 
+	if (isJustRefrected_) isJustRefrected_ = false;
+
+
 	sprite3D_.UpdateAnimation();
 
 	if (isRefrect_){
@@ -282,7 +285,16 @@ void Player::DebugDraw() {
 
 void Player::Refrect(){
 	isRefrect_ = true;
+	refrectCount_ = 0.0f;
 	refrectTex_.ReStart();
+	isJustRefrected_ = true;
+	plState_.isRefrected = isJustRefrected_;
+
+	NetworkManager::PlayerStatePacket plPacket{};
+	plPacket.header.type = 1;
+	plPacket.header.size = sizeof(NetworkManager::PlayerStatePacket);
+	plPacket.state = plState_;
+	NetworkManager::GetInstance().Send(plPacket);
 }
 
 void Player::OnCollision(const int damege) {
@@ -505,17 +517,8 @@ void Player::PlayerInfoInsertion() {
 	plState_.isForwardFlug = isForward_;
 	plState_.life = life_;
 	plState_.nowLine = nowLine_;
+	plState_.isRefrected = isJustRefrected_;
 
-
-
-	//if (not isForward_) {
-	//	//後ろを向いているなら青色
-	//	sprite_->color = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
-	//}
-	//else {
-	//	//前を向いているなら赤色
-	//	sprite_->color = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
-	//}
 }
 
 void Player::SyncFromNetwork() {
@@ -540,6 +543,12 @@ void Player::SyncFromNetwork() {
 			nowLine_ = netState.nowLine;
 		}
 
+		if (netState.isRefrected){
+			isRefrect_ = true;
+			refrectCount_ = 0.0f;
+			refrectTex_.ReStart();
+		}
+
 		plState_.isClientHited = netState.isClientHited;
 
 #else
@@ -554,7 +563,11 @@ void Player::SyncFromNetwork() {
 			plState_.isClientHited = false;
 		}
 		
-
+		if (netState.isRefrected) {
+			isRefrect_ = true;
+			refrectCount_ = 0.0f;
+			refrectTex_.ReStart();
+		}
 #endif
 
 
