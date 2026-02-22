@@ -28,7 +28,12 @@ struct GyroData {
 	int16_t y;
 	int16_t z;
 };
-
+struct Angle {
+	float right = 0.0f;
+	float back = 90.0f;
+	float left = 180.0f;
+	float front = 270.0f;
+};
 enum JoyconType {
 JOYCON_L = 8198,
 JOYCON_R = 8199
@@ -36,7 +41,7 @@ JOYCON_R = 8199
 class Joycon {
 public:
 	void Init(unsigned short Type);
-
+	virtual void addInit() = 0;
 	void Update();
 
 	bool SendSubcommand(hid_device* device, std::byte subcommandId, const std::span<std::byte>& args);
@@ -65,5 +70,5 @@ protected:
 	direction preDir;
 	Vector3 Prerotate_;
 	float count;
-
+	const Angle angle;
 };

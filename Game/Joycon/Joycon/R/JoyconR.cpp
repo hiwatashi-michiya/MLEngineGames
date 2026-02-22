@@ -1,5 +1,11 @@
 #include "JoyconR.h"
 
+void JoyconR::addInit()
+{
+	rotate_.x = angle.front;
+	preDir = front;
+}
+
 direction JoyconR::CheakRadius()
 {
 	//ジョイコンがなければ抜ける
@@ -15,14 +21,17 @@ direction JoyconR::CheakRadius()
 	else if (rotate_.x < 0.0f) {
 		rotate_.x = 360.0f;
 	}
-
-	if (std::abs(rotate_.x) >= 180.0f) {
-		preDir = back;
-		return back;
+	if (preDir == front) {
+		if (angle.back - 45.0f < std::abs(rotate_.x) && std::abs(rotate_.x) < angle.back + 45.0f) {
+			preDir = back;
+			return back;
+		}
 	}
-	else {
-		preDir = front;
-		return front;
+	else if (preDir == back) {
+		if (angle.front - 45.0f < std::abs(rotate_.x) && std::abs(rotate_.x) < angle.front + 45.0f ) {
+			preDir = front;
+			return front;
+		}
 	}
 }
 

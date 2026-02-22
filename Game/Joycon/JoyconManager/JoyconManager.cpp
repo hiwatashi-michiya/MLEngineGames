@@ -10,7 +10,6 @@ void JoyconManager::Init() {
 void JoyconManager::Update() {
 	joyconL->Update();
 	joyconR->Update();
-	CheakRadius();
 }
 
 void JoyconManager::Draw() {
@@ -31,14 +30,19 @@ void JoyconManager::Draw() {
 }
 
 direction JoyconManager::CheakRadius() {
-	direction Ldire = joyconL->CheakRadius();
-	direction Rdire = joyconR->CheakRadius();
+	direction Ldir = joyconL->CheakRadius();
+	direction Rdir = joyconR->CheakRadius();
 
-	if(Rdire == front && Ldire ==Right) {
+#ifdef _DEBUG
+	Draw();
+#endif // _DEBUG
+
+
+	if(Rdir == front && Ldir == Right) {
 		direction_ = direction::front;
 		return direction::front;
 	}
-	else if(Rdire == back && Ldire == Left) {
+	else if(Rdir == back && Ldir == Left) {
 		direction_ = direction::back;
 		return direction::back;
 	}
