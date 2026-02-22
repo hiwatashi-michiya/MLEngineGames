@@ -1,0 +1,52 @@
+#include "JoyconR.h"
+
+direction JoyconR::CheakRadius()
+{
+	//ジョイコンがなければ抜ける
+	if (Joycon::device_ == nullptr) {
+		return no;
+	}
+
+	rotate_ += GetVecRotate() * (180 / std::numbers::pi) / 2;
+
+	if (360.0f < rotate_.x) {
+		rotate_.x = 0.0f;
+	}
+	else if (rotate_.x < 0.0f) {
+		rotate_.x = 360.0f;
+	}
+
+	if (std::abs(rotate_.x) >= 180.0f) {
+		preDir = back;
+		return back;
+	}
+	else {
+		preDir = front;
+		return front;
+	}
+}
+
+void JoyconR::ImGui(std::string title)
+{
+
+	if (device_ == nullptr) {
+#ifdef _DEBUG
+		ImGui::Begin(title.c_str());
+		ImGui::Text("No Conect");
+		ImGui::End();
+#endif
+		return;
+	}
+#ifdef _DEBUG
+	ImGui::Begin(title.c_str());
+	ImGui::Text("GyroX:%f", rotate_.x);
+	if (preDir == Left) {
+		ImGui::Text("Left");
+	}
+	else if(preDir == Right){
+		ImGui::Text("Right");
+	}
+
+	ImGui::End();
+#endif
+}

@@ -298,6 +298,8 @@
     <ClCompile Include="Game\hidapi\hidManager.cpp" />
     <ClCompile Include="Game\Joycon\JoyconManager\JoyconManager.cpp" />
     <ClCompile Include="Game\Joycon\Joycon\Joycon.cpp" />
+    <ClCompile Include="Game\Joycon\Joycon\L\JoyconL.cpp" />
+    <ClCompile Include="Game\Joycon\Joycon\R\JoyconR.cpp" />
     <ClCompile Include="Game\LifeUI\LifeUI.cpp" />
     <ClCompile Include="Game\Manager\GameManager.cpp" />
     <ClCompile Include="Game\Manager\PlayerManager.cpp" />
@@ -332,6 +334,8 @@
     <ClInclude Include="Game\hidapi\hidManager.h" />
     <ClInclude Include="Game\Joycon\JoyconManager\JoyconManager.h" />
     <ClInclude Include="Game\Joycon\Joycon\Joycon.h" />
+    <ClInclude Include="Game\Joycon\Joycon\L\JoyconL.h" />
+    <ClInclude Include="Game\Joycon\Joycon\R\JoyconR.h" />
     <ClInclude Include="Game\LifeUI\LifeUI.h" />
     <ClInclude Include="Game\Manager\GameManager.h" />
     <ClInclude Include="Game\Manager\PlayerManager.h" />

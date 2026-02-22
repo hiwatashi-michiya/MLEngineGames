@@ -6,7 +6,7 @@
 #include <Sprite3D.h>
 #include "Audio/Audio.h"
 
-#include "../Joycon/Joycon/Joycon.h"
+#include "../Joycon/JoyconManager/JoyconManager.h"
 #include "../DeviceIO/DistanceSensor/DistanceSensor.h"
 
 //プレイヤーが操作する自機
@@ -182,7 +182,7 @@ private:
 	//ジャングル
 
 	//joycon
-	std::unique_ptr<Joycon> joyconInput;
+	std::unique_ptr<JoyconManager> joyconInput;
 #ifdef _SERVER
 	// Client専用処理
 	//距離センサー

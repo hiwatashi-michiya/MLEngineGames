@@ -120,6 +120,13 @@ void Joycon::ImGui(std::string title)
 #ifdef _DEBUG
 	ImGui::Begin(title.c_str());
 	ImGui::Text("GyroX:%f", rotate_.x);
+	if (preDir == front) {
+		ImGui::Text("front");
+	}
+	else {
+		ImGui::Text("back");
+	}
+
 	ImGui::End();
 #endif
 }
@@ -139,6 +146,14 @@ direction Joycon::CheakRadius()
 	else if (rotate_.x < 0.0f) {
 		rotate_.x = 360.0f;
 	}
+
+		if (std::abs(rotate_.x) >= 180.0f) {
+			preDir = back;
+			return back;
+		}else{ 
+			preDir = front;
+			return front;
+		}
 
 	//if (Prerotate_.x - 5.0f <= rotate_.x && rotate_.x >= Prerotate_.x + 5.0f) {
 	//	count += MLEngine::Core::FrameTracker::GetInstance()->GetDeltaTimeF();
@@ -177,10 +192,6 @@ direction Joycon::CheakRadius()
 	//	}
 	//	return preDir;
 	//}
-		if (std::abs(rotate_.x) >= 225.0f && 315.0f >= std::abs(rotate_.x)) {
-			preDir = back;
-			return back;
-		}
 
 }
 

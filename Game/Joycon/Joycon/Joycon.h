@@ -13,7 +13,9 @@ using namespace MLEngine::Math;
 enum direction {
 	front = 0,
 	back = 1,
-	no = 2,
+	Left = 2,
+	Right = 3,
+	no = 5,
 };
 enum Buttan {
 	DOWN = 0x01,
@@ -39,16 +41,17 @@ public:
 
 	bool SendSubcommand(hid_device* device, std::byte subcommandId, const std::span<std::byte>& args);
 
-	void ImGui(std::string title);
+	virtual void ImGui(std::string title);
 
-	direction CheakRadius();
+	virtual direction CheakRadius();
+
 	void ResetRotate() {
 		rotate_.x = 90.0f;
 	};
 
 	Vector3 GetVecRotate() { return Vrotate_; };
 
-private:
+protected:
 	std::unique_ptr<hidManager> hidManager_;
 	hid_device* device_;
 	// read input report

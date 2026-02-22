@@ -1,15 +1,17 @@
 #pragma once
 
-#include "../Joycon/Joycon.h"
+#include "../Joycon/L/JoyconL.h"
+#include "../Joycon/R/JoyconR.h"
 
 class JoyconManager {
 public:
 	void Init();
 	void Update();
 	void Draw();
-	void CheakRadius();
+	direction CheakRadius();
 private:
 	//joycon
-	std::unique_ptr<Joycon> joyconL;
-	std::unique_ptr<Joycon> joyconR;
+	std::unique_ptr<JoyconL> joyconL;
+	std::unique_ptr<JoyconR> joyconR;
+	direction direction_;
 };

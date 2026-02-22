@@ -68,8 +68,8 @@ void Player::Initialize() {
 	bulletDamege_ = 10;
 
 #pragma region
-	joyconInput = std::make_unique<Joycon>();
-	joyconInput->Init(JoyconType::JOYCON_L);
+	joyconInput = std::make_unique<JoyconManager>();
+	joyconInput->Init();
 #pragma endregion ジョイコン
 
 #ifdef _SERVER
