@@ -35,6 +35,7 @@
     <ClCompile Include="Game\Particle\HitParticle.cpp" />
     <ClCompile Include="Game\Particle\SmokeParticle.cpp" />
     <ClCompile Include="Game\Background\BackgroundMove.cpp" />
+    <ClCompile Include="Game\InfomationUI\InfomationUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -195,6 +196,7 @@
     <ClInclude Include="Game\Particle\HitParticle.h" />
     <ClInclude Include="Game\Particle\SmokeParticle.h" />
     <ClInclude Include="Game\Background\BackgroundMove.h" />
+    <ClInclude Include="Game\InfomationUI\InfomationUI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
