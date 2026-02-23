@@ -190,6 +190,13 @@ void NetworkManager::RecvLoop() {
 			enemyState_.angryAttackFlag = esp.angryAttackFlag;
 			hasNewEnemyState_ = true;
 		} break;
+
+		case 8: { // EnemyInfoState
+			EnemyInfoState eis{};
+			Receive(eis);
+			enemyInfoState_.healthRate = eis.healthRate;
+			enemyInfoState_.hitMomentFlug = eis.hitMomentFlug;
+		} break;
 		default:
 			// 未知パケット → 破棄
 			break;
@@ -246,6 +253,12 @@ bool NetworkManager::GetLatestEnemyState(EnemyStatePacket& out)
 	out = enemyState_;
 	hasNewEnemyState_ = false; // 消費
 	return true;
+}
+
+void NetworkManager::GetEnemyInfoState(EnemyInfoState& out){
+	out = enemyInfoState_;
+	//念のためこちらでもフラグを折って置く
+	enemyInfoState_.hitMomentFlug = false;
 }
 
 // 明示的なテンプレートインスタンス化

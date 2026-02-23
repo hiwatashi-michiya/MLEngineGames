@@ -13,7 +13,12 @@ InfomationUI::InfomationUI() {
 	speech_Bubble_.startToMiddleTime = 0.2f;
 	speech_Bubble_.stayMiddleTime = 0.0f;
 
+#ifdef CLIENT_BUILD
 	texture_.Load("./Resources/Texture/enemy1_normal.png");
+#else
+	texture_.Load("./Resources/Texture/enemy2_normal.png");
+#endif
+	
 	enemyTex_.Initialize(texture_, {});
 	enemyTex_.easingTime = 0.4f;
 	enemyTex_.startToMiddleTime = 0.2f;
@@ -94,10 +99,7 @@ void InfomationUI::Update() {
 	hpFrame_.Update();
 	hpBar_.Update();
 
-
-	if (MLEngine::Input::Manager::GetInstance()->GetKeyboard()->Trigger(DIK_E)){
-		InfoEase();
-	}
+	
 
 #ifdef _DEBUG
 	DebugDraw();
@@ -171,8 +173,10 @@ void InfomationUI::SetPosSize(){
 	hpBar_.middlePosition = AddStarthalf(hpBarPos_);
 	hpBar_.endPosition = hpBarPos_;
 	hpBar_.startScale = Vector2();
-	hpBar_.middleScale = hpBarSize_ / 2.0f;
-	hpBar_.endScale = hpBarSize_;
+	hpBar_.middleScale.x = (hpBarSize_.x * enHealthRate_) / 2.0f;
+	hpBar_.middleScale.y = (hpBarSize_.y) / 2.0f;
+	hpBar_.endScale.x = hpBarSize_.x * enHealthRate_;
+	hpBar_.endScale.y = hpBarSize_.y;
 }
 
 void InfomationUI::SetPosSizeReverse(){
@@ -196,7 +200,8 @@ void InfomationUI::SetPosSizeReverse(){
 	//HPのバー
 	hpBar_.startPosition = hpBarPos_ ;
 	hpBar_.endPosition = infoStartPos_;
-	hpBar_.startScale = hpBarSize_;
+	hpBar_.startScale.x = hpBarSize_.x * enHealthRate_;
+	hpBar_.startScale.y = hpBarSize_.y;
 	hpBar_.endScale = Vector2();
 }
 

@@ -24,6 +24,11 @@ public:
 
 	void SetIsActive(bool flag);
 
+	void SetEnemyHealthRate(float health) {
+		enHealthRate_ = health;
+	}
+
+
 private:
 	void GlobalSetValues();
 
@@ -75,6 +80,9 @@ private:
 	float scaleTime_ = 0.0f;
 	//hpバーの最大の長さ
 	float maxLangth_ = 140.0f;
+
+	float enHealthRate_ = 1.0f;
+
 	//反対に動くときのフラグ
 	bool isReverse_ = false;
 

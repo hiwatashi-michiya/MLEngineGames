@@ -228,7 +228,7 @@ void PlayScene::Finalize(){
 
 }
 
-void PlayScene::Update(){
+void PlayScene::Update() {
 
 	DrawImgui();
 
@@ -288,6 +288,16 @@ void PlayScene::Update(){
 
 	}
 
+	NetworkManager::EnemyInfoState infoState{};
+
+	NetworkManager::GetInstance().GetEnemyInfoState(infoState);
+
+	InfoUI_->SetEnemyHealthRate(infoState.healthRate);
+
+	if (infoState.hitMomentFlug){
+		InfoUI_->InfoEase();
+	}
+
 #ifdef CLIENT_BUILD
 	//// Client専用処理
 
@@ -324,7 +334,7 @@ void PlayScene::Update(){
 	}
 
 	//タイトルに戻ったときに初期化できるように
-	if (gameManager_->GetState() == GameManager::GameState::Result and static_cast<GameManager::GameState>(gameState.gameState)== GameManager::GameState::Title){
+	if (gameManager_->GetState() == GameManager::GameState::Result and static_cast<GameManager::GameState>(gameState.gameState) == GameManager::GameState::Title) {
 		MLEngine::Scene::Manager::GetInstance()->ChangeScene("Play");
 	}
 
@@ -332,11 +342,11 @@ void PlayScene::Update(){
 	if (gameManager_->GetState() == GameManager::GameState::Playing and static_cast<GameManager::GameState>(gameState.gameState) == GameManager::GameState::Title) {
 		MLEngine::Scene::Manager::GetInstance()->ChangeScene("Play");
 	}
-	
-	if (gameManager_->GetScore() != gameState.score){
+
+	if (gameManager_->GetScore() != gameState.score) {
 		gameManager_->SetIsGetScored(true);
 	}
-	else if (gameManager_->GetCombo() != gameState.combo and gameManager_->GetCombo() < gameState.combo){
+	else if (gameManager_->GetCombo() != gameState.combo and gameManager_->GetCombo() < gameState.combo) {
 		gameManager_->SetIsGetScored(true);
 	}
 	gameManager_->SetState(static_cast<GameManager::GameState>(gameState.gameState));
@@ -358,13 +368,13 @@ void PlayScene::Update(){
 	// Server 処理
 	gameManager_->Update(playerManager_->GetPlayer()->GetIsJustTurned(), playerManager_->GetPlayer()->GetIsJustMoved());
 
-	if (gameManager_->GetState() == GameManager::GameState::Title){
+	if (gameManager_->GetState() == GameManager::GameState::Title) {
 		titleSprite_->isActive = true;
 		if (!isEnemyReset_) {
 			enemy_->Initialize();
 			isEnemyReset_ = true;
 		}
-		
+
 	}
 	else {
 		titleSprite_->isActive = false;
@@ -377,20 +387,20 @@ void PlayScene::Update(){
 		tutorialSprite_.SetIsActive(false);
 
 	}
-	
+
 
 	if (gameManager_->GetTutorialState() == GameManager::TutorialState::LaneMove and beforeState != GameManager::TutorialState::LaneMove) {
 		tutorialSprite_.SetTexture(tutorialMoveTexture_);
 		tutorialSprite_.ReStart();
 	}
-	else if(gameManager_->GetTutorialState() == GameManager::TutorialState::FlontBack and beforeState != GameManager::TutorialState::FlontBack) {
+	else if (gameManager_->GetTutorialState() == GameManager::TutorialState::FlontBack and beforeState != GameManager::TutorialState::FlontBack) {
 		tutorialSprite_.SetTexture(tutorialTurnTexture_);
 		tutorialSprite_.ReStart();
 	}
 
 	//リザルト更新
 	if (gameManager_->GetState() == GameManager::GameState::Result) {
-		
+
 		playerManager_->GetPlayer()->SetIsResultScene(true);
 
 		if (not resultScoreBackUI_.GetIsStartEasing() and not resultScoreBackUI_.GetIsEndEasing()) {
@@ -413,7 +423,7 @@ void PlayScene::Update(){
 		int score = gameManager_->GetScore();
 
 		for (int32_t i = 0; i < 2; i++) {
-			
+
 			resultScoreUIs_[i].SetIsActive(true);
 
 			int num;
@@ -467,14 +477,14 @@ void PlayScene::Update(){
 		playerManager_->GetPlayer()->SetIsResultScene(false);
 	}
 
-	if (!playerManager_->GetPlayer()->GetIsDamaged()){
+	if (!playerManager_->GetPlayer()->GetIsDamaged()) {
 		GameManager::GetInstance()->ResetCombo();
 	}
 
 	NetworkManager::GetInstance().GetEnemyDeadFlug(isClientEnemyDead_);
 #endif	
-	
-	if (gameManager_->GetState() == GameManager::GameState::Title){
+
+	if (gameManager_->GetState() == GameManager::GameState::Title) {
 		playerManager_->GetPlayer()->SetIsTitleScene(true);
 	}
 	else {
@@ -483,15 +493,16 @@ void PlayScene::Update(){
 
 	playerManager_->Update(gameManager_->GetDeltaTime());
 
-	
 
-	if (gameManager_->GetState() == GameManager::GameState::Playing){
+
+	if (gameManager_->GetState() == GameManager::GameState::Playing) {
 		bulletManager_->SetIsModelActive(true);
-		
+
 		ingameStartUI_.SetIsActive(true);
 		ingameGameoverUI_.SetIsActive(true);
 		ingameFinishUI_.SetIsActive(true);
 		scoreUI_->SetIsActive(true);
+		InfoUI_->SetIsActive(true);
 
 		//イージングが開始していない場合、開始させる
 		if (not ingameStartUI_.GetIsStartEasing() and not ingameStartUI_.GetIsEndEasing()) {
@@ -533,13 +544,14 @@ void PlayScene::Update(){
 		ingameGameoverUI_.SetIsActive(false);
 		ingameFinishUI_.SetIsActive(false);
 		scoreUI_->SetIsActive(false);
+		InfoUI_->SetIsActive(false);
 	}
-	
-	if (playerManager_->GetPlayer()->GetIsDead()){
+
+	if (playerManager_->GetPlayer()->GetIsDead()) {
 		gameManager_->SetIsGameOver(true);
 		isEnemyReset_ = false;
 	}
-	else if (enemy_->GetIsDead() and isClientEnemyDead_){
+	else if (enemy_->GetIsDead() and isClientEnemyDead_) {
 		gameManager_->SetGameEnd(true);
 		gameManager_->SetIsClear(true);
 		isEnemyReset_ = false;
@@ -568,8 +580,8 @@ void PlayScene::Update(){
 
 	tutorialPosMiddle_ = (tutorialPosStart_ + tutorialPosEnd_) / 2.0f;
 	tutorialScaleMiddle_ = (tutorialScaleStart_ + tutorialScaleEnd_) / 2.0f;
-	
-	tutorialSprite_.startPosition =tutorialPosStart_;
+
+	tutorialSprite_.startPosition = tutorialPosStart_;
 	tutorialSprite_.middlePosition = tutorialPosMiddle_;
 	tutorialSprite_.endPosition = tutorialPosEnd_;
 	tutorialSprite_.startScale = tutorialScaleStart_;
@@ -591,16 +603,16 @@ void PlayScene::Update(){
 
 	if (gameManager_->GetIsGetScore()) {
 		scoreUI_->ScoreEase();
-		
+
 		scoreUI_->ComboEase();
-		
+
 	}
 
 	ingameStartUI_.Update();
 	ingameGameoverUI_.Update();
 	ingameFinishUI_.Update();
 	resultScoreBackUI_.Update();
-	
+
 	for (int32_t i = 0; i < 2; i++) {
 		resultScoreUIs_[i].Update();
 	}
@@ -628,9 +640,17 @@ void PlayScene::Update(){
 	gamePacket.gameState.score = gameManager_->GetScore();
 	gamePacket.gameState.combo = gameManager_->GetCombo();
 
+
 	NetworkManager::GetInstance().Send(gamePacket);
 #endif	
 
+	NetworkManager::EnemyInfoPacket enInfoPacket{};
+	enInfoPacket.head.type = 8;
+	enInfoPacket.head.size = sizeof(NetworkManager::EnemyInfoPacket);
+
+	enInfoPacket.state.healthRate = enemy_->GetHealthRate();
+	enInfoPacket.state.hitMomentFlug = enemy_->GetHitMomentFlug();
+	NetworkManager::GetInstance().Send(enInfoPacket);
 	
 #ifdef _DEBUG
 	if (input_->GetKeyboard()->Push(DIK_LCONTROL) and input_->GetKeyboard()->Trigger(DIK_0)){
