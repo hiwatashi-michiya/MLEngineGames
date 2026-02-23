@@ -297,6 +297,7 @@
     <ClCompile Include="Game\Enemy\EnemyStateController.cpp" />
     <ClCompile Include="Game\Enemy\EnemyUI.cpp" />
     <ClCompile Include="Game\hidapi\hidManager.cpp" />
+    <ClCompile Include="Game\InfomationUI\InfomationUI.cpp" />
     <ClCompile Include="Game\Joycon\Joycon.cpp" />
     <ClCompile Include="Game\LifeUI\LifeUI.cpp" />
     <ClCompile Include="Game\Manager\GameManager.cpp" />
@@ -331,6 +332,7 @@
     <ClInclude Include="Game\Enemy\EnemyStateController.h" />
     <ClInclude Include="Game\Enemy\EnemyUI.h" />
     <ClInclude Include="Game\hidapi\hidManager.h" />
+    <ClInclude Include="Game\InfomationUI\InfomationUI.h" />
     <ClInclude Include="Game\Joycon\Joycon.h" />
     <ClInclude Include="Game\LifeUI\LifeUI.h" />
     <ClInclude Include="Game\Manager\GameManager.h" />

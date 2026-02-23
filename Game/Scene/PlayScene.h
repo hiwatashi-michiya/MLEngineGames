@@ -11,6 +11,7 @@
 #include"Manager/PlayerManager.h"
 #include"LifeUI/LifeUI.h"
 #include"Score/ScoreNumber.h"
+#include"InfomationUI/InfomationUI.h"
 #include <memory>
 #include "Enemy/Enemy.h"
 #include "Bullet/BulletManager.h"
@@ -109,6 +110,7 @@ private:
 
 	std::unique_ptr<ScoreNumber> scoreUI_;
 
+	std::unique_ptr<InfomationUI> InfoUI_;
 
 
 	MLEngine::Math::Vector3 rotate_ = { 0.0f, 0.0f, 0.0f };
