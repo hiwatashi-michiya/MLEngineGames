@@ -114,6 +114,7 @@ void EnemyDownState::Enter(Enemy* enemy)
 	GlobalVariables* global = GlobalVariables::GetInstance();
 	downTime = global->GetFloatValue("EnemyState", "DownTime");
 	enemy->ChangeMotionState(std::make_unique<EnemyknockDownState>());
+	enemy->ChangeTexture(Enemy::Mode::kCry);
 }
 
 void EnemyDownState::Update(Enemy* enemy)
@@ -234,6 +235,7 @@ void EnemyGreatAttackState::Enter(Enemy* enemy)
 	intervalTime_ = 0.0f;
 	currentAttackCount_ = 0;
 	attackCount_ = GlobalVariables::GetInstance()->GetIntValue("EnemyState", "GreatAttackCount");
+	fireInterval = GlobalVariables::GetInstance()->GetFloatValue("EnemyState", "GreatAttackFireInterval");
 	normalAnimationTime_ = GlobalVariables::GetInstance()->GetFloatValue("EnemyState", "NormalAnimation");
 	attackAnimationTime_ = GlobalVariables::GetInstance()->GetFloatValue("EnemyState", "AngryAttackAnimation");
 	continuousTime_ = GlobalVariables::GetInstance()->GetFloatValue("BulletCaveat", "ContinuousTotalTime");

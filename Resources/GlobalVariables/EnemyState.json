@@ -8,6 +8,7 @@
         "BerserkFireInterval": 1.5,
         "DownTime": 15.0,
         "GreatAttackCount": 7,
+        "GreatAttackFireInterval": 0.3,
         "MaxAngryTime": 6.0,
         "MaxDownCount": 10,
         "MaxGreatAttackTime": 20.0,

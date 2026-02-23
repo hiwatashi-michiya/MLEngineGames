@@ -54,8 +54,8 @@ void EnemyAttackTurnController::ReceiveFromNetwork()
 	}
 
 	// 撃ったレーンを送る
-	bulletCaveat_->Warn(turn.lane0);
-	bulletCaveat_->Warn(turn.lane1);
+	//bulletCaveat_->Warn(turn.lane0);
+	//bulletCaveat_->Warn(turn.lane1);
 }
 
 void EnemyAttackTurnController::SendIfNeeded()

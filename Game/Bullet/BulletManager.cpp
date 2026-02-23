@@ -5,16 +5,13 @@
 #include "Input/Input.h"
 #include"Externals/imgui/imgui.h"
 #include "Enemy/Enemy.h"
-
+#include "Math/Rand.h"
 
 void BulletManager::Initialize(Player* player, Enemy* enemy)
 {
 	global_ = GlobalVariables::GetInstance();
 
 	bullets_.clear();
-
-	global_->AddItem("BulletParameters", "ReflectSpeed", 0.5f);
-
 	
 	startScale_ = global_->GetVector3Value("BulletParameters", "StartScale");
 	endScale_ = global_->GetVector3Value("BulletParameters", "EndScale");
@@ -24,6 +21,10 @@ void BulletManager::Initialize(Player* player, Enemy* enemy)
 	endDistance_ = global_->GetFloatValue("BulletParameters", "EndDistance");
 	bulletDamege_ = global_->GetIntValue("BulletParameters", "BulletDamege");
 	reflectSpeed_ = global_->GetFloatValue("BulletParameters", "ReflectSpeed");
+	normalBumerator_ = global_->GetIntValue("BulletParameters", "NormalNumerator");
+	normalDenominator_ = global_->GetIntValue("BulletParameters", "NormalDenominator");
+	weakNumerator_ = global_->GetIntValue("BulletParameters", "WeakNumerator");
+	weakDenominator_ = global_->GetIntValue("BulletParameters", "WeakDenominator");
 
 	player_ = player;
 	enemy_ = enemy;
@@ -77,8 +78,13 @@ void BulletManager::Update()
 
 
 			if(bullet->IsReflect()){
-				// 反射していたら敵にダメージを与える
-				enemy_->OnCollision(bullet->GetPosition(), bulletDamege_);
+				if (bullet->GetBulletType() == Bullet::BulletType::kNormal) {
+					// 反射していたら敵にダメージを与える
+					enemy_->OnCollision(bullet->GetPosition(), bulletDamege_);
+				}
+				/*else {
+					enemy_->OnCollision(bullet->GetPosition(), 0);
+				}*/
 				//反射のテクスチャを表示させる
 				player_->Refrect();
 				return true;
@@ -92,11 +98,16 @@ void BulletManager::Update()
 
 			if (player_->GetIsForward()) { // プレイヤーが前を向いている場合のみダメージを受ける
 				
-				player_->OnCollision(bulletDamege_);
+				if (bullet->GetBulletType() == Bullet::BulletType::kNormal) {
+					player_->OnCollision(bulletDamege_);
+				}
+				else {
+					player_->OnCollision(0);
+				}
 			}
 			else { // 敵がダメージを受ける
 				//enemy_->OnCollision(bulletDamege_);
-				SpawnReflectBullet(bullet->GetNowLine(), reflectSpeed_);
+				SpawnReflectBullet(bullet->GetNowLine(), reflectSpeed_, bullet->GetBulletType());
 			}
 
 			return true;
@@ -150,6 +161,17 @@ void BulletManager::Update()
 	ImGui::DragFloat("反射速度", &reflectSpeed_, 0.01f);
 	global_->datas_["BulletParameters"].items["ReflectSpeed"].value = reflectSpeed_;
 
+	ImGui::Separator();
+
+	ImGui::SliderInt("通常弾の分子", &normalBumerator_, 0, 100);
+	global_->datas_["BulletParameters"].items["NormalNumerator"].value = normalBumerator_;
+	ImGui::SliderInt("通常弾の分母", &normalDenominator_, 1, 100);
+	global_->datas_["BulletParameters"].items["NormalDenominator"].value = normalDenominator_;
+	ImGui::SliderInt("弱点弾の分子", &weakNumerator_, 0, 100);
+	global_->datas_["BulletParameters"].items["WeakNumerator"].value = weakNumerator_;
+	ImGui::SliderInt("弱点弾の分母", &weakDenominator_, 1, 100);
+	global_->datas_["BulletParameters"].items["WeakDenominator"].value = weakDenominator_;
+
 	if (ImGui::Button("Save")) {
 		global_->SaveFile("BulletParameters");
 		std::string message = std::format("{}.json saved", "BulletParameters");
@@ -165,8 +187,20 @@ void BulletManager::Update()
 
 void BulletManager::SpawnBullet(int laneNumber, float time)
 {
+	std::string texturePath;
+	Bullet::BulletType bulletType = GetBulletType(normalBumerator_, normalDenominator_, weakNumerator_, weakDenominator_);
+	switch (bulletType)
+	{
+	case Bullet::BulletType::kNormal:
+		texturePath = "./Resources/Texture/enemy_bullet.png";
+		break;
+	case Bullet::BulletType::kWeak:
+		texturePath = "./Resources/Texture/enemy_bullet2.png";
+		break;
+	}
+
 	std::unique_ptr<Bullet> newBullet = std::make_unique<Bullet>();
-	newBullet->Initialize("./Resources/Texture/enemy_bullet.png");
+	newBullet->Initialize(texturePath, bulletType);
 	newBullet->SetPosition(
 		{ startTranslate_.x + startDistance_ * (laneNumber - 1), startTranslate_.y, startTranslate_.z },
 		{ endTranslate_.x + endDistance_ * (laneNumber - 1), endTranslate_.y, endTranslate_.z }
@@ -177,10 +211,10 @@ void BulletManager::SpawnBullet(int laneNumber, float time)
 	bullets_.push_back(std::move(newBullet));
 }
 
-void BulletManager::SpawnReflectBullet(int laneNumber, float time)
+void BulletManager::SpawnReflectBullet(int laneNumber, float time, Bullet::BulletType type)
 {
 	std::unique_ptr<Bullet> newBullet = std::make_unique<Bullet>();
-	newBullet->Initialize("./Resources/Texture/enemy_backBullet.png");
+	newBullet->Initialize("./Resources/Texture/enemy_backBullet.png", type);
 	newBullet->SetPosition(
 		{ endTranslate_.x + endDistance_ * (laneNumber - 1), endTranslate_.y, endTranslate_.z },
 		{ startTranslate_.x + startDistance_ * (laneNumber - 1), startTranslate_.y, startTranslate_.z }
@@ -189,6 +223,32 @@ void BulletManager::SpawnReflectBullet(int laneNumber, float time)
 	newBullet->SetTravelTime(time);
 	newBullet->SetNowLine(laneNumber);
 	newBullet->SetIsReflect(true);
+	newBullet->Update();
 	bullets_.push_back(std::move(newBullet));
+}
+
+Bullet::BulletType BulletManager::GetBulletType(int normalNum, int normalDen, int weakNum, int weakDen)
+{
+	if (normalDen <= 0 || weakDen <= 0)
+		return Bullet::BulletType::kNormal;
+
+	float normalRate = (float)normalNum / normalDen;
+	float weakRate = (float)weakNum / weakDen;
+
+	float total = normalRate + weakRate;
+
+	if (total <= 0.0f)
+		return Bullet::BulletType::kNormal;
+
+	// 正規化（合計1にする）
+	normalRate /= total;
+	weakRate /= total;
+
+	float r = MLEngine::Math::RandomFloat(0.0f, 1.0f);
+
+	if (r < normalRate)
+		return Bullet::BulletType::kNormal;
+	else
+		return Bullet::BulletType::kWeak;
 }
 
