@@ -40,6 +40,8 @@ namespace MLEngine::Core {
 		std::chrono::microseconds minCheckTime_;
 		//差分時間
 		std::chrono::microseconds elapsed_;
+		//最初の数フレームを固定化
+		int32_t fixedFrameCount_ = 5;
 
 	private:
 

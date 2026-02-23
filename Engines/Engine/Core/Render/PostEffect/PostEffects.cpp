@@ -1721,6 +1721,23 @@ void CRT::Create() {
 		buffer_->Map(0, nullptr, reinterpret_cast<void**>(&parameter_));
 
 		parameter_->Time = 0.2f;
+		parameter_->uvSub = 0.5f;
+		parameter_->uvSubPow = 2.0f;
+		parameter_->uvPow = 1.1f;
+		parameter_->uvXDiv = 5.0f;
+		parameter_->uvYDiv = 4.0f;
+		parameter_->uvXYPow = 2.0f;
+		parameter_->uvDiv = 2.0f;
+		parameter_->uvDivAdd = 0.5f;
+		parameter_->uvEndPow = 0.92f;
+		parameter_->uvEndAdd = 0.04f;
+		parameter_->colorGap = 0.003f;
+		parameter_->uvMinRange = { 0.0f,0.0f };
+		parameter_->uvMaxRange = { 1.0f,1.0f };
+		parameter_->scanLine = 0.9f;
+		parameter_->scanLinePow = 0.99f;
+		parameter_->vigPow = 16.0f;
+		parameter_->vigEndPow = 0.3f;
 
 		buffer_->Unmap(0, nullptr);
 
@@ -1743,4 +1760,31 @@ void CRT::Render()
 
 void CRT::Debug()
 {
+
+#ifdef _DEBUG
+
+	ImGui::DragFloat("uvSub", &parameter_->uvSub, 0.05f, 0.0f, 1.0f);
+	ImGui::DragFloat("uvSubPow", &parameter_->uvSubPow, 0.1f, 0.0f, 20.0f);
+	ImGui::DragFloat("uvPow", &parameter_->uvPow, 0.05f, 0.0f, 20.0f);
+
+	ImGui::DragFloat("uvXDiv", &parameter_->uvXDiv, 0.05f, 0.1f, 100.0f);
+	ImGui::DragFloat("uvYDiv", &parameter_->uvYDiv, 0.05f, 0.1f, 100.0f);
+	ImGui::DragFloat("uvXYPow", &parameter_->uvXYPow, 0.05f, 0.0f, 20.0f);
+	ImGui::DragFloat("uvDiv", &parameter_->uvDiv, 0.05f, 0.1f, 100.0f);
+
+	ImGui::DragFloat("uvDivAdd", &parameter_->uvDivAdd, 0.01f, 0.0f, 1.0f);
+	ImGui::DragFloat("uvEndPow", &parameter_->uvEndPow, 0.01f, 0.0f, 2.0f);
+	ImGui::DragFloat("uvEndAdd", &parameter_->uvEndAdd, 0.01f, 0.0f, 1.0f);
+	ImGui::DragFloat("colorGap", &parameter_->colorGap, 0.001f, 0.0f, 1.0f);
+
+	ImGui::DragFloat2("uvMinRange", &parameter_->uvMinRange.x, 0.01f, 0.0f, 1.0f);
+	ImGui::DragFloat2("uvMaxRange", &parameter_->uvMaxRange.x, 0.01f, 0.0f, 1.0f);
+
+	ImGui::DragFloat("scanLine", &parameter_->scanLine, 0.01f, 0.0f, 2.0f);
+	ImGui::DragFloat("scanLinePow", &parameter_->scanLinePow, 0.01f, 0.0f, 2.0f);
+	ImGui::DragFloat("vigPow", &parameter_->vigPow, 0.1f, 0.0f, 100.0f);
+	ImGui::DragFloat("vigEndPow", &parameter_->vigEndPow, 0.01f, 0.0f, 2.0f);
+
+#endif // _DEBUG
+
 }

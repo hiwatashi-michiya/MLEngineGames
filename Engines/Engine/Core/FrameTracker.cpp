@@ -40,6 +40,16 @@ float FrameTracker::GetDeltaTimeF()
 //FPS固定更新
 void FrameTracker::Update() {
 
+	//最初のフレームだけ、60固定
+	if (fixedFrameCount_ > 0) {
+		elapsed_ = minTime_;
+		fixedFrameCount_--;
+		//現在の時間を記録する
+		preReference_ = reference_;
+		reference_ = std::chrono::steady_clock::now();
+		return;
+	}
+
 	//現在時間を取得する
 	std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
 	//前回記録からの経過時間を取得する

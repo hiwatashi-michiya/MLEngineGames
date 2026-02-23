@@ -222,6 +222,8 @@ inline void PlayScene::Initialize(){
 
 	}
 
+	bgMove_.Initialize();
+
 }
 
 void PlayScene::Finalize(){
@@ -253,7 +255,8 @@ void PlayScene::Update() {
 	}
 
 	//体力が一定以下になったら
-	if (playerManager_->GetPlayer()->GetLifeRatio() <= vignetteConfig_.startRatio) {
+	if (playerManager_->GetPlayer()->GetLifeRatio() <= vignetteConfig_.startRatio and 
+		gameManager_->GetState() == GameManager::GameState::Playing) {
 
 		//ビネットをかける
 		postEffect_->AddApplyEffect(PostEffectType::kVignette);
@@ -621,6 +624,8 @@ void PlayScene::Update() {
 
 	InfoUI_->Update();
 
+	bgMove_.Update();
+
 #ifdef CLIENT_BUILD
 	// Client専用処理
 	EnemyFlugPacket enemyPacket{};
@@ -678,6 +683,8 @@ void PlayScene::DrawImgui() {
 	gameManager_->Debug();
 
 	planeTransform_->Debug();
+
+	bgMove_.Debug();
 
 	ImGui::Begin("テクスチャ");
 	ImGui::Text("床");

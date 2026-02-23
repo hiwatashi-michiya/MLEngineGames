@@ -190,6 +190,14 @@ void NetworkManager::RecvLoop() {
 			enemyState_.angryAttackFlag = esp.angryAttackFlag;
 			hasNewEnemyState_ = true;
 		} break;
+		case 6: { //background
+			BackgroundState bg{};
+			Receive(bg);
+			bgState_.isEnteredClient = bg.isEnteredClient;
+			bgState_.isEnteredServer = bg.isEnteredServer;
+			isGetNewBGState_ = true;
+			break;
+		}
 
 		case 8: { // EnemyInfoState
 			EnemyInfoState eis{};
@@ -253,6 +261,21 @@ bool NetworkManager::GetLatestEnemyState(EnemyStatePacket& out)
 	out = enemyState_;
 	hasNewEnemyState_ = false; // 消費
 	return true;
+}
+
+bool NetworkManager::GetLatestBGState(BackgroundState& out)
+{
+	
+	//受信していなければ更新しない
+	if (not isGetNewBGState_) {
+		return false;
+	}
+
+	out = bgState_;
+	isGetNewBGState_ = false;
+
+	return true;
+
 }
 
 void NetworkManager::GetEnemyInfoState(EnemyInfoState& out){

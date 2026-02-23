@@ -20,6 +20,7 @@
 #include "MLMath.h"
 #include "../UI/UI.h"
 #include "Enemy/EnemyStateController.h"
+#include "../Background/BackgroundMove.h"
 
 class PlayScene : public BaseScene
 {
@@ -112,6 +113,7 @@ private:
 
 	std::unique_ptr<InfomationUI> InfoUI_;
 
+	BackgroundMove bgMove_;
 
 	MLEngine::Math::Vector3 rotate_ = { 0.0f, 0.0f, 0.0f };
 

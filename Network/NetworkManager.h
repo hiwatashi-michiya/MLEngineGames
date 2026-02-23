@@ -141,6 +141,9 @@ public:
 
     bool GetLatestEnemyState(EnemyStatePacket& out);
 
+    bool GetLatestBGState(BackgroundState& out);
+
+
     void GetEnemyInfoState(EnemyInfoState& out);
 private:
     NetworkManager() = default;
@@ -183,10 +186,13 @@ private:
 
     bool isEnemyDead_ = false;
 
-    EnemyStatePacket enemyState_{};
-    bool hasNewEnemyState_ = false;
+	EnemyStatePacket enemyState_{};
+	bool hasNewEnemyState_ = false;
+   
+    BackgroundState bgState_{};
+    bool isGetNewBGState_ = false;
 
     EnemyInfoState enemyInfoState_{};
-   
+
 };
 
