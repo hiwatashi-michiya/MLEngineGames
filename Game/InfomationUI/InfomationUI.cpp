@@ -9,20 +9,34 @@ InfomationUI::InfomationUI() {
 	//必須となる情報の読み込み
 	texture_.Load("./Resources/Texture/ingame_UI_enemyHP.png");
 	speech_Bubble_.Initialize(texture_, {}, baseColor_);
+	speech_Bubble_.easingTime = 0.4f;
+	speech_Bubble_.startToMiddleTime = 0.2f;
+	speech_Bubble_.stayMiddleTime = 0.0f;
 
 	texture_.Load("./Resources/Texture/enemy1_normal.png");
 	enemyTex_.Initialize(texture_, {});
+	enemyTex_.easingTime = 0.4f;
+	enemyTex_.startToMiddleTime = 0.2f;
+	enemyTex_.stayMiddleTime = 0.0f;
 
 	texture_.Load("./Resources/Texture/enemy_hpGage.png");
-	hpFrame_.Initialize(texture_, {});
+	hpFrame_.Initialize(texture_, {}, { 0.0f,0.0f,0.0f,1.0f });
+	hpFrame_.easingTime = 0.4f;
+	hpFrame_.startToMiddleTime = 0.2f;
+	hpFrame_.stayMiddleTime = 0.0f;
 
 	texture_.Load("./Resources/white.png");
-	hpBar_.Initialize(texture_, {});
-
+	hpBar_.Initialize(texture_, {}, hpColor_);
+	hpBar_.SetAnchorPoint({ 0.0f,0.5f });
+	hpBar_.easingTime = 0.4f;
+	hpBar_.startToMiddleTime = 0.2f;
+	hpBar_.stayMiddleTime = 0.0f;
 }
 
 void InfomationUI::Initialize() {
-	
+	startEase_ = false;
+
+	isReverse_ = false;
 
 }
 
@@ -35,46 +49,60 @@ void InfomationUI::SetIsActive(bool flag) {
 }
 
 void InfomationUI::Update() {
+	float deltaTime = 1.0f * MLEngine::Core::FrameTracker::GetInstance()->GetDeltaTimeF();
+
+	if (deltaTime > 1.0f){
+		deltaTime = 1.0f / 60.0f;
+	}
+
 	GlobalGetValues();
 
-	//スコアの数字十の位
-	speech_Bubble_.startPosition = speech_BubblePos_;
-	speech_Bubble_.middlePosition = speech_BubblePos_;
-	speech_Bubble_.endPosition = speech_BubblePos_;
-	speech_Bubble_.startScale = speech_BubbleSize_;
-	speech_Bubble_.middleScale = speech_BubbleSize_;
-	speech_Bubble_.endScale = speech_BubbleSize_;
 
-	//スコアの数字一の位
-	enemyTex_.startPosition = enemyTexPos_;
-	enemyTex_.middlePosition = enemyTexPos_;
-	enemyTex_.endPosition = enemyTexPos_;
-	enemyTex_.startScale = enemyTexSize_;
-	enemyTex_.middleScale = enemyTexSize_;
-	enemyTex_.endScale = enemyTexSize_;
-	enemyTex_.SetUVScale({ 0.2f,1.0f });
+	if (startEase_){
+		scaleTime_ += deltaTime;
+	}
 
-	//コンボのボード
-	hpFrame_.startPosition = hpFramePos_;
-	hpFrame_.middlePosition = hpFramePos_;
-	hpFrame_.endPosition = hpFramePos_;
-	hpFrame_.startScale = hpFrameSize_;
-	hpFrame_.middleScale = hpFrameSize_;
-	hpFrame_.endScale = hpFrameSize_;
-	//コンボの十の位
-	hpBar_.startPosition = hpBarPos_;
-	hpBar_.middlePosition = hpBarPos_;
-	hpBar_.endPosition = hpBarPos_;
-	hpBar_.startScale = hpBarSize_;
-	hpBar_.middleScale = hpBarSize_;
-	hpBar_.endScale = hpBarSize_;
+	if (scaleTime_ >= scaleTimeRimit_){
+		isReverse_ = true;
+		startEase_ = false;
+		scaleTime_ = 0.0f;
+		hpBar_.ReStart();
+		hpFrame_.ReStart();
+		speech_Bubble_.ReStart();
+		enemyTex_.ReStart();
+	}
 
-	NumberDrawControl();
+	if (hpBar_.GetIsEndEasing() == true and isReverse_ ==true){
+		isReverse_ = false;
+		hpBar_.Stop();
+		hpFrame_.Stop();
+		speech_Bubble_.Stop();
+		enemyTex_.Stop();
+	}
+
+	if (isReverse_){
+		//大->小
+		SetPosSizeReverse();
+	}
+	else {
+		//小->大
+		SetPosSize();	
+	}
 
 	speech_Bubble_.Update();
 	enemyTex_.Update();
 	hpFrame_.Update();
 	hpBar_.Update();
+
+
+	if (MLEngine::Input::Manager::GetInstance()->GetKeyboard()->Trigger(DIK_E)){
+		InfoEase();
+	}
+
+#ifdef _DEBUG
+	DebugDraw();
+#endif // _DEBUG
+
 
 }
 
@@ -113,8 +141,72 @@ void InfomationUI::GlobalGetValues() {
 	hpBarSize_ = global->GetVector2Value("InfoUIState", "hpBarSize");
 }
 
-void InfomationUI::DebugDraw() {
+void InfomationUI::SetPosSize(){
+	//吹き出し
+	speech_Bubble_.startPosition = infoStartPos_;
+	speech_Bubble_.middlePosition = AddStarthalf(speech_BubblePos_);
+	speech_Bubble_.endPosition = speech_BubblePos_;
+	speech_Bubble_.startScale = Vector2();
+	speech_Bubble_.middleScale = speech_BubbleSize_ / 2.0f;
+	speech_Bubble_.endScale = speech_BubbleSize_;
 
+	//敵の画像
+	enemyTex_.startPosition = infoStartPos_;
+	enemyTex_.middlePosition = AddStarthalf(enemyTexPos_);
+	enemyTex_.endPosition = enemyTexPos_;
+	enemyTex_.startScale = Vector2();
+	enemyTex_.middleScale = enemyTexSize_ / 2.0f;
+	enemyTex_.endScale = enemyTexSize_;
+	enemyTex_.SetUVScale({ 0.2f,1.0f });
+
+	//HPのフレーム
+	hpFrame_.startPosition = infoStartPos_;
+	hpFrame_.middlePosition = AddStarthalf(hpFramePos_);
+	hpFrame_.endPosition = hpFramePos_;
+	hpFrame_.startScale = Vector2();
+	hpFrame_.middleScale = hpFrameSize_ / 2.0f;
+	hpFrame_.endScale = hpFrameSize_;
+	//HPのバー
+	hpBar_.startPosition = infoStartPos_;
+	hpBar_.middlePosition = AddStarthalf(hpBarPos_);
+	hpBar_.endPosition = hpBarPos_;
+	hpBar_.startScale = Vector2();
+	hpBar_.middleScale = hpBarSize_ / 2.0f;
+	hpBar_.endScale = hpBarSize_;
+}
+
+void InfomationUI::SetPosSizeReverse(){
+	//吹き出し
+	speech_Bubble_.startPosition = speech_BubblePos_;
+	speech_Bubble_.endPosition = infoStartPos_ ;
+	speech_Bubble_.startScale = speech_BubbleSize_;
+	speech_Bubble_.endScale = Vector2();
+
+	//敵の画像
+	enemyTex_.startPosition = enemyTexPos_;
+	enemyTex_.endPosition = infoStartPos_;
+	enemyTex_.startScale = enemyTexSize_;
+	enemyTex_.endScale = Vector2();
+
+	//HPのフレーム
+	hpFrame_.startPosition = hpFramePos_ ;
+	hpFrame_.endPosition = infoStartPos_;
+	hpFrame_.startScale = hpFrameSize_;
+	hpFrame_.endScale = Vector2();
+	//HPのバー
+	hpBar_.startPosition = hpBarPos_ ;
+	hpBar_.endPosition = infoStartPos_;
+	hpBar_.startScale = hpBarSize_;
+	hpBar_.endScale = Vector2();
+}
+
+void InfomationUI::DebugDraw() {
+	ImGui::Begin("お知らせUI");
+	if (ImGui::Button("イージングスタート")){
+
+		InfoEase();
+	}
+	ImGui::End();
 }
 
 void InfomationUI::NumberDrawControl() {
@@ -122,4 +214,12 @@ void InfomationUI::NumberDrawControl() {
 
 
 
+}
+
+Vector2 InfomationUI::AddStarthalf(Vector2 end) const{
+	Vector2 result{};
+
+	result = (infoStartPos_ + end) / 2.0f;
+
+	return result;
 }

@@ -43,6 +43,8 @@ public:
 
 	void SetRotate(float rotate) { sprite_->rotate = rotate; }
 
+	void SetAnchorPoint(const MLEngine::Math::Vector2 point) { sprite_->anchorPoint = point; }
+
 	void SetTexture(MLEngine::Resource::Texture tex) {
 		sprite_->SetTexture(tex);
 	}

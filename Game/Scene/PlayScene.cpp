@@ -92,6 +92,8 @@ inline void PlayScene::Initialize(){
 	scoreUI_ = std::make_unique<ScoreNumber>();
 	scoreUI_->Initialize();
 
+	InfoUI_ = std::make_unique<InfomationUI>();
+	InfoUI_->Initialize();
 
 	groundTexture_ = "./Resources/Texture/ingame_stage.png";
 	laneTexture_ = "./Resources/Texture/ingame_stageLine.png";
@@ -236,19 +238,19 @@ void PlayScene::Update(){
 
 	gameManager_->ScoreUpdate();
 
-	//ブラウン管
-	postEffect_->AddApplyEffect(PostEffectType::kCRT);
+	////ブラウン管
+	//postEffect_->AddApplyEffect(PostEffectType::kCRT);
 
-	//CRTパラメータを設定
-	if (auto* crt = dynamic_cast<CRT*>(postEffect_->GetPostEffects()[PostEffectType::kCRT].get())) {
+	////CRTパラメータを設定
+	//if (auto* crt = dynamic_cast<CRT*>(postEffect_->GetPostEffects()[PostEffectType::kCRT].get())) {
 
-		crt->parameter_->Time += FrameTracker::GetInstance()->GetDeltaTimeF();
+	//	crt->parameter_->Time += FrameTracker::GetInstance()->GetDeltaTimeF();
 
-		if (crt->parameter_->Time > 100.0f) {
-			crt->parameter_->Time = 0.0f;
-		}
+	//	if (crt->parameter_->Time > 100.0f) {
+	//		crt->parameter_->Time = 0.0f;
+	//	}
 
-	}
+	//}
 
 	//体力が一定以下になったら
 	if (playerManager_->GetPlayer()->GetLifeRatio() <= vignetteConfig_.startRatio) {
@@ -604,6 +606,8 @@ void PlayScene::Update(){
 	}
 
 	scoreUI_->Update();
+
+	InfoUI_->Update();
 
 #ifdef CLIENT_BUILD
 	// Client専用処理
