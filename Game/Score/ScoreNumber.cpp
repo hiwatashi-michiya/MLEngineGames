@@ -206,30 +206,28 @@ void ScoreNumber::NumberDrawControl(){
 		comboNumOne_.startScale = Vector2{};
 	}
 
-	if (scoreTen_ > 0) {
-		scoreNumTen_.SetIsActive(true);
-	}
-	else {
-		scoreNumTen_.SetIsActive(false);
+	if (scoreTen_ == 0) {
+
+		scoreNumTen_.startScale = Vector2{};
+		scoreNumTen_.middleScale = Vector2{};
+		scoreNumTen_.endScale = Vector2{};
 
 		scoreNumOne_.startPosition = (scoreNumOnePos_ + scoreNumTenPos_) / 2.0f;
 		scoreNumOne_.middlePosition = (scoreNumOnePos_ + scoreNumTenPos_) / 2.0f;
 		scoreNumOne_.endPosition = (scoreNumOnePos_ + scoreNumTenPos_) / 2.0f;
+
 	}
 
-	if (comboTen_ > 0) {
-		comboNumTen_.SetIsActive(true);
-	}
-	else {
-		comboNumTen_.SetIsActive(false);
+	if (comboTen_ == 0) {
+
+		comboNumTen_.startScale = Vector2{};
+		comboNumTen_.middleScale = Vector2{};
+		comboNumTen_.endScale = Vector2{};
 
 		comboNumOne_.startPosition = (comboNumOnePos_ + comboNumTenPos_) / 2.0f;
 		comboNumOne_.middlePosition = (comboNumOnePos_ + comboNumTenPos_) / 2.0f;
 		comboNumOne_.endPosition = (comboNumOnePos_ + comboNumTenPos_) / 2.0f;
 
 	}
-
-
-
 
 }

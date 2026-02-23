@@ -43,6 +43,7 @@ void BackgroundMove::Initialize() {
 		clouds_[i].transform.translate = defaultCloudOffset_ + cloudOffset_[i];
 		clouds_[i].transform.translate.x += cloudPositionX_;
 		clouds_[i].transform.scale = { 2.0f,2.0f,2.0f };
+		clouds_[i].isActive = false;
 
 	}
 

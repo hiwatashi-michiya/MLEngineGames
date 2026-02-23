@@ -13,7 +13,9 @@ Player::Player() {
 
 	sprite3D_.Initialize("./Resources/texture/player_back.png", 7);
 	sprite3D_.color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	sprite3D_.transform.scale = { 17.5f,2.5f,1.0f };
+	normalScale_ = { 17.5f,2.5f,1.0f };
+	resultScale_ = { 35.0f,5.0f,2.0f };;
+	sprite3D_.transform.scale = normalScale_;
 	sprite3D_.isActive = true;
 	sprite3D_.StartAnimation();
 	vController_ = &VirtualController::GetInstance();
@@ -138,7 +140,16 @@ void Player::Update(const float deltaTime) {
 
 	if (isResultScene_) {
 
+		//ダメージを受けていた場合
+		if (isDamaged_) {
+			//被弾状態を強制解除
+			isDamaged_ = false;
+			damageTime_ = 0.0f;
+			damageBlinkingCount_ = 0.0f;
+		}
+
 		sprite3D_.transform.translate = resultPosition_;
+		sprite3D_.transform.scale = resultScale_;
 
 		//ノーダメージ(スコア0)のとき
 		if (gameManager->GetScore() <= 0) {
@@ -162,6 +173,7 @@ void Player::Update(const float deltaTime) {
 		pos_.x = LaneSpecificCalculation();
 
 		sprite3D_.transform.translate = pos_;
+		sprite3D_.transform.scale = normalScale_;
 
 	if (isForward_) {
 		sprite3D_.SetTexture(backTextureName_);
@@ -384,6 +396,7 @@ void Player::TimeProcess(const float deltaTime){
 		damageBlinkingCount_ += deltaTime;
 	}
 
+	//被弾時の点滅
 	if (damageBlinkingCount_ >= damageBlinkingTime_) {
 		damageBlinkingCount_ = 0.0f;
 		damageBlinkingTime_ = 0.5f * ((damageCount_ - damageTime_) / damageCount_) + 0.1f;
@@ -392,7 +405,7 @@ void Player::TimeProcess(const float deltaTime){
 	else {
 		sprite3D_.color = { 1.0f,1.0f,1.0f,1.0f };
 	}
-
+	//被弾後のコンボ受付時間を超えたら
 	if (damageTime_ >= damageCount_) {
 		isDamaged_ = false;
 		damageTime_ = 0.0f;

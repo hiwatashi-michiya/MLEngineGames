@@ -129,8 +129,9 @@ private:
 	std::string backTextureName_;
 	std::string damageTextureName_;
 
+	MLEngine::Math::Vector3 normalScale_{};
 	MLEngine::Math::Vector3 resultPosition_{};
-
+	MLEngine::Math::Vector3 resultScale_{};
 		
 	bool isTitleScene_ = false;
 	bool isResultScene_ = false;

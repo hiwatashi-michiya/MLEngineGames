@@ -259,7 +259,8 @@ void PlayScene::Update(){
 	}
 
 	//体力が一定以下になったら
-	if (playerManager_->GetPlayer()->GetLifeRatio() <= vignetteConfig_.startRatio) {
+	if (playerManager_->GetPlayer()->GetLifeRatio() <= vignetteConfig_.startRatio and 
+		gameManager_->GetState() == GameManager::GameState::Playing) {
 
 		//ビネットをかける
 		postEffect_->AddApplyEffect(PostEffectType::kVignette);
@@ -599,9 +600,7 @@ void PlayScene::Update(){
 
 	scoreUI_->Update();
 
-	if (not GameManager::GetInstance()->GetIsSceneChange()) {
-		bgMove_.Update();
-	}
+	bgMove_.Update();
 
 #ifdef CLIENT_BUILD
 	// Client専用処理
