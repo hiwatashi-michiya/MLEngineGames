@@ -125,6 +125,9 @@ public:
     void GetEnemyDeadFlug(bool& out)const;
 
     bool GetLatestEnemyState(EnemyStatePacket& out);
+
+    bool GetLatestBGState(BackgroundState& out);
+
 private:
     NetworkManager() = default;
     ~NetworkManager() = default;
@@ -169,5 +172,8 @@ private:
 	EnemyStatePacket enemyState_{};
 	bool hasNewEnemyState_ = false;
    
+    BackgroundState bgState_{};
+    bool isGetNewBGState_ = false;
+
 };
 

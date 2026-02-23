@@ -91,6 +91,9 @@ public:
     void ResetScore() { score_ = 0; }
     void ResetCombo() { scratchCombo_ = 0; }
 
+    //シーン切り替え中かどうか
+    bool GetIsSceneChange() const { return isSceneChange_; }
+
 private:
     // コンストラクタ
     GameManager() = default;

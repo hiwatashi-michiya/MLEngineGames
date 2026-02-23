@@ -226,6 +226,8 @@ inline void PlayScene::Initialize(){
 
 	}
 
+	bgMove_.Initialize();
+
 }
 
 void PlayScene::Finalize(){
@@ -597,6 +599,10 @@ void PlayScene::Update(){
 
 	scoreUI_->Update();
 
+	if (not GameManager::GetInstance()->GetIsSceneChange()) {
+		bgMove_.Update();
+	}
+
 #ifdef CLIENT_BUILD
 	// Client専用処理
 	EnemyFlugPacket enemyPacket{};
@@ -646,6 +652,8 @@ void PlayScene::DrawImgui() {
 	gameManager_->Debug();
 
 	planeTransform_->Debug();
+
+	bgMove_.Debug();
 
 	ImGui::Begin("テクスチャ");
 	ImGui::Text("床");
