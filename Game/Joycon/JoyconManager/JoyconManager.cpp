@@ -17,6 +17,7 @@ void JoyconManager::Draw() {
 	joyconL->ImGui("joyconL");
 	joyconR->ImGui("joyconR");
 	ImGui::Begin("JoyconManager");
+	ImGui::SetWindowFontScale(2.0f);
 	if (direction_ == front) {
 		ImGui::Text("front");
 	}else if (direction_ == back) {

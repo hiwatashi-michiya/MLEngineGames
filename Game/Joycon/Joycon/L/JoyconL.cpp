@@ -21,15 +21,13 @@ direction JoyconL::CheakRadius()
 	else if (rotate_.x < 0.0f) {
 		rotate_.x = 360.0f;
 	}
-	if (preDir == Right) {
-		if (angle.left - 15.0f < std::abs(rotate_.x) && std::abs(rotate_.x) < angle.left + 15.0f) {
-			preDir = Left;
-			return Left;
-		}
-	}else if(preDir == Left){
-		if (std::abs(rotate_.x) < angle.right + 15.0f && std::abs(rotate_.x) < 360.0f - 15.0f) {
-			preDir = Right;
-			return Right;
-		}
+	if (angle.left - 25.0f < std::abs(rotate_.x) && std::abs(rotate_.x) < angle.left + 25.0f) {
+		preDir = Left;
+		return Left;
 	}
+	else if (std::abs(rotate_.x) < angle.right + 25.0f && std::abs(rotate_.x) < 360.0f - 25.0f) {
+		preDir = Right;
+		return Right;
+	}
+	return preDir;
 };

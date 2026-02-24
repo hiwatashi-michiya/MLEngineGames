@@ -46,7 +46,7 @@ public:
 
 	bool SendSubcommand(hid_device* device, std::byte subcommandId, const std::span<std::byte>& args);
 
-	virtual void ImGui(std::string title);
+	void ImGui(std::string title);
 
 	virtual direction CheakRadius();
 

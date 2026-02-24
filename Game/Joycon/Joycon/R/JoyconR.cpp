@@ -33,29 +33,5 @@ direction JoyconR::CheakRadius()
 			return front;
 		}
 	}
-}
-
-void JoyconR::ImGui(std::string title)
-{
-
-	if (device_ == nullptr) {
-#ifdef _DEBUG
-		ImGui::Begin(title.c_str());
-		ImGui::Text("No Conect");
-		ImGui::End();
-#endif
-		return;
-	}
-#ifdef _DEBUG
-	ImGui::Begin(title.c_str());
-	ImGui::Text("GyroX:%f", rotate_.x);
-	if (preDir == Left) {
-		ImGui::Text("Left");
-	}
-	else if(preDir == Right){
-		ImGui::Text("Right");
-	}
-
-	ImGui::End();
-#endif
+	return preDir;
 }

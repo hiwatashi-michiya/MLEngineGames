@@ -121,11 +121,20 @@ void Joycon::ImGui(std::string title)
 #ifdef _DEBUG
 	ImGui::Begin(title.c_str());
 	ImGui::Text("GyroX:%f", rotate_.x);
+	ImGui::SetWindowFontScale(2.0f);
 	if (preDir == front) {
 		ImGui::Text("front");
 	}
-	else {
+	else if(preDir == back){
 		ImGui::Text("back");
+	}
+	else if (preDir == Left) {
+		ImGui::Text("Left");
+	}else if(preDir == Right) {
+		ImGui::Text("Right");
+	}
+	else {
+		ImGui::Text("no");
 	}
 
 	ImGui::End();
