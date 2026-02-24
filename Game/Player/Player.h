@@ -8,6 +8,7 @@
 
 #include "../Joycon/JoyconManager/JoyconManager.h"
 #include "../DeviceIO/DistanceSensor/DistanceSensor.h"
+#include <UI/UI.h>
 
 //プレイヤーが操作する自機
 class Player : public BaseCharacter{
@@ -25,6 +26,8 @@ public:
 	void Draw() override;
 	//デバック描画(ラインとか)
 	void DebugDraw() override;
+	//反射したときの挙動
+	void Refrect();
 
 	void OnCollision(const int damege);
 
@@ -102,6 +105,8 @@ private:
 
 	//今いるレーンに応じての座標計算
 	float LaneSpecificCalculation();
+
+	float LaneSpecificCalculationRefrect();
 	//時間による回復
 	void PlayerRecovery();
 	//送る情報を更新
@@ -118,6 +123,9 @@ private:
 
 	NetworkManager::SendPlayerState plState_{};
 
+	MLEngine::Resource::Texture texture_;
+
+
 	//入力デバイス
 	VirtualController* vController_ = nullptr;
 
@@ -129,9 +137,27 @@ private:
 	std::string backTextureName_;
 	std::string damageTextureName_;
 
+	MLEngine::Math::Vector3 normalScale_{};
 	MLEngine::Math::Vector3 resultPosition_{};
-
+	MLEngine::Math::Vector3 resultScale_{};
 		
+	//反射のテクスチャ
+	UI refrectTex_;
+
+	MLEngine::Math::Vector2 refrectPos_{};
+
+	MLEngine::Math::Vector2 refrectSize_{};
+
+	float laneDistanceRefrect_ = 0.0f;
+
+	int refrectPosY_ = 950;
+
+	float refrectCount_ = 0.0f;
+
+	float refrectTimer_ = 1.0f;
+	
+	bool isRefrect_ = false;
+
 	bool isTitleScene_ = false;
 	bool isResultScene_ = false;
 	//前を向いているか
@@ -145,6 +171,8 @@ private:
 	//瞬間を記録する
 	bool isJustTurned_ = false;
 	bool isJustMoved_ = false;
+
+	bool isJustRefrected_ = false;
 
 	bool isRecoveryArea_ = false;
 

@@ -28,8 +28,9 @@ void PlayScene::GlobalSetValue(){
 	global->SetValue("TextureState", "TitlePos", titlePos_);
 	global->SetValue("TextureState", "TitleScale", titleScale_);
 
-	global->SetValue("TextureState", "TutorialPos3D", tutorialPos_);
-	global->SetValue("TextureState", "TutorialScale3D", tutorialScale_);
+	global->SetValue("TextureState", "TutorialPosStart", tutorialPosStart_);
+	global->SetValue("TextureState", "TutorialPos", tutorialPosEnd_);
+	global->SetValue("TextureState", "TutorialScale", tutorialScaleEnd_);
 	global->SetValue("TextureState", "ResultPos", resultPos_);
 	global->SetValue("TextureState", "ResultScale", resultScale_);
 }
@@ -40,8 +41,9 @@ void PlayScene::GlobalGetValue(){
 	titlePos_ = global->GetVector2Value("TextureState", "TitlePos");
 	titleScale_ = global->GetVector2Value("TextureState", "TitleScale");
 
-	tutorialPos_ = global->GetVector3Value("TextureState", "TutorialPos3D");
-	tutorialScale_ = global->GetVector3Value("TextureState", "TutorialScale3D");
+	tutorialPosStart_= global->GetVector2Value("TextureState", "TutorialPosStart");
+	tutorialPosEnd_ = global->GetVector2Value("TextureState", "TutorialPos");
+	tutorialScaleEnd_ = global->GetVector2Value("TextureState", "TutorialScale");
 	resultPos_ = global->GetVector2Value("TextureState", "ResultPos");
 	resultScale_ = global->GetVector2Value("TextureState", "ResultScale");
 
@@ -77,7 +79,7 @@ inline void PlayScene::Initialize(){
 	bulletManager_->SetPlayer(playerManager_->GetPlayer());
 	bulletManager_->SetEnemy(enemy_.get());
 
-	EnemyAttackTurnController::GetInstance().SetBulletCaveat(bulletManager_->GetBulletCaveat());
+	//EnemyAttackTurnController::GetInstance().SetBulletCaveat(bulletManager_->GetBulletCaveat());
 
 	enemy_->SetBulletManager(bulletManager_.get());
 
@@ -90,6 +92,8 @@ inline void PlayScene::Initialize(){
 	scoreUI_ = std::make_unique<ScoreNumber>();
 	scoreUI_->Initialize();
 
+	InfoUI_ = std::make_unique<InfomationUI>();
+	InfoUI_->Initialize();
 
 	groundTexture_ = "./Resources/Texture/ingame_stage.png";
 	laneTexture_ = "./Resources/Texture/ingame_stageLine.png";
@@ -109,21 +113,19 @@ inline void PlayScene::Initialize(){
 
 	//必須となる情報の読み込み
 	titleTexture_.Load("./Resources/Texture/title_logo.png");
-	tutorialMoveTexture_ = ("./Resources/Texture/tutorial_ui_move.png");
-	tutorialTurnTexture_ = ("./Resources/Texture/tutorial_ui_turn.png");
+	tutorialMoveTexture_.Load("./Resources/Texture/tutorial_ui_move.png");
+	tutorialTurnTexture_.Load("./Resources/Texture/tutorial_ui_turn.png");
 	gameClearTexture_.Load("./Resources/Texture/gameClear.png");
 	gameOverTexture_.Load("./Resources/Texture/gameOver.png");
 
 	titleSprite_.reset(MLEngine::Resource::Sprite2D::Create(titleTexture_, titlePos_, titleColor_));
 	titleSprite_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 
-	tutorialTransform_ = std::make_unique<MLEngine::Object::Transform>();
+	tutorialSprite_.Initialize(tutorialMoveTexture_, {},tutorialColor_);
+	tutorialSprite_.SetIsActive(false);
 
-	tutorialSprite_.Initialize(tutorialMoveTexture_, 1);
-	tutorialSprite_.color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	tutorialSprite_.isActive = false;
-	tutorialSprite_.transform.translate.y = 1.0f;
-	tutorialSprite_.transform.SetParent(tutorialTransform_.get());
+	tutorialSprite_.SetTexture(tutorialTurnTexture_);
+	tutorialSprite_.SetTexture(tutorialMoveTexture_);
 
 	tutorialSprite_.SetTexture(tutorialTurnTexture_);
 	tutorialSprite_.SetTexture(tutorialMoveTexture_);
@@ -135,9 +137,6 @@ inline void PlayScene::Initialize(){
 
 	titlePos_ = { 640.0f,120.0f };
 	titleScale_ = { 510.0f,505.0f };
-
-	tutorialPos_ = { 1015.0f,200.0f };
-	tutorialScale_ = { 550.0f,385.0f };
 
 	resultPos_ = { 640.0f,120.0f };
 	resultScale_ = { 512.0f,128.0f };
@@ -226,13 +225,15 @@ inline void PlayScene::Initialize(){
 
 	}
 
+	bgMove_.Initialize();
+
 }
 
 void PlayScene::Finalize(){
 
 }
 
-void PlayScene::Update(){
+void PlayScene::Update() {
 
 	DrawImgui();
 
@@ -257,7 +258,8 @@ void PlayScene::Update(){
 	}
 
 	//体力が一定以下になったら
-	if (playerManager_->GetPlayer()->GetLifeRatio() <= vignetteConfig_.startRatio) {
+	if (playerManager_->GetPlayer()->GetLifeRatio() <= vignetteConfig_.startRatio and 
+		gameManager_->GetState() == GameManager::GameState::Playing) {
 
 		//ビネットをかける
 		postEffect_->AddApplyEffect(PostEffectType::kVignette);
@@ -290,6 +292,16 @@ void PlayScene::Update(){
 
 		}
 
+	}
+
+	NetworkManager::EnemyInfoState infoState{};
+
+	NetworkManager::GetInstance().GetEnemyInfoState(infoState);
+
+	InfoUI_->SetEnemyHealthRate(infoState.healthRate);
+
+	if (infoState.hitMomentFlug){
+		InfoUI_->InfoEase();
 	}
 
 #ifdef CLIENT_BUILD
@@ -328,7 +340,7 @@ void PlayScene::Update(){
 	}
 
 	//タイトルに戻ったときに初期化できるように
-	if (gameManager_->GetState() == GameManager::GameState::Result and static_cast<GameManager::GameState>(gameState.gameState)== GameManager::GameState::Title){
+	if (gameManager_->GetState() == GameManager::GameState::Result and static_cast<GameManager::GameState>(gameState.gameState) == GameManager::GameState::Title) {
 		MLEngine::Scene::Manager::GetInstance()->ChangeScene("Play");
 	}
 
@@ -336,11 +348,11 @@ void PlayScene::Update(){
 	if (gameManager_->GetState() == GameManager::GameState::Playing and static_cast<GameManager::GameState>(gameState.gameState) == GameManager::GameState::Title) {
 		MLEngine::Scene::Manager::GetInstance()->ChangeScene("Play");
 	}
-	
-	if (gameManager_->GetScore() != gameState.score){
+
+	if (gameManager_->GetScore() != gameState.score) {
 		gameManager_->SetIsGetScored(true);
 	}
-	else if (gameManager_->GetCombo() != gameState.combo and gameManager_->GetCombo() < gameState.combo){
+	else if (gameManager_->GetCombo() != gameState.combo and gameManager_->GetCombo() < gameState.combo) {
 		gameManager_->SetIsGetScored(true);
 	}
 	gameManager_->SetState(static_cast<GameManager::GameState>(gameState.gameState));
@@ -349,48 +361,52 @@ void PlayScene::Update(){
 
 
 	titleSprite_->isActive = false;
-	tutorialSprite_.isActive = false;
+	tutorialSprite_.SetIsActive(false);
 	resultSprite_->isActive = false;
 
 
 
 #else
 
+	GameManager::TutorialState beforeState = gameManager_->GetTutorialState();
+	GameManager::GameState beforeGameState = gameManager_->GetState();
+
 	// Server 処理
 	gameManager_->Update(playerManager_->GetPlayer()->GetIsJustTurned(), playerManager_->GetPlayer()->GetIsJustMoved());
 
-	if (gameManager_->GetState() == GameManager::GameState::Title){
+	if (gameManager_->GetState() == GameManager::GameState::Title) {
 		titleSprite_->isActive = true;
 		if (!isEnemyReset_) {
 			enemy_->Initialize();
 			isEnemyReset_ = true;
 		}
-		
+
 	}
 	else {
 		titleSprite_->isActive = false;
 	}
 
 	if (gameManager_->GetState() == GameManager::GameState::Tutorial) {
-		tutorialSprite_.isActive = true;
+		tutorialSprite_.SetIsActive(true);
 	}
 	else {
-		tutorialSprite_.isActive = false;
+		tutorialSprite_.SetIsActive(false);
+
 	}
 
-	if (gameManager_->GetTutorialState() == GameManager::TutorialState::LaneMove) {
+
+	if (gameManager_->GetTutorialState() == GameManager::TutorialState::LaneMove and beforeState != GameManager::TutorialState::LaneMove) {
 		tutorialSprite_.SetTexture(tutorialMoveTexture_);
+		tutorialSprite_.ReStart();
 	}
-	else if(gameManager_->GetTutorialState() == GameManager::TutorialState::FlontBack) {
+	else if (gameManager_->GetTutorialState() == GameManager::TutorialState::FlontBack and beforeState != GameManager::TutorialState::FlontBack) {
 		tutorialSprite_.SetTexture(tutorialTurnTexture_);
-	}
-	else {
-		tutorialSprite_.isActive = false;
+		tutorialSprite_.ReStart();
 	}
 
 	//リザルト更新
 	if (gameManager_->GetState() == GameManager::GameState::Result) {
-		
+
 		playerManager_->GetPlayer()->SetIsResultScene(true);
 
 		if (not resultScoreBackUI_.GetIsStartEasing() and not resultScoreBackUI_.GetIsEndEasing()) {
@@ -413,7 +429,7 @@ void PlayScene::Update(){
 		int score = gameManager_->GetScore();
 
 		for (int32_t i = 0; i < 2; i++) {
-			
+
 			resultScoreUIs_[i].SetIsActive(true);
 
 			int num;
@@ -467,14 +483,14 @@ void PlayScene::Update(){
 		playerManager_->GetPlayer()->SetIsResultScene(false);
 	}
 
-	if (!playerManager_->GetPlayer()->GetIsDamaged()){
+	if (!playerManager_->GetPlayer()->GetIsDamaged()) {
 		GameManager::GetInstance()->ResetCombo();
 	}
 
 	NetworkManager::GetInstance().GetEnemyDeadFlug(isClientEnemyDead_);
 #endif	
-	
-	if (gameManager_->GetState() == GameManager::GameState::Title){
+
+	if (gameManager_->GetState() == GameManager::GameState::Title) {
 		playerManager_->GetPlayer()->SetIsTitleScene(true);
 	}
 	else {
@@ -483,15 +499,16 @@ void PlayScene::Update(){
 
 	playerManager_->Update(gameManager_->GetDeltaTime());
 
-	
 
-	if (gameManager_->GetState() == GameManager::GameState::Playing){
+
+	if (gameManager_->GetState() == GameManager::GameState::Playing) {
 		bulletManager_->SetIsModelActive(true);
 
 		ingameStartUI_.SetIsActive(true);
 		ingameGameoverUI_.SetIsActive(true);
 		ingameFinishUI_.SetIsActive(true);
 		scoreUI_->SetIsActive(true);
+		InfoUI_->SetIsActive(true);
 
 		//イージングが開始していない場合、開始させる
 		if (not ingameStartUI_.GetIsStartEasing() and not ingameStartUI_.GetIsEndEasing()) {
@@ -533,13 +550,14 @@ void PlayScene::Update(){
 		ingameGameoverUI_.SetIsActive(false);
 		ingameFinishUI_.SetIsActive(false);
 		scoreUI_->SetIsActive(false);
+		InfoUI_->SetIsActive(false);
 	}
-	
-	if (playerManager_->GetPlayer()->GetIsDead()){
+
+	if (playerManager_->GetPlayer()->GetIsDead()) {
 		gameManager_->SetIsGameOver(true);
 		isEnemyReset_ = false;
 	}
-	else if (enemy_->GetIsDead() and isClientEnemyDead_){
+	else if (enemy_->GetIsDead() and isClientEnemyDead_) {
 		gameManager_->SetGameEnd(true);
 		gameManager_->SetIsClear(true);
 		isEnemyReset_ = false;
@@ -565,12 +583,22 @@ void PlayScene::Update(){
 
 	titleSprite_->position = titlePos_;
 	titleSprite_->size = titleScale_;
-	
-	tutorialTransform_->translate = tutorialPos_;
-	tutorialTransform_->rotateQuaternion = MLEngine::Math::ConvertFromEuler(tutorialRotate_);
-	tutorialTransform_->scale = tutorialScale_;
-	tutorialTransform_->UpdateMatrix();
-	tutorialSprite_.UpdateAnimation();
+
+	tutorialPosMiddle_ = (tutorialPosStart_ + tutorialPosEnd_) / 2.0f;
+	tutorialScaleMiddle_ = (tutorialScaleStart_ + tutorialScaleEnd_) / 2.0f;
+
+	tutorialSprite_.startPosition = tutorialPosStart_;
+	tutorialSprite_.middlePosition = tutorialPosMiddle_;
+	tutorialSprite_.endPosition = tutorialPosEnd_;
+	tutorialSprite_.startScale = tutorialScaleStart_;
+	tutorialSprite_.middleScale = tutorialScaleMiddle_;
+	tutorialSprite_.endScale = tutorialScaleEnd_;
+
+	tutorialSprite_.easingTime = 0.4f;
+	tutorialSprite_.startToMiddleTime = 0.2f;
+	tutorialSprite_.stayMiddleTime = 0.0f;
+	tutorialSprite_.Update();
+
 
 	resultSprite_->position = resultPos_;
 	resultSprite_->size = resultScale_;
@@ -581,21 +609,25 @@ void PlayScene::Update(){
 
 	if (gameManager_->GetIsGetScore()) {
 		scoreUI_->ScoreEase();
-		
+
 		scoreUI_->ComboEase();
-		
+
 	}
 
 	ingameStartUI_.Update();
 	ingameGameoverUI_.Update();
 	ingameFinishUI_.Update();
 	resultScoreBackUI_.Update();
-	
+
 	for (int32_t i = 0; i < 2; i++) {
 		resultScoreUIs_[i].Update();
 	}
 
 	scoreUI_->Update();
+
+	InfoUI_->Update();
+
+	bgMove_.Update();
 
 #ifdef CLIENT_BUILD
 	// Client専用処理
@@ -616,9 +648,17 @@ void PlayScene::Update(){
 	gamePacket.gameState.score = gameManager_->GetScore();
 	gamePacket.gameState.combo = gameManager_->GetCombo();
 
+
 	NetworkManager::GetInstance().Send(gamePacket);
 #endif	
 
+	NetworkManager::EnemyInfoPacket enInfoPacket{};
+	enInfoPacket.head.type = 8;
+	enInfoPacket.head.size = sizeof(NetworkManager::EnemyInfoPacket);
+
+	enInfoPacket.state.healthRate = enemy_->GetHealthRate();
+	enInfoPacket.state.hitMomentFlug = enemy_->GetHitMomentFlug();
+	NetworkManager::GetInstance().Send(enInfoPacket);
 	
 #ifdef _DEBUG
 	if (input_->GetKeyboard()->Push(DIK_LCONTROL) and input_->GetKeyboard()->Trigger(DIK_0)){
@@ -647,6 +687,8 @@ void PlayScene::DrawImgui() {
 
 	planeTransform_->Debug();
 
+	bgMove_.Debug();
+
 	ImGui::Begin("テクスチャ");
 	ImGui::Text("床");
 	ImGui::DragFloat3("床の座標", &translate_.x, 0.01f);
@@ -656,16 +698,9 @@ void PlayScene::DrawImgui() {
 	ImGui::Text("タイトル");
 	ImGui::DragFloat2("タイトル座標", &titlePos_.x, 1.0f);
 	ImGui::DragFloat2("タイトル大きさ", &titleScale_.x, 1.0f);
-
-	ImGui::Text("チュートリアル");
-	ImGui::DragFloat3("チュートリアル座標", &tutorialPos_.x, 0.1f);
-	ImGui::DragFloat3("チュートリアル回転", &tutorialRotate_.x, 0.01f);
-	ImGui::DragFloat3("チュートリアル大きさ", &tutorialScale_.x, 0.1f);
-
-	ImGui::DragFloat3("チュートリアル2座標", &tutorialSprite_.transform.translate.x, 0.1f);
-	ImGui::DragFloat3("チュートリアル2回転", &tutorialSprite_.transform.rotate.x, 0.01f);
-	ImGui::DragFloat3("チュートリアル2大きさ", &tutorialSprite_.transform.scale.x, 0.1f);
-	
+	if (ImGui::Button("チュートリアルのイージング再生")) {
+		tutorialSprite_.ReStart();
+	}
 	ImGui::End();
 
 	ImGui::Begin("縁石");

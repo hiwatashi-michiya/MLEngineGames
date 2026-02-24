@@ -42,7 +42,7 @@ void GameManager::Initialize() {
     remainingTime_ = timeLimit_;
     state_ = GameState::Title;
     nextState_ = GameState::Title;
-    tuState_ = TutorialState::LaneMove;
+    tuState_ = TutorialState::free;
     isTutorialClear_ = false;
     isGameEnd_ = false;
     isSceneChange_ = true;
@@ -55,9 +55,8 @@ void GameManager::Initialize() {
     gameClearWaitCounter_ = 0.0f;
     resultShuffleCounter_ = 0.0f;
 
-    //クライアント側では音を出さない
+    //クライアント側ではBGMを出さない
 #ifdef CLIENT_BUILD
-    Audio::SEVolume = 0.0f;
     Audio::BGMVolume = 0.0f;
 #endif
 
@@ -143,6 +142,7 @@ void GameManager::Update(bool isJustTurned, bool isJustMoved) {
             break;
         
         default:
+            tuState_ = GameManager::TutorialState::LaneMove;
             break;
         }
 

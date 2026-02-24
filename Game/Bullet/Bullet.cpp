@@ -5,7 +5,7 @@
 
 using namespace MLEngine::Utility;
 
-void Bullet::Initialize(std::string texturehandle)
+void Bullet::Initialize(std::string texturehandle, BulletType type)
 {
 	sprite3D_.Initialize(texturehandle, 6);
 	sprite3D_.StartAnimation();
@@ -13,6 +13,8 @@ void Bullet::Initialize(std::string texturehandle)
 
 	sprite3D_.transform.scale = scale_;
 	sprite3D_.transform.translate = position_;
+
+	type_ = type;
 }
 
 void Bullet::Update()

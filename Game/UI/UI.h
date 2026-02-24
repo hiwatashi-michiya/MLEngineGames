@@ -43,6 +43,12 @@ public:
 
 	void SetRotate(float rotate) { sprite_->rotate = rotate; }
 
+	void SetAnchorPoint(const MLEngine::Math::Vector2 point) { sprite_->anchorPoint = point; }
+
+	void SetTexture(MLEngine::Resource::Texture tex) {
+		sprite_->SetTexture(tex);
+	}
+
 	//スプライト取得
 	MLEngine::Resource::Sprite2D* GetSprite() { return sprite_.get(); }
 	//開始座標

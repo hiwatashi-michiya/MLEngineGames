@@ -36,11 +36,15 @@ void Enemy::Initialize()
 	attackTexture_ = "./Resources/Texture/enemy2_attack.png";
 
 	normalTexture_ = "./Resources/Texture/enemy2_normal.png";
+
+	cryTesture_ = "./Resources/Texture/enemy2_cry.png";
 #else
 	angryTexture_ = "./Resources/Texture/enemy1_angry.png";
 	attackTexture_ = "./Resources/Texture/enemy1_attack.png";
 
 	normalTexture_ = "./Resources/Texture/enemy1_normal.png";
+
+	cryTesture_ = "./Resources/Texture/enemy1_cry.png";
 #endif
 
 	// 前面スプライト初期化
@@ -95,6 +99,8 @@ void Enemy::Update()
 	leftHand_->DebugUI("左手", "Left");
 	rightHand_->DebugUI("右手", "Right");
 
+	if (hitMomentFlug_) hitMomentFlug_ = false;
+
 	if (hp_ <= 0) {
 		if (!dynamic_cast<EnemyDownState*>(currentState_.get())) {
 			ChangeState(std::make_unique<EnemyDownState>());
@@ -107,6 +113,8 @@ void Enemy::Update()
 //		EnemyAttackTurnController::GetInstance().OnMyEnemyAttackFinished(-1, -1, false);
 //#endif
 	}
+	//体力割合の計算
+	healthRate_ = ((float)hp_ / (float)maxHp_);
 
 	// 状態遷移判定
 	/*if (!dynamic_cast<EnemyBerserkState*>(currentState_.get())) {
@@ -208,6 +216,8 @@ void Enemy::DebugUI()
 	else if (dynamic_cast<EnemyGreatAttackState*>(currentState_.get())) { // 大技状態
 		ImGui::SliderInt("攻撃数", &dynamic_cast<EnemyGreatAttackState*>(currentState_.get())->attackCount_, 1, 20);
 		global_->datas_["EnemyState"].items["AttackCount"].value = dynamic_cast<EnemyGreatAttackState*>(currentState_.get())->attackCount_;
+		ImGui::SliderFloat("発射間隔", &dynamic_cast<EnemyGreatAttackState*>(currentState_.get())->fireInterval, 0.0f, 10.0f);
+		global_->datas_["EnemyState"].items["GreatAttackFireInterval"].value = dynamic_cast<EnemyGreatAttackState*>(currentState_.get())->fireInterval;
 		stateIndex = 3;
 	}
 
@@ -334,6 +344,8 @@ void Enemy::OnCollision(MLEngine::Math::Vector3 position, int damege)
 		hp_ = 0;
 	}
 
+	hitMomentFlug_ = true;
+
 	enemyDamageSE_.Play(Audio::SEVolume);
 
 	ChangeMotionState(std::make_unique<EnemyOnHitState>());
@@ -351,6 +363,9 @@ void Enemy::ChangeTexture(Mode mode)
 	}
 	else if (mode == Mode::kAttack) {
 		frontPlane_.SetTexture(attackTexture_);
+	}
+	else if (mode == Mode::kCry) {
+		frontPlane_.SetTexture(cryTesture_);
 	}
 }
 

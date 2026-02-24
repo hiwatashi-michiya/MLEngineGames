@@ -44,7 +44,8 @@ public:
     enum class TutorialState : uint8_t {
         LaneMove,      //レーン移動
         FlontBack,   //振り向き
-        Wait      //待機
+        Wait,      //待機
+        free      //
     };
     
 
@@ -90,6 +91,9 @@ public:
     //リセット関数
     void ResetScore() { score_ = 0; }
     void ResetCombo() { scratchCombo_ = 0; }
+
+    //シーン切り替え中かどうか
+    bool GetIsSceneChange() const { return isSceneChange_; }
 
 private:
     // コンストラクタ

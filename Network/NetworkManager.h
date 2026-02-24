@@ -22,6 +22,8 @@ public:
         bool isDamagedFlug;
         //クライアントが攻撃を食らったか
         bool isClientHited;
+        //反射したかどうか
+        bool isRefrected;
         //体力
         int life;
         //現在いるラインの番号
@@ -42,19 +44,9 @@ public:
         int combo;
     };
 
-    struct GameStatePacket {
-        PacketHeader header;
-        SendGameState gameState;
-    };
-
-
-    struct PlayerStatePacket {
-        PacketHeader header;
-        SendPlayerState state;
-    };
 
     struct EnemyAttackTurnPacket {
-		//uint8_t enemyId;
+        //uint8_t enemyId;
         bool isShot;
         int lane0;
         int lane1;
@@ -66,7 +58,42 @@ public:
 
         bool greatAttackFlag;
         bool angryAttackFlag;
-	};
+    };
+
+    struct BackgroundState {
+
+        bool isEnteredClient;
+        bool isEnteredServer;
+
+    };
+    //敵のインフォーメーションの通信用
+    struct EnemyInfoState {
+        float healthRate;
+        bool hitMomentFlug;
+    };
+
+    /*パケットまとめ*/
+
+    struct GameStatePacket {
+        PacketHeader header;
+        SendGameState gameState;
+    };
+
+
+    struct PlayerStatePacket {
+        PacketHeader header;
+        SendPlayerState state;
+    };
+
+    struct BackgroundPacket {
+        PacketHeader head;
+        BackgroundState state;
+    };
+
+    struct EnemyInfoPacket {
+        PacketHeader head;
+        EnemyInfoState state;
+    };
 
 #pragma pack(pop)
 
@@ -113,6 +140,11 @@ public:
     void GetEnemyDeadFlug(bool& out)const;
 
     bool GetLatestEnemyState(EnemyStatePacket& out);
+
+    bool GetLatestBGState(BackgroundState& out);
+
+
+    void GetEnemyInfoState(EnemyInfoState& out);
 private:
     NetworkManager() = default;
     ~NetworkManager() = default;
@@ -145,17 +177,22 @@ private:
     std::atomic<bool> isRunning_;
 
     SendPlayerState playerState_{};
-    
+
     SendGameState gamestates_{};
 
     EnemyAttackTurnPacket enemyAttackTurn_{};
     bool hasNewEnemyAttackTurn_ = false;
-   
+
 
     bool isEnemyDead_ = false;
 
 	EnemyStatePacket enemyState_{};
 	bool hasNewEnemyState_ = false;
    
+    BackgroundState bgState_{};
+    bool isGetNewBGState_ = false;
+
+    EnemyInfoState enemyInfoState_{};
+
 };
 

@@ -388,6 +388,27 @@ namespace MLEngine::Core::Render::PostEffect {
 		struct Parameter {
 			//彩度
 			float Time = 0.5f;
+			float uvSub = 0.5f;
+			float uvSubPow = 2.0f;
+			float uvPow = 1.1f;
+
+			float uvXDiv = 5.0f;
+			float uvYDiv = 4.0f;
+			float uvXYPow = 2.0f;
+			float uvDiv = 2.0f;
+
+			float uvDivAdd = 0.5f;
+			float uvEndPow = 0.92f;
+			float uvEndAdd = 0.04f;
+			float colorGap = 0.003f;
+
+			MLEngine::Math::Vector2 uvMinRange{ 0.0f,0.0f };
+			MLEngine::Math::Vector2 uvMaxRange{ 1.0f,1.0f };
+
+			float scanLine = 0.9f;
+			float scanLinePow = 0.99f;
+			float vigPow = 16.0f;
+			float vigEndPow = 0.3f;
 		};
 
 	public:

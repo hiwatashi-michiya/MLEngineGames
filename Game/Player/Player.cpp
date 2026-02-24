@@ -10,10 +10,15 @@ Player::Player() {
 	backTextureName_ = ("./Resources/Texture/player_anime_back.png");
 	frontTextureName_ = ("./Resources/Texture/player_anime_front.png");
 	damageTextureName_ = ("./Resources/Texture/player_anime_damage");
+	//必須となる情報の読み込み
+	texture_.Load("./Resources/Texture/ingame_player_defense.png");
+
 
 	sprite3D_.Initialize("./Resources/texture/player_back.png", 7);
 	sprite3D_.color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	sprite3D_.transform.scale = { 17.5f,2.5f,1.0f };
+	normalScale_ = { 17.5f,2.5f,1.0f };
+	resultScale_ = { 35.0f,5.0f,2.0f };;
+	sprite3D_.transform.scale = normalScale_;
 	sprite3D_.isActive = true;
 	sprite3D_.StartAnimation();
 	vController_ = &VirtualController::GetInstance();
@@ -58,14 +63,21 @@ void Player::Initialize() {
 	global->SetValue("PlayerState", "recoverySpeed", recoverySpeed_);
 	global->SetValue("PlayerState", "resultPosition", resultPosition_);
 
+	//ボードの調整
+	global->SetValue("UIState", "RefrectPos", laneDistanceRefrect_);
+	global->SetValue("UIState", "RefrectSize", refrectSize_);
+
+
 	nowLine_ = config_->centerLane_;
 	time_ = 0.0f;
 	recoverySpeed_ = 1.0f;
-	life_ = lifeMax_;
+	life_ = (int)lifeMax_;
 	pos_ = Vector3(640.0f, -3.0f, -2.0f);
 	color_ = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
 	isDead_ = false;
 	bulletDamege_ = 10;
+
+	refrectTex_.Initialize(texture_, {}, { 1.0f,1.0f,1.0f,1.0f });
 
 #pragma region
 	joyconInput = std::make_unique<JoyconManager>();
@@ -100,6 +112,10 @@ void Player::Update(const float deltaTime) {
 	recoveryValue_ = global->GetIntValue("PlayerState", "recoveryValue");
 	recoverySpeed_ = global->GetFloatValue("PlayerState", "recoverySpeed");
 	resultPosition_ = global->GetVector3Value("PlayerState", "resultPosition");
+
+	laneDistanceRefrect_ = global->GetFloatValue("UIState", "RefrectPos");
+	refrectSize_ = global->GetVector2Value("UIState", "RefrectSize");
+
 #ifdef _DEBUG
 	DebugDraw();
 
@@ -138,7 +154,16 @@ void Player::Update(const float deltaTime) {
 
 	if (isResultScene_) {
 
+		//ダメージを受けていた場合
+		if (isDamaged_) {
+			//被弾状態を強制解除
+			isDamaged_ = false;
+			damageTime_ = 0.0f;
+			damageBlinkingCount_ = 0.0f;
+		}
+
 		sprite3D_.transform.translate = resultPosition_;
+		sprite3D_.transform.scale = resultScale_;
 
 		//ノーダメージ(スコア0)のとき
 		if (gameManager->GetScore() <= 0) {
@@ -162,6 +187,7 @@ void Player::Update(const float deltaTime) {
 		pos_.x = LaneSpecificCalculation();
 
 		sprite3D_.transform.translate = pos_;
+		sprite3D_.transform.scale = normalScale_;
 
 	if (isForward_) {
 		sprite3D_.SetTexture(backTextureName_);
@@ -194,8 +220,40 @@ void Player::Update(const float deltaTime) {
 
 	}
 
+	if (isJustRefrected_) isJustRefrected_ = false;
+
+
 	sprite3D_.UpdateAnimation();
 
+	if (isRefrect_){
+		refrectCount_ += deltaTime;
+	}
+
+	refrectPos_.x = LaneSpecificCalculationRefrect();
+	refrectPos_.y = refrectPosY_;
+
+	refrectTex_.startPosition = refrectPos_;
+	refrectTex_.middlePosition = refrectPos_;
+	refrectTex_.endPosition = refrectPos_;
+	refrectTex_.startScale = Vector2();
+	refrectTex_.middleScale = refrectSize_ * 1.2f;
+	if (isRefrect_){
+		refrectTex_.endScale = refrectSize_;
+	}
+	else {
+		refrectTex_.endScale = Vector2();
+
+	}
+
+	refrectTex_.easingTime = 0.3f;
+	refrectTex_.startToMiddleTime = 0.15f;
+	refrectTex_.stayMiddleTime = 0.0f;
+	refrectTex_.Update();
+
+	if (refrectCount_ >= refrectTimer_) {
+		isRefrect_ = false;
+		refrectCount_ = 0.0f;
+	}
 	if (life_ <= 0) {
 		isDead_ = true;
 	}
@@ -225,8 +283,30 @@ void Player::DebugDraw() {
 		//GameManager::GetInstance()->AddScore(plState_.isDamagedFlug);
 	}
 	ImGui::End();
+
+	ImGui::Begin("反射板");
+	ImGui::DragInt("反射板のy座標", &refrectPosY_);
+	if (ImGui::Button("イージング開始")){
+		Refrect();
+	}
+
+	ImGui::End();
 #endif // _DEBUG
 
+}
+
+void Player::Refrect(){
+	isRefrect_ = true;
+	refrectCount_ = 0.0f;
+	refrectTex_.ReStart();
+	isJustRefrected_ = true;
+	plState_.isRefrected = isJustRefrected_;
+
+	NetworkManager::PlayerStatePacket plPacket{};
+	plPacket.header.type = 1;
+	plPacket.header.size = sizeof(NetworkManager::PlayerStatePacket);
+	plPacket.state = plState_;
+	NetworkManager::GetInstance().Send(plPacket);
 }
 
 void Player::OnCollision(const int damege) {
@@ -384,6 +464,7 @@ void Player::TimeProcess(const float deltaTime){
 		damageBlinkingCount_ += deltaTime;
 	}
 
+	//被弾時の点滅
 	if (damageBlinkingCount_ >= damageBlinkingTime_) {
 		damageBlinkingCount_ = 0.0f;
 		damageBlinkingTime_ = 0.5f * ((damageCount_ - damageTime_) / damageCount_) + 0.1f;
@@ -392,7 +473,7 @@ void Player::TimeProcess(const float deltaTime){
 	else {
 		sprite3D_.color = { 1.0f,1.0f,1.0f,1.0f };
 	}
-
+	//被弾後のコンボ受付時間を超えたら
 	if (damageTime_ >= damageCount_) {
 		isDamaged_ = false;
 		damageTime_ = 0.0f;
@@ -411,24 +492,35 @@ float Player::LaneSpecificCalculation() {
 	return result;
 }
 
+float Player::LaneSpecificCalculationRefrect(){
+	float result = 0;
+	//レーンの差
+	int laneDis = 0;
+	//中心のレーンからの差を求める
+	laneDis = config_->centerLane_ - nowLine_;
+	result = (float)(960.0f - (laneDistanceRefrect_ * laneDis));
+
+	return result;
+}
+
 void Player::PlayerRecovery() {
 	//時間以上で回復
 	if (time_ >= recoverySpeed_) {
 		time_ = 0.0f;
 		if (standTime_ >= recoveryDoubleUpCount_){
-			life_ += (recoveryValue_ * 2.0f);
+			life_ += (int)(recoveryValue_ * 2.0f);
 		}
 		else if (standTime_ >= recoveryUpCount_){
-			life_ += recoveryValue_ * 1.5f;
+			life_ += (int)(recoveryValue_ * 1.5f);
 		}
 		else {
-			life_ += recoveryValue_;
+			life_ += (int)(recoveryValue_);
 		}
 	}
 
 	//超過していた場合調整
 	if (life_ >= lifeMax_) {
-		life_ = lifeMax_;
+		life_ = (int)lifeMax_;
 
 	}
 }
@@ -438,17 +530,8 @@ void Player::PlayerInfoInsertion() {
 	plState_.isForwardFlug = isForward_;
 	plState_.life = life_;
 	plState_.nowLine = nowLine_;
+	plState_.isRefrected = isJustRefrected_;
 
-
-
-	//if (not isForward_) {
-	//	//後ろを向いているなら青色
-	//	sprite_->color = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
-	//}
-	//else {
-	//	//前を向いているなら赤色
-	//	sprite_->color = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
-	//}
 }
 
 void Player::SyncFromNetwork() {
@@ -473,6 +556,12 @@ void Player::SyncFromNetwork() {
 			nowLine_ = netState.nowLine;
 		}
 
+		if (netState.isRefrected){
+			isRefrect_ = true;
+			refrectCount_ = 0.0f;
+			refrectTex_.ReStart();
+		}
+
 		plState_.isClientHited = netState.isClientHited;
 
 #else
@@ -487,7 +576,11 @@ void Player::SyncFromNetwork() {
 			plState_.isClientHited = false;
 		}
 		
-
+		if (netState.isRefrected) {
+			isRefrect_ = true;
+			refrectCount_ = 0.0f;
+			refrectTex_.ReStart();
+		}
 #endif
 
 
