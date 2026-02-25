@@ -73,6 +73,7 @@ private:
 	bool isModelActive_ = true;
 	// 弾を受け取ったかどうか
 	bool isReceive_ = false;
+	int receiveCount_ = 0;
 	// 反射したかどうか
 	bool isReflect_ = false;
 	// 反射した弾の速度

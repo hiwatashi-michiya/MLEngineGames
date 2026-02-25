@@ -317,9 +317,7 @@ void EnemyTutorialNormalState::Enter(Enemy* enemy)
 	enemy->GetFrontSprite()->SetAnimationTime(normalAnimationTime_);
 
 	enemy->GetLeftHand()->SetHandState(EnemyHand::HandState::kNormal);
-	enemy->GetLeftHand()->SetTotalTime(attackAnimationTime_);
 	enemy->GetRightHand()->SetHandState(EnemyHand::HandState::kNormal);
-	enemy->GetRightHand()->SetTotalTime(attackAnimationTime_);
 	enemyAttackSE_.Load("SE/enemy_attack.mp3");
 }
 
@@ -394,9 +392,7 @@ void EnemyTutorialBerserkState::Enter(Enemy* enemy)
 	enemy->ChangeTexture(Enemy::Mode::kAngry);
 	enemy->GetFrontSprite()->SetAnimationTime(normalAnimationTime_);
 	enemy->GetLeftHand()->SetHandState(EnemyHand::HandState::kAngry);
-	enemy->GetLeftHand()->SetTotalTime(attackAnimationTime_);
 	enemy->GetRightHand()->SetHandState(EnemyHand::HandState::kAngry);
-	enemy->GetRightHand()->SetTotalTime(attackAnimationTime_);
 	enemyAttackSE_.Load("SE/enemy_attack.mp3");
 }
 

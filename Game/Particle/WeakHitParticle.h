@@ -44,7 +44,7 @@ public:
 	void Update();
 	void DebugUI();
 
-	void Spawn(MLEngine::Math::Vector3 position);
+	void Spawn(MLEngine::Math::Vector3 position, bool waterOnly);
 
 private:
 

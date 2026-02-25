@@ -118,7 +118,7 @@ void WeakHitParticle::DebugUI() {
 #endif // _DEBUG
 }
 
-void WeakHitParticle::Spawn(MLEngine::Math::Vector3 position){
+void WeakHitParticle::Spawn(MLEngine::Math::Vector3 position, bool waterOnly){
 
 	for (int i = 0; i < waterDivision_; i++) {
 		Water newWater;
@@ -140,6 +140,9 @@ void WeakHitParticle::Spawn(MLEngine::Math::Vector3 position){
 		waters_.emplace_back(std::move(newWater));
 	}
 
+	if (waterOnly) {
+		return;
+	}
 	for(int i = 0; i < starDivision_; i++){
 		Star newStar;
 		newStar.sprite3D_ = std::make_unique<MLEngine::Resource::Sprite3D>();

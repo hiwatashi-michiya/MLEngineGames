@@ -165,7 +165,7 @@ void GameManager::Update(bool isJustTurned, bool isJustMoved, bool isReceive, bo
 					tutorialClearSE_.Play(Audio::SEVolume);
 				}
 				finishTime_ += deltaTime_;
-				if (finishTime_ > 1.0f) {
+				if (finishTime_ > 3.0f) {
 					isTutorialClear_ = true;
 					finishTime_ = 0.0f;
 				}

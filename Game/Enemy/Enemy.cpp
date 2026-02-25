@@ -227,9 +227,23 @@ void Enemy::TutorialUpdate()
 			isEasing_ = false;
 			enemyUI_->SetIsActive(true);
 		}
+		leftHand_->Update();
+		rightHand_->Update();
+
+		// トランスフォーム更新
+		offsetTransform_->rotateQuaternion = MLEngine::Math::ConvertFromEuler(rotate_);
+		offsetTransform_->UpdateMatrix();
+
+		transform_->UpdateMatrix();
+
+		// アニメーション更新
+		frontPlane_.UpdateAnimation();
 	}
 	else {
 		currentState_->Update(this);
+
+		leftHand_->Update();
+		rightHand_->Update();
 
 		hitParticle_->Update();
 
@@ -239,16 +253,20 @@ void Enemy::TutorialUpdate()
 		// UI更新
 		enemyUI_->Update();
 
+		// トランスフォーム更新
+		offsetTransform_->rotateQuaternion = MLEngine::Math::ConvertFromEuler(rotate_);
+		offsetTransform_->UpdateMatrix();
+
+		transform_->UpdateMatrix();
+
 		// アニメーション更新
 		frontPlane_.UpdateAnimation();
-	}
-	// トランスフォーム更新
-	offsetTransform_->rotateQuaternion = MLEngine::Math::ConvertFromEuler(rotate_);
-	offsetTransform_->UpdateMatrix();
-	transform_->UpdateMatrix();
 
-	leftHand_->Update();
-	rightHand_->Update();
+		if (hp_ <= maxHp_ / 2) {
+			hp_ = maxHp_ / 2;
+		}
+
+	}
 }
 
 void Enemy::DebugUI()

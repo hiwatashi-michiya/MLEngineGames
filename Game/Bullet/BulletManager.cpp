@@ -60,7 +60,7 @@ void BulletManager::Initialize(Player* player, Enemy* enemy)
 	}
 
 #endif
-	
+	receiveCount_ = 0;
 
 }
 
@@ -87,13 +87,13 @@ void BulletManager::Update(bool isTutorial)
 				if (bullet->GetBulletType() == Bullet::BulletType::kNormal) {
 					// 反射していたら敵にダメージを与える
 					enemy_->OnCollision(bullet->GetPosition(), bulletDamege_);
+					isReflect_ = true;
 				}
 				/*else {
 					enemy_->OnCollision(bullet->GetPosition(), 0);
 				}*/
 				//反射のテクスチャを表示させる
 				player_->Refrect();
-				isReflect_ = true;
 				return true;
 			}
 			
@@ -115,13 +115,17 @@ void BulletManager::Update(bool isTutorial)
 				}
 				else {
 					player_->OnCollision(0);
-					weakHitParticle_->Spawn(bullet->GetPosition());
+					weakHitParticle_->Spawn(bullet->GetPosition(), false);
 					isReceive_ = true;
+					receiveCount_++;
 				}
 			}
 			else { // 敵がダメージを受ける
 				//enemy_->OnCollision(bulletDamege_);
-				SpawnReflectBullet(bullet->GetNowLine(), reflectSpeed_, bullet->GetBulletType());
+				if (bullet->GetBulletType() == Bullet::BulletType::kNormal) {
+					SpawnReflectBullet(bullet->GetNowLine(), reflectSpeed_, bullet->GetBulletType());
+				}
+				weakHitParticle_->Spawn(bullet->GetPosition(), true);
 			}
 
 			return true;
@@ -205,7 +209,12 @@ void BulletManager::SpawnBullet(int laneNumber, float time, bool isTutorial)
 	std::string texturePath;
 	Bullet::BulletType bulletType = GetBulletType(normalBumerator_, normalDenominator_, weakNumerator_, weakDenominator_);
 	if (isTutorial) {
-		bulletType = GetBulletType(1, 3, 2, 3);
+		if (receiveCount_ < 3) {
+			bulletType = GetBulletType(1, 3, 2, 3);
+		}
+		else {
+			bulletType = GetBulletType(3, 3, 0, 3);
+		}
 	}
 	switch (bulletType)
 	{
