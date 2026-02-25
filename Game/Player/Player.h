@@ -8,6 +8,7 @@
 
 #include "../Joycon/JoyconManager/JoyconManager.h"
 #include "../DeviceIO/DistanceSensor/DistanceSensor.h"
+#include "../DeviceIO/WirelessLed/WirelessLed.h"
 #include <UI/UI.h>
 
 //プレイヤーが操作する自機
@@ -215,7 +216,7 @@ private:
 	// Client専用処理
 	//距離センサー
 	std::unique_ptr<DistanceSensor> DistanceSensor_;
-
+	std::unique_ptr<WirelessLed> WirelessLed_;
 #endif
 
 	//SE

@@ -291,6 +291,7 @@
     <ClCompile Include="Game\DeviceIO\UltrasonicSensor\UltrasonicSensor.cpp" />
     <ClCompile Include="Game\Character\BaseCharacter.cpp" />
     <ClCompile Include="Game\Config\GameConfig.cpp" />
+    <ClCompile Include="Game\DeviceIO\WirelessLed\WirelessLed.cpp" />
     <ClCompile Include="Game\Enemy\EnemyAttackTurnController.cpp" />
     <ClCompile Include="Game\Enemy\EnemyHand.cpp" />
     <ClCompile Include="Game\Enemy\EnemyMotionState.cpp" />
@@ -329,6 +330,7 @@
     <ClInclude Include="Game\DeviceIO\UltrasonicSensor\UltrasonicSensor.h" />
     <ClInclude Include="Game\Character\BaseCharacter.h" />
     <ClInclude Include="Game\Config\GameConfig.h" />
+    <ClInclude Include="Game\DeviceIO\WirelessLed\WirelessLed.h" />
     <ClInclude Include="Game\Enemy\EnemyAttackTurnController.h" />
     <ClInclude Include="Game\Enemy\EnemyHand.h" />
     <ClInclude Include="Game\Enemy\EnemyMotionState.h" />
