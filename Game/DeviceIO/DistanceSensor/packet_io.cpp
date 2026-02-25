@@ -93,4 +93,10 @@ bool PacketIO::read(void* packet, size_t packet_size) {
     return false;
 }
 
+bool PacketIO::writeByte(uint8_t value) {
+    if (!this->device) return false;
+
+    return this->device->write(&value, 1) == 1;
+}
+
 constexpr uint8_t PacketIO::HEADER[];

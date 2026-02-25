@@ -6,8 +6,9 @@
 class PacketIO {
 public:
     enum class DeviceType : uint32_t {
-        ALL = 0x0000'0000,
+        NONE = 0x0000'0000,
         PICO = 0x2E8A'F00A,
+        ALL = 0xFFFF'FFFF,
     };
     struct Port {
         std::string name;
@@ -26,6 +27,7 @@ public:
     bool open();
     void close();
     bool read(void* packet, size_t packet_size);
+    bool writeByte(uint8_t value);
     const Port port;
 
 private:

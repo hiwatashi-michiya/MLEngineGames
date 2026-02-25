@@ -90,6 +90,9 @@ void Player::Initialize() {
 	DistanceSensor_ = std::make_unique<DistanceSensor>();
 	DistanceSensor_->Init();
 #pragma endregion 距離センサー
+	WirelessLed_ = std::make_unique<WirelessLed>();
+	WirelessLed_->Init();
+	WirelessLed_->SetLevel(0);
 #endif
 
 }
@@ -203,6 +206,9 @@ void Player::Update(const float deltaTime) {
 			//ノーダメージ(スコア0)のとき
 			if (gameManager->GetScore() <= 0) {
 				sprite3D_.SetTexture(frontTextureName_);
+#ifdef _SERVER
+				WirelessLed_->SetLevel(0);
+#endif
 			}
 			//スコアが1以上の時
 			else {
@@ -213,7 +219,9 @@ void Player::Update(const float deltaTime) {
 				textureName += ".png";
 
 				sprite3D_.SetTexture(textureName);
-
+#ifdef _SERVER
+				WirelessLed_->SetLevel(gameManager->GetScoreLevel());
+#endif
 			}
 
 		}

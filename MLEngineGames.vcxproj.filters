@@ -36,6 +36,7 @@
     <ClCompile Include="Game\Particle\SmokeParticle.cpp" />
     <ClCompile Include="Game\Background\BackgroundMove.cpp" />
     <ClCompile Include="Game\InfomationUI\InfomationUI.cpp" />
+    <ClCompile Include="Game\DeviceIO\WirelessLed\WirelessLed.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -197,6 +198,7 @@
     <ClInclude Include="Game\Particle\SmokeParticle.h" />
     <ClInclude Include="Game\Background\BackgroundMove.h" />
     <ClInclude Include="Game\InfomationUI\InfomationUI.h" />
+    <ClInclude Include="Game\DeviceIO\WirelessLed\WirelessLed.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
