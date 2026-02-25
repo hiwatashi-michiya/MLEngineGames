@@ -54,12 +54,14 @@ void BackgroundMove::Update() {
 
 	SyncFromNetwork();
 
-	//managerを介してクライアントに送る
-	NetworkManager::BackgroundPacket bgPacket{};
-	bgPacket.head.type = 6;
-	bgPacket.head.size = sizeof(NetworkManager::BackgroundPacket);
-	bgPacket.state = bgState_;
-	NetworkManager::GetInstance().Send(bgPacket);
+	if (needSend_) {
+		//managerを介してクライアントに送る
+		NetworkManager::BackgroundPacket bgPacket{};
+		bgPacket.head.type = 6;
+		bgPacket.head.size = sizeof(NetworkManager::BackgroundPacket);
+		bgPacket.state = bgState_;
+		NetworkManager::GetInstance().Send(bgPacket);
+	}
 
 #ifdef CLIENT_BUILD
 
@@ -82,6 +84,7 @@ void BackgroundMove::Update() {
 			bgState_.isEnteredClient = false;
 			isStartMoveClouds_ = false;
 			currentCloudMoveTime_ = 0.0f;
+			needSend_ = true;
 		}
 
 		for (int32_t i = 0; i < kMaxClouds_; i++) {
@@ -122,6 +125,7 @@ void BackgroundMove::Update() {
 			bgState_.isEnteredServer = false;
 			isStartMoveClouds_ = false;
 			currentCloudMoveTime_ = 0.0f;
+			needSend_ = true;
 		}
 
 		for (int32_t i = 0; i < kMaxClouds_; i++) {

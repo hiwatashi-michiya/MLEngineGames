@@ -59,6 +59,8 @@ private:
 	//雲の動きを開始するかどうか
 	bool isStartMoveClouds_ = false;
 
+	bool needSend_ = false;
+
 };
 
 
