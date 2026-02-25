@@ -1731,13 +1731,13 @@ void CRT::Create() {
 		parameter_->uvDivAdd = 0.5f;
 		parameter_->uvEndPow = 0.92f;
 		parameter_->uvEndAdd = 0.04f;
-		parameter_->colorGap = 0.003f;
+		parameter_->colorGap = 0.001f;
 		parameter_->uvMinRange = { 0.0f,0.0f };
 		parameter_->uvMaxRange = { 1.0f,1.0f };
-		parameter_->scanLine = 0.9f;
-		parameter_->scanLinePow = 0.99f;
+		parameter_->scanLine = 1.05f;
+		parameter_->scanLinePow = 1.2f;
 		parameter_->vigPow = 16.0f;
-		parameter_->vigEndPow = 0.3f;
+		parameter_->vigEndPow = 0.41f;
 
 		buffer_->Unmap(0, nullptr);
 
