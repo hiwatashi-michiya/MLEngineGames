@@ -35,6 +35,9 @@ void BulletManager::Initialize(Player* player, Enemy* enemy)
 	smokeParticle_ = std::make_unique<SmokeParticle>();
 	smokeParticle_->Initialize();
 
+	weakHitParticle_ = std::make_unique<WeakHitParticle>();
+	weakHitParticle_->Initialize();
+
 
 #ifdef _DEBUG
 	startSprite3D_.clear();
@@ -61,7 +64,7 @@ void BulletManager::Initialize(Player* player, Enemy* enemy)
 
 }
 
-void BulletManager::Update()
+void BulletManager::Update(bool isTutorial)
 {
 	MLEngine::Input::Manager* input = MLEngine::Input::Manager::GetInstance();
 
@@ -72,8 +75,11 @@ void BulletManager::Update()
 
 	}
 
+	isReceive_ = false;
+	isReflect_ = false;
+
 	// 死んだ弾をリストから削除
-	bullets_.remove_if([this](const std::unique_ptr<Bullet>& bullet) {
+	bullets_.remove_if([this, isTutorial](const std::unique_ptr<Bullet>& bullet) {
 		if (bullet->IsDead()) {
 
 
@@ -87,6 +93,7 @@ void BulletManager::Update()
 				}*/
 				//反射のテクスチャを表示させる
 				player_->Refrect();
+				isReflect_ = true;
 				return true;
 			}
 			
@@ -99,10 +106,17 @@ void BulletManager::Update()
 			if (player_->GetIsForward()) { // プレイヤーが前を向いている場合のみダメージを受ける
 				
 				if (bullet->GetBulletType() == Bullet::BulletType::kNormal) {
-					player_->OnCollision(bulletDamege_);
+					if (isTutorial) {
+						player_->OnCollision(0);
+					}
+					else {
+						player_->OnCollision(bulletDamege_);
+					}
 				}
 				else {
 					player_->OnCollision(0);
+					weakHitParticle_->Spawn(bullet->GetPosition());
+					isReceive_ = true;
 				}
 			}
 			else { // 敵がダメージを受ける
@@ -119,6 +133,7 @@ void BulletManager::Update()
 	bulletCaveat_->DebugUI();
 
 	smokeParticle_->Update();
+	weakHitParticle_->Update();
 
 #ifdef _DEBUG
 
@@ -185,10 +200,13 @@ void BulletManager::Update()
 }
 
 
-void BulletManager::SpawnBullet(int laneNumber, float time)
+void BulletManager::SpawnBullet(int laneNumber, float time, bool isTutorial)
 {
 	std::string texturePath;
 	Bullet::BulletType bulletType = GetBulletType(normalBumerator_, normalDenominator_, weakNumerator_, weakDenominator_);
+	if (isTutorial) {
+		bulletType = GetBulletType(1, 3, 2, 3);
+	}
 	switch (bulletType)
 	{
 	case Bullet::BulletType::kNormal:
@@ -208,6 +226,7 @@ void BulletManager::SpawnBullet(int laneNumber, float time)
 	newBullet->SetScale(startScale_, endScale_);
 	newBullet->SetTravelTime(time);
 	newBullet->SetNowLine(laneNumber);
+	newBullet->Update();
 	bullets_.push_back(std::move(newBullet));
 }
 

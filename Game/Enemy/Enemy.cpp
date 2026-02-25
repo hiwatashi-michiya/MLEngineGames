@@ -85,11 +85,90 @@ void Enemy::Initialize()
 
 	enemyUI_ = std::make_unique<EnemyUI>();
 	enemyUI_->Initialize(this);
+	enemyUI_->Update();
 
 	enemyDamageSE_.Load("SE/enemy_damage.mp3");
 	enemyAngrySE_.Load("SE/enemy_angry.mp3");
 	enemyDownSE_.Load("SE/enemy_down.mp3");
 
+}
+
+void Enemy::TutorialInitialize()
+{
+	global_ = GlobalVariables::GetInstance();
+
+	// 
+	scale_ = global_->GetVector3Value("EnemyState", "Scale");
+	translate_ = global_->GetVector3Value("EnemyState", "Translate");
+	maxHp_ = global_->GetIntValue("EnemyState", "MaxHp");
+	hp_ = global_->GetIntValue("EnemyState", "MaxHp");
+	maxDownCount_ = global_->GetIntValue("EnemyState", "MaxDownCount");
+	maxGrateAttackTime_ = global_->GetFloatValue("EnemyState", "MaxGreatAttackTime");
+	maxAngryTime_ = global_->GetFloatValue("EnemyState", "MaxAngryTime");
+
+	offsetTransform_ = std::make_unique<MLEngine::Object::Transform>();
+	offsetTransform_->scale = scale_;
+	offsetTransform_->translate = translate_;
+
+	transform_ = std::make_unique<MLEngine::Object::Transform>();
+	transform_->SetParent(offsetTransform_.get());
+	transform_->translate = { 0.0f, 0.0f, 0.0f };
+
+
+
+	angryTexture_ = "./Resources/Texture/enemy1_angry.png";
+	attackTexture_ = "./Resources/Texture/enemy1_attack.png";
+
+	normalTexture_ = "./Resources/Texture/enemy1_normal.png";
+
+	cryTesture_ = "./Resources/Texture/enemy1_cry.png";
+
+	// 前面スプライト初期化
+	frontPlane_.Initialize(normalTexture_, 5);
+	frontPlane_.transform.translate = { 0.0f, 1.0f, -0.001f };
+	frontPlane_.transform.SetParent(offsetTransform_.get());
+	frontPlane_.StartAnimation();
+
+	// 背面スプライト初期化
+	backTextrue_ = "./Resources/Texture/enemy1_back.png";
+	backPlane_.Initialize(backTextrue_, 1);
+	backPlane_.transform.rotateQuaternion = MLEngine::Math::ConvertFromEuler({ 0.0f, 180.0f * (float)(M_PI / 180.0f), 0.0f });
+	backPlane_.transform.translate = { 0.0f, 1.0f, 0.001f };
+	backPlane_.transform.SetParent(offsetTransform_.get());
+
+
+
+#ifdef _DEBUG
+	model_.Initialize("./Resources/model/plane/plane.obj");
+	model_.worldMatrix = MLEngine::Math::MakeAffineMatrix({ 0.1f, 0.1f, 1.0f }, { 0.0f, 0.0f, 0.0f, 1.0f }, translate_);
+#endif
+
+	leftHand_ = std::make_unique<EnemyHand>();
+	leftHand_->Initialize(transform_.get(), true);
+	rightHand_ = std::make_unique<EnemyHand>();
+	rightHand_->Initialize(transform_.get(), false);
+
+	hitParticle_ = std::make_unique<HitParticle>();
+	hitParticle_->Initialize();
+
+	ChangeState(std::make_unique<EnemyTutorialNormalState>());
+	// 
+	ChangeMotionState(std::make_unique<EnemyIdleState>());
+
+	hp_ = maxHp_;
+
+	downCount_ = 0;
+
+	enemyUI_ = std::make_unique<EnemyUI>();
+	enemyUI_->Initialize(this);
+	enemyUI_->Update();
+
+	enemyDamageSE_.Load("SE/enemy_damage.mp3");
+	enemyAngrySE_.Load("SE/enemy_angry.mp3");
+	enemyDownSE_.Load("SE/enemy_down.mp3");
+
+	isEasing_ = true;
+	easingTime_ = 0.0f;
 }
 
 void Enemy::Update()
@@ -105,31 +184,7 @@ void Enemy::Update()
 			ChangeMotionState(std::make_unique<EnemyknockDownState>());
 			enemyDownSE_.Play(Audio::SEVolume);
 		}
-//#ifdef CLIENT_BUILD
-//		EnemyAttackTurnController::GetInstance().OnMyEnemyAttackFinished(-1, -1, false);
-//#else
-//		EnemyAttackTurnController::GetInstance().OnMyEnemyAttackFinished(-1, -1, false);
-//#endif
 	}
-
-	// 状態遷移判定
-	/*if (!dynamic_cast<EnemyBerserkState*>(currentState_.get())) {
-		if(hp_ <= maxHp_ * 0.3f) {
-			ChangeState(std::make_unique<EnemyBerserkState>());
-			enemyAngrySE_.Play(Audio::SEVolume);
-		}
-	}*/
-	// ダウン状態へ移行判定
-	/*if (!dynamic_cast<EnemyDownState*>(currentState_.get())) {
-		if(downCount_ >= maxDownCount_) {
-			ChangeState(std::make_unique<EnemyDownState>());
-			ChangeMotionState(std::make_unique<EnemyknockDownState>());
-			downCount_ = 0;
-			enemyDownSE_.Play(Audio::SEVolume);
-		}
-	}*/
-
-	MLEngine::Input::Manager* input = MLEngine::Input::Manager::GetInstance();
 
 	currentState_->Update(this);
 
@@ -152,6 +207,44 @@ void Enemy::Update()
 
 	// アニメーション更新
 	frontPlane_.UpdateAnimation();
+}
+
+void Enemy::TutorialUpdate()
+{
+
+	if (isEasing_) {
+		easingTime_ += 1.0f / 60.0f;
+
+		easingTime_ = std::clamp(easingTime_, 0.0f, 1.0f);
+
+		offsetTransform_->scale = MLEngine::Math::Lerp(MLEngine::Math::Vector3{ 0.0f, 0.0f, 1.0f }, scale_, easingTime_);
+		enemyUI_->SetIsActive(false);
+		if (easingTime_ >= 1.0f) {
+			isEasing_ = false;
+			enemyUI_->SetIsActive(true);
+		}
+	}
+	else {
+		currentState_->Update(this);
+
+		hitParticle_->Update();
+
+		// モーション更新
+		motionState_->Update(this);
+
+		// UI更新
+		enemyUI_->Update();
+
+		// アニメーション更新
+		frontPlane_.UpdateAnimation();
+	}
+	// トランスフォーム更新
+	offsetTransform_->rotateQuaternion = MLEngine::Math::ConvertFromEuler(rotate_);
+	offsetTransform_->UpdateMatrix();
+	transform_->UpdateMatrix();
+
+	leftHand_->Update();
+	rightHand_->Update();
 }
 
 void Enemy::DebugUI()

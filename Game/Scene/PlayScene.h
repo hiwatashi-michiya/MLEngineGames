@@ -19,6 +19,7 @@
 #include "MLMath.h"
 #include "../UI/UI.h"
 #include "Enemy/EnemyStateController.h"
+#include "Particle/WeakHitParticle.h"
 
 class PlayScene : public BaseScene
 {
@@ -100,7 +101,7 @@ private:
 
 	// 敵
 	std::unique_ptr<Enemy> enemy_;
-	bool isEnemyReset_;
+	bool isEnemyReset_ = false;
 
 	// 弾マネージャー
 	std::unique_ptr<BulletManager> bulletManager_;
@@ -120,13 +121,15 @@ private:
 	MLEngine::Resource::Texture titleTexture_;
 	MLEngine::Resource::Texture gameClearTexture_;
 	MLEngine::Resource::Texture gameOverTexture_;
-
+	MLEngine::Resource::Texture okMarkTexture_;
 	MLEngine::Resource::Texture tutorialMoveTexture_;
 	MLEngine::Resource::Texture tutorialTurnTexture_;
+	MLEngine::Resource::Texture tutorialEnemyTexture_;
 
 	UI tutorialSprite_;
 	std::unique_ptr<MLEngine::Resource::Sprite2D> titleSprite_;
 	std::unique_ptr<MLEngine::Resource::Sprite2D> resultSprite_;
+	std::unique_ptr<MLEngine::Resource::Sprite2D> okMarkSprite_[2];
 
 
 	MLEngine::Math::Vector2 titlePos_;
@@ -183,6 +186,7 @@ private:
 	UI ingameFinishUI_;
 	UI resultScoreBackUI_;
 	std::array<UI, 2> resultScoreUIs_;
+
 
 };
 

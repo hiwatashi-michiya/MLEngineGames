@@ -266,7 +266,7 @@ void EnemyHand::Update()
 		angle_ = 0.0f;
 
 		if (prevHandState_ == HandState::kAngry) {
-			totalTime_ = angryAttackTime_ + attackMotionTime_;
+			totalTime_ = angryAttackTime_;
 		}
 		else {
 			totalTime_ = normalAttackTime_ + attackMotionTime_;
@@ -370,8 +370,7 @@ void EnemyHand::DebugUI(std::string uiname, std::string dir)
 
 void EnemyHand::SetHandState(HandState state)
 {
-	prevHandState_ = handState_;
-	handState_ = state;
+	
 	if(state != HandState::kAttack){
 		frontPlane_.Initialize(frontTexture_, 1);
 		backPlane_.Initialize(backTexture_, 1);
@@ -386,14 +385,21 @@ void EnemyHand::SetHandState(HandState state)
 			transform_->scale = global_->GetVector3Value(enemytype_ + "Hand", "RightHandScale");
 		}
 
-		
+		prevHandState_ = state;
 	}
 	else {
+
 		swingUpTime_.elapsedTime_ = 0.0f;
 		swingDownTime_.elapsedTime_ = 0.0f;
 		afterTime_.elapsedTime_ = 0.0f;
 
 		frontPlane_.Initialize(frontFistTexture_, 1);
 		backPlane_.Initialize(backFistTexture_, 1);
+
+		if (handState_ != HandState::kAttack) {
+			prevHandState_ = handState_;
+		}
 	}
+
+	handState_ = state;
 }

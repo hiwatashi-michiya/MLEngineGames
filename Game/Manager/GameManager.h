@@ -17,7 +17,7 @@ public:
     void Finalize();
 
     // フレーム更新
-    void Update(bool isJustTurned, bool isJustMoved);
+    void Update(bool isJustTurned, bool isJustMoved, bool isReceive, bool isReflect);
 
     //debug
     void Debug();
@@ -44,6 +44,8 @@ public:
     enum class TutorialState : uint8_t {
         LaneMove,      //レーン移動
         FlontBack,   //振り向き
+		Receive,     // 受け
+		Reflect,     // 反射
         Wait,      //待機
         free      //
     };
@@ -130,11 +132,17 @@ private:
     //チュートリアルでのカウント
     int moveCount_ = 0;
     int turnCount_ = 0;
+    int receiveCount_ = 0;
+    int reflectCount_ = 0;
     int moveCountMax_ = 0;
     int turnCountMax_ = 0;
+	int receiveCountMax_ = 3;
+	int reflectCountMax_ = 1;
 
     float waitTime_ = 1.0f;
     float time_ = 0.0f;
+
+    float finishTime_ = 0.0f;
     //後で正式なものと交換
     float deltaTime_ = 1.0f / 60.0f;
     //基礎点数

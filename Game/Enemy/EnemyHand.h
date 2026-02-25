@@ -33,6 +33,7 @@ public:
 		frontPlane_.isActive = isActive;
 		backPlane_.isActive = isActive;
 	}
+	void SetTotalTime(float time) { totalTime_ = time; }
 
 
 private:

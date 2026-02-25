@@ -70,7 +70,7 @@ inline void PlayScene::Initialize(){
 
 	enemy_ = std::make_unique<Enemy>();
 	enemy_->Initialize();
-	isEnemyReset_ = true;
+	isEnemyReset_ = false;
 	enemy_->SetCamera(&camera_);
 
 	bulletManager_ = std::make_unique<BulletManager>();
@@ -113,8 +113,10 @@ inline void PlayScene::Initialize(){
 	titleTexture_.Load("./Resources/Texture/title_logo.png");
 	tutorialMoveTexture_.Load("./Resources/Texture/tutorial_ui_move.png");
 	tutorialTurnTexture_.Load("./Resources/Texture/tutorial_ui_turn.png");
+	tutorialEnemyTexture_.Load("./Resources/Texture/tutorial_ui_enemy.png");
 	gameClearTexture_.Load("./Resources/Texture/gameClear.png");
 	gameOverTexture_.Load("./Resources/Texture/gameOver.png");
+	okMarkTexture_.Load("./Resources/Texture/tutorial_UI_clear.png");
 
 	titleSprite_.reset(MLEngine::Resource::Sprite2D::Create(titleTexture_, titlePos_, titleColor_));
 	titleSprite_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -128,6 +130,12 @@ inline void PlayScene::Initialize(){
 	resultSprite_.reset(MLEngine::Resource::Sprite2D::Create(gameOverTexture_, resultPos_, resultColor_));
 	resultSprite_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	resultSprite_->isActive = false;
+
+	for (int i = 0; i < 2; i++) {
+		okMarkSprite_[i].reset(MLEngine::Resource::Sprite2D::Create(okMarkTexture_, MLEngine::Math::Vector2(1800.0f, 360.0f + i * 250.0f)));
+		okMarkSprite_[i]->size = MLEngine::Math::Vector2(150.0f, 150.0f);
+		okMarkSprite_[i]->isActive = false;
+	}
 
 
 	titlePos_ = { 640.0f,120.0f };
@@ -219,6 +227,7 @@ inline void PlayScene::Initialize(){
 		resultScoreUIs_[i].stayMiddleTime = 0.0f;
 
 	}
+
 
 }
 
@@ -354,14 +363,15 @@ void PlayScene::Update(){
 	GameManager::GameState beforeGameState = gameManager_->GetState();
 
 	// Server 処理
-	gameManager_->Update(playerManager_->GetPlayer()->GetIsJustTurned(), playerManager_->GetPlayer()->GetIsJustMoved());
+	gameManager_->Update(playerManager_->GetPlayer()->GetIsJustTurned(), playerManager_->GetPlayer()->GetIsJustMoved(), bulletManager_->GetIsReceive(), bulletManager_->GetIsReflect());
 
 	if (gameManager_->GetState() == GameManager::GameState::Title){
 		titleSprite_->isActive = true;
-		if (!isEnemyReset_) {
+		enemy_->TutorialInitialize();
+		/*if (!isEnemyReset_) {
 			enemy_->Initialize();
 			isEnemyReset_ = true;
-		}
+		}*/
 		
 	}
 	else {
@@ -370,9 +380,18 @@ void PlayScene::Update(){
 
 	if (gameManager_->GetState() == GameManager::GameState::Tutorial) {
 		tutorialSprite_.SetIsActive(true);
+		if (gameManager_->GetTutorialState() == GameManager::TutorialState::Reflect) {
+			okMarkSprite_[0]->isActive = true;
+			if (bulletManager_->GetIsReflect()) {
+				okMarkSprite_[1]->isActive = true;
+			}
+		}
 	}
 	else {
 		tutorialSprite_.SetIsActive(false);
+		for (int i = 0; i < 2; i++) {
+			okMarkSprite_[i]->isActive = false;
+		}
 
 	}
 	
@@ -385,6 +404,14 @@ void PlayScene::Update(){
 		tutorialSprite_.SetTexture(tutorialTurnTexture_);
 		tutorialSprite_.ReStart();
 	}
+	else if (gameManager_->GetTutorialState() == GameManager::TutorialState::Receive and beforeState != GameManager::TutorialState::Receive) {
+		tutorialSprite_.SetTexture(tutorialEnemyTexture_);
+		tutorialSprite_.ReStart();
+		for (int i = 0; i < 2; i++) {
+			okMarkSprite_[i]->isActive = false;
+		}
+	}
+	
 
 	//リザルト更新
 	if (gameManager_->GetState() == GameManager::GameState::Result) {
@@ -484,6 +511,18 @@ void PlayScene::Update(){
 	
 
 	if (gameManager_->GetState() == GameManager::GameState::Playing){
+
+		if (!isEnemyReset_) {
+			enemy_->Initialize();
+			enemy_->SetIsActive(false);
+			bulletManager_->Initialize(playerManager_->GetPlayer(), enemy_.get());
+			bulletManager_->SetIsModelActive(false);
+			gameManager_->SetScore(0);
+			gameManager_->SetCombo(0);
+			isEnemyReset_ = true;
+
+		}
+
 		bulletManager_->SetIsModelActive(true);
 		
 		ingameStartUI_.SetIsActive(true);
@@ -517,12 +556,22 @@ void PlayScene::Update(){
 			EnemyAttackTurnController::GetInstance().Update();
 			EnemyStateController::GetInstance().Update();
 			enemy_->Update();
-			bulletManager_->Update();
+			bulletManager_->Update(false);
 
 			lifeUI_->Update();
 
 		}
 
+	}
+	else if(gameManager_->GetState() == GameManager::GameState::Tutorial && (gameManager_->GetTutorialState() == GameManager::TutorialState::Receive || gameManager_->GetTutorialState() == GameManager::TutorialState::Reflect)) {
+#ifdef CLIENT_BUILD
+#else
+		bulletManager_->SetIsModelActive(true);
+		enemy_->SetIsActive(true);
+
+		bulletManager_->Update(true);
+		enemy_->TutorialUpdate();
+#endif
 	}
 	else {
 		bulletManager_->SetIsModelActive(false);
@@ -577,6 +626,17 @@ void PlayScene::Update(){
 	tutorialSprite_.easingTime = 0.4f;
 	tutorialSprite_.startToMiddleTime = 0.2f;
 	tutorialSprite_.stayMiddleTime = 0.0f;
+
+	if (gameManager_->GetTutorialState() == GameManager::TutorialState::Receive || gameManager_->GetTutorialState() == GameManager::TutorialState::Reflect) {
+		tutorialSprite_.startPosition = tutorialPosStart_ + MLEngine::Math::Vector2(100.0f, 200.0f);
+		tutorialSprite_.middlePosition = tutorialPosMiddle_ + MLEngine::Math::Vector2(100.0f, 200.0f);
+		tutorialSprite_.endPosition = tutorialPosEnd_ + MLEngine::Math::Vector2(100.0f, 200.0f);
+
+		tutorialSprite_.startScale = tutorialScaleStart_;
+		tutorialSprite_.middleScale = tutorialScaleMiddle_ + MLEngine::Math::Vector2(-0.1f, -0.1f);
+		tutorialSprite_.endScale = tutorialScaleEnd_ + MLEngine::Math::Vector2(-0.1f, -0.1f);
+
+	}
 	tutorialSprite_.Update();
 
 
