@@ -43,6 +43,11 @@ std::vector<PacketIO::Port> PacketIO::find_ports(DeviceType device_type) {
             ports.push_back(port);
         }
     }
+    std::sort(ports.begin(), ports.end(),
+        [](const Port& a, const Port& b) {
+            return a.name < b.name;
+        }
+    );
     return ports;
 }
 
