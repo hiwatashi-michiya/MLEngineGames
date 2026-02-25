@@ -26,10 +26,12 @@ bool WirelessLed::Init() {
 }
 
 bool WirelessLed::SetLevel(int level) {
+	if (!packet_io) return false;
+
 	level = std::clamp(level, MIN_LEVEL, MAX_LEVEL);
 	if (level == lastLevel) return true;
-
 	lastLevel = level;
+
 	OutputDebugStringA(std::format("[Wireless LED] SetLevel({})\n", level).c_str());
 	return packet_io->writeByte(static_cast<uint8_t>('0') + static_cast<uint8_t>(level));
 }
