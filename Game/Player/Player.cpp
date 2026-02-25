@@ -206,9 +206,6 @@ void Player::Update(const float deltaTime) {
 			//ノーダメージ(スコア0)のとき
 			if (gameManager->GetScore() <= 0) {
 				sprite3D_.SetTexture(frontTextureName_);
-#ifdef _SERVER
-				WirelessLed_->SetLevel(0);
-#endif
 			}
 			//スコアが1以上の時
 			else {
@@ -219,13 +216,11 @@ void Player::Update(const float deltaTime) {
 				textureName += ".png";
 
 				sprite3D_.SetTexture(textureName);
-#ifdef _SERVER
-				WirelessLed_->SetLevel(gameManager->GetScoreLevel());
-#endif
 			}
-
 		}
-
+#ifdef _SERVER
+		WirelessLed_->SetLevel(gameManager->GetScoreLevel());
+#endif
 	}
 
 	if (isJustRefrected_) isJustRefrected_ = false;
