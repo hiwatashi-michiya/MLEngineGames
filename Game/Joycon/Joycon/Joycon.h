@@ -44,15 +44,16 @@ public:
 	virtual void addInit() = 0;
 	void Update();
 
+	void SetRotate(Vector3 input) { rotate_ = input; };
+
+	Vector3 GetRotate() { return rotate_; };
+
 	bool SendSubcommand(hid_device* device, std::byte subcommandId, const std::span<std::byte>& args);
 
 	void ImGui(std::string title);
 
 	virtual direction CheakRadius();
 
-	void ResetRotate() {
-		rotate_.x = 90.0f;
-	};
 
 	Vector3 GetVecRotate() { return Vrotate_; };
 

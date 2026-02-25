@@ -212,6 +212,10 @@ private:
 
 	//joycon
 	std::unique_ptr<JoyconManager> joyconInput;
+	direction dir;
+	//前のフレームの向き
+	direction predir;
+
 #ifdef _SERVER
 	// Client専用処理
 	//距離センサー
@@ -226,8 +230,7 @@ private:
 	MLEngine::Resource::Audio playerDamageSE_;
 	//前のフレームの移動レーン番号
 	int premovenum;
-	//前のフレームの向き
-	direction predir;
+
 };
 
 

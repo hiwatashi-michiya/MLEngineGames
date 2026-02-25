@@ -305,6 +305,9 @@ void Player::Refrect(){
 	isJustRefrected_ = true;
 	plState_.isRefrected = isJustRefrected_;
 
+	//ジョイコンをリセット
+	//joyconInput->ResetRotate(dir);
+
 	NetworkManager::PlayerStatePacket plPacket{};
 	plPacket.header.type = 1;
 	plPacket.header.size = sizeof(NetworkManager::PlayerStatePacket);
@@ -420,7 +423,7 @@ void Player::PlayerMove(){
 		playerTurnSE_.Play(Audio::SEVolume);
 	}
 
-	direction dir = joyconInput->CheakRadius();
+	dir = joyconInput->CheakRadius();
 	//#ifndef CLIENT_BUILD
 	if (predir != dir) {
 		if (dir == direction::front) {

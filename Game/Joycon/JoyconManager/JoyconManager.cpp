@@ -41,10 +41,12 @@ direction JoyconManager::CheakRadius() {
 
 	if(Rdir == front && Ldir == Right) {
 		direction_ = direction::front;
+		//joyconL->ResetRotate(Right);
 		return direction::front;
 	}
 	else if(Rdir == back && Ldir == Left) {
 		direction_ = direction::back;
+		//joyconL->ResetRotate(Left);
 		return direction::back;
 	}
 	else {

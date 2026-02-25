@@ -7,11 +7,11 @@ public:
 	void addInit()override;
 	direction CheakRadius()override;
 	void ResetRotate(direction dir) {
-		if (dir == front) {
-			rotate_.x = 90.0f;
+		if (dir == Left) {
+			rotate_.x = 180.0f;
 		}
-		else if (dir == back) {
-			rotate_.x = 270.0f;
+		else if (dir == Right) {
+			rotate_.x = 0.0f;
 		}
 	};
 private:
