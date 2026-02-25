@@ -6,8 +6,9 @@
 #include <Sprite3D.h>
 #include "Audio/Audio.h"
 
-#include "../Joycon/Joycon.h"
+#include "../Joycon/JoyconManager/JoyconManager.h"
 #include "../DeviceIO/DistanceSensor/DistanceSensor.h"
+#include "../DeviceIO/WirelessLed/WirelessLed.h"
 #include <UI/UI.h>
 
 //プレイヤーが操作する自機
@@ -137,7 +138,10 @@ private:
 	std::string backTextureName_;
 	std::string damageTextureName_;
 
+	MLEngine::Math::Vector3 normalScale_{};
 	MLEngine::Math::Vector3 resultPosition_{};
+	MLEngine::Math::Vector3 resultScale_{};
+		
 	//反射のテクスチャ
 	UI refrectTex_;
 
@@ -207,12 +211,16 @@ private:
 	//ジャングル
 
 	//joycon
-	std::unique_ptr<Joycon> joyconInput;
+	std::unique_ptr<JoyconManager> joyconInput;
+	direction dir;
+	//前のフレームの向き
+	direction predir;
+
 #ifdef _SERVER
 	// Client専用処理
 	//距離センサー
 	std::unique_ptr<DistanceSensor> DistanceSensor_;
-
+	std::unique_ptr<WirelessLed> WirelessLed_;
 #endif
 
 	//SE
@@ -222,8 +230,7 @@ private:
 	MLEngine::Resource::Audio playerDamageSE_;
 	//前のフレームの移動レーン番号
 	int premovenum;
-	//前のフレームの向き
-	direction predir;
+
 };
 
 

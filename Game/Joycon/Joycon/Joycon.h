@@ -4,7 +4,7 @@
 #include <bit>
 #include <numbers>
 #include "imgui.h"
-#include "../hidapi/hidManager.h"
+#include "../../hidapi/hidManager.h"
 #include "Externals/hidapi/include/hidapi.h"
 #include "Quaternion.h"
 #include "../Engine/Core/FrameTracker.h"
@@ -13,7 +13,9 @@ using namespace MLEngine::Math;
 enum direction {
 	front = 0,
 	back = 1,
-	no = 2,
+	Left = 2,
+	Right = 3,
+	no = 5,
 };
 enum Buttan {
 	DOWN = 0x01,
@@ -26,36 +28,48 @@ struct GyroData {
 	int16_t y;
 	int16_t z;
 };
+struct Angle {
+	float right = 0.0f;
+	float back = 90.0f;
+	float left = 180.0f;
+	float front = 270.0f;
+};
+enum JoyconType {
+JOYCON_L = 8198,
+JOYCON_R = 8199
+};
 class Joycon {
 public:
-	void Init();
-
+	void Init(unsigned short Type);
+	virtual void addInit() = 0;
 	void Update();
 
-	bool IsPush(Buttan key);
+	void SetRotate(Vector3 input) { rotate_ = input; };
+
+	Vector3 GetRotate() { return rotate_; };
 
 	bool SendSubcommand(hid_device* device, std::byte subcommandId, const std::span<std::byte>& args);
 
-	direction CheakRadius();
-	void ResetRotate() {
-		rotate_.x = 90.0f;
-	};
+	void ImGui(std::string title);
 
-	Quaternion GetQuaRotate() { return Qrotate_; };
+	virtual direction CheakRadius();
+
+
 	Vector3 GetVecRotate() { return Vrotate_; };
 
-private:
+protected:
 	std::unique_ptr<hidManager> hidManager_;
 	hid_device* device_;
-	bool Buttanflag = false;
-	std::array<std::byte, 0x40> data_{};
 	// read input report
 	static std::array<uint8_t, 0x40> buff;
 
-	Quaternion Qrotate_;
 	std::array<uint16_t, 3> Gyro_Normalized;
 	Vector3 Vrotate_;
 	Vector3 rotate_;
-	float second;
+
+	direction nowDir;
 	direction preDir;
+	Vector3 Prerotate_;
+	float count;
+	const Angle angle;
 };

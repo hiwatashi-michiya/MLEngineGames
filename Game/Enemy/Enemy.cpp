@@ -178,6 +178,8 @@ void Enemy::Update()
 	leftHand_->DebugUI("左手", "Left");
 	rightHand_->DebugUI("右手", "Right");
 
+	if (hitMomentFlug_) hitMomentFlug_ = false;
+
 	if (hp_ <= 0) {
 		if (!dynamic_cast<EnemyDownState*>(currentState_.get())) {
 			ChangeState(std::make_unique<EnemyDownState>());
@@ -185,6 +187,8 @@ void Enemy::Update()
 			enemyDownSE_.Play(Audio::SEVolume);
 		}
 	}
+	//体力割合の計算
+	healthRate_ = ((float)hp_ / (float)maxHp_);
 
 	currentState_->Update(this);
 
@@ -432,6 +436,8 @@ void Enemy::OnCollision(MLEngine::Math::Vector3 position, int damege)
 	if (hp_ < 0) {
 		hp_ = 0;
 	}
+
+	hitMomentFlug_ = true;
 
 	enemyDamageSE_.Play(Audio::SEVolume);
 

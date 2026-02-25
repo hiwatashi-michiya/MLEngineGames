@@ -11,6 +11,7 @@
 #include"Manager/PlayerManager.h"
 #include"LifeUI/LifeUI.h"
 #include"Score/ScoreNumber.h"
+#include"InfomationUI/InfomationUI.h"
 #include <memory>
 #include "Enemy/Enemy.h"
 #include "Bullet/BulletManager.h"
@@ -19,7 +20,7 @@
 #include "MLMath.h"
 #include "../UI/UI.h"
 #include "Enemy/EnemyStateController.h"
-#include "Particle/WeakHitParticle.h"
+#include "../Background/BackgroundMove.h"
 
 class PlayScene : public BaseScene
 {
@@ -110,7 +111,9 @@ private:
 
 	std::unique_ptr<ScoreNumber> scoreUI_;
 
+	std::unique_ptr<InfomationUI> InfoUI_;
 
+	BackgroundMove bgMove_;
 
 	MLEngine::Math::Vector3 rotate_ = { 0.0f, 0.0f, 0.0f };
 

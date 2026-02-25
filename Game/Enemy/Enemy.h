@@ -72,6 +72,7 @@ public:
 	MLEngine::Math::Vector3 GetRotate() { return rotate_; }
 	int GetHp() const { return hp_; }
 	int GetMaxHp() const { return maxHp_; }
+	float GetHealthRate()const { return healthRate_; }
 	bool GetIsDead() const {
 		if (hp_ <= 0) {
 			return true;
@@ -84,6 +85,8 @@ public:
 	float GetAngryTime() const { return angryTime_; }
 
 	bool GetIsActive() const { return frontPlane_.isActive; }
+
+	bool GetHitMomentFlug()const { return hitMomentFlug_; }
 
 	// セット関数
 	// 弾マネージャー取得
@@ -163,6 +166,8 @@ private:
 	int maxHp_ = 500;
 	int hp_ = 0;
 
+	float healthRate_ = 0.0f;
+
 	// ダウンカウント
 	int maxDownCount_ = 10;
 	int downCount_ = 0;
@@ -176,6 +181,9 @@ private:
 
 	// ImGui用状態選択インデックス
 	int stateIndex = 0;
+
+	//攻撃が当たった瞬間
+	bool hitMomentFlug_ = false;
 
 	//SE
 	MLEngine::Resource::Audio enemyDamageSE_;

@@ -1,7 +1,7 @@
 {
     "Tutorial": {
-        "MoveCount": 10,
-        "TurnCount": 6,
+        "MoveCount": 3,
+        "TurnCount": 2,
         "WaitTime": 1.0
     }
 }
