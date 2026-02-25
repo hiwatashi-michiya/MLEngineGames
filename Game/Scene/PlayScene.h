@@ -155,10 +155,12 @@ private:
 	MLEngine::Math::Vector4 resultColor_;
 
 	std::unique_ptr<MLEngine::Object::Transform> planeTransform_;
+	MLEngine::Object::Transform puddleTransform_;
 
 	//床のテクスチャ
 	MLEngine::Resource::Sprite3D groundPlane_;
 	MLEngine::Resource::Sprite3D lanePlane_;
+	MLEngine::Resource::Sprite3D puddle_;
 
 	//天球
 	MLEngine::Resource::RigidModel skydome_;
@@ -174,6 +176,7 @@ private:
 
 	std::string groundTexture_;
 	std::string laneTexture_;
+	std::string puddleTexture_;
 
 	bool isClientEnemyDead_ = false;
 

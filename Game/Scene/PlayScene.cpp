@@ -97,6 +97,7 @@ inline void PlayScene::Initialize(){
 
 	groundTexture_ = "./Resources/Texture/ingame_stage.png";
 	laneTexture_ = "./Resources/Texture/ingame_stageLine.png";
+	puddleTexture_ = "./Resources/Texture/ingame_puddle.png";
 
 	planeTransform_ = std::make_unique<MLEngine::Object::Transform>();
 
@@ -110,6 +111,11 @@ inline void PlayScene::Initialize(){
 	lanePlane_.transform.scale = { 1.0f, 10.0f, 1.0f };
 	lanePlane_.uvLoopScale_.y = 10.0f;
 	lanePlane_.transform.SetParent(planeTransform_.get());
+
+	puddle_.Initialize(puddleTexture_, 1);
+	puddle_.transform.translate = { 0.0f, 0.0f, -0.02f };
+	puddle_.transform.scale = { 1.0f, 10.0f, 1.0f };
+	puddle_.transform.SetParent(&puddleTransform_);
 
 	//必須となる情報の読み込み
 	titleTexture_.Load("./Resources/Texture/title_logo.png");
@@ -152,6 +158,10 @@ inline void PlayScene::Initialize(){
 	translate_.y = -4.0f;
 	rotate_.x = 1.48f;
 	scale_ = { 10.0f,30.0f,1.0f };
+
+	puddleTransform_.translate = { 0.0f,-3.0f,11.1f };
+	puddleTransform_.rotate.x = 1.48f;
+	puddleTransform_.scale = { 3.5f,1.1f,1.0f };
 
 	skydome_.Initialize("./Resources/model/skydome/skydome.obj");
 	skydomeTransform_.scale = { 1000.0f,1000.0f,1000.0f };
@@ -617,6 +627,9 @@ void PlayScene::Update() {
 	planeTransform_->rotateQuaternion = MLEngine::Math::ConvertFromEuler(rotate_);
 	planeTransform_->UpdateMatrix();
 
+	puddleTransform_.rotateQuaternion = MLEngine::Math::ConvertFromEuler(puddleTransform_.rotate);
+	puddleTransform_.UpdateMatrix();
+
 	skydomeTransform_.UpdateMatrix();
 	skydome_.SetWorldMatrix(skydomeTransform_.worldMatrix);
 
@@ -745,6 +758,10 @@ void PlayScene::DrawImgui() {
 	gameManager_->Debug();
 
 	planeTransform_->Debug();
+
+	ImGui::Begin("puddle");
+	puddleTransform_.Debug();
+	ImGui::End();
 
 	bgMove_.Debug();
 
