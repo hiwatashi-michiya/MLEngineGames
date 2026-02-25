@@ -361,7 +361,9 @@ int GameManager::GetScoreLevel() const
 
     int level = 0;
 
-    if (score_ <= 15 and score_ > 0) {
+    if (score_ == 0) {
+    }
+    else if (score_ <= 15 and score_ > 0) {
         level = ((score_ - 1) / 5) + 1;
     }
     else if(score_ <= 45) {
