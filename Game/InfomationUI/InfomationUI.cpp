@@ -6,6 +6,7 @@
 InfomationUI::InfomationUI() {
 	GlobalSetValues();
 
+
 	//必須となる情報の読み込み
 	texture_.Load("./Resources/Texture/ingame_UI_enemyHP.png");
 	speech_Bubble_.Initialize(texture_, {}, baseColor_);
