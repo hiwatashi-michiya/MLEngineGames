@@ -319,6 +319,36 @@ void Player::OnCollision(const int damege) {
 
 }
 void Player::PlayerMove(){
+	//タイトルシーンでなければ反転入力
+	if (vController_->Decide()) {
+		isForward_ = !isForward_;
+		isJustTurned_ = true;
+		playerTurnSE_.Play(Audio::SEVolume);
+	}
+
+	direction dir = joyconInput->CheakRadius();
+	//#ifndef CLIENT_BUILD
+	if (predir != dir) {
+		if (dir == direction::front) {
+			isForward_ = true;
+			isJustTurned_ = true;
+		}
+		else if (dir == direction::back) {
+			isForward_ = false;
+			isJustTurned_ = true;
+		}
+#ifdef _DEBUG
+		else if (dir == direction::no) {
+				ImGui::Begin("Joycon");
+				ImGui::Text("NOconectJoycon");
+				ImGui::End();
+			}
+#endif	
+	}
+
+	predir = dir;
+	//#endif
+
 	if (isTitleScene_ or isResultScene_){
 		return;
 	}
@@ -398,35 +428,6 @@ void Player::PlayerMove(){
 		}
 	}
 
-	//タイトルシーンでなければ反転入力
-	if (vController_->Decide()) {
-		isForward_ = !isForward_;
-		isJustTurned_ = true;
-		playerTurnSE_.Play(Audio::SEVolume);
-	}
-
-	direction dir = joyconInput->CheakRadius();
-	//#ifndef CLIENT_BUILD
-	if (predir != dir) {
-		if (dir == direction::front) {
-			isForward_ = true;
-			isJustTurned_ = true;
-		}
-		else if (dir == direction::back) {
-			isForward_ = false;
-			isJustTurned_ = true;
-		}
-#ifdef _DEBUG
-		else if (dir == direction::no) {
-				ImGui::Begin("Joycon");
-				ImGui::Text("NOconectJoycon");
-				ImGui::End();
-			}
-#endif	
-	}
-
-	predir = dir;
-	//#endif
 
 
 }

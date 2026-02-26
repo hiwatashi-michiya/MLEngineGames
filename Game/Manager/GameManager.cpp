@@ -54,6 +54,7 @@ void GameManager::Initialize() {
     gameOverWaitCounter_ = 0.0f;
     gameClearWaitCounter_ = 0.0f;
     resultShuffleCounter_ = 0.0f;
+    resultChangeCounter_ = 0;
 
     //クライアント側ではBGMを出さない
 #ifdef CLIENT_BUILD
@@ -101,7 +102,7 @@ void GameManager::Update(bool isJustTurned, bool isJustMoved) {
         }
 
         //決定ボタンでチュートリアルに移行
-        if (vController_->Decide()) {
+        if (isJustTurned) {
             titleStartSE_.Play(Audio::SEVolume);
             nextState_ = GameState::Tutorial;
         };
@@ -200,7 +201,7 @@ void GameManager::Update(bool isJustTurned, bool isJustMoved) {
         break;
     case GameManager::GameState::Result:
 
-        if (not resultBGM_.IsPlaying() and isEndShuffle_) {
+        if (not resultBGM_.IsPlaying() and isEndShuffle_ and not isReset_) {
             resultBGM_.Play(Audio::BGMVolume, true);
         }
 
@@ -218,11 +219,22 @@ void GameManager::Update(bool isJustTurned, bool isJustMoved) {
 
         }
 
+        if (isEndShuffle_) {
+            resultChangeCounter_ += deltaTime_;
+        }
+
+        if (resultChangeCounter_ >= resultChangeTime_){
+            isEndShuffle_ = false;
+            resultChangeCounter_ = 0;
+            resultBGM_.Stop();
+            isReset_ = true;
+        }
         //決定ボタンでシーンを初期化
-        if (isEndShuffle_ and vController_->Decide()) {
+        else if (isEndShuffle_ and vController_->Decide()) {
             resultBGM_.Stop();
             isReset_ = true;
         };
+        
 
 
         break;

@@ -172,6 +172,10 @@ private:
     float resultShuffleCounter_ = 0.0f;
     //シャッフル完了したか
     bool isEndShuffle_ = false;
+
+    float resultChangeCounter_ = 0.0f;
+
+    float resultChangeTime_ = 3.0f;
     //画像の最大スケール
     MLEngine::Math::Vector2 maxSpriteScale_ = { 10.0f,10.0f };
 
