@@ -70,6 +70,7 @@ void GameManager::Initialize() {
 	receiveCount_ = 0;
 	reflectCount_ = 0;
 	time_ = 0;
+	isStart_ = false;
 
 	ResetCombo();
 }
@@ -165,9 +166,11 @@ void GameManager::Update(bool isJustTurned, bool isJustMoved, bool isReceive, bo
 					tutorialClearSE_.Play(Audio::SEVolume);
 				}
 				finishTime_ += deltaTime_;
-				if (finishTime_ > 3.0f) {
+				isStart_ = true;
+				if (finishTime_ > 10.0f) {
 					isTutorialClear_ = true;
 					finishTime_ = 0.0f;
+					isStart_ = false;
 				}
 			}
 			break;

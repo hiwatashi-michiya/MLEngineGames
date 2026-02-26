@@ -62,6 +62,7 @@ public:
     bool GetIsGetScore()const { return isGetScored_; }
     bool GetIsGameOver() const { return isGameOver_; }
     bool GetIsEndShuffle() const { return isEndShuffle_; }
+	bool GetIsStart() const { return isStart_; }
 
     void SetIsGetScored(bool isScored) { isGetScored_ = isScored; }
     void SetIsClear(bool isClear) { isClear_ = isClear; }
@@ -146,6 +147,7 @@ private:
     float time_ = 0.0f;
 
     float finishTime_ = 0.0f;
+    bool isStart_ = false;
     //後で正式なものと交換
     float deltaTime_ = 1.0f / 60.0f;
     //基礎点数

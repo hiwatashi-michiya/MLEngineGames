@@ -125,7 +125,9 @@ void BulletManager::Update(bool isTutorial)
 				if (bullet->GetBulletType() == Bullet::BulletType::kNormal) {
 					SpawnReflectBullet(bullet->GetNowLine(), reflectSpeed_, bullet->GetBulletType());
 				}
-				weakHitParticle_->Spawn(bullet->GetPosition(), true);
+				else {
+					weakHitParticle_->Spawn(bullet->GetPosition(), true);
+				}
 			}
 
 			return true;
@@ -210,7 +212,7 @@ void BulletManager::SpawnBullet(int laneNumber, float time, bool isTutorial)
 	Bullet::BulletType bulletType = GetBulletType(normalBumerator_, normalDenominator_, weakNumerator_, weakDenominator_);
 	if (isTutorial) {
 		if (receiveCount_ < 3) {
-			bulletType = GetBulletType(1, 3, 2, 3);
+			bulletType = GetBulletType(0, 3, 3, 3);
 		}
 		else {
 			bulletType = GetBulletType(3, 3, 0, 3);

@@ -128,11 +128,13 @@ private:
 	MLEngine::Resource::Texture tutorialMoveTexture_;
 	MLEngine::Resource::Texture tutorialTurnTexture_;
 	MLEngine::Resource::Texture tutorialEnemyTexture_;
+	MLEngine::Resource::Texture tutorialStartTexture_;
 
 	UI tutorialSprite_;
 	std::unique_ptr<MLEngine::Resource::Sprite2D> titleSprite_;
 	std::unique_ptr<MLEngine::Resource::Sprite2D> resultSprite_;
 	std::unique_ptr<MLEngine::Resource::Sprite2D> okMarkSprite_[2];
+	std::unique_ptr<MLEngine::Resource::Sprite2D> startSprite_;
 
 
 	MLEngine::Math::Vector2 titlePos_;

@@ -125,6 +125,7 @@ inline void PlayScene::Initialize(){
 	gameClearTexture_.Load("./Resources/Texture/gameClear.png");
 	gameOverTexture_.Load("./Resources/Texture/gameOver.png");
 	okMarkTexture_.Load("./Resources/Texture/tutorial_UI_clear.png");
+	tutorialStartTexture_.Load("./Resources/Texture/tutorial_UI_start.png");
 
 	titleSprite_.reset(MLEngine::Resource::Sprite2D::Create(titleTexture_, titlePos_, titleColor_));
 	titleSprite_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -147,6 +148,10 @@ inline void PlayScene::Initialize(){
 		okMarkSprite_[i]->size = MLEngine::Math::Vector2(150.0f, 150.0f);
 		okMarkSprite_[i]->isActive = false;
 	}
+
+	startSprite_.reset(MLEngine::Resource::Sprite2D::Create(tutorialStartTexture_, MLEngine::Math::Vector2(960.0f, 540.0f)));
+	startSprite_->size = MLEngine::Math::Vector2(900.0f, 200.0f);
+	startSprite_->isActive = false;
 
 
 	titlePos_ = { 640.0f,120.0f };
@@ -382,7 +387,9 @@ void PlayScene::Update() {
 	tutorialSprite_.SetIsActive(false);
 	resultSprite_->isActive = false;
 
-
+	if (gameManager_->GetState() != GameManager::GameState::Tutorial) {
+		startSprite_->isActive = false;
+	}
 
 #else
 
@@ -593,6 +600,7 @@ void PlayScene::Update() {
 	}
 	else if(gameManager_->GetState() == GameManager::GameState::Tutorial && (gameManager_->GetTutorialState() == GameManager::TutorialState::Receive || gameManager_->GetTutorialState() == GameManager::TutorialState::Reflect)) {
 #ifdef CLIENT_BUILD
+		startSprite_->isActive = true;
 #else
 		bulletManager_->SetIsModelActive(true);
 		enemy_->SetIsActive(true);
@@ -609,6 +617,7 @@ void PlayScene::Update() {
 		ingameFinishUI_.SetIsActive(false);
 		scoreUI_->SetIsActive(false);
 		InfoUI_->SetIsActive(false);
+
 	}
 
 	if (playerManager_->GetPlayer()->GetIsDead()) {
