@@ -42,6 +42,7 @@ public:
         uint8_t gameState;
         int score;
         int combo;
+        bool isStart;
     };
 
 

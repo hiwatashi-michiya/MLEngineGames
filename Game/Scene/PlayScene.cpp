@@ -387,6 +387,12 @@ void PlayScene::Update() {
 	tutorialSprite_.SetIsActive(false);
 	resultSprite_->isActive = false;
 
+	if (gameState.isStart) {
+		startSprite_->isActive = true;
+	}
+	else {
+		startSprite_->isActive = false;
+	}
 	if (gameManager_->GetState() != GameManager::GameState::Tutorial) {
 		startSprite_->isActive = false;
 	}
@@ -728,6 +734,7 @@ void PlayScene::Update() {
 	gamePacket.gameState.gameState = gameManager_->GetStateToInt();
 	gamePacket.gameState.score = gameManager_->GetScore();
 	gamePacket.gameState.combo = gameManager_->GetCombo();
+	gamePacket.gameState.isStart = gameManager_->GetIsStart();
 
 
 	NetworkManager::GetInstance().Send(gamePacket);
