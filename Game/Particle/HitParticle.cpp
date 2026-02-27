@@ -8,7 +8,7 @@
 void HitParticle::Initialize() {
 	global_ = GlobalVariables::GetInstance();
 
-	global_->AddItem("HitParticle", "GrainDivision", 10);
+	/*global_->AddItem("HitParticle", "GrainDivision", 10);
 	global_->AddItem("HitParticle", "GrainScale", MLEngine::Math::Vector3(0.1f, 0.1f, 0.1f));
 	global_->AddItem("HitParticle", "GrainOffset", 0.1f);
 	global_->AddItem("HitParticle", "GrainLimitTime", 1.0f);
@@ -21,7 +21,7 @@ void HitParticle::Initialize() {
 	global_->AddItem("HitParticle", "SpickOffset", 0.15f);
 	global_->AddItem("HitParticle", "SpickLimitTime", 0.75f);
 	global_->AddItem("HitParticle", "SpickEnemy1Color", MLEngine::Math::Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-	global_->AddItem("HitParticle", "SpickEnemy2Color", MLEngine::Math::Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+	global_->AddItem("HitParticle", "SpickEnemy2Color", MLEngine::Math::Vector4(1.0f, 1.0f, 1.0f, 1.0f));*/
 
 	grainDivision_ = global_->GetIntValue("HitParticle", "GrainDivision");
 	grainScale_ = global_->GetVector3Value("HitParticle", "GrainScale");

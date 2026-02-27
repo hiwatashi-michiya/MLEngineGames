@@ -1,0 +1,34 @@
+{
+    "WeakHitParticle": {
+        "StarDivision": 6,
+        "StarLimitTime": 1.184999942779541,
+        "StarMaxScale": [
+            0.5,
+            0.5,
+            0.5
+        ],
+        "StarOffset": [
+            2.0,
+            1.5,
+            0.0
+        ],
+        "WaterDivision": 20,
+        "WaterGravity": -0.1509999930858612,
+        "WaterLimitTime": 1.0,
+        "WaterMaxScale": [
+            0.20000000298023224,
+            0.20000000298023224,
+            0.10000000149011612
+        ],
+        "WaterMaxSpeed": [
+            0.10000000149011612,
+            0.19200000166893005,
+            0.0
+        ],
+        "WaterOffset": [
+            0.10000000149011612,
+            0.10000000149011612,
+            0.0
+        ]
+    }
+}

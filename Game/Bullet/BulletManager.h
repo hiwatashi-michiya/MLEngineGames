@@ -9,6 +9,7 @@
 #include "Player/Player.h"
 #include "BulletCaveat.h"
 #include "Particle/SmokeParticle.h"
+#include "Particle/WeakHitParticle.h"
 
 class Enemy;
 //class BulletCaveat;
@@ -18,16 +19,19 @@ class BulletManager {
 		BulletManager() {};
 		~BulletManager() {};
 		void Initialize(Player* player, Enemy* enemy);
-		void Update();
+		void Update(bool isTutorial);
 
 		// 弾を生成する
-		void SpawnBullet(int laneNumber, float time);
+		void SpawnBullet(int laneNumber, float time, bool isTutorial);
 
 		void SpawnReflectBullet(int laneNumber, float time, Bullet::BulletType type);
 
 		Bullet::BulletType GetBulletType(int normalNum, int normalDen,int weakNum, int weakDen);
 
 		BulletCaveat* GetBulletCaveat() { return bulletCaveat_.get(); }
+
+		bool GetIsReceive() const { return isReceive_; }
+		bool GetIsReflect() const { return isReflect_; }
 
 		void SetPlayer(Player* player) { player_ = player; }
 		void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
@@ -63,14 +67,21 @@ private:
 	MLEngine::Math::Vector3 endTranslate_ = { 0.0f, -0.18f, -9.0f };
 	float startDistance_ = 1.7f;
 	float endDistance_ = 0.28f;
-
+	// 弾のダメージ
 	int bulletDamege_ = 10;
-
+	// モデルのアクティブ状態
 	bool isModelActive_ = true;
-
+	// 弾を受け取ったかどうか
+	bool isReceive_ = false;
+	int receiveCount_ = 0;
+	// 反射したかどうか
+	bool isReflect_ = false;
+	// 反射した弾の速度
 	float reflectSpeed_ = 0.5f;
-
+	// 煙エフェクト
 	std::unique_ptr<SmokeParticle> smokeParticle_;
+	// 弱攻撃ヒットエフェクト
+	std::unique_ptr<WeakHitParticle> weakHitParticle_;
 
 	int normalBumerator_ = 2;
 	int normalDenominator_ = 3;

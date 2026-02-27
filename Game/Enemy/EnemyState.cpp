@@ -47,7 +47,7 @@ void EnemyNormalState::Update(Enemy* enemy)
 
 		EnemyAttackTurnController::GetInstance().OnMyEnemyAttackFinished(laneNumber, -1, false);
 
-		enemy->GetBulletManager()->SpawnBullet(laneNumber, bulletSpeed_);
+		enemy->GetBulletManager()->SpawnBullet(laneNumber, bulletSpeed_, false);
 		enemy->ChangeMotionState(std::make_unique<EnemyAttackState>());
 		enemy->ChangeTexture(Enemy::Mode::kNormal);
 		enemy->GetFrontSprite()->SetAnimationTime(normalAnimationTime_);
@@ -190,8 +190,8 @@ void EnemyBerserkState::Update(Enemy* enemy)
 		}
 
 		EnemyAttackTurnController::GetInstance().OnMyEnemyAttackFinished(laneNumber[0], laneNumber[1], true);
-		enemy->GetBulletManager()->SpawnBullet(laneNumber[0], bulletSpeed_);
-		enemy->GetBulletManager()->SpawnBullet(laneNumber[1], bulletSpeed_);
+		enemy->GetBulletManager()->SpawnBullet(laneNumber[0], bulletSpeed_, false);
+		enemy->GetBulletManager()->SpawnBullet(laneNumber[1], bulletSpeed_, false);
 		enemy->ChangeMotionState(std::make_unique<EnemyAttackState>());
 		enemy->ChangeTexture(Enemy::Mode::kAngry);
 		enemy->GetFrontSprite()->SetAnimationTime(normalAnimationTime_);
@@ -265,8 +265,8 @@ void EnemyGreatAttackState::Update(Enemy* enemy)
 	}
 	else if (intervalTime_ >= fireInterval)
 	{
-		enemy->GetBulletManager()->SpawnBullet(laneNumber_[0], bulletSpeed_);
-		enemy->GetBulletManager()->SpawnBullet(laneNumber_[1], bulletSpeed_);
+		enemy->GetBulletManager()->SpawnBullet(laneNumber_[0], bulletSpeed_, false);
+		enemy->GetBulletManager()->SpawnBullet(laneNumber_[1], bulletSpeed_, false);
 		enemy->ChangeMotionState(std::make_unique<EnemyAttackState>());
 		EnemyAttackTurnController::GetInstance().OnMyEnemyAttackFinished(laneNumber_[0], laneNumber_[1], true);
 		enemy->ChangeTexture(Enemy::Mode::kNormal);
@@ -298,4 +298,161 @@ void EnemyGreatAttackState::Exit(Enemy* enemy)
 	enemy->GetLeftHand()->SetHandState(EnemyHand::HandState::kNormal);
 	enemy->GetRightHand()->SetHandState(EnemyHand::HandState::kNormal);
 	EnemyStateController::GetInstance().OnMyEnemyStateFinished(false, EnemyStateController::GetInstance().GetAngryFlag());
+}
+
+void EnemyTutorialNormalState::Enter(Enemy* enemy)
+{
+	intervalTime_ = 0.0f;
+	prevLaneNumber = -1;
+	GlobalVariables* global = GlobalVariables::GetInstance();
+	bulletSpeed_ = global->GetFloatValue("EnemyState", "NormalBulletSpeed");
+	fireInterval = global->GetFloatValue("EnemyState", "NormalFireInterval");
+	isAnimation_ = false;
+	normalAnimationTime_ = global->GetFloatValue("EnemyState", "NormalAnimation");
+	attackAnimationTime_ = global->GetFloatValue("EnemyState", "NormalAttackAnimation");
+	maxGrateAttackTime_ = global->GetFloatValue("EnemyState", "MaxGreatAttackTime");
+	maxAngryTime_ = global->GetFloatValue("EnemyState", "MaxAngryTime");
+
+	enemy->ChangeTexture(Enemy::Mode::kNormal);
+	enemy->GetFrontSprite()->SetAnimationTime(normalAnimationTime_);
+
+	enemy->GetLeftHand()->SetHandState(EnemyHand::HandState::kNormal);
+	enemy->GetRightHand()->SetHandState(EnemyHand::HandState::kNormal);
+	enemyAttackSE_.Load("SE/enemy_attack.mp3");
+}
+
+void EnemyTutorialNormalState::Update(Enemy* enemy)
+{
+
+	if (intervalTime_ >= fireInterval)
+	{
+		int laneNumber = MLEngine::Math::RandomInt(0, 2);
+
+		while (laneNumber == prevLaneNumber)
+		{
+			laneNumber = MLEngine::Math::RandomInt(0, 2);
+		}
+
+		enemy->GetBulletManager()->SpawnBullet(laneNumber, bulletSpeed_, true);
+		enemy->ChangeMotionState(std::make_unique<EnemyAttackState>());
+		enemy->ChangeTexture(Enemy::Mode::kNormal);
+		enemy->GetFrontSprite()->SetAnimationTime(normalAnimationTime_);
+		intervalTime_ = 0.0f;
+		prevLaneNumber = laneNumber;
+		enemyAttackSE_.Play(Audio::SEVolume);
+
+		isAnimation_ = false;
+	}
+	else
+	{
+		intervalTime_ += 1.0f / 60.0f;
+
+
+		
+		enemy->AddAngryTime(1.0f / 60.0f);
+
+		if (intervalTime_ < fireInterval - attackAnimationTime_) {
+			
+			if (enemy->GetAngryTime() > maxAngryTime_) {
+				enemy->ChangeState(std::make_unique<EnemyTutorialBerserkState>());
+				enemy->ResetAngryTime();
+
+			}
+
+		}
+
+		if (!isAnimation_ && intervalTime_ >= fireInterval - attackAnimationTime_) {
+			isAnimation_ = true;
+			enemyAttackSE_.Play(Audio::SEVolume);
+			enemy->ChangeTexture(Enemy::Mode::kAttack);
+			enemy->GetFrontSprite()->SetAnimationTime(attackAnimationTime_);
+			enemy->GetLeftHand()->SetHandState(EnemyHand::HandState::kAttack);
+			enemy->GetRightHand()->SetHandState(EnemyHand::HandState::kAttack);
+		}
+
+
+	}
+}
+
+void EnemyTutorialNormalState::Exit(Enemy* enemy)
+{
+	enemy->ChangeTexture(Enemy::Mode::kNormal);
+}
+
+void EnemyTutorialBerserkState::Enter(Enemy* enemy)
+{
+	intervalTime_ = 0.0f;
+	prevLaneNumber = -1;
+	GlobalVariables* global = GlobalVariables::GetInstance();
+	totalTime_ = global->GetFloatValue("EnemyState", "AngryTotalTime");
+	bulletSpeed_ = global->GetFloatValue("EnemyState", "BerserkBulletSpeed");
+	fireInterval = global->GetFloatValue("EnemyState", "BerserkFireInterval");
+	normalAnimationTime_ = global->GetFloatValue("EnemyState", "AngryAnimation");
+	attackAnimationTime_ = global->GetFloatValue("EnemyState", "AngryAttackAnimation");
+	enemy->ChangeTexture(Enemy::Mode::kAngry);
+	enemy->GetFrontSprite()->SetAnimationTime(normalAnimationTime_);
+	enemy->GetLeftHand()->SetHandState(EnemyHand::HandState::kAngry);
+	enemy->GetRightHand()->SetHandState(EnemyHand::HandState::kAngry);
+	enemyAttackSE_.Load("SE/enemy_attack.mp3");
+}
+
+void EnemyTutorialBerserkState::Update(Enemy* enemy)
+{
+	time_ += 1.0f / 60.0f;
+	intervalTime_ += 1.0f / 60.0f;
+
+	if (intervalTime_ >= fireInterval)
+	{
+		int laneNumber[2];
+
+		laneNumber[0] = MLEngine::Math::RandomInt(0, 2);
+		while (laneNumber[0] == prevLaneNumber)
+		{
+			laneNumber[0] = MLEngine::Math::RandomInt(0, 2);
+		}
+
+		laneNumber[1] = MLEngine::Math::RandomInt(0, 2);
+		while (laneNumber[1] == laneNumber[0])
+		{
+			laneNumber[1] = MLEngine::Math::RandomInt(0, 2);
+		}
+
+		
+		enemy->GetBulletManager()->SpawnBullet(laneNumber[0], bulletSpeed_, true);
+		enemy->GetBulletManager()->SpawnBullet(laneNumber[1], bulletSpeed_, true);
+		enemy->ChangeMotionState(std::make_unique<EnemyAttackState>());
+		enemy->ChangeTexture(Enemy::Mode::kAngry);
+		enemy->GetFrontSprite()->SetAnimationTime(normalAnimationTime_);
+		intervalTime_ = 0.0f;
+		prevLaneNumber = laneNumber[0];
+
+		isAnimation_ = false;
+		attackCount_++;
+	}
+	else
+	{
+
+		if (!isAnimation_ && intervalTime_ >= fireInterval - attackAnimationTime_) {
+			isAnimation_ = true;
+			enemyAttackSE_.Play(Audio::SEVolume);
+			enemy->ChangeTexture(Enemy::Mode::kAttack);
+			enemy->GetFrontSprite()->SetAnimationTime(attackAnimationTime_);
+			enemy->GetLeftHand()->SetHandState(EnemyHand::HandState::kAttack);
+			enemy->GetRightHand()->SetHandState(EnemyHand::HandState::kAttack);
+		}
+	}
+
+
+	if (attackCount_ == totalTime_ / fireInterval && enemy->GetLeftHand()->GetHandState() != EnemyHand::HandState::kAttack)
+	{
+		enemy->ChangeState(std::make_unique<EnemyTutorialNormalState>());
+		enemy->ResetAngryTime();
+	}
+}
+
+void EnemyTutorialBerserkState::Exit(Enemy* enemy)
+{
+	enemy->GetLeftHand()->SetHandState(EnemyHand::HandState::kNormal);
+	enemy->GetRightHand()->SetHandState(EnemyHand::HandState::kNormal);
+	
 }

@@ -70,7 +70,7 @@ inline void PlayScene::Initialize(){
 
 	enemy_ = std::make_unique<Enemy>();
 	enemy_->Initialize();
-	isEnemyReset_ = true;
+	isEnemyReset_ = false;
 	enemy_->SetCamera(&camera_);
 
 	bulletManager_ = std::make_unique<BulletManager>();
@@ -97,6 +97,7 @@ inline void PlayScene::Initialize(){
 
 	groundTexture_ = "./Resources/Texture/ingame_stage.png";
 	laneTexture_ = "./Resources/Texture/ingame_stageLine.png";
+	puddleTexture_ = "./Resources/Texture/ingame_puddle.png";
 
 	planeTransform_ = std::make_unique<MLEngine::Object::Transform>();
 
@@ -111,12 +112,20 @@ inline void PlayScene::Initialize(){
 	lanePlane_.uvLoopScale_.y = 10.0f;
 	lanePlane_.transform.SetParent(planeTransform_.get());
 
+	puddle_.Initialize(puddleTexture_, 1);
+	puddle_.transform.translate = { 0.0f, 0.0f, -0.02f };
+	puddle_.transform.scale = { 1.0f, 10.0f, 1.0f };
+	puddle_.transform.SetParent(&puddleTransform_);
+
 	//必須となる情報の読み込み
 	titleTexture_.Load("./Resources/Texture/title_logo.png");
 	tutorialMoveTexture_.Load("./Resources/Texture/tutorial_ui_move.png");
 	tutorialTurnTexture_.Load("./Resources/Texture/tutorial_ui_turn.png");
+	tutorialEnemyTexture_.Load("./Resources/Texture/tutorial_ui_enemy.png");
 	gameClearTexture_.Load("./Resources/Texture/gameClear.png");
 	gameOverTexture_.Load("./Resources/Texture/gameOver.png");
+	okMarkTexture_.Load("./Resources/Texture/tutorial_UI_clear.png");
+	tutorialStartTexture_.Load("./Resources/Texture/tutorial_UI_start.png");
 
 	titleSprite_.reset(MLEngine::Resource::Sprite2D::Create(titleTexture_, titlePos_, titleColor_));
 	titleSprite_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -127,9 +136,22 @@ inline void PlayScene::Initialize(){
 	tutorialSprite_.SetTexture(tutorialTurnTexture_);
 	tutorialSprite_.SetTexture(tutorialMoveTexture_);
 
+	tutorialSprite_.SetTexture(tutorialTurnTexture_);
+	tutorialSprite_.SetTexture(tutorialMoveTexture_);
+
 	resultSprite_.reset(MLEngine::Resource::Sprite2D::Create(gameOverTexture_, resultPos_, resultColor_));
 	resultSprite_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	resultSprite_->isActive = false;
+
+	for (int i = 0; i < 2; i++) {
+		okMarkSprite_[i].reset(MLEngine::Resource::Sprite2D::Create(okMarkTexture_, MLEngine::Math::Vector2(1800.0f, 360.0f + i * 250.0f)));
+		okMarkSprite_[i]->size = MLEngine::Math::Vector2(150.0f, 150.0f);
+		okMarkSprite_[i]->isActive = false;
+	}
+
+	startSprite_.reset(MLEngine::Resource::Sprite2D::Create(tutorialStartTexture_, MLEngine::Math::Vector2(960.0f, 540.0f)));
+	startSprite_->size = MLEngine::Math::Vector2(900.0f, 200.0f);
+	startSprite_->isActive = false;
 
 
 	titlePos_ = { 640.0f,120.0f };
@@ -141,6 +163,10 @@ inline void PlayScene::Initialize(){
 	translate_.y = -4.0f;
 	rotate_.x = 1.48f;
 	scale_ = { 10.0f,30.0f,1.0f };
+
+	puddleTransform_.translate = { 0.0f,-3.0f,11.1f };
+	puddleTransform_.rotate.x = 1.48f;
+	puddleTransform_.scale = { 3.5f,1.1f,1.0f };
 
 	skydome_.Initialize("./Resources/model/skydome/skydome.obj");
 	skydomeTransform_.scale = { 1000.0f,1000.0f,1000.0f };
@@ -222,6 +248,8 @@ inline void PlayScene::Initialize(){
 
 	}
 
+	bgMove_.Initialize();
+
 }
 
 void PlayScene::Finalize(){
@@ -253,7 +281,8 @@ void PlayScene::Update() {
 	}
 
 	//体力が一定以下になったら
-	if (playerManager_->GetPlayer()->GetLifeRatio() <= vignetteConfig_.startRatio) {
+	if (playerManager_->GetPlayer()->GetLifeRatio() <= vignetteConfig_.startRatio and 
+		gameManager_->GetState() == GameManager::GameState::Playing) {
 
 		//ビネットをかける
 		postEffect_->AddApplyEffect(PostEffectType::kVignette);
@@ -358,7 +387,15 @@ void PlayScene::Update() {
 	tutorialSprite_.SetIsActive(false);
 	resultSprite_->isActive = false;
 
-
+	if (gameState.isStart) {
+		startSprite_->isActive = true;
+	}
+	else {
+		startSprite_->isActive = false;
+	}
+	if (gameManager_->GetState() != GameManager::GameState::Tutorial) {
+		startSprite_->isActive = false;
+	}
 
 #else
 
@@ -366,15 +403,17 @@ void PlayScene::Update() {
 	GameManager::GameState beforeGameState = gameManager_->GetState();
 
 	// Server 処理
-	gameManager_->Update(playerManager_->GetPlayer()->GetIsJustTurned(), playerManager_->GetPlayer()->GetIsJustMoved());
+	gameManager_->Update(playerManager_->GetPlayer()->GetIsJustTurned(), playerManager_->GetPlayer()->GetIsJustMoved(), bulletManager_->GetIsReceive(), bulletManager_->GetIsReflect());
 
 	if (gameManager_->GetState() == GameManager::GameState::Title) {
 		titleSprite_->isActive = true;
-		if (!isEnemyReset_) {
+		enemy_->TutorialInitialize();
+		isEnemyReset_ = false;
+		/*if (!isEnemyReset_) {
 			enemy_->Initialize();
 			isEnemyReset_ = true;
-		}
-
+		}*/
+		
 	}
 	else {
 		titleSprite_->isActive = false;
@@ -382,9 +421,18 @@ void PlayScene::Update() {
 
 	if (gameManager_->GetState() == GameManager::GameState::Tutorial) {
 		tutorialSprite_.SetIsActive(true);
+		if (gameManager_->GetTutorialState() == GameManager::TutorialState::Reflect) {
+			okMarkSprite_[0]->isActive = true;
+			if (bulletManager_->GetIsReflect()) {
+				okMarkSprite_[1]->isActive = true;
+			}
+		}
 	}
 	else {
 		tutorialSprite_.SetIsActive(false);
+		for (int i = 0; i < 2; i++) {
+			okMarkSprite_[i]->isActive = false;
+		}
 
 	}
 
@@ -397,6 +445,14 @@ void PlayScene::Update() {
 		tutorialSprite_.SetTexture(tutorialTurnTexture_);
 		tutorialSprite_.ReStart();
 	}
+	else if (gameManager_->GetTutorialState() == GameManager::TutorialState::Receive and beforeState != GameManager::TutorialState::Receive) {
+		tutorialSprite_.SetTexture(tutorialEnemyTexture_);
+		tutorialSprite_.ReStart();
+		for (int i = 0; i < 2; i++) {
+			okMarkSprite_[i]->isActive = false;
+		}
+	}
+	
 
 	//リザルト更新
 	if (gameManager_->GetState() == GameManager::GameState::Result) {
@@ -495,7 +551,19 @@ void PlayScene::Update() {
 
 
 
-	if (gameManager_->GetState() == GameManager::GameState::Playing) {
+	if (gameManager_->GetState() == GameManager::GameState::Playing){
+
+		if (!isEnemyReset_) {
+			enemy_->Initialize();
+			enemy_->SetIsActive(false);
+			bulletManager_->Initialize(playerManager_->GetPlayer(), enemy_.get());
+			bulletManager_->SetIsModelActive(false);
+			gameManager_->SetScore(0);
+			gameManager_->SetCombo(0);
+			isEnemyReset_ = true;
+
+		}
+
 		bulletManager_->SetIsModelActive(true);
 
 		ingameStartUI_.SetIsActive(true);
@@ -530,12 +598,23 @@ void PlayScene::Update() {
 			EnemyAttackTurnController::GetInstance().Update();
 			EnemyStateController::GetInstance().Update();
 			enemy_->Update();
-			bulletManager_->Update();
+			bulletManager_->Update(false);
 
 			lifeUI_->Update();
 
 		}
 
+	}
+	else if(gameManager_->GetState() == GameManager::GameState::Tutorial && (gameManager_->GetTutorialState() == GameManager::TutorialState::Receive || gameManager_->GetTutorialState() == GameManager::TutorialState::Reflect)) {
+#ifdef CLIENT_BUILD
+		startSprite_->isActive = true;
+#else
+		bulletManager_->SetIsModelActive(true);
+		enemy_->SetIsActive(true);
+
+		bulletManager_->Update(true);
+		enemy_->TutorialUpdate();
+#endif
 	}
 	else {
 		bulletManager_->SetIsModelActive(false);
@@ -545,16 +624,15 @@ void PlayScene::Update() {
 		ingameFinishUI_.SetIsActive(false);
 		scoreUI_->SetIsActive(false);
 		InfoUI_->SetIsActive(false);
+
 	}
 
 	if (playerManager_->GetPlayer()->GetIsDead()) {
 		gameManager_->SetIsGameOver(true);
-		isEnemyReset_ = false;
 	}
 	else if (enemy_->GetIsDead() and isClientEnemyDead_) {
 		gameManager_->SetGameEnd(true);
 		gameManager_->SetIsClear(true);
-		isEnemyReset_ = false;
 	}
 	// トランスフォーム更新
 
@@ -562,6 +640,9 @@ void PlayScene::Update() {
 	planeTransform_->scale = scale_;
 	planeTransform_->rotateQuaternion = MLEngine::Math::ConvertFromEuler(rotate_);
 	planeTransform_->UpdateMatrix();
+
+	puddleTransform_.rotateQuaternion = MLEngine::Math::ConvertFromEuler(puddleTransform_.rotate);
+	puddleTransform_.UpdateMatrix();
 
 	skydomeTransform_.UpdateMatrix();
 	skydome_.SetWorldMatrix(skydomeTransform_.worldMatrix);
@@ -591,6 +672,17 @@ void PlayScene::Update() {
 	tutorialSprite_.easingTime = 0.4f;
 	tutorialSprite_.startToMiddleTime = 0.2f;
 	tutorialSprite_.stayMiddleTime = 0.0f;
+
+	if (gameManager_->GetTutorialState() == GameManager::TutorialState::Receive || gameManager_->GetTutorialState() == GameManager::TutorialState::Reflect) {
+		tutorialSprite_.startPosition = tutorialPosStart_ + MLEngine::Math::Vector2(100.0f, 200.0f);
+		tutorialSprite_.middlePosition = tutorialPosMiddle_ + MLEngine::Math::Vector2(100.0f, 200.0f);
+		tutorialSprite_.endPosition = tutorialPosEnd_ + MLEngine::Math::Vector2(100.0f, 200.0f);
+
+		tutorialSprite_.startScale = tutorialScaleStart_;
+		tutorialSprite_.middleScale = tutorialScaleMiddle_ + MLEngine::Math::Vector2(-0.1f, -0.1f);
+		tutorialSprite_.endScale = tutorialScaleEnd_ + MLEngine::Math::Vector2(-0.1f, -0.1f);
+
+	}
 	tutorialSprite_.Update();
 
 
@@ -621,6 +713,8 @@ void PlayScene::Update() {
 
 	InfoUI_->Update();
 
+	bgMove_.Update();
+
 #ifdef CLIENT_BUILD
 	// Client専用処理
 	EnemyFlugPacket enemyPacket{};
@@ -639,6 +733,7 @@ void PlayScene::Update() {
 	gamePacket.gameState.gameState = gameManager_->GetStateToInt();
 	gamePacket.gameState.score = gameManager_->GetScore();
 	gamePacket.gameState.combo = gameManager_->GetCombo();
+	gamePacket.gameState.isStart = gameManager_->GetIsStart();
 
 
 	NetworkManager::GetInstance().Send(gamePacket);
@@ -678,6 +773,12 @@ void PlayScene::DrawImgui() {
 	gameManager_->Debug();
 
 	planeTransform_->Debug();
+
+	ImGui::Begin("puddle");
+	puddleTransform_.Debug();
+	ImGui::End();
+
+	bgMove_.Debug();
 
 	ImGui::Begin("テクスチャ");
 	ImGui::Text("床");

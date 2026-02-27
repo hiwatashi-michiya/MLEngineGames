@@ -34,7 +34,9 @@ public:
 	Enemy() {};
 	~Enemy() {};
 	void Initialize();
+	void TutorialInitialize();
 	void Update();
+	void TutorialUpdate();
 	void DebugUI();
 
 	// 状態変更
@@ -187,6 +189,10 @@ private:
 	MLEngine::Resource::Audio enemyDamageSE_;
 	MLEngine::Resource::Audio enemyAngrySE_;
 	MLEngine::Resource::Audio enemyDownSE_;
+
+	bool isEasing_ = true;
+	float easingTime_ = 0.0f;
+
 
 };
 

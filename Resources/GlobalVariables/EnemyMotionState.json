@@ -1,7 +1,7 @@
 {
     "EnemyMotionState": {
         "AddDegrees": 5.0,
-        "Attack": 0.5,
+        "Attack": 0.4,
         "GetUpSection": 0.800000011920929,
         "LieDownAngle_": 70.0,
         "LieDownSection": 0.30000001192092896,

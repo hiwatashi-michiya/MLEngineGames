@@ -18,7 +18,7 @@
     <ClCompile Include="Game\Scene\SceneFactory.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Network\NetworkManager.cpp" />
-    <ClCompile Include="Game\Joycon\Joycon.cpp" />
+    <ClCompile Include="Game\Joycon\Joycon\Joycon.cpp" />
     <ClCompile Include="Game\hidapi\hidManager.cpp" />
     <ClCompile Include="Game\DeviceIO\UltrasonicSensor\UltrasonicSensor.cpp" />
     <ClCompile Include="Game\Bullet\BulletCaveat.cpp" />
@@ -31,11 +31,14 @@
     <ClCompile Include="Game\DeviceIO\DistanceSensor\vendor_serial.cpp" />
     <ClCompile Include="Game\Enemy\EnemyStateController.cpp" />
     <ClCompile Include="Game\Particle\HitParticle.cpp" />
-    <ClCompile Include="Game\Enemy\EnemyStateController.cpp" />
-    <ClCompile Include="Game\Particle\HitParticle.cpp" />
+    <ClCompile Include="Game\Joycon\JoyconManager\JoyconManager.cpp" />
     <ClCompile Include="Game\Particle\SmokeParticle.cpp" />
+    <ClCompile Include="Game\Joycon\Joycon\L\JoyconL.cpp" />
+    <ClCompile Include="Game\Joycon\Joycon\R\JoyconR.cpp" />
     <ClCompile Include="Game\Background\BackgroundMove.cpp" />
     <ClCompile Include="Game\InfomationUI\InfomationUI.cpp" />
+    <ClCompile Include="Game\DeviceIO\WirelessLed\WirelessLed.cpp" />
+    <ClCompile Include="Game\Particle\WeakHitParticle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -107,7 +110,7 @@
     <ClInclude Include="Game\Scene\PlayScene.h" />
     <ClInclude Include="Game\Scene\SceneFactory.h" />
     <ClInclude Include="Network\NetworkManager.h" />
-    <ClInclude Include="Game\Joycon\Joycon.h" />
+    <ClInclude Include="Game\Joycon\Joycon\Joycon.h" />
     <ClInclude Include="Game\hidapi\hidManager.h" />
     <ClInclude Include="Game\DeviceIO\UltrasonicSensor\UltrasonicSensor.h" />
     <ClInclude Include="Game\DeviceIO\serial\include\serial\serial.h" />
@@ -192,11 +195,14 @@
     <ClInclude Include="vendor\serial\include\serial\serial.h" />
     <ClInclude Include="Game\Enemy\EnemyStateController.h" />
     <ClInclude Include="Game\Particle\HitParticle.h" />
-    <ClInclude Include="Game\Enemy\EnemyStateController.h" />
-    <ClInclude Include="Game\Particle\HitParticle.h" />
+    <ClInclude Include="Game\Joycon\JoyconManager\JoyconManager.h" />
     <ClInclude Include="Game\Particle\SmokeParticle.h" />
+    <ClInclude Include="Game\Joycon\Joycon\L\JoyconL.h" />
+    <ClInclude Include="Game\Joycon\Joycon\R\JoyconR.h" />
     <ClInclude Include="Game\Background\BackgroundMove.h" />
     <ClInclude Include="Game\InfomationUI\InfomationUI.h" />
+    <ClInclude Include="Game\DeviceIO\WirelessLed\WirelessLed.h" />
+    <ClInclude Include="Game\Particle\WeakHitParticle.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

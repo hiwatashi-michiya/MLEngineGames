@@ -20,6 +20,7 @@
 #include "MLMath.h"
 #include "../UI/UI.h"
 #include "Enemy/EnemyStateController.h"
+#include "../Background/BackgroundMove.h"
 
 class PlayScene : public BaseScene
 {
@@ -101,7 +102,7 @@ private:
 
 	// 敵
 	std::unique_ptr<Enemy> enemy_;
-	bool isEnemyReset_;
+	bool isEnemyReset_ = false;
 
 	// 弾マネージャー
 	std::unique_ptr<BulletManager> bulletManager_;
@@ -112,6 +113,7 @@ private:
 
 	std::unique_ptr<InfomationUI> InfoUI_;
 
+	BackgroundMove bgMove_;
 
 	MLEngine::Math::Vector3 rotate_ = { 0.0f, 0.0f, 0.0f };
 
@@ -122,13 +124,17 @@ private:
 	MLEngine::Resource::Texture titleTexture_;
 	MLEngine::Resource::Texture gameClearTexture_;
 	MLEngine::Resource::Texture gameOverTexture_;
-
+	MLEngine::Resource::Texture okMarkTexture_;
 	MLEngine::Resource::Texture tutorialMoveTexture_;
 	MLEngine::Resource::Texture tutorialTurnTexture_;
+	MLEngine::Resource::Texture tutorialEnemyTexture_;
+	MLEngine::Resource::Texture tutorialStartTexture_;
 
 	UI tutorialSprite_;
 	std::unique_ptr<MLEngine::Resource::Sprite2D> titleSprite_;
 	std::unique_ptr<MLEngine::Resource::Sprite2D> resultSprite_;
+	std::unique_ptr<MLEngine::Resource::Sprite2D> okMarkSprite_[2];
+	std::unique_ptr<MLEngine::Resource::Sprite2D> startSprite_;
 
 
 	MLEngine::Math::Vector2 titlePos_;
@@ -151,10 +157,12 @@ private:
 	MLEngine::Math::Vector4 resultColor_;
 
 	std::unique_ptr<MLEngine::Object::Transform> planeTransform_;
+	MLEngine::Object::Transform puddleTransform_;
 
 	//床のテクスチャ
 	MLEngine::Resource::Sprite3D groundPlane_;
 	MLEngine::Resource::Sprite3D lanePlane_;
+	MLEngine::Resource::Sprite3D puddle_;
 
 	//天球
 	MLEngine::Resource::RigidModel skydome_;
@@ -170,6 +178,7 @@ private:
 
 	std::string groundTexture_;
 	std::string laneTexture_;
+	std::string puddleTexture_;
 
 	bool isClientEnemyDead_ = false;
 
@@ -185,6 +194,7 @@ private:
 	UI ingameFinishUI_;
 	UI resultScoreBackUI_;
 	std::array<UI, 2> resultScoreUIs_;
+
 
 };
 

@@ -39,23 +39,13 @@ void EnemyAttackTurnController::ReceiveFromNetwork()
 		return;
 	}
 
-	// 相手が攻撃を終えた → 自分のターン
-	/*if (isServer_ && turn.enemyId == 1) {
-		isMyTurn_ = true;
-	}
-	else if (!isServer_ && turn.enemyId == 0) {
-		isMyTurn_ = true;
-	}*/
-
 	isMyTurn_ = turn.isShot;
 
 	if (turn.isAngry) {
 		OnMyEnemyAttackFinished(-1, -1, false);
 	}
 
-	// 撃ったレーンを送る
-	//bulletCaveat_->Warn(turn.lane0);
-	//bulletCaveat_->Warn(turn.lane1);
+	
 }
 
 void EnemyAttackTurnController::SendIfNeeded()

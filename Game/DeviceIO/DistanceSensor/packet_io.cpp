@@ -43,6 +43,11 @@ std::vector<PacketIO::Port> PacketIO::find_ports(DeviceType device_type) {
             ports.push_back(port);
         }
     }
+    std::sort(ports.begin(), ports.end(),
+        [](const Port& a, const Port& b) {
+            return a.name < b.name;
+        }
+    );
     return ports;
 }
 
@@ -91,6 +96,12 @@ bool PacketIO::read(void* packet, size_t packet_size) {
         }
     }
     return false;
+}
+
+bool PacketIO::writeByte(uint8_t value) {
+    if (!this->device) return false;
+
+    return this->device->write(&value, 1) == 1;
 }
 
 constexpr uint8_t PacketIO::HEADER[];
