@@ -72,6 +72,7 @@ void GameManager::Initialize() {
 	reflectCount_ = 0;
 	time_ = 0;
 	isStart_ = false;
+	isTurn_ = false;
 
 	ResetCombo();
 }
@@ -163,17 +164,16 @@ void GameManager::Update(bool isJustTurned, bool isJustMoved, bool isReceive, bo
 				reflectCount_++;
 			}
 			if (reflectCount_ >= reflectCountMax_) {
-				if (finishTime_ == 0.0f) {
-					tutorialClearSE_.Play(Audio::SEVolume);
-				}
-				finishTime_ += deltaTime_;
+				tutorialClearSE_.Play(Audio::SEVolume);
 				isStart_ = true;
-				if (finishTime_ > 10.0f) {
-					isTutorialClear_ = true;
-					finishTime_ = 0.0f;
-					isStart_ = false;
-				}
+				tuState_ = TutorialState::Turn;
 			}
+			break;
+		case GameManager::TutorialState::Turn:
+			if (isTurn_) {
+				isTutorialClear_ = true;
+			}
+
 			break;
 		default:
 			tuState_ = GameManager::TutorialState::LaneMove;

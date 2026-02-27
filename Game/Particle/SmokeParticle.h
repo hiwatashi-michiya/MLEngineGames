@@ -10,7 +10,7 @@
 class SmokeParticle {
 	struct Smoke {
 		
-		std::unique_ptr < MLEngine::Resource::Sprite3D> sprite3D_;
+		std::unique_ptr <MLEngine::Resource::Sprite3D> sprite3D_;
 		MLEngine::Math::Vector3 velocity_;
 		float gravity_ = 0.01f;
 		float lifeTime_ = 0.0f;

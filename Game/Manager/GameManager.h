@@ -46,6 +46,7 @@ public:
         FlontBack,   //振り向き
 		Receive,     // 受け
 		Reflect,     // 反射
+        Turn,        // 反転
         Wait,      //待機
         free      //
     };
@@ -68,6 +69,7 @@ public:
     void SetIsClear(bool isClear) { isClear_ = isClear; }
     void SetGameEnd(bool isGameEnd) { isGameEnd_ = isGameEnd; }
     void SetIsGameOver(bool flag) { isGameOver_ = flag; }
+    void SetIsTurn(bool isTurn) { isTurn_ = isTurn; }
 
     // スコア管理
     void AddScore(bool isCombo);
@@ -148,6 +150,7 @@ private:
 
     float finishTime_ = 0.0f;
     bool isStart_ = false;
+    bool isTurn_ = false;
     //後で正式なものと交換
     float deltaTime_ = 1.0f / 60.0f;
     //基礎点数

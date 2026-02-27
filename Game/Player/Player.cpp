@@ -270,7 +270,7 @@ void Player::Update(const float deltaTime) {
 
 void Player::Draw() {
 	/*sprite_->Draw();*/
-	DistanceSensor_->Draw();
+	//DistanceSensor_->Draw();
 }
 
 void Player::DebugDraw() {

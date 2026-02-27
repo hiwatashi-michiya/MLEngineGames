@@ -427,6 +427,11 @@ void PlayScene::Update() {
 				okMarkSprite_[1]->isActive = true;
 			}
 		}
+
+		if (gameManager_->GetTutorialState() == GameManager::TutorialState::Turn) {
+			gameManager_->SetIsTurn(playerManager_->GetPlayer()->GetIsForward());
+		}
+
 	}
 	else {
 		tutorialSprite_.SetIsActive(false);
@@ -605,11 +610,11 @@ void PlayScene::Update() {
 		}
 
 	}
-	else if(gameManager_->GetState() == GameManager::GameState::Tutorial && (gameManager_->GetTutorialState() == GameManager::TutorialState::Receive || gameManager_->GetTutorialState() == GameManager::TutorialState::Reflect)) {
+	else if(gameManager_->GetState() == GameManager::GameState::Tutorial && (gameManager_->GetTutorialState() == GameManager::TutorialState::Receive || gameManager_->GetTutorialState() == GameManager::TutorialState::Reflect || gameManager_->GetTutorialState() == GameManager::TutorialState::Turn)) {
 #ifdef CLIENT_BUILD
 		startSprite_->isActive = true;
 #else
-		bulletManager_->SetIsModelActive(true);
+ 		bulletManager_->SetIsModelActive(true);
 		enemy_->SetIsActive(true);
 
 		bulletManager_->Update(true);

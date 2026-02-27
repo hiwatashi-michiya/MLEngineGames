@@ -106,18 +106,20 @@ void BulletManager::Update(bool isTutorial)
 			if (player_->GetIsForward()) { // プレイヤーが前を向いている場合のみダメージを受ける
 				
 				if (bullet->GetBulletType() == Bullet::BulletType::kNormal) {
-					if (isTutorial) {
-						player_->OnCollision(0);
-					}
-					else {
+					if (!isTutorial) {
 						player_->OnCollision(bulletDamege_);
 					}
 				}
 				else {
-					player_->OnCollision(0);
+					if (!isTutorial) {
+						player_->OnCollision(0);
+					}
+					else {
+						isReceive_ = true;
+						receiveCount_++;
+					}
 					weakHitParticle_->Spawn(bullet->GetPosition(), false);
-					isReceive_ = true;
-					receiveCount_++;
+					
 				}
 			}
 			else { // 敵がダメージを受ける
