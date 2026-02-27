@@ -3,6 +3,7 @@
 #include "imgui.h"
 #include <thread>
 #include <numbers>
+#include <windows.h>
 
 #pragma pack(push, 1)
 struct Packet {

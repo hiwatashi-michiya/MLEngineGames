@@ -48,10 +48,13 @@ void DistanceSensor::Update()
 
 void DistanceSensor::Draw()
 {
+#ifdef _DEBUG
 	ImGui::Begin("Distance Sensor");
 	ImGui::Text(output.c_str());
 	ImGui::End();
 	CheckPosition();
+#endif
+	OutputDebugStringA(output.c_str());
 }
 
 void DistanceSensor::Thread() {
