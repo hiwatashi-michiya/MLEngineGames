@@ -408,6 +408,7 @@ void PlayScene::Update() {
 	if (gameManager_->GetState() == GameManager::GameState::Title) {
 		titleSprite_->isActive = true;
 		enemy_->TutorialInitialize();
+		isEnemyReset_ = false;
 		/*if (!isEnemyReset_) {
 			enemy_->Initialize();
 			isEnemyReset_ = true;
@@ -628,12 +629,10 @@ void PlayScene::Update() {
 
 	if (playerManager_->GetPlayer()->GetIsDead()) {
 		gameManager_->SetIsGameOver(true);
-		isEnemyReset_ = false;
 	}
 	else if (enemy_->GetIsDead() and isClientEnemyDead_) {
 		gameManager_->SetGameEnd(true);
 		gameManager_->SetIsClear(true);
-		isEnemyReset_ = false;
 	}
 	// トランスフォーム更新
 
